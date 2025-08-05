@@ -1,0 +1,365 @@
+"use client"
+
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
+import { AnimatePresence, motion } from "motion/react"
+import { SearchIcon, Loader2, AlertCircle, ShoppingCart, Package } from "lucide-react"
+import { useEffect, useState, useCallback } from "react"
+import { useRouter, useSearchParams, usePathname } from "next/navigation"
+import { ForwardLink } from "@/components/ui/pageTransitions"
+
+export default function ProductsPage() {
+    const router = useRouter()
+    const pathname = usePathname()
+    const searchParams = useSearchParams()
+    
+    // Initialize search from URL params
+    const [search, setSearch] = useState(searchParams.get('search') || "")
+    const [isFocused, setIsFocused] = useState(false)
+    const [isSearching, setIsSearching] = useState(false)
+    const [products, setProducts] = useState([])
+    const [loading, setLoading] = useState(false)
+    const [error, setError] = useState(null)
+    const [pagination, setPagination] = useState(null)
+    const [page, setPage] = useState(parseInt(searchParams.get('page')) || 1)
+
+    // Function to update URL with search params
+    const updateURL = useCallback((searchTerm, pageNum = 1) => {
+        const params = new URLSearchParams(searchParams)
+        
+        if (searchTerm && searchTerm.trim()) {
+            params.set('search', searchTerm.trim())
+        } else {
+            params.delete('search')
+        }
+        
+        if (pageNum > 1) {
+            params.set('page', pageNum.toString())
+        } else {
+            params.delete('page')
+        }
+        
+        const newURL = params.toString() ? `${pathname}?${params.toString()}` : pathname
+        router.replace(newURL)
+    }, [router, pathname, searchParams])
+
+    // Debounced search function
+    const fetchProducts = useCallback(async (searchTerm = "", pageNum = 1) => {
+        setLoading(true)
+        setError(null)
+        
+        try {
+            const params = new URLSearchParams({
+                search: searchTerm,
+                page: pageNum.toString(),
+                limit: '12',
+                inStockOnly: 'true' // Only show in-stock products
+            })
+            
+            const response = await fetch(`/api/products?${params}`)
+            const data = await response.json()
+            
+            if (!response.ok) {
+                throw new Error(data.error || 'Failed to fetch products')
+            }
+            
+            setProducts(data.products || [])
+            setPagination(data.pagination)
+        } catch (err) {
+            setError(err.message)
+            setProducts([])
+        } finally {
+            setLoading(false)
+        }
+    }, [])
+
+    // Load initial products on mount
+    useEffect(() => {
+        const initialSearch = searchParams.get('search') || ""
+        const initialPage = parseInt(searchParams.get('page')) || 1
+        fetchProducts(initialSearch, initialPage)
+    }, [fetchProducts, searchParams])
+
+    // Handle search with debouncing and URL updates
+    useEffect(() => {
+        if (search.length > 0) {
+            setIsSearching(true)
+            const timeoutId = setTimeout(() => {
+                setPage(1)
+                updateURL(search, 1)
+                fetchProducts(search, 1)
+            }, 300)
+            return () => clearTimeout(timeoutId)
+        } else {
+            setIsSearching(false)
+            setPage(1)
+            updateURL("", 1)
+            fetchProducts("", 1)
+        }
+    }, [search, fetchProducts, updateURL])
+
+    const handleSearch = () => {
+        if (search.trim()) {
+            setPage(1)
+            updateURL(search.trim(), 1)
+            fetchProducts(search.trim(), 1)
+            setIsFocused(false)
+        }
+    }
+
+    const handleLoadMore = () => {
+        const nextPage = page + 1
+        setPage(nextPage)
+        updateURL(search, nextPage)
+        fetchProducts(search, nextPage)
+    }
+
+    const formatPrice = (price) => {
+        return new Intl.NumberFormat('en-US', {
+            style: 'currency',
+            currency: 'USD'
+        }).format(price)
+    }
+
+    return (
+        <div className="flex flex-col items-center justify-start w-full h-full min-h-screen">
+            {/* Search Header */}
+            <motion.div 
+                animate={isFocused ? { opacity: 1, height: "10rem" } : { opacity: 1, height: "6rem" }}
+                transition={{
+                    type: "spring",
+                    stiffness: 400,
+                    damping: 30,
+                    mass: 1.5
+                }}
+                className="flex items-end justify-between w-full bg-background/50 backdrop-blur-lg rounded-b-3xl z-50 pb-3"
+                layout
+            >
+                <Input 
+                    className="flex-1 text-lg h-12 rounded-full px-4 transition-all duration-300 mx-3" 
+                    placeholder="Search products..." 
+                    value={search} 
+                    onChange={(e) => setSearch(e.target.value)}
+                    onFocus={() => setIsFocused(true)}
+                    onBlur={() => setIsFocused(false)}
+                    onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                            handleSearch()
+                            e.target.blur()
+                        }
+                    }}
+                />
+                <AnimatePresence mode="popLayout">
+                    {(isSearching || loading) && (
+                        <motion.div 
+                            initial={{ opacity: 0, scale: 0, x: 100, y: 25, rotate: 360 }}
+                            animate={{ opacity: 1, scale: 1, x: 0, y: 0, rotate: 0 }}
+                            exit={{ opacity: 0, scale: 0, x: 100, y: 25, rotate: 360 }}
+                            transition={{
+                                type: "spring",
+                                stiffness: 250,
+                                damping: 30,
+                                mass: 1.5
+                            }}
+                            className="flex items-center justify-center mr-3"
+                            layout
+                        >
+                            <Button 
+                                size="icon" 
+                                className="size-12 rounded-full"
+                                onClick={handleSearch}
+                                disabled={loading}
+                            >
+                                {loading ? (
+                                    <Loader2 className="size-5 animate-spin" />
+                                ) : (
+                                    <SearchIcon strokeWidth={1.2} className="size-5 transition-all duration-300 scale-100"/>
+                                )}
+                            </Button>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+            </motion.div>
+
+            {/* Content */}
+            <div className="p-4 w-full">
+                {/* Search Results Header */}
+                {search && !loading && (
+                    <motion.div 
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="mb-6 w-full"
+                    >
+                        <h2 className="text-xl font-semibold mb-2">
+                            Search results for "{search}"
+                        </h2>
+                        {pagination && (
+                            <p className="text-muted-foreground">
+                                Found {pagination.totalItems} in-stock products
+                            </p>
+                        )}
+                    </motion.div>
+                )}
+
+                {/* Error State */}
+                {error && (
+                    <motion.div 
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="flex items-center justify-center p-8 w-full"
+                    >
+                        <div className="text-center">
+                            <AlertCircle className="size-12 text-destructive mx-auto mb-4" />
+                            <h3 className="text-lg font-semibold mb-2">Something went wrong</h3>
+                            <p className="text-muted-foreground mb-4">{error}</p>
+                            <Button onClick={() => fetchProducts(search, page)}>
+                                Try Again
+                            </Button>
+                        </div>
+                    </motion.div>
+                )}
+
+                {/* Products Grid */}
+                {!error && (
+                    <motion.div 
+                        className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2 w-full"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ delay: 0.1 }}
+                    >
+                        <AnimatePresence mode="popLayout">
+                            {products.map((product, index) => (
+                                <motion.div
+                                    key={product.id}
+                                    initial={{ opacity: 0, y: 20 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0, y: -20 }}
+                                    transition={{ delay: index * 0.05 }}
+                                    layout
+                                >
+                                    <ForwardLink href={`/products/${product.id}`}>
+                                        <Card className="cursor-pointer hover:shadow-lg transition-all duration-300 group p-0 gap-0">
+                                            <CardHeader className="p-0">
+                                                <div className="aspect-square relative overflow-hidden rounded-t-lg bg-muted">
+                                                    {product.imgs && product.imgs.length > 0 ? (
+                                                        <img 
+                                                            src={product.imgs[0]} 
+                                                            alt={product.title}
+                                                            className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-300 rounded-xl"
+                                                            onError={(e) => {
+                                                                e.target.style.display = 'none'
+                                                                e.target.nextSibling.style.display = 'flex'
+                                                            }}
+                                                        />
+                                                    ) : null}
+                                                    <div 
+                                                        className={`absolute inset-0 bg-muted flex items-center justify-center ${product.imgs && product.imgs.length > 0 ? 'hidden' : 'flex'}`}
+                                                        style={{ display: product.imgs && product.imgs.length > 0 ? 'none' : 'flex' }}
+                                                    >
+                                                        <Package className="size-12 text-muted-foreground" />
+                                                    </div>
+                                                </div>
+                                            </CardHeader>
+                                            <CardContent className="p-4">
+                                                <CardTitle className="text-sm line-clamp-2 mb-2 h-8 w-full text-ellipsis">
+                                                    {product.title}
+                                                </CardTitle>
+                                                {/* {product.des && (
+                                                    <CardDescription className="line-clamp-2 mb-3">
+                                                        {product.des}
+                                                    </CardDescription>
+                                                )} */}
+                                                
+                                                {/* Categories */}
+                                                {/* {product.category && product.category.length > 0 && (
+                                                    <div className="flex flex-wrap gap-1 mb-3">
+                                                        {product.category.slice(0, 2).map((cat, idx) => (
+                                                            <Badge key={idx} variant="secondary" className="text-xs">
+                                                                {cat}
+                                                            </Badge>
+                                                        ))}
+                                                        {product.category.length > 2 && (
+                                                            <Badge variant="outline" className="text-xs">
+                                                                +{product.category.length - 2}
+                                                            </Badge>
+                                                        )}
+                                                    </div>
+                                                )} */}
+
+                                                <div className="flex items-center justify-between">
+                                                    <div className="flex flex-col">
+                                                        <span className="text-lg font-bold">
+                                                            {formatPrice(product.price)}
+                                                        </span>
+                                                        <span className="text-xs text-muted-foreground">
+                                                            {product.stocks} in stock
+                                                        </span>
+                                                    </div>
+                                                    <Button 
+                                                        size="sm" 
+                                                        variant="ghost"
+                                                        className="opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                                                    >
+                                                        <ShoppingCart className="size-4" />
+                                                    </Button>
+                                                </div>
+                                            </CardContent>
+                                        </Card>
+                                    </ForwardLink>
+                                </motion.div>
+                            ))}
+                        </AnimatePresence>
+                    </motion.div>
+                )}
+
+                {/* Empty State */}
+                {!loading && !error && products.length === 0 && (
+                    <motion.div 
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="flex items-center justify-center p-8 text-center"
+                    >
+                        <div>
+                            <SearchIcon className="size-12 text-muted-foreground mx-auto mb-4" />
+                            <h3 className="text-lg font-semibold mb-2">
+                                {search ? 'No in-stock products found' : 'No in-stock products available'}
+                            </h3>
+                            <p className="text-muted-foreground">
+                                {search 
+                                    ? `Try adjusting your search terms or check back later.`
+                                    : 'Check back later for new products in stock.'
+                                }
+                            </p>
+                        </div>
+                    </motion.div>
+                )}
+
+                {/* Load More Button */}
+                {!loading && !error && pagination && pagination.hasNextPage && (
+                    <motion.div 
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="flex justify-center mt-8"
+                    >
+                        <Button 
+                            variant="outline" 
+                            onClick={handleLoadMore}
+                            className="min-w-32"
+                        >
+                            Load More
+                        </Button>
+                    </motion.div>
+                )}
+
+                {/* Loading State for Load More */}
+                {loading && products.length > 0 && (
+                    <div className="flex justify-center mt-8">
+                        <Loader2 className="size-6 animate-spin" />
+                    </div>
+                )}
+            </div>
+        </div>
+    )
+}
