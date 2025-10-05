@@ -18,7 +18,11 @@ export default function AddTradeinProductPage({defaultData={
     okay_price: '',
     bad_price: '',
     broken_price: '',
-    category: [],
+    category: '',
+    brand: '',
+    series: '',
+    brand_img: '',
+    imgs: [],
     new_def: '',
     good_def: '',
     okay_def: '',
@@ -99,7 +103,11 @@ export default function AddTradeinProductPage({defaultData={
                 okay_price: '',
                 bad_price: '',
                 broken_price: '',
-                category: [],
+                category: '',
+                brand: '',
+                series: '',
+                brand_img: '',
+                imgs: [],
                 new_def: '',
                 good_def: '',
                 okay_def: '',
@@ -190,34 +198,60 @@ export default function AddTradeinProductPage({defaultData={
                             />
                         </div>
 
-                        {/* Categories */}
+                        {/* Category */}
                         <div className="space-y-2">
-                            <label className="text-sm font-medium">Categories</label>
-                            <div className="flex gap-2">
-                                <Input
-                                    value={categoryInput}
-                                    onChange={(e) => setCategoryInput(e.target.value)}
-                                    placeholder="Add category"
-                                    onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addCategory())}
-                                />
-                                <Button type="button" onClick={addCategory} variant="outline">
-                                    Add
-                                </Button>
-                            </div>
-                            <div className="flex flex-wrap gap-2 mt-2">
-                                {formData.category.map((cat, index) => (
-                                    <Badge key={index} variant="secondary" className="flex items-center gap-1">
-                                        {cat}
-                                        <button
-                                            type="button"
-                                            onClick={() => removeCategory(cat)}
-                                            className="ml-1 hover:text-red-600"
-                                        >
-                                            <XIcon className="w-3 h-3" />
-                                        </button>
-                                    </Badge>
-                                ))}
-                            </div>
+                            <label className="text-sm font-medium">Category *</label>
+                            <Input
+                                value={formData.category}
+                                onChange={(e) => handleInputChange('category', e.target.value)}
+                                placeholder="e.g., Smartphones, Laptops, Tablets"
+                                required
+                            />
+                        </div>
+
+                        {/* Brand */}
+                        <div className="space-y-2">
+                            <label className="text-sm font-medium">Brand *</label>
+                            <Input
+                                value={formData.brand}
+                                onChange={(e) => handleInputChange('brand', e.target.value)}
+                                placeholder="e.g., Apple, Samsung, Dell"
+                                required
+                            />
+                        </div>
+
+                        {/* Series */}
+                        <div className="space-y-2">
+                            <label className="text-sm font-medium">Series *</label>
+                            <Input
+                                value={formData.series}
+                                onChange={(e) => handleInputChange('series', e.target.value)}
+                                placeholder="e.g., iPhone, Galaxy, XPS"
+                                required
+                            />
+                        </div>
+
+                        {/* Brand Image */}
+                        <div className="space-y-2">
+                            <label className="text-sm font-medium">Brand Image URL</label>
+                            <Input
+                                value={formData.brand_img}
+                                onChange={(e) => handleInputChange('brand_img', e.target.value)}
+                                placeholder="https://example.com/brand-logo.png"
+                                type="url"
+                            />
+                        </div>
+
+                        {/* Product Images */}
+                        <div className="space-y-2">
+                            <label className="text-sm font-medium">Product Images</label>
+                            <textarea
+                                className="w-full min-h-[80px] px-3 py-2 border border-gray-200 rounded-md resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                value={formData.imgs ? formData.imgs.join('\n') : ''}
+                                onChange={(e) => handleInputChange('imgs', e.target.value.split('\n').filter(url => url.trim()))}
+                                placeholder="Enter image URLs (one per line)&#10;https://example.com/image1.jpg&#10;https://example.com/image2.jpg"
+                            />
+                            <p className="text-xs text-muted-foreground">Enter one image URL per line</p>
                         </div>
 
                         {/* Trade-in Prices */}

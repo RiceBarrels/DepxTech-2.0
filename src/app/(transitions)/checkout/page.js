@@ -19,8 +19,8 @@ import {
     ZapIcon
 } from "lucide-react"
 import Image from "next/image"
-import Link from "next/link"
 import { toast } from "sonner"
+import { ForwardLink, BackLink } from "@/components/ui/pageTransitions"
 import { useRouter } from "next/navigation"
 import { loadStripe } from '@stripe/stripe-js'
 import {
@@ -536,9 +536,9 @@ export default function CheckoutPage() {
                         <LockIcon className="w-16 h-16 mx-auto mb-4 text-gray-400" />
                         <h2 className="text-xl font-semibold mb-2">Please Login</h2>
                         <p className="text-muted-foreground mb-4">You need to be logged in to checkout</p>
-                        <Link href="/login">
+                        <ForwardLink href="/login">
                             <Button>Login</Button>
-                        </Link>
+                        </ForwardLink>
                     </CardContent>
                 </Card>
             </div>
@@ -563,12 +563,12 @@ export default function CheckoutPage() {
                         <ShoppingCartIcon className="w-16 h-16 mx-auto mb-4 text-gray-400" />
                         <h2 className="text-xl font-semibold mb-2">Your cart is empty</h2>
                         <p className="text-muted-foreground mb-4">Add some products to proceed to checkout</p>
-                        <Link href="/products">
+                        <BackLink href="/products">
                             <Button>
                                 <ArrowLeftIcon className="w-4 h-4 mr-2" />
                                 Continue Shopping
                             </Button>
-                        </Link>
+                        </BackLink>
                     </CardContent>
                 </Card>
             </div>
@@ -592,16 +592,16 @@ export default function CheckoutPage() {
                         </div>
 
                         <div className="flex gap-4">
-                            <Link href="/products" className="flex-1">
+                            <BackLink href="/products" className="flex-1">
                                 <Button variant="outline" className="w-full">
                                     Continue Shopping
                                 </Button>
-                            </Link>
-                            <Link href="/account" className="flex-1">
+                            </BackLink>
+                            <ForwardLink href="/account" className="flex-1">
                                 <Button className="w-full">
                                     View Orders
                                 </Button>
-                            </Link>
+                            </ForwardLink>
                         </div>
                     </CardContent>
                 </Card>
@@ -614,11 +614,11 @@ export default function CheckoutPage() {
             {/* Header */}
             <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center gap-4">
-                    <Link href="/cart">
+                    <BackLink href="/cart">
                         <Button variant="outline" size="icon">
                             <ArrowLeftIcon className="w-4 h-4 mr-2" />
                         </Button>
-                    </Link>
+                    </BackLink>
                     <h1 className="text-2xl font-bold">Checkout</h1>
                 </div>
             </div>

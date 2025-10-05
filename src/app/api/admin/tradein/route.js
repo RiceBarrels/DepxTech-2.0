@@ -116,6 +116,27 @@ export async function POST(request) {
       )
     }
 
+    if (!body.category) {
+      return NextResponse.json(
+        { error: 'Category is required' }, 
+        { status: 400 }
+      )
+    }
+
+    if (!body.brand) {
+      return NextResponse.json(
+        { error: 'Brand is required' }, 
+        { status: 400 }
+      )
+    }
+
+    if (!body.series) {
+      return NextResponse.json(
+        { error: 'Series is required' }, 
+        { status: 400 }
+      )
+    }
+
     if (!body.new_price || body.new_price < 0) {
       return NextResponse.json(
         { error: 'Valid new price is required' }, 
@@ -168,6 +189,10 @@ export async function POST(request) {
       bad_price,
       broken_price,
       category,
+      brand,
+      series,
+      brand_img,
+      imgs,
       new_def,
       good_def,
       okay_def,
@@ -187,7 +212,11 @@ export async function POST(request) {
       okay_price,
       bad_price,
       broken_price,
-      category: category || [],
+      category,
+      brand,
+      series,
+      brand_img: brand_img || null,
+      imgs: imgs || [],
       new_def,
       good_def,
       okay_def,

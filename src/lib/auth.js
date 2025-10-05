@@ -34,17 +34,24 @@ export function AuthProvider({ children }) {
         setTimeout(() => reject(new Error('Profile fetch timeout')), 10000) // 10 second timeout
       })
       
-      // Fetch data from profiles table only
-      const queryPromise = supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', userId)
-        .single()
-        .abortSignal(abortSignal)
+      // Fetch data from both profiles and profile_customer_readonly tables in parallel
+      const queryPromise = Promise.all([
+        supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', userId)
+          .single()
+          .abortSignal(abortSignal),
+        supabase
+          .from('profile_customer_readonly')
+          .select('*')
+          .eq('id', userId)
+          .abortSignal(abortSignal)
+      ])
 
-      console.log('fetchProfileData: Executing query with timeout...')
+      console.log('fetchProfileData: Executing queries with timeout...')
       
-      const { data: profiles, error: profilesError } = await Promise.race([
+      const results = await Promise.race([
         queryPromise,
         timeoutPromise
       ])
@@ -55,20 +62,32 @@ export function AuthProvider({ children }) {
         return null
       }
 
-      console.log('fetchProfileData: Response received:', { profiles, profilesError })
+      const [profilesResponse, customerReadonlyResponse] = results
 
-      if (profilesError) {
-        if (profilesError.code === 'PGRST116') {
+      console.log('fetchProfileData: Response received:', { profilesResponse, customerReadonlyResponse })
+
+      // Handle profiles response
+      if (profilesResponse.error) {
+        if (profilesResponse.error.code === 'PGRST116') {
           console.log('fetchProfileData: User not found in profiles table (PGRST116)')
-          return null
         } else {
-          console.error('fetchProfileData: Error fetching profile:', profilesError)
-          return null
+          console.error('fetchProfileData: Error fetching profile:', profilesResponse.error)
         }
       }
 
-      console.log('fetchProfileData: Successfully fetched profile:', profiles)
-      return profiles || null
+      // Handle customer readonly response (it's optional, so we don't fail if there's an error)
+      if (customerReadonlyResponse.error) {
+        console.warn('fetchProfileData: Error fetching profile_customer_readonly:', customerReadonlyResponse.error)
+      }
+
+      // Combine the data from both tables
+      const combinedProfile = {
+        ...(profilesResponse.data || {}),
+        customerReadonly: customerReadonlyResponse.data || []
+      }
+
+      console.log('fetchProfileData: Successfully fetched combined profile:', combinedProfile)
+      return combinedProfile
     } catch (error) {
       // Check if error is due to abort
       if (error.name === 'AbortError' || abortSignal?.aborted) {
@@ -153,16 +172,21 @@ export function AuthProvider({ children }) {
       }
       
       console.log('initializeUserData: Initialization completed successfully (user + profile)')
+      
+      // Set loading to false only after both user and profileData have been set
+      console.log('initializeUserData: Both user and profile data fetched, setting loading to false')
+      setLoading(false)
     } catch (error) {
       console.error('initializeUserData: Error during initialization:', error)
       // Reset both user and profile data on error
       setUser(null)
       setProfileData(null)
+      // Set loading to false even on error so the app doesn't hang
+      setLoading(false)
     } finally {
-      // Only set loading to false and clear refs if this request wasn't cancelled
+      // Clear refs if this request wasn't cancelled
       if (!profileAbortControllerRef.current?.signal.aborted) {
-        console.log('initializeUserData: Setting loading to false (user and profile data ready)')
-        setLoading(false)
+        console.log('initializeUserData: Cleaning up initialization refs')
       }
       initializationRef.current = null
     }

@@ -6,6 +6,24 @@ import TopNav from '@/components/ui/topNav'
 
 export default async function ProductPage({ params }) {
     const { id } = await params
+    
+    // Increment views on the server side using the API with service role
+    try {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/products/views`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ productId: id }),
+        })
+        
+        if (!response.ok) {
+            console.error('Failed to increment views:', await response.text())
+        }
+    } catch (error) {
+        console.error('Error incrementing views:', error)
+    }
+    
     // fetch product from api/products
     const product = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/products?id=${id}`)
     const productData = await product.json()

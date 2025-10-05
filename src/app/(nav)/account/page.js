@@ -8,11 +8,17 @@ import { BadgeDollarSignIcon, ChevronRightIcon, InboxIcon, LogOutIcon, Package2I
 import AccountLoading from './loading'
 import { ForwardLink, useForwardRoutePush } from '@/components/ui/pageTransitions'
 import { Separator } from '@/components/ui/separator'
+import Recommends from '@/components/ui/recommends'
+import { useSpring, useTransition, animated, useScroll, useInView } from '@react-spring/web'
 
 export default function AccountPage() {
   const { user, loading, signOut, profileData } = useAuth()
   const router = useRouter()
   const forwardPush = useForwardRoutePush()
+
+  const handleProductClick = async (product) => {
+    router.push(`/products/${product.id}`)
+  }
 
   useEffect(() => {
     if (!loading && !user) {
@@ -27,6 +33,13 @@ export default function AccountPage() {
   if (!user) {
     return null // This will redirect to login via useEffect
   }
+
+  const recommendsSpring = useSpring({
+    opacity: 1,
+    transform: 'translateY(0px)',
+    from: { opacity: 0, transform: 'translateY(20px)' },
+    config: { tension: 280, friction: 60 }
+  })
 
   return (
     <div className="min-h-screen py-12 px-4 sm:px-6 lg:px-8">
@@ -109,6 +122,15 @@ export default function AccountPage() {
           </Button>
         </div>
       </div>
+      <animated.div style={recommendsSpring}>
+        <Recommends 
+          title="Trending Products"
+          limit={12}
+          className="mt-8"
+          onProductClick={handleProductClick}
+          initialProducts={[]}
+        />
+      </animated.div>
     </div>
   )
 }

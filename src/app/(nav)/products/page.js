@@ -193,7 +193,7 @@ export default function ProductsPage() {
                         className="mb-6 w-full"
                     >
                         <h2 className="text-xl font-semibold mb-2">
-                            Search results for "{search}"
+                            Search results for &ldquo;{search}&rdquo;
                         </h2>
                         {pagination && (
                             <p className="text-muted-foreground">

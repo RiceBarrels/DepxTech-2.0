@@ -2,11 +2,11 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import Link from 'next/link'
 import { createClient } from '@/utils/supabase/client'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { ForwardLink } from '@/components/ui/pageTransitions'
 
 export default function SignupPage() {
   const [email, setEmail] = useState('')
@@ -61,7 +61,7 @@ export default function SignupPage() {
         setError(error.message)
       } else {
         setMessage('Check your email for the confirmation link!')
-        // Optionally redirect to login page after a delay
+        // Redirect to login page after a delay
         setTimeout(() => {
           router.push('/login')
         }, 3000)
@@ -74,7 +74,7 @@ export default function SignupPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center  py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
         <Card>
           <CardHeader className="text-center">
@@ -101,47 +101,53 @@ export default function SignupPage() {
                 <label htmlFor="email" className="block text-sm font-medium text-gray-300/75 mb-1">
                   Email address
                 </label>
-                    <Input
-                    id="email"
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                <Input
+                  id="email"
+                  type="email"
+                  name="email"
+                  autoComplete="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  placeholder="Enter your email"
+                  className="w-full"
+                />
+              </div>
+              
+              <div className='flex gap-2'>
+                <div className='flex-1'>
+                  <label htmlFor="firstName" className="block text-sm font-medium text-gray-300/75 mb-1">
+                    First Name
+                  </label>
+                  <Input
+                    id="firstName"
+                    type="text"
+                    name="firstName"
+                    autoComplete="given-name"
+                    value={firstName}
+                    onChange={(e) => setFirstName(e.target.value)}
                     required
-                    placeholder="Enter your email"
+                    placeholder="Enter your first name"
                     className="w-full"
-                    />
+                  />
                 </div>
-                <div className='flex gap-2'>
-                    
-                    <div className='flex-1'>
-                        <label htmlFor="firstName" className="block text-sm font-medium text-gray-300/75 mb-1">
-                        First Name
-                        </label>
-                        <Input
-                        id="firstName"
-                        type="text"
-                        value={firstName}
-                        onChange={(e) => setFirstName(e.target.value)}
-                        required
-                        placeholder="Enter your first name"
-                        className="w-full"
-                        />
-                    </div>
 
-                    <div className='flex-1'>
-                        <label htmlFor="lastName" className="block text-sm font-medium text-gray-300/75 mb-1">
-                        Last Name
-                        </label>
-                        <Input
-                        id="lastName"
-                        type="text"
-                        value={lastName}
-                        onChange={(e) => setLastName(e.target.value)}
-                        required
-                        placeholder="Enter your last name"
-                        className="w-full"
-                        />
-                    </div>
+                <div className='flex-1'>
+                  <label htmlFor="lastName" className="block text-sm font-medium text-gray-300/75 mb-1">
+                    Last Name
+                  </label>
+                  <Input
+                    id="lastName"
+                    type="text"
+                    name="lastName"
+                    autoComplete="family-name"
+                    value={lastName}
+                    onChange={(e) => setLastName(e.target.value)}
+                    required
+                    placeholder="Enter your last name"
+                    className="w-full"
+                  />
+                </div>
               </div>
 
               <div>
@@ -151,6 +157,8 @@ export default function SignupPage() {
                 <Input
                   id="password"
                   type="password"
+                  name="password"
+                  autoComplete="new-password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
@@ -166,6 +174,8 @@ export default function SignupPage() {
                 <Input
                   id="confirmPassword"
                   type="password"
+                  name="confirmPassword"
+                  autoComplete="new-password"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   required
@@ -185,9 +195,9 @@ export default function SignupPage() {
               <div className="text-center">
                 <p className="text-sm text-muted-foreground">
                   Already have an account?{' '}
-                  <Link href="/login" className="font-medium text-blue-600 hover:text-blue-500">
+                  <ForwardLink href="/login" className="font-medium text-blue-600 hover:text-blue-500">
                     Sign in
-                  </Link>
+                  </ForwardLink>
                 </p>
               </div>
             </form>
@@ -196,4 +206,4 @@ export default function SignupPage() {
       </div>
     </div>
   )
-} 
+}

@@ -516,7 +516,7 @@ export default function CartPage() {
                                             </Button>
 
                                             <Button
-                                                size="sm"
+                                                size="icon"
                                                 variant="destructive"
                                                 onClick={() => removeItem(product.id)}
                                                 disabled={updating[product.id]}

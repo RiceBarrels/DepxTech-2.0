@@ -1,15 +1,12 @@
 "use client"
 
 import { cn } from "@/lib/utils";
-// import { Capacitor } from "@capacitor/core";
 import { useTransitionRouter } from "next-view-transitions";
 import Link from "next/link";
-// import { doubleHapticsImpact } from "@/lib/haptics";
+import { doubleHapticsImpact } from "@/lib/haptics";
 
 export function ForwardLink({href="", children, haptics=true, disabled=false, className, ...prop}){
   const router = useTransitionRouter();
-  const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
-  // const isIos = Capacitor.getPlatform() === 'ios';
 
   return (
     <Link 
@@ -19,10 +16,10 @@ export function ForwardLink({href="", children, haptics=true, disabled=false, cl
         e.preventDefault();
         if(!disabled){
           if(haptics){
-            // doubleHapticsImpact();
+            doubleHapticsImpact();
           }
           router.push(href, {
-            onTransitionReady: () => forwardAnimation(isSafari,false),
+            onTransitionReady: () => forwardAnimation(),
           });
         }
       }}
@@ -36,18 +33,16 @@ export function ForwardLink({href="", children, haptics=true, disabled=false, cl
 
 export function useForwardRoutePush(){
   const router = useTransitionRouter();
-  const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
   
   return (href) => {
     router.push(href, {
-      onTransitionReady: () => forwardAnimation(isSafari, false),
+      onTransitionReady: () => forwardAnimation(),
     });
   };
 }
 
 export function BackLink({href="", children, haptics=true, ...prop}){
   const router = useTransitionRouter();
-  const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
   // const isIos = Capacitor.getPlatform() === 'ios';
 
   return (
@@ -56,10 +51,10 @@ export function BackLink({href="", children, haptics=true, ...prop}){
       onClick={(e) => {
         e.preventDefault();
         if(haptics){
-          // doubleHapticsImpact();
+          doubleHapticsImpact();
         }
         router.push(href, {
-          onTransitionReady: () => backAnimation(isSafari,false),
+          onTransitionReady: () => backAnimation(),
         });
       }}
       {...prop}
@@ -71,16 +66,15 @@ export function BackLink({href="", children, haptics=true, ...prop}){
 
 export function useBackRoutePush(){
   const router = useTransitionRouter();
-  const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
   
   return (href) => {
     router.push(href, {
-      onTransitionReady: () => backAnimation(isSafari, false),
+      onTransitionReady: () => backAnimation(),
     });
   };
 }
 
-function forwardAnimation(isSafari,isIos){
+function forwardAnimation(){
     document.documentElement.animate(
       [
         {
@@ -108,12 +102,12 @@ function forwardAnimation(isSafari,isIos){
       [
         {
           zIndex: 2,
-          transform: `translate(calc(100%${isSafari || isIos ? " + 12px":""}), ${isSafari || isIos ? 12 : 0}px)`,
+          transform: `translate(100%, 0)`,
           borderRadius: 0,
         },
         {
           zIndex: 2,
-          transform: `translate(${isSafari || isIos ? 12 : 0}, ${isSafari || isIos ? 12 : 0})`,
+          transform: `translate(0, 0)`,
           borderRadius: 32,
         },
       ],
@@ -126,7 +120,7 @@ function forwardAnimation(isSafari,isIos){
     );
 };
 
-function backAnimation(isSafari, isIos, startState = null){
+function backAnimation(startState = null){
     const oldViewAnimationDef = [
         {
             zIndex: 2,
@@ -164,13 +158,13 @@ function backAnimation(isSafari, isIos, startState = null){
       [
         {
             zIndex: 1,
-            transform: `translate(${isSafari || isIos ? -100+12 : -100}px,${isSafari || isIos ? 12 : 0}px) scale(0.9)`,
+            transform: `translate(-100px, 0) scale(0.9)`,
             borderRadius: "0px",
             opacity: 0,
         },
         {
             zIndex: 1,
-            transform: `translate(${isSafari || isIos ? 12 : 0}px,${isSafari || isIos ? 12 : 0}px) scale(1)`,
+            transform: `translate(0, 0) scale(1)`,
             borderRadius: "32px",
             opacity: 1,
         },

@@ -16,7 +16,6 @@ import {
     ArrowLeftIcon,
     Loader2
 } from "lucide-react"
-import Link from "next/link"
 import { toast } from "sonner"
 import { BackLink, ForwardLink } from "@/components/ui/pageTransitions"
 
@@ -105,9 +104,9 @@ export default function OrdersPage() {
                     <CardContent className="flex flex-col items-center justify-center py-8">
                         <h2 className="text-xl font-semibold mb-2">Please log in</h2>
                         <p className="text-muted-foreground mb-4">You need to be logged in to view your orders</p>
-                        <Link href="/login">
+                        <ForwardLink href="/login">
                             <Button>Go to Login</Button>
-                        </Link>
+                        </ForwardLink>
                     </CardContent>
                 </Card>
             </div>
@@ -136,9 +135,9 @@ export default function OrdersPage() {
                         <ShoppingBagIcon className="h-12 w-12 text-muted-foreground mb-4" />
                         <h2 className="text-xl font-semibold mb-2">No orders yet</h2>
                         <p className="text-muted-foreground mb-4">You haven't placed any orders yet</p>
-                        <Link href="/products">
+                        <ForwardLink href="/products">
                             <Button>Start Shopping</Button>
-                        </Link>
+                        </ForwardLink>
                     </CardContent>
                 </Card>
             ) : (

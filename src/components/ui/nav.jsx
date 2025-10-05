@@ -11,10 +11,9 @@ import Image from "next/image";
 import { Button } from "./button";
 import { Separator } from "./separator";
 import { ModeToggle } from "./modeToggle";
-import { useAuth } from "@/lib/auth";
+import { BottomSafeArea } from "../safe-area";
 
 export default function Nav({}) {
-    const { user, loading } = useAuth()
     const pathname = usePathname();
     const [justOpenedPage, setJustOpenedPage] = useState();
     const [touchedLink, setTouchedLink] = useState();
@@ -33,7 +32,7 @@ export default function Nav({}) {
 
     return (
         <>
-            <nav className="w-full h-16 overflow-hidden px-6 fixed top-0 bg-background/50 backdrop-blur-lg rounded-b-3xl border-b border-gray-500/10 hidden sm:flex gap-4">
+            <nav className="w-full h-16 overflow-hidden px-6 fixed top-0 bg-background/50 backdrop-blur-lg rounded-b-3xl border-b border-gray-500/10 hidden sm:flex gap-4 z-[999]">
                 <div className="flex items-center flex-1 justify-start gap-4 lg:gap-8">
                     <Link href="/" className="flex items-center justify-center">
                         <Image src="/lightLogo.svg" alt="Logo" width={36} height={36} className="hidden light:block"/>
@@ -170,6 +169,7 @@ export default function Nav({}) {
                     </span>
                 </Link>
             </nav>
+            <BottomSafeArea/>
         </>
     )
 }

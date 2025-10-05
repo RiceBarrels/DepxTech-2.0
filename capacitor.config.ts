@@ -1,11 +1,11 @@
 import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'com.example.app',
-  appName: 'DepxTech',
-  webDir: 'public',
+  appId: 'com.reforkit.app',
+  appName: 'Sanus Space',
+  webDir: 'out',
   server: {
-    url: 'http://localhost:3000',
+    url: 'http://192.168.156.48:3000',
     cleartext: true,
   },
 };

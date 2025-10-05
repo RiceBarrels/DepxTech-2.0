@@ -1,9 +1,7 @@
-"use client"
-
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { ForwardLink, useForwardRoutePush } from '@/components/ui/pageTransitions'
+import Link from 'next/link'
 import { 
   SmartphoneIcon, 
   LaptopIcon, 
@@ -16,12 +14,12 @@ import {
   ArrowRightIcon,
   DollarSignIcon,
   RecycleIcon,
-  ShieldCheckIcon
+  ShieldCheckIcon,
+  PackageIcon
 } from 'lucide-react'
+import { ForwardLink } from '@/components/ui/pageTransitions'
 
 export default function TradePage() {
-  const forwardPush = useForwardRoutePush()
-
   const tradeCategories = [
     {
       id: 'phone',
@@ -30,8 +28,7 @@ export default function TradePage() {
       icon: SmartphoneIcon,
       route: '/trade/phone',
       estimatedValue: '$50 - $800',
-      popular: true,
-      image: '/api/placeholder/300/200?text=Smartphones'
+      popular: true
     },
     {
       id: 'laptop',
@@ -40,8 +37,7 @@ export default function TradePage() {
       icon: LaptopIcon,
       route: '/trade/laptop',
       estimatedValue: '$100 - $1500',
-      popular: true,
-      image: '/api/placeholder/300/200?text=Laptops'
+      popular: true
     },
     {
       id: 'tablet',
@@ -50,8 +46,7 @@ export default function TradePage() {
       icon: TabletIcon,
       route: '/trade/tablet',
       estimatedValue: '$30 - $600',
-      popular: false,
-      image: '/api/placeholder/300/200?text=Tablets'
+      popular: false
     },
     {
       id: 'console',
@@ -60,8 +55,7 @@ export default function TradePage() {
       icon: GamepadIcon,
       route: '/trade/console',
       estimatedValue: '$50 - $400',
-      popular: true,
-      image: '/api/placeholder/300/200?text=Gaming+Consoles'
+      popular: true
     },
     {
       id: 'audio',
@@ -70,8 +64,7 @@ export default function TradePage() {
       icon: HeadphonesIcon,
       route: '/trade/audio',
       estimatedValue: '$20 - $300',
-      popular: false,
-      image: '/api/placeholder/300/200?text=Audio+Devices'
+      popular: false
     },
     {
       id: 'cpu',
@@ -80,8 +73,7 @@ export default function TradePage() {
       icon: CpuIcon,
       route: '/trade/cpu',
       estimatedValue: '$30 - $500',
-      popular: false,
-      image: '/api/placeholder/300/200?text=Processors'
+      popular: false
     },
     {
       id: 'gpu',
@@ -90,8 +82,7 @@ export default function TradePage() {
       icon: MonitorIcon,
       route: '/trade/gpu',
       estimatedValue: '$50 - $1000',
-      popular: true,
-      image: '/api/placeholder/300/200?text=Graphics+Cards'
+      popular: true
     },
     {
       id: 'ram',
@@ -100,8 +91,7 @@ export default function TradePage() {
       icon: HardDriveIcon,
       route: '/trade/ram',
       estimatedValue: '$10 - $200',
-      popular: false,
-      image: '/api/placeholder/300/200?text=Memory+RAM'
+      popular: false
     }
   ]
 
@@ -149,9 +139,9 @@ export default function TradePage() {
         {/* Trade Categories Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
           {tradeCategories.map((category) => (
-            <ForwardLink 
+            <ForwardLink
                 key={category.id} 
-                href={category.route}
+                href={`/trade/category/${encodeURIComponent(category.title)}`}
             >
                 <Card 
                     className="group hover:shadow-lg transition-all duration-300 cursor-pointer border-2 hover:border-primary/50"

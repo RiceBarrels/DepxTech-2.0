@@ -4,15 +4,37 @@ import { useRouter } from "next/navigation"
 import { ChevronLeftIcon, ChevronRightIcon, HomeIcon, RefreshCcwIcon } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { LayoutDashboardIcon } from "lucide-react"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Minimize2Icon } from "lucide-react"
 import { Maximize2Icon } from "lucide-react"
 import { motion, AnimatePresence } from "motion/react"
 
 export default function RouteController() {
     const router = useRouter()
-    const [minimized, setMinimized] = useState(false)
+    const [minimized, setMinimized] = useState(() => {
+        if (typeof window !== 'undefined') {
+            try {
+                const stored = localStorage.getItem('minimizedPanel')
+                return stored === 'true'
+            } catch (error) {
+                console.error('Error reading localStorage:', error)
+                return false
+            }
+        }
+        return false
+    })
     const [isHover, setIsHover] = useState(false)
+    
+    useEffect(() => {
+        if (typeof window !== 'undefined') {
+            try {
+                localStorage.setItem('minimizedPanel', String(minimized))
+            } catch (error) {
+                console.error('Error writing to localStorage:', error)
+            }
+        }
+    }, [minimized])
+
     return (
         <div 
             onMouseEnter={() => setIsHover(true)}
@@ -43,13 +65,9 @@ export default function RouteController() {
                         <Button onClick={() => router.forward()} variant="ghost" size="icon"><ChevronRightIcon className="w-4 h-4" /></Button>
                     }
                     <Button onClick={() => router.refresh()} variant="ghost" size="icon"><RefreshCcwIcon className="w-4 h-4" /></Button>
-
-                    <div className="h-4 w-4"/>
                     
-                    <Button onClick={() => router.push('/')} variant="ghost"><HomeIcon className="w-4 h-4" /></Button>
+                    <Button onClick={() => router.push('/')} variant="ghost" size="icon"><HomeIcon className="w-4 h-4" /></Button>
                     <Button onClick={() => router.push('/admin')} variant="ghost"><LayoutDashboardIcon className="w-4 h-4" />Dashboard</Button>
-
-                    <div className="h-4 w-4"/>
                 </motion.div>
                 )}
             </AnimatePresence>
