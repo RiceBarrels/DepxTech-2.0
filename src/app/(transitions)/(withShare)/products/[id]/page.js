@@ -2,7 +2,6 @@
 
 import ProductDetails from '@/components/ui/productDetails'
 import Recommends from '@/components/ui/recommends'
-import TopNav from '@/components/ui/topNav'
 import { ProductStructuredData } from '@/components/seo/StructuredData'
 
 export async function generateMetadata({ params }) {
@@ -112,7 +111,6 @@ export default async function ProductPage({ params }) {
         <>
             <ProductStructuredData product={productDetails} />
             <div className='p-4 flex flex-col items-center justify-center'>
-                <TopNav backURL="/products" />
                 <ProductDetails product={productDetails} />
                 <Recommends title="Recommended for You" limit={8} className="mt-8" excludeId={id} categories={productDetails.category}/>
             </div>

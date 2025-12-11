@@ -19,7 +19,6 @@ import {
     Loader2
 } from "lucide-react"
 import Image from "next/image"
-import Link from "next/link"
 import { toast } from "sonner"
 import { useTransitionRouter } from "@/components/ui/pageTransitions"
 import CartLoading from "./loading"
@@ -30,6 +29,16 @@ export default function CartPage() {
     
     // Initialize fast cart data immediately
     const initializeFastCart = () => {
+        // Check if we're in the browser environment
+        if (typeof window === 'undefined') {
+            return {
+                products: [],
+                inputValues: {},
+                loading: true,
+                isFastCartLoaded: false
+            }
+        }
+        
         try {
             const fastCart = localStorage.getItem('fastCart')
             if (fastCart && fastCart !== 'undefined' && fastCart !== 'null') {
@@ -52,7 +61,9 @@ export default function CartPage() {
         } catch (error) {
             console.error('Error loading fast cart:', error)
             // Clear invalid fastCart data
-            localStorage.removeItem('fastCart')
+            if (typeof window !== 'undefined') {
+                localStorage.removeItem('fastCart')
+            }
         }
         return {
             products: [],
@@ -85,6 +96,11 @@ export default function CartPage() {
 
 
     const saveFastCart = (productsToSave) => {
+        // Check if we're in the browser environment
+        if (typeof window === 'undefined') {
+            return
+        }
+        
         try {
             if (Array.isArray(productsToSave) && productsToSave.length > 0) {
                 localStorage.setItem('fastCart', JSON.stringify(productsToSave))
@@ -377,9 +393,9 @@ export default function CartPage() {
                         <ShoppingCartIcon className="w-16 h-16 mx-auto mb-4 text-gray-400" />
                         <h2 className="text-xl font-semibold mb-2">Please Login</h2>
                         <p className="text-muted-foreground mb-4">You need to be logged in to view your cart</p>
-                        <Link href="/login">
+                        <TransitionLink href="/login">
                             <Button>Login</Button>
-                        </Link>
+                        </TransitionLink>
                     </CardContent>
                 </Card>
             </div>
@@ -400,12 +416,12 @@ export default function CartPage() {
                         <PackageIcon className="w-16 h-16 mx-auto mb-4 text-gray-400" />
                         <h2 className="text-xl font-semibold mb-2">Your cart is empty</h2>
                         <p className="text-muted-foreground mb-4">Add some products to get started</p>
-                        <Link href="/products">
+                        <TransitionLink href="/products">
                             <Button>
                                 <ArrowLeftIcon className="w-4 h-4 mr-2" />
                                 Continue Shopping
                             </Button>
-                        </Link>
+                        </TransitionLink>
                     </CardContent>
                 </Card>
             </div>

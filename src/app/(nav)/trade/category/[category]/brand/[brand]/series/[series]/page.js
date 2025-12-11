@@ -1,10 +1,10 @@
 import { supabaseAdmin } from '@/lib/supabase-admin'
-import Link from 'next/link'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { ArrowLeftIcon, ArrowRightIcon, DollarSignIcon } from 'lucide-react'
 import Image from 'next/image'
+import { TransitionLink } from '@/components/ui/pageTransitions'
 
 export async function generateMetadata({ params }) {
   const { category: categoryParam, brand: brandParam, series: seriesParam } = await params
@@ -52,12 +52,12 @@ export default async function SeriesProductsPage({ params }) {
     <div className="min-h-screen py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-6xl mx-auto">
         <div className="mb-8">
-          <Link href={`/trade/category/${encodeURIComponent(category)}/brand/${encodeURIComponent(brand)}`}>
+          <TransitionLink href={`/trade/category/${encodeURIComponent(category)}/brand/${encodeURIComponent(brand)}`}>
             <Button variant="outline" size="sm">
               <ArrowLeftIcon className="w-4 h-4 mr-2" />
               Back to Series
             </Button>
-          </Link>
+          </TransitionLink>
         </div>
 
         <div className="text-center mb-12">
@@ -78,7 +78,7 @@ export default async function SeriesProductsPage({ params }) {
             {products && products.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {products.map((product) => (
-                  <Link 
+                  <TransitionLink 
                     key={product.id} 
                     href={`/trade/product/${product.id}`}
                     className="block"
@@ -132,7 +132,7 @@ export default async function SeriesProductsPage({ params }) {
                         </div>
                       </CardContent>
                     </Card>
-                  </Link>
+                  </TransitionLink>
                 ))}
               </div>
             ) : (

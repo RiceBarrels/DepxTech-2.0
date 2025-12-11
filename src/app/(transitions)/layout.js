@@ -1,27 +1,18 @@
-"use client"
+// "use client"
 
-import { BottomSafeArea, TopSafeArea } from "@/components/safe-area";
-import { useEffect } from "react";
+import { BottomSafeArea } from "@/components/safe-area";
+// import { useEffect } from "react";
+// import { usePathname } from "next/navigation";
 import { PageLoadHaptics } from "@/components/ui/pageLoadHaptics";
 
 export default function transitionLayout({ children }) {
-    useEffect(() => {
-        // Ensure transition-slide class is set for transition routes
-        document.documentElement.classList.add('transition-slide');
-        document.documentElement.classList.remove('transition-fade');
-        
-        return () => {
-            // Cleanup on unmount
-        };
-    }, []);
 
     return (
         <div 
-            className="min-h-screen w-full"
+            className="min-h-screen w-full relative z-20 bg-background"
             style={{ viewTransitionName: 'transition-page' }}
         >
             <PageLoadHaptics />
-            <TopSafeArea />
             {children}
             <BottomSafeArea />
         </div>

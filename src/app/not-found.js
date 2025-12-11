@@ -1,10 +1,10 @@
 
-import Link from 'next/link'
 import { Footer } from "@/components/ui/footer";
 import Nav from "@/components/ui/nav";
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { LineShadowText } from '@/components/magicui/line-shadow-text'
+import { TransitionLink } from '@/components/ui/pageTransitions'
 
 export default function NotFound() {
   return (
@@ -39,21 +39,21 @@ export default function NotFound() {
                   </CardHeader>
                   <CardContent>
                     <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                      <Link href="/">
+                      <TransitionLink href="/">
                         <Button className="w-full sm:w-auto">
                           Go Home
                         </Button>
-                      </Link>
-                      <Link href="/products">
+                      </TransitionLink>
+                      <TransitionLink href="/products">
                         <Button variant="outline" className="w-full sm:w-auto">
                           Browse Products
                         </Button>
-                      </Link>
-                      <Link href="/trade">
+                      </TransitionLink>
+                      <TransitionLink href="/trade">
                         <Button variant="outline" className="w-full sm:w-auto">
                           Trade-In Center
                         </Button>
-                      </Link>
+                      </TransitionLink>
                     </div>
                   </CardContent>
                 </Card>

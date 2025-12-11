@@ -21,11 +21,11 @@ export function Footer(){
                     <AccordionTrigger className="">About DepxTech</AccordionTrigger>
                     <AccordionContent className="">
                         <div className="px-6"><Separator /></div>
-                        <Link href="about" className="block p-4 px-8 hover:bg-accent active:bg-accent focus:bg-accent">About Us</Link>
+                        <TransitionLink href="/about" className="block p-4 px-8 hover:bg-accent active:bg-accent focus:bg-accent">About Us</TransitionLink>
                         <div className="px-6"><Separator /></div>
-                        <Link href="blog" className="block p-4 px-8 hover:bg-accent active:bg-accent focus:bg-accent">Blog</Link>
+                        <TransitionLink href="/blog" className="block p-4 px-8 hover:bg-accent active:bg-accent focus:bg-accent">Blog</TransitionLink>
                         <div className="px-6"><Separator /></div>
-                        <Link href="deephuo" className="block p-4 px-8 hover:bg-accent active:bg-accent focus:bg-accent">WTH is DeepHuo?</Link>
+                        <TransitionLink href="/deephuo" className="block p-4 px-8 hover:bg-accent active:bg-accent focus:bg-accent">WTH is DeepHuo?</TransitionLink>
                     </AccordionContent>
                 </AccordionItem>
                 <AccordionItem value="item-2" className="">
@@ -83,9 +83,9 @@ export function Footer(){
                     <AccordionTrigger className="">Help</AccordionTrigger>
                     <AccordionContent className="">
                         <div className="px-6"><Separator /></div>
-                        <Link href="help" className="block p-4 px-8 hover:bg-accent active:bg-accent focus:bg-accent">Help Center</Link>
+                        <TransitionLink href="help" className="block p-4 px-8 hover:bg-accent active:bg-accent focus:bg-accent">Help Center</TransitionLink>
                         <div className="px-6"><Separator /></div>
-                        <Link href="support" className="block p-4 px-8 hover:bg-accent active:bg-accent focus:bg-accent">Chat Now</Link>
+                        <TransitionLink href="support" className="block p-4 px-8 hover:bg-accent active:bg-accent focus:bg-accent">Chat Now</TransitionLink>
                         <div className="px-6"><Separator /></div>
                         <small className="block p-4 px-8 hover:bg-accent active:bg-accent focus:bg-accent">Mon-Sun 8-22 EDT(NY)</small>
                         <small className="block p-4 px-8 hover:bg-accent active:bg-accent focus:bg-accent">Email: support@depxtech.com</small>
@@ -95,11 +95,11 @@ export function Footer(){
                     <AccordionTrigger className="">Socials</AccordionTrigger>
                     <AccordionContent className="">
                         <div className="px-6"><Separator /></div>
-                        <Link href="https://www.facebook.com/depxtech" className="block p-4 px-8 hover:bg-accent active:bg-accent focus:bg-accent">Facebook</Link>
+                        <TransitionLink href="https://www.facebook.com/depxtech" className="block p-4 px-8 hover:bg-accent active:bg-accent focus:bg-accent">Facebook</TransitionLink>
                         <div className="px-6"><Separator /></div>
-                        <Link href="https://www.instagram.com/depxtech" className="block p-4 px-8 hover:bg-accent active:bg-accent focus:bg-accent">Instagram</Link>
+                        <TransitionLink href="https://www.instagram.com/depxtech" className="block p-4 px-8 hover:bg-accent active:bg-accent focus:bg-accent">Instagram</TransitionLink>
                         <div className="px-6"><Separator /></div>
-                        <Link href="https://www.youtube.com/@depxtech" className="block p-4 px-8 hover:bg-accent active:bg-accent focus:bg-accent">Youtube</Link>
+                        <TransitionLink href="https://www.youtube.com/@depxtech" className="block p-4 px-8 hover:bg-accent active:bg-accent focus:bg-accent">Youtube</TransitionLink>
                     </AccordionContent>
                 </AccordionItem>
                 <AccordionItem value="item-7" className="border-none ">

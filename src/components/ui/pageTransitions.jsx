@@ -14,7 +14,7 @@ export function isTransitionRoute(pathname) {
   const transitionRoutes = [
     '/login', 
     '/signup', 
-    '/products/', // product detail pages
+    // '/products/', // product detail pages
     '/checkout',
     '/account/orders',
     '/account/settings',
@@ -24,13 +24,43 @@ export function isTransitionRoute(pathname) {
   return transitionRoutes.some(route => pathname.startsWith(route));
 }
 
+// Check if a URL is external
+function isExternalUrl(url) {
+  if (!url || typeof url !== 'string') return false;
+  try {
+    // If it starts with http:// or https://, it's external
+    if (url.startsWith('http://') || url.startsWith('https://')) {
+      return true;
+    }
+    // If it starts with //, it's a protocol-relative external URL
+    if (url.startsWith('//')) {
+      return true;
+    }
+    // If it starts with mailto:, tel:, etc., it's external (but not internal routes)
+    const protocolPattern = /^[a-z][a-z0-9+.-]*:/i;
+    if (protocolPattern.test(url) && !url.startsWith('/')) {
+      return true;
+    }
+    return false;
+  } catch {
+    return false;
+  }
+}
+
 // Unified TransitionLink component - replaces all Link variants
+// SEO-friendly features:
+// - Automatically detects external links and adds proper rel="noopener noreferrer" attributes
+// - Uses Next.js Link prefetching for better performance and SEO
+// - Maintains href attribute for search engine crawlers
+// - Supports aria-disabled for accessibility (which helps SEO)
+// - Proper semantic HTML with anchor tags
 export function TransitionLink({ 
   href = "", 
   children, 
   haptics = true, 
   hapticsOnPressRelease = false, // New prop: if true, haptics only on press/release, not on click
   disabled = false, 
+  prefetch = true, // SEO: Enable prefetching by default for better performance
   className, 
   ...props 
 }) {
@@ -42,6 +72,26 @@ export function TransitionLink({
     const isTransition = isTransitionRoute(pathname);
     document.body.setAttribute('data-route-group', isTransition ? 'transitions' : 'nav');
   }, [pathname]);
+
+  // Determine if this is an external link
+  const isExternal = isExternalUrl(href);
+  
+  // For external links, use regular anchor tag with proper rel attributes
+  // For internal links, use Next.js Link with transition handling
+  if (isExternal) {
+    return (
+      <a
+        href={href}
+        rel="noopener noreferrer"
+        target="_blank"
+        className={cn(disabled ? "cursor-not-allowed" : "cursor-pointer", className)}
+        aria-disabled={disabled}
+        {...props}
+      >
+        {children}
+      </a>
+    );
+  }
 
   const handlePress = () => {
     if (haptics && hapticsOnPressRelease && !disabled) {
@@ -56,7 +106,10 @@ export function TransitionLink({
   };
 
   const handleClick = async (e) => {
+    // Prevent default to use custom transition navigation
+    // The href is still in the DOM for SEO crawlers to follow
     e.preventDefault();
+    
     if (!disabled) {
       // Call custom onClick handler if provided (for mobile nav state updates, etc.)
       if (props.onClick) {
@@ -92,6 +145,7 @@ export function TransitionLink({
   return (
     <Link 
       href={href}
+      prefetch={prefetch}
       disabled={disabled}
       onClick={handleClick}
       onMouseDown={(e) => {
@@ -115,6 +169,7 @@ export function TransitionLink({
       onDrag={(e) => e.preventDefault()}
       draggable={false}
       className={cn(disabled ? "cursor-not-allowed" : "cursor-pointer", className)}
+      aria-disabled={disabled}
       {...restProps}
     >
       {children}

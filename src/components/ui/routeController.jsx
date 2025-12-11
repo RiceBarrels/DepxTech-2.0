@@ -8,9 +8,10 @@ import { useEffect, useState } from "react"
 import { Minimize2Icon } from "lucide-react"
 import { Maximize2Icon } from "lucide-react"
 import { motion, AnimatePresence } from "motion/react"
-
+import { useSafeArea } from "@/components/safe-area"
 export default function RouteController() {
     const router = useTransitionRouter()
+    const safeArea = useSafeArea()
     const [minimized, setMinimized] = useState(() => {
         if (typeof window !== 'undefined') {
             try {
@@ -39,8 +40,11 @@ export default function RouteController() {
         <div 
             onMouseEnter={() => setIsHover(true)}
             onMouseLeave={() => setIsHover(false)}
-            className="flex items-center gap-2 p-2 bg-background/50 backdrop-blur-sm rounded-lg fixed top-2 left-2 z-[9999] shadow-lg h-14"
-        >
+            className="flex items-center gap-2 p-2 bg-background/50 backdrop-blur-sm rounded-lg fixed top-2 left-2 z-10 shadow-lg h-14 z-20"style={{ 
+                viewTransitionName: 'route-controller',
+                top: `${4 + safeArea.top}px`,
+
+        }}>
             <AnimatePresence mode="popLayout">
                 {!minimized && (
                 <motion.div 

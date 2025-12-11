@@ -1,9 +1,9 @@
 import { supabaseAdmin } from '@/lib/supabase-admin'
-import Link from 'next/link'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { ArrowLeftIcon, ArrowRightIcon } from 'lucide-react'
 import Image from 'next/image'
+import { TransitionLink } from '@/components/ui/pageTransitions'
 
 export async function generateMetadata({ params }) {
   const { category: categoryParam } = await params
@@ -53,12 +53,12 @@ export default async function CategoryBrandPage({ params }) {
     <div className="min-h-screen py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto">
         <div className="mb-8">
-          <Link href="/trade">
+          <TransitionLink href="/trade">
             <Button variant="outline" size="sm">
               <ArrowLeftIcon className="w-4 h-4 mr-2" />
               Back to Categories
             </Button>
-          </Link>
+          </TransitionLink>
         </div>
 
         <div className="text-center mb-12">
@@ -79,7 +79,7 @@ export default async function CategoryBrandPage({ params }) {
             {uniqueBrands.length > 0 ? (
               <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
                 {uniqueBrands.map((item) => (
-                  <Link 
+                  <TransitionLink 
                     key={item.brand} 
                     href={`/trade/category/${encodeURIComponent(category)}/brand/${encodeURIComponent(item.brand)}`}
                     className="block"
@@ -105,7 +105,7 @@ export default async function CategoryBrandPage({ params }) {
                         <h3 className="font-semibold">{item.brand}</h3>
                       </CardContent>
                     </Card>
-                  </Link>
+                  </TransitionLink>
                 ))}
               </div>
             ) : (

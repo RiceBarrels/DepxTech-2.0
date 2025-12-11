@@ -128,7 +128,7 @@ export function ProductActions({
     }, [isInCart, currentCartAmount])
 
     return (
-        <div className="sticky bottom-2 bg-background/50 backdrop-blur-lg p-4 rounded-xl border">
+        <div className="sticky bottom-2 bg-background/90 backdrop-blur-lg p-4 rounded-xl border">
             {/* Customer Actions */}
             {!isAdmin && (
                 <div className="flex gap-3">

@@ -42,7 +42,7 @@ export function useSafeArea() {
 
 export function TopSafeArea(){
     const area = useSafeArea().top
-    const height = area + 16
+    const height = area === 0 ? 0 : area + 16
 
     return (
         <div 
@@ -54,7 +54,7 @@ export function TopSafeArea(){
 
 export function BottomSafeArea(){
     const area = useSafeArea().bottom
-    const height = area + 16
+    const height = area === 0 ? 0 : area + 16
 
     return (
         <div 

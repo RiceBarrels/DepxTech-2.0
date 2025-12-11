@@ -142,3 +142,57 @@ export function BreadcrumbStructuredData({ items }) {
     />
   )
 }
+
+export function ItemListStructuredData({ products, searchTerm, currentPage, totalItems }) {
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://depxtech.com'
+  
+  if (!products || products.length === 0) return null
+  
+  const itemListSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: searchTerm 
+      ? `Search results for "${searchTerm}"` 
+      : 'Products - DepxTech',
+    description: searchTerm
+      ? `Find ${totalItems || products.length} products matching "${searchTerm}" at DepxTech`
+      : 'Browse our wide selection of premium electronics including smartphones, laptops, headphones, gaming gear, and smart home devices.',
+    numberOfItems: totalItems || products.length,
+    itemListElement: products.map((product, index) => ({
+      '@type': 'ListItem',
+      position: (currentPage - 1) * 12 + index + 1,
+      item: {
+        '@type': 'Product',
+        name: product.title,
+        description: product.des || `${product.title} - Available at DepxTech`,
+        image: product.imgs && product.imgs.length > 0 ? product.imgs[0] : `${baseUrl}/placeholder-image.svg`,
+        url: `${baseUrl}/products/${product.id}`,
+        brand: {
+          '@type': 'Brand',
+          name: product.brand || 'DepxTech',
+        },
+        category: product.category?.[0] || 'Electronics',
+        offers: {
+          '@type': 'Offer',
+          url: `${baseUrl}/products/${product.id}`,
+          priceCurrency: 'USD',
+          price: product.price?.toString() || '0',
+          availability: product.stocks > 0 
+            ? 'https://schema.org/InStock' 
+            : 'https://schema.org/OutOfStock',
+          seller: {
+            '@type': 'Organization',
+            name: 'DepxTech',
+          },
+        },
+      },
+    })),
+  }
+
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListSchema) }}
+    />
+  )
+}

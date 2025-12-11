@@ -1,7 +1,6 @@
 'use client'
 
 import { useState } from 'react'
-import Link from 'next/link'
 import { createClient } from '@/utils/supabase/client'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -42,14 +41,7 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col py-4 px-4 gap-2 w-full justify-between items-center">
-      <div className="w-full flex justify-start">
-        <TransitionLink href="/">
-          <Button variant="outline" className="size-10">
-            <ArrowLeftIcon className="size-4" />
-          </Button>
-        </TransitionLink>
-      </div>
+    <div className="flex flex-col py-4 px-4 gap-2 w-full justify-between items-center">
 
       <div className='flex-1 flex flex-col justify-center items-center max-w-256 w-full'>
         <div className="flex flex-col md:flex-row w-full md:h-100 items-center m-8 border rounded-4xl">
@@ -128,9 +120,9 @@ export default function LoginPage() {
               </div>
 
               <div className="text-center">
-                <Link href="/forgot-password" className="text-sm text-primary underline">
+                <TransitionLink href="/forgot-password" className="text-sm text-primary underline">
                   Forgot your password?
-                </Link>
+                </TransitionLink>
               </div>
             </form>
           </div>

@@ -73,7 +73,7 @@ export default function Nav({}) {
         <>
             <nav 
                 ref={navRef}
-                className="w-full overflow-hidden px-6 fixed top-0 bg-background/50 backdrop-blur-lg rounded-b-3xl border-b border-gray-500/10 hidden sm:flex gap-4 z-[9999]"
+                className="w-full overflow-hidden px-6 fixed top-0 bg-background/50 backdrop-blur-lg rounded-b-3xl border-b border-gray-500/10 hidden sm:flex gap-4 z-10"
                 style={{ 
                     viewTransitionName: 'nav-bar',
                     height: `${64 + safeArea.top}px`,
@@ -280,7 +280,7 @@ export default function Nav({}) {
                 </div>
             </nav>
             <nav 
-                className="w-full justify-around overflow-hidden px-6 fixed bottom-0 bg-background/50 backdrop-blur-lg rounded-t-3xl border-t border-gray-500/10 flex sm:hidden z-[9999]"
+                className="w-full justify-around overflow-hidden px-6 fixed bottom-0 bg-background/50 backdrop-blur-lg rounded-t-3xl border-t border-gray-500/10 flex sm:hidden z-10"
                 onTouchEnd={() => setTouchedLink(null)}
                 style={{ 
                     viewTransitionName: 'nav-bar-mobile',

@@ -1,8 +1,8 @@
 import { supabaseAdmin } from '@/lib/supabase-admin'
-import Link from 'next/link'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { ArrowLeftIcon, ArrowRightIcon } from 'lucide-react'
+import { TransitionLink } from '@/components/ui/pageTransitions'
 
 export async function generateMetadata({ params }) {
   const { category: categoryParam, brand: brandParam } = await params
@@ -50,12 +50,12 @@ export default async function BrandSeriesPage({ params }) {
     <div className="min-h-screen py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto">
         <div className="mb-8">
-          <Link href={`/trade/category/${encodeURIComponent(category)}`}>
+          <TransitionLink href={`/trade/category/${encodeURIComponent(category)}`}>
             <Button variant="outline" size="sm">
               <ArrowLeftIcon className="w-4 h-4 mr-2" />
               Back to Brands
             </Button>
-          </Link>
+          </TransitionLink>
         </div>
 
         <div className="text-center mb-12">
@@ -76,7 +76,7 @@ export default async function BrandSeriesPage({ params }) {
             {uniqueSeries.length > 0 ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 {uniqueSeries.map((seriesName) => (
-                  <Link 
+                  <TransitionLink 
                     key={seriesName} 
                     href={`/trade/category/${encodeURIComponent(category)}/brand/${encodeURIComponent(brand)}/series/${encodeURIComponent(seriesName)}`}
                     className="block"
@@ -87,7 +87,7 @@ export default async function BrandSeriesPage({ params }) {
                         <ArrowRightIcon className="w-5 h-5 text-muted-foreground" />
                       </CardContent>
                     </Card>
-                  </Link>
+                  </TransitionLink>
                 ))}
               </div>
             ) : (

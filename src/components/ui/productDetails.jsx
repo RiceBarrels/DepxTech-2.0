@@ -122,7 +122,7 @@ export default function ProductDetails({
                     {des && (
                         <div>
                             <h3 className="text-lg font-semibold mb-2">Description</h3>
-                            <p className="text-gray-300/75 leading-relaxed">{des}</p>
+                            <p className="text-foreground/80 leading-relaxed">{des}</p>
                         </div>
                     )}
 
