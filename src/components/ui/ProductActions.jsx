@@ -19,7 +19,7 @@ import { MinusIcon } from 'lucide-react'
 import { PlusIcon } from 'lucide-react'
 import Image from 'next/image'
 import { toast } from 'sonner'
-import { useRouter } from 'next/navigation'
+import { useTransitionRouter } from '@/components/ui/pageTransitions'
 
 export function ProductActions({
     product,
@@ -35,7 +35,7 @@ export function ProductActions({
     const [isInCart, setIsInCart] = useState(false)
     const [currentCartAmount, setCurrentCartAmount] = useState(0)
     const [loading, setLoading] = useState(false)
-    const router = useRouter()
+    const router = useTransitionRouter()
     const stocks = product.stocks
 
     // Fetch cart items when component mounts or user changes

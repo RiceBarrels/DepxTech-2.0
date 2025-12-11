@@ -21,9 +21,9 @@ import {
 import Image from "next/image"
 import Link from "next/link"
 import { toast } from "sonner"
-import { useRouter } from "next/navigation"
+import { useTransitionRouter } from "@/components/ui/pageTransitions"
 import CartLoading from "./loading"
-import { ForwardLink } from "@/components/ui/pageTransitions"
+import { TransitionLink } from "@/components/ui/pageTransitions"
 
 export default function CartPage() {
     const { user, getCart, updateCartItemAmount, clearCart } = useAuth()
@@ -582,7 +582,7 @@ export default function CartPage() {
                             </div>
 
                             <div className="flex flex-col space-y-2 pt-4">
-                                <ForwardLink href="/checkout" disabled={!isCloudFetched}>
+                                <TransitionLink href="/checkout" disabled={!isCloudFetched}>
                                     <Button className="w-full" disabled={!isCloudFetched}>
                                         {isCloudFetched ? (
                                             <CreditCardIcon className="w-4 h-4 mr-2" />
@@ -591,13 +591,13 @@ export default function CartPage() {
                                         )}
                                         {isCloudFetched ? "Proceed to Checkout" : "Loading Checkout..."}
                                     </Button>
-                                </ForwardLink>
-                                <ForwardLink href="/products">
+                                </TransitionLink>
+                                <TransitionLink href="/products">
                                     <Button variant="outline" className="w-full">
                                         <ArrowLeftIcon className="w-4 h-4 mr-2" />
                                         Continue Shopping
                                     </Button>
-                                </ForwardLink>
+                                </TransitionLink>
                             </div>
                         </CardContent>
                     </Card>

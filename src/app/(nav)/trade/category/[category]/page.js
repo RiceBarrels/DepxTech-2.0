@@ -5,8 +5,30 @@ import { Button } from '@/components/ui/button'
 import { ArrowLeftIcon, ArrowRightIcon } from 'lucide-react'
 import Image from 'next/image'
 
+export async function generateMetadata({ params }) {
+  const { category: categoryParam } = await params
+  const category = decodeURIComponent(categoryParam)
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://depxtech.com'
+  
+  return {
+    title: `Trade In ${category} | DepxTech`,
+    description: `Trade in your ${category} at DepxTech. Get instant quotes for your device. Choose from ${category} brands and get the best trade-in value.`,
+    keywords: [`trade in ${category}`, category, 'depxtech', 'trade in', 'electronics trade in'],
+    openGraph: {
+      title: `Trade In ${category} | DepxTech`,
+      description: `Trade in your ${category} at DepxTech. Get instant quotes for your device.`,
+      type: 'website',
+      url: `${baseUrl}/trade/category/${encodeURIComponent(category)}`,
+    },
+    alternates: {
+      canonical: `${baseUrl}/trade/category/${encodeURIComponent(category)}`,
+    },
+  }
+}
+
 export default async function CategoryBrandPage({ params }) {
-  const category = decodeURIComponent(params.category)
+  const { category: categoryParam } = await params
+  const category = decodeURIComponent(categoryParam)
   
   // Fetch distinct brands for this category
   const { data: brands, error } = await supabaseAdmin

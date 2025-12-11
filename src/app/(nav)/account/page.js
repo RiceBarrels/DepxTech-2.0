@@ -1,37 +1,35 @@
 "use client"
 
 import { useAuth } from '@/lib/auth'
-import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { BadgeDollarSignIcon, ChevronRightIcon, InboxIcon, LogOutIcon, Package2Icon, PenIcon, SettingsIcon, TicketIcon, TicketPercentIcon, UserIcon } from 'lucide-react'
-import AccountLoading from './loading'
-import { ForwardLink, useForwardRoutePush } from '@/components/ui/pageTransitions'
+import { useTransitionRouter, isTransitionRoute } from '@/components/ui/pageTransitions'
+import { usePathname } from 'next/navigation'
 import { Separator } from '@/components/ui/separator'
 import Recommends from '@/components/ui/recommends'
 import { useSpring, useTransition, animated, useScroll, useInView } from '@react-spring/web'
 
 export default function AccountPage() {
   const { user, loading, signOut, profileData } = useAuth()
-  const router = useRouter()
-  const forwardPush = useForwardRoutePush()
+  const transitionRouter = useTransitionRouter()
+  const pathname = usePathname()
 
-  const handleProductClick = async (product) => {
-    router.push(`/products/${product.id}`)
-  }
-
-  useEffect(() => {
-    if (!loading && !user) {
-      router.push('/login')
+  const navigateWithTransition = async (href) => {
+    // Set transition type before navigation
+    const isTransition = isTransitionRoute(href)
+    const isCurrentTransition = isTransitionRoute(pathname)
+    
+    if (isTransition || isCurrentTransition) {
+      document.documentElement.classList.add('transition-slide')
+      document.documentElement.classList.remove('transition-fade')
+    } else {
+      document.documentElement.classList.add('transition-fade')
+      document.documentElement.classList.remove('transition-slide')
     }
-  }, [user, loading, router])
-
-  if (loading) {
-    return <AccountLoading />
-  }
-
-  if (!user) {
-    return null // This will redirect to login via useEffect
+    
+    // Use transition router which handles view transitions
+    await transitionRouter.push(href)
   }
 
   const recommendsSpring = useSpring({
@@ -40,6 +38,24 @@ export default function AccountPage() {
     from: { opacity: 0, transform: 'translateY(20px)' },
     config: { tension: 280, friction: 60 }
   })
+
+  const handleProductClick = async (product) => {
+    await navigateWithTransition(`/products/${product.id}`)
+  }
+
+  useEffect(() => {
+    if (!loading && !user) {
+      navigateWithTransition('/login')
+    }
+  }, [user, loading])
+
+  if (loading) {
+    return null
+  }
+
+  if (!user) {
+    return null // This will redirect to login via useEffect
+  }
 
   return (
     <div className="min-h-screen py-12 px-4 sm:px-6 lg:px-8">
@@ -69,46 +85,46 @@ export default function AccountPage() {
           </div>
 
           {/* edit */}
-          <Button variant="outline" className='rounded-4xl w-32 h-12 text-base gap-4' onClick={() => router.push('/account/edit')}>
+          <Button variant="outline" className='rounded-4xl w-32 h-12 text-base gap-4' onClick={() => navigateWithTransition('/account/edit')}>
             <PenIcon />Edit
           </Button>
         </div>
 
         <div className='flex justify-between items-center bg-accent/25 rounded-full overflow-hidden h-20'>
-          <Button variant="ghost" className="flex flex-col gap-1 items-center h-20 rounded-none flex-5" onClick={() => forwardPush('/account/orders')}>
+          <Button variant="ghost" className="flex flex-col gap-1 items-center h-20 rounded-none flex-5" onClick={() => navigateWithTransition('/account/orders')}>
             <Package2Icon strokeWidth={1.1} className='size-5'/>
             <span className='text-xs font-light'>Orders</span>
           </Button>
 
           <div className='h-14'><Separator orientation="vertical"/></div>
 
-            <Button variant="ghost" className="flex flex-col gap-1 items-center h-20 rounded-none flex-4" onClick={() => forwardPush('/account/membership')}>
+            <Button variant="ghost" className="flex flex-col gap-1 items-center h-20 rounded-none flex-4" onClick={() => navigateWithTransition('/account/membership')}>
               <BadgeDollarSignIcon strokeWidth={1.1} className='size-5'/>
               <span className='text-xs font-light'>Premium</span>
             </Button>
 
           <div className='h-14'><Separator orientation="vertical"/></div>
 
-          <Button variant="ghost" className="flex flex-col gap-1 items-center h-20 rounded-none flex-4" onClick={() => forwardPush('/account/coupons')}>
+          <Button variant="ghost" className="flex flex-col gap-1 items-center h-20 rounded-none flex-4" onClick={() => navigateWithTransition('/account/coupons')}>
             <TicketPercentIcon strokeWidth={1.1} className='size-5'/>
             <span className='text-xs font-light'>Coupons</span>
           </Button>
 
           <div className='h-14'><Separator orientation="vertical"/></div>
 
-          <Button variant="ghost" className="flex flex-col gap-1 items-center h-20 rounded-none flex-5" onClick={() => forwardPush('/account/settings')}>
+          <Button variant="ghost" className="flex flex-col gap-1 items-center h-20 rounded-none flex-5" onClick={() => navigateWithTransition('/account/settings')}>
             <SettingsIcon strokeWidth={1.1} className='size-5'/>
             <span className='text-xs font-light'>Settings</span>
           </Button>
         </div>
         <div className='flex flex-col justify-center items-center bg-accent/25 light:bg-accent rounded-4xl overflow-hidden'>
-          <Button variant="ghost" className='w-full p-8 px-8 justify-start gap-4 rounded-none' onClick={() => forwardPush('/account/inbox')}>
+          <Button variant="ghost" className='w-full p-8 px-8 justify-start gap-4 rounded-none' onClick={() => navigateWithTransition('/account/inbox')}>
             <div><InboxIcon strokeWidth={1.1} className='size-5'/></div>
             <span className='font-normal text-base flex-1 flex justify-start items-center'>Inbox</span>
             <div><ChevronRightIcon className='size-4 text-muted-foreground'/></div>
           </Button>
           <div className='w-full px-6'><Separator orientation="horizontal"/></div>
-          <Button variant="ghost" className='w-full p-8 px-8 justify-start gap-4 rounded-none items-center' onClick={() => forwardPush('/account/membership/about')}>
+          <Button variant="ghost" className='w-full p-8 px-8 justify-start gap-4 rounded-none items-center' onClick={() => navigateWithTransition('/account/membership/about')}>
             <div><BadgeDollarSignIcon strokeWidth={1.1} className='size-5'/></div>
             <span className='font-normal text-base flex-1 flex justify-start items-center'>Premium Membership</span>
             <div><ChevronRightIcon className='size-4 text-muted-foreground'/></div>

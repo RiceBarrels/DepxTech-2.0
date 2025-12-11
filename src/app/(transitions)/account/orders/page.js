@@ -17,7 +17,7 @@ import {
     Loader2
 } from "lucide-react"
 import { toast } from "sonner"
-import { BackLink, ForwardLink } from "@/components/ui/pageTransitions"
+import { TransitionLink } from "@/components/ui/pageTransitions"
 
 export default function OrdersPage() {
     const { user, getUserTransactions } = useAuth()
@@ -104,9 +104,9 @@ export default function OrdersPage() {
                     <CardContent className="flex flex-col items-center justify-center py-8">
                         <h2 className="text-xl font-semibold mb-2">Please log in</h2>
                         <p className="text-muted-foreground mb-4">You need to be logged in to view your orders</p>
-                        <ForwardLink href="/login">
+                        <TransitionLink href="/login">
                             <Button>Go to Login</Button>
-                        </ForwardLink>
+                        </TransitionLink>
                     </CardContent>
                 </Card>
             </div>
@@ -116,10 +116,10 @@ export default function OrdersPage() {
     return (
         <div className="container mx-auto px-4 py-8">
             <div className="mb-6">
-                <BackLink href="/account" className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-4">
+                <TransitionLink href="/account" className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-4">
                     <ArrowLeftIcon className="h-4 w-4 mr-1" />
                     Back
-                </BackLink>
+                </TransitionLink>
                 <h1 className="text-3xl font-bold">Order History</h1>
                 <p className="text-muted-foreground">View all your past orders and transactions</p>
             </div>
@@ -135,9 +135,9 @@ export default function OrdersPage() {
                         <ShoppingBagIcon className="h-12 w-12 text-muted-foreground mb-4" />
                         <h2 className="text-xl font-semibold mb-2">No orders yet</h2>
                         <p className="text-muted-foreground mb-4">You haven't placed any orders yet</p>
-                        <ForwardLink href="/products">
+                        <TransitionLink href="/products">
                             <Button>Start Shopping</Button>
-                        </ForwardLink>
+                        </TransitionLink>
                     </CardContent>
                 </Card>
             ) : (

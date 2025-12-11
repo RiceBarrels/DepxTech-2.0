@@ -5,8 +5,8 @@ import {
     AccordionTrigger,
 } from "@/components/ui/accordion"
 import { Card, CardContent, CardHeader } from "./card";
-import { ForwardLink } from "./pageTransitions";
-import Link from "next/link";
+import { TransitionLink } from "./pageTransitions";
+import Link from "next/link"; // Keep for external links
 import { Separator } from "./separator";
 
 export function Footer(){
@@ -32,51 +32,51 @@ export function Footer(){
                     <AccordionTrigger className="">Shopping & Products</AccordionTrigger>
                     <AccordionContent className="">
                         <div className="px-6"><Separator /></div>
-                        <Link href="/" className="block p-4 px-8 hover:bg-accent active:bg-accent focus:bg-accent">Home</Link>
+                        <TransitionLink href="/" className="block p-4 px-8 hover:bg-accent active:bg-accent focus:bg-accent">Home</TransitionLink>
                         <div className="px-6"><Separator /></div>
-                        <Link href="/products" className="block p-4 px-8 hover:bg-accent active:bg-accent focus:bg-accent">All Products</Link>
+                        <TransitionLink href="/products" className="block p-4 px-8 hover:bg-accent active:bg-accent focus:bg-accent">All Products</TransitionLink>
                         <div className="px-6"><Separator /></div>
-                        <Link href="/cart" className="block p-4 px-8 hover:bg-accent active:bg-accent focus:bg-accent">Shopping Cart</Link>
+                        <TransitionLink href="/cart" className="block p-4 px-8 hover:bg-accent active:bg-accent focus:bg-accent">Shopping Cart</TransitionLink>
                         <div className="px-6"><Separator /></div>
-                        <Link href="/checkout" className="block p-4 px-8 hover:bg-accent active:bg-accent focus:bg-accent">Checkout</Link>
+                        <TransitionLink href="/checkout" className="block p-4 px-8 hover:bg-accent active:bg-accent focus:bg-accent">Checkout</TransitionLink>
                         <div className="px-6"><Separator /></div>
-                        <Link href="/address" className="block p-4 px-8 hover:bg-accent active:bg-accent focus:bg-accent">Address Book</Link>
+                        <TransitionLink href="/address" className="block p-4 px-8 hover:bg-accent active:bg-accent focus:bg-accent">Address Book</TransitionLink>
                     </AccordionContent>
                 </AccordionItem>
                 <AccordionItem value="item-3" className="">
                     <AccordionTrigger className="">Trading</AccordionTrigger>
                     <AccordionContent className="">
                         <div className="px-6"><Separator /></div>
-                        <Link href="/trade" className="block p-4 px-8 hover:bg-accent active:bg-accent focus:bg-accent">Trade Hub</Link>
+                        <TransitionLink href="/trade" className="block p-4 px-8 hover:bg-accent active:bg-accent focus:bg-accent">Trade Hub</TransitionLink>
                         <div className="px-6"><Separator /></div>
-                        <Link href="/trade" className="block p-4 px-8 hover:bg-accent active:bg-accent focus:bg-accent">Trade GPU</Link>
+                        <TransitionLink href="/trade" className="block p-4 px-8 hover:bg-accent active:bg-accent focus:bg-accent">Trade GPU</TransitionLink>
                         <div className="px-6"><Separator /></div>
-                        <Link href="/trade" className="block p-4 px-8 hover:bg-accent active:bg-accent focus:bg-accent">Trade CPU</Link>
+                        <TransitionLink href="/trade" className="block p-4 px-8 hover:bg-accent active:bg-accent focus:bg-accent">Trade CPU</TransitionLink>
                         <div className="px-6"><Separator /></div>
-                        <Link href="/trade" className="block p-4 px-8 hover:bg-accent active:bg-accent focus:bg-accent">Trade RAM</Link>
+                        <TransitionLink href="/trade" className="block p-4 px-8 hover:bg-accent active:bg-accent focus:bg-accent">Trade RAM</TransitionLink>
                         <div className="px-6"><Separator /></div>
-                        <Link href="/refund-policy" className="block p-4 px-8 hover:bg-accent active:bg-accent focus:bg-accent">Return Policy</Link>
+                        <TransitionLink href="/refund-policy" className="block p-4 px-8 hover:bg-accent active:bg-accent focus:bg-accent">Return Policy</TransitionLink>
                     </AccordionContent>
                 </AccordionItem>
                 <AccordionItem value="item-4" className="">
                     <AccordionTrigger className="">Account</AccordionTrigger>
                     <AccordionContent className="">
                         <div className="px-6"><Separator /></div>
-                        <Link href="/login" className="block p-4 px-8 hover:bg-accent active:bg-accent focus:bg-accent">Login</Link>
+                        <TransitionLink href="/login" className="block p-4 px-8 hover:bg-accent active:bg-accent focus:bg-accent">Login</TransitionLink>
                         <div className="px-6"><Separator /></div>
-                        <Link href="/signup" className="block p-4 px-8 hover:bg-accent active:bg-accent focus:bg-accent">Sign Up</Link>
+                        <TransitionLink href="/signup" className="block p-4 px-8 hover:bg-accent active:bg-accent focus:bg-accent">Sign Up</TransitionLink>
                         <div className="px-6"><Separator /></div>
-                        <Link href="/account" className="block p-4 px-8 hover:bg-accent active:bg-accent focus:bg-accent">My Account</Link>
+                        <TransitionLink href="/account" className="block p-4 px-8 hover:bg-accent active:bg-accent focus:bg-accent">My Account</TransitionLink>
                         <div className="px-6"><Separator /></div>
-                        <Link href="/account/orders" className="block p-4 px-8 hover:bg-accent active:bg-accent focus:bg-accent">My Orders</Link>
+                        <TransitionLink href="/account/orders" className="block p-4 px-8 hover:bg-accent active:bg-accent focus:bg-accent">My Orders</TransitionLink>
                         <div className="px-6"><Separator /></div>
-                        <Link href="/account/settings" className="block p-4 px-8 hover:bg-accent active:bg-accent focus:bg-accent">Account Settings</Link>
+                        <TransitionLink href="/account/settings" className="block p-4 px-8 hover:bg-accent active:bg-accent focus:bg-accent">Account Settings</TransitionLink>
                         <div className="px-6"><Separator /></div>
-                        <Link href="/account/inbox" className="block p-4 px-8 hover:bg-accent active:bg-accent focus:bg-accent">Inbox</Link>
+                        <TransitionLink href="/account/inbox" className="block p-4 px-8 hover:bg-accent active:bg-accent focus:bg-accent">Inbox</TransitionLink>
                         <div className="px-6"><Separator /></div>
-                        <Link href="/account/membership" className="block p-4 px-8 hover:bg-accent active:bg-accent focus:bg-accent">Membership</Link>
+                        <TransitionLink href="/account/membership" className="block p-4 px-8 hover:bg-accent active:bg-accent focus:bg-accent">Membership</TransitionLink>
                         <div className="px-6"><Separator /></div>
-                        <Link href="/account/membership/about" className="block p-4 px-8 hover:bg-accent active:bg-accent focus:bg-accent">About Membership</Link>
+                        <TransitionLink href="/account/membership/about" className="block p-4 px-8 hover:bg-accent active:bg-accent focus:bg-accent">About Membership</TransitionLink>
                     </AccordionContent>
                 </AccordionItem>
                 <AccordionItem value="item-5" className="">
@@ -106,13 +106,13 @@ export function Footer(){
                     <AccordionTrigger className="">Terms & Conditions & Privacy Policy</AccordionTrigger>
                     <AccordionContent className="">
                         <div className="px-6"><Separator /></div>
-                        <Link href="/privacy-policy" className="block p-4 px-8 hover:bg-accent active:bg-accent focus:bg-accent">Privacy Policy</Link>
+                        <TransitionLink href="/privacy-policy" className="block p-4 px-8 hover:bg-accent active:bg-accent focus:bg-accent">Privacy Policy</TransitionLink>
                         <div className="px-6"><Separator /></div>
-                        <Link href="/terms-of-service" className="block p-4 px-8 hover:bg-accent active:bg-accent focus:bg-accent">Terms of Service</Link>
+                        <TransitionLink href="/terms-of-service" className="block p-4 px-8 hover:bg-accent active:bg-accent focus:bg-accent">Terms of Service</TransitionLink>
                         <div className="px-6"><Separator /></div>
-                        <Link href="/refund-policy" className="block p-4 px-8 hover:bg-accent active:bg-accent focus:bg-accent">Refund Policy</Link>
+                        <TransitionLink href="/refund-policy" className="block p-4 px-8 hover:bg-accent active:bg-accent focus:bg-accent">Refund Policy</TransitionLink>
                         <div className="px-6"><Separator /></div>
-                        <Link href="/shipping-policy" className="block p-4 px-8 hover:bg-accent active:bg-accent focus:bg-accent">Shipping Policy</Link>
+                        <TransitionLink href="/shipping-policy" className="block p-4 px-8 hover:bg-accent active:bg-accent focus:bg-accent">Shipping Policy</TransitionLink>
                     </AccordionContent>
                 </AccordionItem>
             </Accordion>

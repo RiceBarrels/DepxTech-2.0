@@ -4,9 +4,32 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button'
 import { ArrowLeftIcon, ArrowRightIcon } from 'lucide-react'
 
+export async function generateMetadata({ params }) {
+  const { category: categoryParam, brand: brandParam } = await params
+  const category = decodeURIComponent(categoryParam)
+  const brand = decodeURIComponent(brandParam)
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://depxtech.com'
+  
+  return {
+    title: `Trade In ${brand} ${category} | DepxTech`,
+    description: `Trade in your ${brand} ${category} at DepxTech. Get instant quotes for your ${brand} device. Choose your model and get the best trade-in value.`,
+    keywords: [`trade in ${brand} ${category}`, brand, category, 'depxtech', 'trade in'],
+    openGraph: {
+      title: `Trade In ${brand} ${category} | DepxTech`,
+      description: `Trade in your ${brand} ${category} at DepxTech. Get instant quotes for your device.`,
+      type: 'website',
+      url: `${baseUrl}/trade/category/${encodeURIComponent(category)}/brand/${encodeURIComponent(brand)}`,
+    },
+    alternates: {
+      canonical: `${baseUrl}/trade/category/${encodeURIComponent(category)}/brand/${encodeURIComponent(brand)}`,
+    },
+  }
+}
+
 export default async function BrandSeriesPage({ params }) {
-  const category = decodeURIComponent(params.category)
-  const brand = decodeURIComponent(params.brand)
+  const { category: categoryParam, brand: brandParam } = await params
+  const category = decodeURIComponent(categoryParam)
+  const brand = decodeURIComponent(brandParam)
   
   // Fetch distinct series for this category and brand
   const { data: series, error } = await supabaseAdmin

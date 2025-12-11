@@ -2,178 +2,125 @@
 
 import { cn } from "@/lib/utils";
 import { useTransitionRouter } from "next-view-transitions";
+import { usePathname } from "next/navigation";
+import { useEffect } from "react";
 import Link from "next/link";
-import { doubleHapticsImpact } from "@/lib/haptics";
+import { doubleHapticsImpact, lightHapticsImpact } from "@/lib/haptics";
 
-export function ForwardLink({href="", children, haptics=true, disabled=false, className, ...prop}){
+// Check if a route is in the transitions group (no nav)
+export function isTransitionRoute(pathname) {
+  // Routes that don't have nav: login, signup, products/[id], checkout, account sub-pages
+  // Note: /account itself has nav, but /account/orders, /account/settings, etc. don't
+  const transitionRoutes = [
+    '/login', 
+    '/signup', 
+    '/products/', // product detail pages
+    '/checkout',
+    '/account/orders',
+    '/account/settings',
+    '/account/inbox',
+    '/account/membership'
+  ];
+  return transitionRoutes.some(route => pathname.startsWith(route));
+}
+
+// Unified TransitionLink component - replaces all Link variants
+export function TransitionLink({ 
+  href = "", 
+  children, 
+  haptics = true, 
+  hapticsOnPressRelease = false, // New prop: if true, haptics only on press/release, not on click
+  disabled = false, 
+  className, 
+  ...props 
+}) {
   const router = useTransitionRouter();
+  const pathname = usePathname();
+
+  useEffect(() => {
+    // Add data attribute to body based on route group
+    const isTransition = isTransitionRoute(pathname);
+    document.body.setAttribute('data-route-group', isTransition ? 'transitions' : 'nav');
+  }, [pathname]);
+
+  const handlePress = () => {
+    if (haptics && hapticsOnPressRelease && !disabled) {
+      lightHapticsImpact();
+    }
+  };
+
+  const handleRelease = () => {
+    if (haptics && hapticsOnPressRelease && !disabled) {
+      lightHapticsImpact();
+    }
+  };
+
+  const handleClick = async (e) => {
+    e.preventDefault();
+    if (!disabled) {
+      // Call custom onClick handler if provided (for mobile nav state updates, etc.)
+      if (props.onClick) {
+        props.onClick(e);
+      }
+      
+      // Only trigger haptics on click if NOT using press/release mode
+      if (haptics && !hapticsOnPressRelease) {
+        doubleHapticsImpact();
+      }
+      
+      // Set transition type before navigation
+      const isTransition = isTransitionRoute(href);
+      const isCurrentTransition = isTransitionRoute(pathname);
+      
+      // If navigating to/from transition route, use slide transition
+      if (isTransition || isCurrentTransition) {
+        document.documentElement.classList.add('transition-slide');
+        document.documentElement.classList.remove('transition-fade');
+      } else {
+        document.documentElement.classList.add('transition-fade');
+        document.documentElement.classList.remove('transition-slide');
+      }
+      
+      // Use transition router which handles view transitions
+      await router.push(href);
+    }
+  };
+
+  // Extract onClick, onMouseDown, onMouseUp, onTouchStart, onTouchEnd from props to avoid conflicts
+  const { onClick, onMouseDown, onMouseUp, onTouchStart, onTouchEnd, ...restProps } = props;
 
   return (
     <Link 
       href={href}
       disabled={disabled}
-      onClick={(e) => {
-        e.preventDefault();
-        if(!disabled){
-          if(haptics){
-            doubleHapticsImpact();
-          }
-          router.push(href, {
-            onTransitionReady: () => forwardAnimation(),
-          });
-        }
+      onClick={handleClick}
+      onMouseDown={(e) => {
+        handlePress();
+        onMouseDown?.(e);
       }}
-      className={cn(disabled ? "cursor-not-allowed" : "cursor-pointer",className)}
-      {...prop}
+      onMouseUp={(e) => {
+        handleRelease();
+        onMouseUp?.(e);
+      }}
+      onTouchStart={(e) => {
+        handlePress();
+        onTouchStart?.(e);
+      }}
+      onTouchEnd={(e) => {
+        handleRelease();
+        onTouchEnd?.(e);
+      }}
+      onContextMenu={(e) => e.preventDefault()}
+      onDragStart={(e) => e.preventDefault()}
+      onDrag={(e) => e.preventDefault()}
+      draggable={false}
+      className={cn(disabled ? "cursor-not-allowed" : "cursor-pointer", className)}
+      {...restProps}
     >
       {children}
     </Link>
-  )
+  );
 }
 
-export function useForwardRoutePush(){
-  const router = useTransitionRouter();
-  
-  return (href) => {
-    router.push(href, {
-      onTransitionReady: () => forwardAnimation(),
-    });
-  };
-}
-
-export function BackLink({href="", children, haptics=true, ...prop}){
-  const router = useTransitionRouter();
-  // const isIos = Capacitor.getPlatform() === 'ios';
-
-  return (
-    <Link 
-      href={href}
-      onClick={(e) => {
-        e.preventDefault();
-        if(haptics){
-          doubleHapticsImpact();
-        }
-        router.push(href, {
-          onTransitionReady: () => backAnimation(),
-        });
-      }}
-      {...prop}
-    >
-      {children}
-    </Link>
-  )
-}
-
-export function useBackRoutePush(){
-  const router = useTransitionRouter();
-  
-  return (href) => {
-    router.push(href, {
-      onTransitionReady: () => backAnimation(),
-    });
-  };
-}
-
-function forwardAnimation(){
-    document.documentElement.animate(
-      [
-        {
-          zIndex: 1,
-          opacity: 1,
-          transform: "translateX(0) scale(1)",
-          borderRadius: 32,
-        },
-        {
-          zIndex: 1,
-          opacity: 0.5,
-          transform: "translateX(-100px) scale(0.9)",
-          borderRadius: 0,
-        },
-      ],
-      {
-        duration: 300,
-        easing: "ease-in-out",
-        fill: "forwards",
-        pseudoElement: "::view-transition-old(root)",
-      }
-    );
-  
-    document.documentElement.animate(
-      [
-        {
-          zIndex: 2,
-          transform: `translate(100%, 0)`,
-          borderRadius: 0,
-        },
-        {
-          zIndex: 2,
-          transform: `translate(0, 0)`,
-          borderRadius: 32,
-        },
-      ],
-      {
-        duration: 300,
-        easing: "ease-in-out",
-        fill: "forwards",
-        pseudoElement: "::view-transition-new(root)",
-      }
-    );
-};
-
-function backAnimation(startState = null){
-    const oldViewAnimationDef = [
-        {
-            zIndex: 2,
-            opacity: 1,
-            transform: startState ? startState.transform : "translateX(0px)",
-            borderRadius: "32px",
-        },
-        {
-            zIndex: 2,
-            opacity: 1,
-            transform: "translateX(100%)",
-            borderRadius: "32px",
-        },
-      ];
-
-    const oldAnimation = document.documentElement.animate(
-      oldViewAnimationDef,
-      {
-        duration: 450,
-        easing: "ease-in-out",
-        fill: "forwards",
-        pseudoElement: "::view-transition-old(root)",
-      }
-    );
-  
-    oldAnimation.onfinish = () => {
-        const pageElement = document.documentElement;
-        pageElement.style.transform = '';
-        pageElement.style.borderRadius = '';
-        pageElement.style.overflow = '';
-        pageElement.style.transition = '';
-    };
-
-    document.documentElement.animate(
-      [
-        {
-            zIndex: 1,
-            transform: `translate(-100px, 0) scale(0.9)`,
-            borderRadius: "0px",
-            opacity: 0,
-        },
-        {
-            zIndex: 1,
-            transform: `translate(0, 0) scale(1)`,
-            borderRadius: "32px",
-            opacity: 1,
-        },
-      ],
-      {
-        duration: 450,
-        easing: "ease-in-out",
-        fill: "forwards",
-        pseudoElement: "::view-transition-new(root)",
-      }
-    );
-};
+// Re-export useTransitionRouter for convenience
+export { useTransitionRouter };

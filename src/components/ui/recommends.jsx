@@ -16,7 +16,8 @@ import {
 } from 'lucide-react'
 import { fetchRecommendationsServer } from "@/lib/fetch-recommends"
 import { useAuth } from '@/lib/auth'
-import { useRouter } from 'next/navigation'
+import { useTransitionRouter, isTransitionRoute } from '@/components/ui/pageTransitions'
+import { usePathname } from 'next/navigation'
 
 // Server-side component for initial render (SEO-friendly)
 export default function Recommends({ 
@@ -36,12 +37,40 @@ export default function Recommends({
     const [mounted, setMounted] = useState(false)
     const [hasFetched, setHasFetched] = useState(false)
     const { user, addToCart } = useAuth()
-    const router = useRouter()
+    const transitionRouter = useTransitionRouter()
+    const pathname = usePathname()
     
     // Prevent hydration mismatch
     useEffect(() => {
         setMounted(true)
     }, [])
+
+    const navigateWithTransition = useCallback(async (href) => {
+        // Set transition type before navigation
+        const isTransition = isTransitionRoute(href)
+        const isCurrentTransition = isTransitionRoute(pathname)
+        
+        if (isTransition || isCurrentTransition) {
+            document.documentElement.classList.add('transition-slide')
+            document.documentElement.classList.remove('transition-fade')
+        } else {
+            document.documentElement.classList.add('transition-fade')
+            document.documentElement.classList.remove('transition-slide')
+        }
+        
+        // Use transition router which handles view transitions
+        await transitionRouter.push(href)
+    }, [transitionRouter, pathname])
+
+    const handleProductClick = useCallback(async (product) => {
+        // If a custom onProductClick is provided, use it
+        if (onProductClick) {
+            return await onProductClick(product)
+        }
+        
+        // Otherwise use transition router to navigate
+        await navigateWithTransition(`/products/${product.id}`)
+    }, [onProductClick, navigateWithTransition])
 
     const handleAddToCart = useCallback(async (product) => {
         // If a custom onAddToCart is provided, use it
@@ -52,7 +81,7 @@ export default function Recommends({
         // Otherwise use the auth context
         if (!user) {
             // Redirect to login if user is not authenticated
-            router.push('/login')
+            await navigateWithTransition('/login')
             return
         }
         
@@ -68,7 +97,7 @@ export default function Recommends({
             console.error('Error adding to cart:', error)
             return { success: false, error: error.message }
         }
-    }, [onAddToCart, user, addToCart, router])
+    }, [onAddToCart, user, addToCart, navigateWithTransition])
 
     const fetchRecommendations = useCallback(async () => {
         setLoading(true)
@@ -204,7 +233,7 @@ export default function Recommends({
                                 product={product}
                                 index={index}
                                 mounted={mounted}
-                                onProductClick={onProductClick}
+                                onProductClick={handleProductClick}
                                 onAddToCart={handleAddToCart}
                                 onToggleFavorite={onToggleFavorite}
                                 formatPrice={formatPrice}

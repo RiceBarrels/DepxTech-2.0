@@ -66,28 +66,27 @@ export async function verifyAdminAccess(request = null) {
     // Create Supabase client with proper cookie handling
     const supabase = await createClient()
     
-    // Get the current user session
-    const { data: { session }, error: sessionError } = await supabase.auth.getSession()
-    
-    console.log('Session details:', {
-      hasSession: !!session,
-      sessionError: sessionError,
-      userId: session?.user?.id,
-      userEmail: session?.user?.email,
-      expiresAt: session?.expires_at
+    // Get the authenticated user (secure method)
+    const { data: { user }, error: authError } = await supabase.auth.getUser()
+
+    console.log('Authenticated user details:', {
+      hasUser: !!user,
+      authError: authError,
+      userId: user?.id,
+      userEmail: user?.email
     })
-    
-    if (sessionError || !session) {
-      console.log('No valid session found')
-      return { 
-        authorized: false, 
-        isAdmin: false, 
-        error: 'Unauthorized - No valid session',
+
+    if (authError || !user) {
+      console.log('No authenticated user found')
+      return {
+        authorized: false,
+        isAdmin: false,
+        error: 'Unauthorized - No authenticated user',
         status: 401
       }
     }
 
-    const userId = session.user.id
+    const userId = user.id
     console.log('Verifying admin access for user:', userId)
 
     // Check if user has admin role
@@ -117,7 +116,7 @@ export async function verifyAdminAccess(request = null) {
     return {
       authorized: true,
       isAdmin: true,
-      user: session.user,
+      user: user,
       userId: userId,
       profileData: adminCheck.profileData,
       error: null,

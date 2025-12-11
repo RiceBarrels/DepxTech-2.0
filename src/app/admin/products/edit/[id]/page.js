@@ -1,6 +1,7 @@
 "use client"
 
-import { useParams, useRouter, usePathname } from "next/navigation"
+import { useParams, usePathname } from "next/navigation"
+import { useTransitionRouter } from "@/components/ui/pageTransitions"
 import { useState, useEffect } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -11,10 +12,11 @@ import { cn } from '@/lib/utils'
 import { PictureInPictureIcon } from "lucide-react"
 import { openWindow } from "@/components/ui/windows"
 import { EditIcon } from "lucide-react"
+import { ImageUpload, uploadFiles, deleteFileFromBucket } from "@/components/admin/ImageUpload"
 
 export default function EditProductPage() {
     const { id } = useParams()
-    const router = useRouter()
+    const router = useTransitionRouter()
     const pathname = usePathname()
     const [loading, setLoading] = useState(true)
     const [saving, setSaving] = useState(false)
@@ -37,7 +39,6 @@ export default function EditProductPage() {
     
     // Category input state
     const [categoryInput, setCategoryInput] = useState('')
-    const [imageInput, setImageInput] = useState('')
 
     // Fetch product data
     useEffect(() => {
@@ -105,22 +106,6 @@ export default function EditProductPage() {
         }))
     }
 
-    const addImage = () => {
-        if (imageInput.trim() && !formData.imgs.includes(imageInput.trim())) {
-            setFormData(prev => ({
-                ...prev,
-                imgs: [...prev.imgs, imageInput.trim()]
-            }))
-            setImageInput('')
-        }
-    }
-
-    const removeImage = (imageToRemove) => {
-        setFormData(prev => ({
-            ...prev,
-            imgs: prev.imgs.filter(img => img !== imageToRemove)
-        }))
-    }
 
     const handleVariantChange = (index, field, value) => {
         setFormData(prev => ({
@@ -154,6 +139,9 @@ export default function EditProductPage() {
         setSuccess(false)
 
         try {
+            // Upload new images first
+            const uploadedImageUrls = await uploadFiles(formData.imgs, 'products')
+            
             const response = await fetch('/api/admin/products/edit', {
                 method: 'POST',
                 headers: {
@@ -162,6 +150,7 @@ export default function EditProductPage() {
                 body: JSON.stringify({
                     id: product.id,
                     ...formData,
+                    imgs: uploadedImageUrls,
                     price: parseFloat(formData.price) || 0,
                     stocks: parseInt(formData.stocks) || 0,
                 })
@@ -359,35 +348,14 @@ export default function EditProductPage() {
                         </div>
 
                         {/* Images */}
-                        <div className="space-y-2">
-                            <label className="text-sm font-medium">Images</label>
-                            <div className="flex gap-2">
-                                <Input
-                                    value={imageInput}
-                                    onChange={(e) => setImageInput(e.target.value)}
-                                    placeholder="Add image URL"
-                                    onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addImage())}
-                                />
-                                <Button type="button" onClick={addImage} variant="outline">
-                                    Add
-                                </Button>
-                            </div>
-                            <div className="space-y-2 mt-2">
-                                {formData.imgs.map((img, index) => (
-                                    <div key={index} className="flex items-center gap-2 p-2 border rounded">
-                                        <img src={img} alt={`Product ${index + 1}`} className="w-12 h-12 object-cover rounded" />
-                                        <span className="flex-1 text-sm truncate">{img}</span>
-                                        <button
-                                            type="button"
-                                            onClick={() => removeImage(img)}
-                                            className="text-red-600 hover:text-red-800"
-                                        >
-                                            <XIcon className="w-4 h-4" />
-                                        </button>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
+                        <ImageUpload
+                            value={formData.imgs}
+                            onChange={(urls) => handleInputChange('imgs', urls)}
+                            multiple={true}
+                            folder="products"
+                            label="Product Images"
+                            onDelete={deleteFileFromBucket}
+                        />
 
                         {/* Variant Data */}
                         <div className="space-y-2">

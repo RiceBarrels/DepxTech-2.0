@@ -17,7 +17,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { EditIcon } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import Image from 'next/image'
-import { useRouter } from 'next/navigation'
+import { useTransitionRouter } from '@/components/ui/pageTransitions'
 import { ImageIcon } from 'lucide-react'
 import { PictureInPictureIcon } from 'lucide-react'
 import { openWindow } from '@/components/ui/windows'
@@ -40,7 +40,7 @@ export default function ProductPage() {
         hasNextPage: false,
         hasPrevPage: false
     })
-    const router = useRouter()
+    const router = useTransitionRouter()
 
     const fetchProducts = useCallback(async (page = 1, search = '', limit = 10) => {
         try {

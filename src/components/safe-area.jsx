@@ -1,5 +1,6 @@
 "use client"
 import { SafeArea } from 'capacitor-plugin-safe-area';
+import { Capacitor } from '@capacitor/core';
 import { useEffect, useState } from 'react';
 
 
@@ -41,16 +42,24 @@ export function useSafeArea() {
 
 export function TopSafeArea(){
     const area = useSafeArea().top
+    const height = area + 16
 
     return (
-        <div className={`h-[${area+16}px] w-full p-2`}></div>
+        <div 
+            className="w-full p-2 sm:h-0 sm:p-0"
+            style={{ height: `${height}px` }}
+        ></div>
     )
 }
 
 export function BottomSafeArea(){
     const area = useSafeArea().bottom
+    const height = area + 16
 
     return (
-        <div className={`h-[${area+16}px] w-full p-2`}/>
+        <div 
+            className="w-full p-2 sm:h-0 sm:p-0"
+            style={{ height: `${height}px` }}
+        />
     )
 }

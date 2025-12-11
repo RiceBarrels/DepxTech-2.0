@@ -6,10 +6,34 @@ import { Badge } from '@/components/ui/badge'
 import { ArrowLeftIcon, ArrowRightIcon, DollarSignIcon } from 'lucide-react'
 import Image from 'next/image'
 
+export async function generateMetadata({ params }) {
+  const { category: categoryParam, brand: brandParam, series: seriesParam } = await params
+  const category = decodeURIComponent(categoryParam)
+  const brand = decodeURIComponent(brandParam)
+  const series = decodeURIComponent(seriesParam)
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://depxtech.com'
+  
+  return {
+    title: `Trade In ${brand} ${series} ${category} | DepxTech`,
+    description: `Trade in your ${brand} ${series} ${category} at DepxTech. Get instant quotes for your device. Select your specific model and get the best trade-in value.`,
+    keywords: [`trade in ${brand} ${series}`, brand, series, category, 'depxtech', 'trade in'],
+    openGraph: {
+      title: `Trade In ${brand} ${series} ${category} | DepxTech`,
+      description: `Trade in your ${brand} ${series} ${category} at DepxTech. Get instant quotes for your device.`,
+      type: 'website',
+      url: `${baseUrl}/trade/category/${encodeURIComponent(category)}/brand/${encodeURIComponent(brand)}/series/${encodeURIComponent(series)}`,
+    },
+    alternates: {
+      canonical: `${baseUrl}/trade/category/${encodeURIComponent(category)}/brand/${encodeURIComponent(brand)}/series/${encodeURIComponent(series)}`,
+    },
+  }
+}
+
 export default async function SeriesProductsPage({ params }) {
-  const category = decodeURIComponent(params.category)
-  const brand = decodeURIComponent(params.brand)
-  const series = decodeURIComponent(params.series)
+  const { category: categoryParam, brand: brandParam, series: seriesParam } = await params
+  const category = decodeURIComponent(categoryParam)
+  const brand = decodeURIComponent(brandParam)
+  const series = decodeURIComponent(seriesParam)
   
   // Fetch products for this category, brand, and series
   const { data: products, error } = await supabaseAdmin

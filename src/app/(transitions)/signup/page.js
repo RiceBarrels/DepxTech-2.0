@@ -1,12 +1,11 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
 import { createClient } from '@/utils/supabase/client'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { ForwardLink } from '@/components/ui/pageTransitions'
+import { TransitionLink, useTransitionRouter } from '@/components/ui/pageTransitions'
 
 export default function SignupPage() {
   const [email, setEmail] = useState('')
@@ -17,7 +16,7 @@ export default function SignupPage() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [message, setMessage] = useState('')
-  const router = useRouter()
+  const router = useTransitionRouter()
 
   const handleSignup = async (e) => {
     e.preventDefault()
@@ -62,8 +61,8 @@ export default function SignupPage() {
       } else {
         setMessage('Check your email for the confirmation link!')
         // Redirect to login page after a delay
-        setTimeout(() => {
-          router.push('/login')
+        setTimeout(async () => {
+          await router.push('/login')
         }, 3000)
       }
     } catch (err) {
@@ -98,7 +97,7 @@ export default function SignupPage() {
               )}
               
               <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-300/75 mb-1">
+                <label htmlFor="email" className="block text-sm font-medium mb-1">
                   Email address
                 </label>
                 <Input
@@ -116,7 +115,7 @@ export default function SignupPage() {
               
               <div className='flex gap-2'>
                 <div className='flex-1'>
-                  <label htmlFor="firstName" className="block text-sm font-medium text-gray-300/75 mb-1">
+                  <label htmlFor="firstName" className="block text-sm font-medium mb-1">
                     First Name
                   </label>
                   <Input
@@ -133,7 +132,7 @@ export default function SignupPage() {
                 </div>
 
                 <div className='flex-1'>
-                  <label htmlFor="lastName" className="block text-sm font-medium text-gray-300/75 mb-1">
+                  <label htmlFor="lastName" className="block text-sm font-medium mb-1">
                     Last Name
                   </label>
                   <Input
@@ -151,7 +150,7 @@ export default function SignupPage() {
               </div>
 
               <div>
-                <label htmlFor="password" className="block text-sm font-medium text-gray-300/75 mb-1">
+                <label htmlFor="password" className="block text-sm font-medium mb-1">
                   Password
                 </label>
                 <Input
@@ -168,7 +167,7 @@ export default function SignupPage() {
               </div>
 
               <div>
-                <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-300/75 mb-1">
+                <label htmlFor="confirmPassword" className="block text-sm font-medium mb-1">
                   Confirm Password
                 </label>
                 <Input
@@ -195,9 +194,9 @@ export default function SignupPage() {
               <div className="text-center">
                 <p className="text-sm text-muted-foreground">
                   Already have an account?{' '}
-                  <ForwardLink href="/login" className="font-medium text-blue-600 hover:text-blue-500">
+                  <TransitionLink href="/login" className="font-medium text-blue-600 hover:text-blue-500">
                     Sign in
-                  </ForwardLink>
+                  </TransitionLink>
                 </p>
               </div>
             </form>

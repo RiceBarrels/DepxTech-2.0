@@ -155,35 +155,351 @@
 @layer base {
   * {
     @apply border-border outline-ring/50;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
   }
   body {
     @apply bg-background text-foreground;
   }
+  
+  /* Disable long-press context menu, drag and drop on links for mobile */
+  a {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
+    touch-action: manipulation;
+    -webkit-user-drag: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    pointer-events: auto;
+  }
+  
+  /* Prevent dragging images inside links */
+  a img {
+    -webkit-user-drag: none;
+    pointer-events: none;
+  }
+  
+  /* Allow text selection only in input fields and textareas */
+  input,
+  textarea,
+  [contenteditable="true"] {
+    -webkit-user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+    user-select: text;
+  }
 }
 
-::view-transition-group(root) {
-  z-index: auto !important;
+/* Enable view transitions on mobile */
+@supports (view-transition-name: none) {
+  :root {
+    view-transition-name: root;
+  }
 }
 
-::view-transition-image-pair(root) {
-  isolation: isolate;
-  will-change: transform, opacity, scale;
+/* View Transitions - Root */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 0.4s;
+  animation-timing-function: cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+/* Default: fade and scale for nav pages */
+:root:not(.transition-slide) ::view-transition-old(root) {
+  animation-name: fade-and-scale-out;
+}
+
+:root:not(.transition-slide) ::view-transition-new(root) {
+  animation-name: fade-and-scale-in;
+}
+
+/* Slide transitions when navigating to/from transition routes (no nav) */
+:root.transition-slide ::view-transition-old(root) {
+  animation-name: slide-out-left;
+  animation-duration: 0.5s;
+  animation-timing-function: cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+:root.transition-slide ::view-transition-new(root) {
+  animation-name: slide-in-right;
+  animation-duration: 0.5s;
+  animation-timing-function: cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+/* View Transitions for Main Content Only - Enhanced animations */
+::view-transition-old(main-content),
+::view-transition-new(main-content) {
+  animation-duration: 0.5s;
+  animation-timing-function: cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+::view-transition-old(main-content) {
+  animation-name: main-content-fade-out;
+}
+
+::view-transition-new(main-content) {
+  animation-name: main-content-fade-in;
+}
+
+/* View Transitions for transition pages - fancy left-to-right slide */
+::view-transition-old(transition-page),
+::view-transition-new(transition-page) {
+  animation-duration: 0.5s;
+  animation-timing-function: cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+::view-transition-old(transition-page) {
+  animation-name: slide-out-left;
+}
+
+::view-transition-new(transition-page) {
+  animation-name: slide-in-right;
+}
+
+/* View Transitions for fade-and-scale Only */
+::view-transition-old(fade-and-scale),
+::view-transition-new(fade-and-scale) {
+  animation-duration: 0.4s;
+  animation-timing-function: cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+::view-transition-old(fade-and-scale) {
+  animation-name: fade-and-scale-out;
+}
+
+::view-transition-new(fade-and-scale) {
+  animation-name: fade-and-scale-in;
+}
+
+/* View Transitions for auth-card Only */
+::view-transition-old(auth-card),
+::view-transition-new(auth-card) {
+  animation-duration: 0.4s;
+  animation-timing-function: cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+::view-transition-old(auth-card) {
+  animation-name: slide-out-fade;
+}
+
+::view-transition-new(auth-card) {
+  animation-name: slide-in-fade;
+}
+
+/* sidebar */
+::view-transition-old(side-bar),
+::view-transition-new(side-bar) {
+  animation-duration: 0.4s;
+  animation-timing-function: cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+::view-transition-old(side-bar) {
+  animation-name: slide-out-fade;
+}
+
+::view-transition-new(side-bar) {
+  animation-name: slide-in-fade;
+}
+
+/* Ensure nav stays on top during view transitions */
+::view-transition-group(*) {
+  z-index: 0;
+}
+/* Ensure nav stays on top during view transitions */
+::view-transition-old(*){
+  z-index: 0;
+}
+/* Ensure nav stays on top during view transitions */
+::view-transition-new(*) {
   z-index: 1;
 }
 
-::view-transition-new(root) {
-  animation: none !important;
-  box-shadow: 0px 0px 8px #00000015;
+/* Nav should always be on top */
+nav[class*="fixed"] {
+  position: fixed !important;
+  z-index: 9999 !important;
+  isolation: isolate;
 }
 
-::view-transition-old(root) {
+/* Nav bar view transition - stays on top and doesn't animate */
+::view-transition-group(nav-bar),
+::view-transition-group(nav-bar-mobile) {
+  z-index: 9999 !important;
+}
+
+::view-transition-old(nav-bar),
+::view-transition-new(nav-bar),
+::view-transition-old(nav-bar-mobile),
+::view-transition-new(nav-bar-mobile) {
   animation: none !important;
-  box-shadow: 0px 0px 8px #00000015;
+  /* mix-blend-mode:; */
+}
+
+@keyframes slide-out-fade {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(-50px);
+  }
+}
+
+@keyframes slide-in-fade {
+  from {
+    opacity: 0;
+    transform: translateX(50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Main transition animations */
+@keyframes pageEnter {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pageExit {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes fade-and-scale-out {
+  0% {
+    opacity: 1;
+    transform: scale(1) translateX(0);
+    filter: blur(0);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.8) translateX(-10px);
+    filter: blur(2px);
+  }
+}
+
+@keyframes fade-and-scale-in {
+  0% {
+    opacity: 0;
+    transform: scale(1.2) translateX(10px);
+    filter: blur(2px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateX(0);
+    filter: blur(0);
+  }
+}
+
+/* Enhanced main-content animations with fancy effects */
+@keyframes main-content-fade-out {
+  0% {
+    opacity: 1;
+    transform: scale(1) translateY(0) translateX(0);
+    filter: blur(0);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(0.95) translateY(-10px) translateX(-5px);
+    filter: blur(2px);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.9) translateY(-20px) translateX(-10px);
+    filter: blur(4px);
+  }
+}
+
+@keyframes main-content-fade-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.9) translateY(20px) translateX(10px);
+    filter: blur(4px);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.05) translateY(10px) translateX(5px);
+    filter: blur(2px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0) translateX(0);
+    filter: blur(0);
+  }
+}
+
+/* Smooth slide transitions - mobile-like full screen slide with fancy effects */
+@keyframes slide-out-left {
+  0% {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+    filter: blur(0);
+  }
+  50% {
+    opacity: 0.7;
+    transform: translateX(-15%) scale(0.97);
+    filter: blur(2px);
+  }
+  100% {
+    opacity: 0.5;
+    transform: translateX(-100%) scale(0.9);
+    filter: blur(6px);
+  }
+}
+
+@keyframes slide-in-right {
+  0% {
+    opacity: 0;
+    transform: translateX(100%) scale(0.9);
+    filter: blur(6px);
+  }
+  50% {
+    opacity: 0.7;
+    transform: translateX(15%) scale(0.97);
+    filter: blur(2px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+    filter: blur(0);
+  }
+}
+
+/* Fade transitions */
+@keyframes fade-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
 }
 
 @keyframes fade-in {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes fade-in-up {
@@ -197,10 +513,34 @@
   }
 }
 
+@keyframes slide-down {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .animate-fade-in {
   animation: fade-in 0.6s ease-out both;
 }
 
 .animate-fade-in-up {
   animation: fade-in-up 0.6s ease-out both;
+}
+
+.animate-slide-down {
+  animation: slide-down 0.3s ease-out both;
+}
+
+/* Optional: Add transition to specific elements */
+.sidebar-menu-button {
+  transition: all 0.2s ease;
+}
+
+.sidebar-menu-button:hover {
+  transform: translateX(2px);
 }

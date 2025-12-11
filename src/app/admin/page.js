@@ -1,16 +1,16 @@
 'use client'
 
 import { useAuth } from '@/lib/auth'
-import { useRouter } from 'next/navigation'
+import { useTransitionRouter } from '@/components/ui/pageTransitions'
 import { useEffect, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
-import { PackageIcon, TableIcon, ArrowRightLeftIcon } from 'lucide-react'
+import { PackageIcon, TableIcon, ArrowRightLeftIcon, TicketPercentIcon } from 'lucide-react'
 
 export default function AdminDashboard() {
   const { user, loading, signOut, getProfileData, getAllProfileData, getUserDataById } = useAuth()
-  const router = useRouter()
+  const router = useTransitionRouter()
   const [profiles, setProfiles] = useState([])
   const [userProfile, setUserProfile] = useState(null)
   const [profilesLoading, setProfilesLoading] = useState(true)
@@ -124,6 +124,9 @@ export default function AdminDashboard() {
                     </Button>
                     <Button variant="outline" size="sm" className="w-full" onClick={() => router.push('/admin/tradein')}>
                         <ArrowRightLeftIcon className="w-4 h-4" /> Manage Trade-in Products
+                    </Button>
+                    <Button variant="outline" size="sm" className="w-full" onClick={() => router.push('/admin/offers')}>
+                        <TicketPercentIcon className="w-4 h-4" /> Manage Offers
                     </Button>
                 </div>
             </CardContent>

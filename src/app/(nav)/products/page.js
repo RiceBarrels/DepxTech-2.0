@@ -6,12 +6,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge"
 import { AnimatePresence, motion } from "motion/react"
 import { SearchIcon, Loader2, AlertCircle, ShoppingCart, Package } from "lucide-react"
-import { useEffect, useState, useCallback } from "react"
-import { useRouter, useSearchParams, usePathname } from "next/navigation"
-import { ForwardLink } from "@/components/ui/pageTransitions"
+import { useEffect, useState, useCallback, useRef } from "react"
+import { useSearchParams, usePathname } from "next/navigation"
+import { TransitionLink, useTransitionRouter } from "@/components/ui/pageTransitions"
 
 export default function ProductsPage() {
-    const router = useRouter()
+    const router = useTransitionRouter()
     const pathname = usePathname()
     const searchParams = useSearchParams()
     
@@ -27,23 +27,19 @@ export default function ProductsPage() {
 
     // Function to update URL with search params
     const updateURL = useCallback((searchTerm, pageNum = 1) => {
-        const params = new URLSearchParams(searchParams)
+        const params = new URLSearchParams()
         
         if (searchTerm && searchTerm.trim()) {
             params.set('search', searchTerm.trim())
-        } else {
-            params.delete('search')
         }
         
         if (pageNum > 1) {
             params.set('page', pageNum.toString())
-        } else {
-            params.delete('page')
         }
         
         const newURL = params.toString() ? `${pathname}?${params.toString()}` : pathname
         router.replace(newURL)
-    }, [router, pathname, searchParams])
+    }, [router, pathname])
 
     // Debounced search function
     const fetchProducts = useCallback(async (searchTerm = "", pageNum = 1) => {
@@ -75,30 +71,58 @@ export default function ProductsPage() {
         }
     }, [])
 
+    // Track if we're updating URL ourselves to avoid infinite loops
+    const isUpdatingURL = useRef(false)
+    const prevSearchParams = useRef(searchParams.toString())
+
     // Load initial products on mount
     useEffect(() => {
         const initialSearch = searchParams.get('search') || ""
         const initialPage = parseInt(searchParams.get('page')) || 1
+        setSearch(initialSearch)
+        setPage(initialPage)
         fetchProducts(initialSearch, initialPage)
-    }, [fetchProducts, searchParams])
+        prevSearchParams.current = searchParams.toString()
+    }, []) // Only run on mount
 
-    // Handle search with debouncing and URL updates
+    // Sync state with URL params when they change externally (e.g., browser back/forward)
     useEffect(() => {
-        if (search.length > 0) {
-            setIsSearching(true)
+        const currentParams = searchParams.toString()
+        
+        // Skip if we just updated the URL ourselves
+        if (isUpdatingURL.current) {
+            isUpdatingURL.current = false
+            prevSearchParams.current = currentParams
+            return
+        }
+        
+        // Skip if URL params haven't actually changed
+        if (currentParams === prevSearchParams.current) {
+            return
+        }
+        
+        const urlSearch = searchParams.get('search') || ""
+        const urlPage = parseInt(searchParams.get('page')) || 1
+        
+        // Update state from URL (external navigation like back/forward)
+        setSearch(urlSearch)
+        setPage(urlPage)
+        fetchProducts(urlSearch, urlPage)
+        prevSearchParams.current = currentParams
+    }, [searchParams, fetchProducts])
+
+    // Handle search input changes with debouncing and URL updates
+    useEffect(() => {
             const timeoutId = setTimeout(() => {
+            setIsSearching(search.length > 0)
                 setPage(1)
+            isUpdatingURL.current = true
                 updateURL(search, 1)
                 fetchProducts(search, 1)
             }, 300)
+        
             return () => clearTimeout(timeoutId)
-        } else {
-            setIsSearching(false)
-            setPage(1)
-            updateURL("", 1)
-            fetchProducts("", 1)
-        }
-    }, [search, fetchProducts, updateURL])
+    }, [search, updateURL, fetchProducts])
 
     const handleSearch = () => {
         if (search.trim()) {
@@ -239,7 +263,7 @@ export default function ProductsPage() {
                                     transition={{ delay: index * 0.05 }}
                                     layout
                                 >
-                                    <ForwardLink href={`/products/${product.id}`}>
+                                    <TransitionLink href={`/products/${product.id}`}>
                                         <Card className="cursor-pointer hover:shadow-lg transition-all duration-300 group p-0 gap-0">
                                             <CardHeader className="p-0">
                                                 <div className="aspect-square relative overflow-hidden rounded-t-lg bg-muted">
@@ -307,7 +331,7 @@ export default function ProductsPage() {
                                                 </div>
                                             </CardContent>
                                         </Card>
-                                    </ForwardLink>
+                                    </TransitionLink>
                                 </motion.div>
                             ))}
                         </AnimatePresence>

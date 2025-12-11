@@ -1,14 +1,13 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/utils/supabase/client'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { ArrowLeftIcon, LogInIcon } from 'lucide-react'
-import { BackLink, ForwardLink } from '@/components/ui/pageTransitions'
+import { TransitionLink, useTransitionRouter } from '@/components/ui/pageTransitions'
 import { Separator } from '@/components/ui/separator'
 
 export default function LoginPage() {
@@ -16,7 +15,7 @@ export default function LoginPage() {
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
-  const router = useRouter()
+  const router = useTransitionRouter()
 
   const handleLogin = async (e) => {
     e.preventDefault()
@@ -33,7 +32,7 @@ export default function LoginPage() {
       if (error) {
         setError(error.message)
       } else {
-        router.push('/')
+        await router.push('/')
       }
     } catch (err) {
       setError('An unexpected error occurred')
@@ -45,11 +44,11 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen flex flex-col py-4 px-4 gap-2 w-full justify-between items-center">
       <div className="w-full flex justify-start">
-        <BackLink href="/">
+        <TransitionLink href="/">
           <Button variant="outline" className="size-10">
             <ArrowLeftIcon className="size-4" />
           </Button>
-        </BackLink>
+        </TransitionLink>
       </div>
 
       <div className='flex-1 flex flex-col justify-center items-center max-w-256 w-full'>
@@ -79,7 +78,7 @@ export default function LoginPage() {
               )}
               
               <div>
-                <label htmlFor="email" className="block font-medium text-gray-300/75 mb-1">
+                <label htmlFor="email" className="block font-medium mb-1">
                   Email address
                 </label>
                 <Input
@@ -96,7 +95,7 @@ export default function LoginPage() {
               </div>
 
               <div>
-                <label htmlFor="password" className="block font-medium text-gray-300/75 mb-1">
+                <label htmlFor="password" className="block font-medium mb-1">
                   Password
                 </label>
                 <Input
@@ -121,11 +120,11 @@ export default function LoginPage() {
                   {loading ? 'Signing in...' : 'Sign in'}
                 </Button>
                 
-                <ForwardLink href="/signup">
+                <TransitionLink href="/signup">
                   <Button type="button" variant="outline">
                     Create Account
                   </Button>
-                </ForwardLink>
+                </TransitionLink>
               </div>
 
               <div className="text-center">

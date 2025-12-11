@@ -1,13 +1,13 @@
 "use client"
 
 import { useAuth } from '@/lib/auth'
-import { useRouter } from 'next/navigation'
+import { useTransitionRouter } from '@/components/ui/pageTransitions'
 import { useEffect, useState, useRef } from 'react'
 import RouteController from './routeController'
 
 function AdminUI() {
     const { user, loading } = useAuth()
-    const router = useRouter()
+    const router = useTransitionRouter()
     const [isAdmin, setIsAdmin] = useState(false)
     const [adminLoading, setAdminLoading] = useState(true)
     const [adminCheckDone, setAdminCheckDone] = useState(false)

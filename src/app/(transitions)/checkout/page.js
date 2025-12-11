@@ -20,8 +20,8 @@ import {
 } from "lucide-react"
 import Image from "next/image"
 import { toast } from "sonner"
-import { ForwardLink, BackLink } from "@/components/ui/pageTransitions"
-import { useRouter } from "next/navigation"
+import { TransitionLink } from "@/components/ui/pageTransitions"
+import { useTransitionRouter } from "@/components/ui/pageTransitions"
 import { loadStripe } from '@stripe/stripe-js'
 import {
     Elements,
@@ -463,7 +463,7 @@ export default function CheckoutPage() {
     const [loading, setLoading] = useState(true)
     const [paymentSuccess, setPaymentSuccess] = useState(false)
     const [orderDetails, setOrderDetails] = useState(null)
-    const router = useRouter()
+    const router = useTransitionRouter()
 
     useEffect(() => {
         if (user) {
@@ -536,9 +536,9 @@ export default function CheckoutPage() {
                         <LockIcon className="w-16 h-16 mx-auto mb-4 text-gray-400" />
                         <h2 className="text-xl font-semibold mb-2">Please Login</h2>
                         <p className="text-muted-foreground mb-4">You need to be logged in to checkout</p>
-                        <ForwardLink href="/login">
+                        <TransitionLink href="/login">
                             <Button>Login</Button>
-                        </ForwardLink>
+                        </TransitionLink>
                     </CardContent>
                 </Card>
             </div>
@@ -563,12 +563,12 @@ export default function CheckoutPage() {
                         <ShoppingCartIcon className="w-16 h-16 mx-auto mb-4 text-gray-400" />
                         <h2 className="text-xl font-semibold mb-2">Your cart is empty</h2>
                         <p className="text-muted-foreground mb-4">Add some products to proceed to checkout</p>
-                        <BackLink href="/products">
+                        <TransitionLink href="/products">
                             <Button>
                                 <ArrowLeftIcon className="w-4 h-4 mr-2" />
                                 Continue Shopping
                             </Button>
-                        </BackLink>
+                        </TransitionLink>
                     </CardContent>
                 </Card>
             </div>
@@ -592,16 +592,16 @@ export default function CheckoutPage() {
                         </div>
 
                         <div className="flex gap-4">
-                            <BackLink href="/products" className="flex-1">
+                            <TransitionLink href="/products" className="flex-1">
                                 <Button variant="outline" className="w-full">
                                     Continue Shopping
                                 </Button>
-                            </BackLink>
-                            <ForwardLink href="/account" className="flex-1">
+                            </TransitionLink>
+                            <TransitionLink href="/account" className="flex-1">
                                 <Button className="w-full">
                                     View Orders
                                 </Button>
-                            </ForwardLink>
+                            </TransitionLink>
                         </div>
                     </CardContent>
                 </Card>
@@ -614,11 +614,11 @@ export default function CheckoutPage() {
             {/* Header */}
             <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center gap-4">
-                    <BackLink href="/cart">
+                    <TransitionLink href="/cart">
                         <Button variant="outline" size="icon">
                             <ArrowLeftIcon className="w-4 h-4 mr-2" />
                         </Button>
-                    </BackLink>
+                    </TransitionLink>
                     <h1 className="text-2xl font-bold">Checkout</h1>
                 </div>
             </div>

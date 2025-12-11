@@ -1,14 +1,13 @@
 "use client"
 
-import { LoadingUI } from '@/components/ui/loadingUI'
 import { useAuth } from '@/lib/auth'
-import { useRouter } from 'next/navigation'
+import { useTransitionRouter } from '@/components/ui/pageTransitions'
 import { useEffect, useState, useRef } from 'react'
 
 export default function AdminChecker() {
 
     const { user, loading } = useAuth()
-    const router = useRouter()
+    const router = useTransitionRouter()
     const [isAdmin, setIsAdmin] = useState(false)
     const [adminLoading, setAdminLoading] = useState(true)
     const [adminCheckDone, setAdminCheckDone] = useState(false)
@@ -18,7 +17,7 @@ export default function AdminChecker() {
         const checkAdminAccess = async () => {
             if (!loading && !user) {
                 console.log('AdminChecker: No user found, redirecting to login')
-                router.push('/login')
+                await router.push('/login')
                 return
             }
 
@@ -72,7 +71,7 @@ export default function AdminChecker() {
                     } else {
                         console.error('AdminChecker: Error checking admin role:', error)
                     }
-                    router.push('/')
+                    await router.push('/')
                     return
                 }
                 
@@ -85,12 +84,12 @@ export default function AdminChecker() {
                         setIsAdmin(true)
                     } else {
                         console.log('AdminChecker: User does not have admin role, redirecting...')
-                        router.push('/')
+                        await router.push('/')
                         return
                     }
                 } else {
                     console.log('AdminChecker: No role data found, redirecting to home')
-                    router.push('/')
+                    await router.push('/')
                     return
                 }
                 
@@ -104,7 +103,7 @@ export default function AdminChecker() {
                 }
                 
                 console.error('AdminChecker: Error in admin access check:', error)
-                router.push('/')
+                await router.push('/')
                 return
             } finally {
                 // Only set loading to false if request wasn't cancelled
@@ -128,11 +127,7 @@ export default function AdminChecker() {
     }, [user, loading, router])
 
     if (loading || adminLoading) {
-        return (
-            <div className="min-h-screen flex items-center justify-center fixed top-0 left-0 right-0 bottom-0 z-50">
-                <LoadingUI text="checking admin access"/>
-            </div>
-        )
+        return null
     }
     return null;
 }

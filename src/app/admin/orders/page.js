@@ -1,14 +1,13 @@
 'use client'
 
 import { useAuth } from '@/lib/auth'
-import { useRouter } from 'next/navigation'
+import { useTransitionRouter } from '@/components/ui/pageTransitions'
 import { useEffect, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Badge } from '@/components/ui/badge'
-import { LoadingUI } from '@/components/ui/loadingUI'
 import { Search, RefreshCw, Eye, Package, DollarSign, TrendingUp } from 'lucide-react'
 import { openWindow } from '@/components/ui/windows'
 
@@ -242,7 +241,7 @@ function OrderItemsDisplay({ items }) {
 
 export default function AdminOrders() {
   const { user, loading } = useAuth()
-  const router = useRouter()
+  const router = useTransitionRouter()
   const [transactions, setTransactions] = useState([])
   const [filteredTransactions, setFilteredTransactions] = useState([])
   const [transactionsLoading, setTransactionsLoading] = useState(true)
@@ -382,7 +381,7 @@ export default function AdminOrders() {
   }
 
   if (!user || loading) {
-    return <LoadingUI text="Loading admin dashboard..." />
+    return null
   }
 
   return (
@@ -498,7 +497,7 @@ export default function AdminOrders() {
           <CardContent>
             {transactionsLoading ? (
               <div className="flex items-center justify-center py-8">
-                <LoadingUI text="Loading transactions..." />
+                <div>Loading transactions...</div>
               </div>
             ) : (
               <div className="overflow-x-auto">

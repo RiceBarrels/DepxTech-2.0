@@ -1,6 +1,6 @@
 "use client"
 
-import { useRouter } from "next/navigation"
+import { useTransitionRouter } from "@/components/ui/pageTransitions"
 import { ChevronLeftIcon, ChevronRightIcon, HomeIcon, RefreshCcwIcon } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { LayoutDashboardIcon } from "lucide-react"
@@ -10,7 +10,7 @@ import { Maximize2Icon } from "lucide-react"
 import { motion, AnimatePresence } from "motion/react"
 
 export default function RouteController() {
-    const router = useRouter()
+    const router = useTransitionRouter()
     const [minimized, setMinimized] = useState(() => {
         if (typeof window !== 'undefined') {
             try {

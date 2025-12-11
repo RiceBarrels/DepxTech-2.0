@@ -28,6 +28,11 @@ const nextConfig = {
       },
     ],
   },
+  // Allow cross-origin requests from Capacitor dev server
+  allowedDevOrigins: [
+    'http://192.168.1.108:3000',
+    'http://localhost:3000',
+  ],
   // reactStrictMode: true,
   // output: 'export',
 };

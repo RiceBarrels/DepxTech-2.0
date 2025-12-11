@@ -1,6 +1,6 @@
 "use client"
 
-import { useRouter } from "next/navigation"
+import { useTransitionRouter } from "@/components/ui/pageTransitions"
 import { useState, useEffect } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -10,7 +10,7 @@ import { ArrowLeftIcon, EditIcon, TrashIcon, PlusIcon, SearchIcon, ArrowRightLef
 import { cn } from '@/lib/utils'
 
 export default function TradeinManagePage() {
-    const router = useRouter()
+    const router = useTransitionRouter()
     const [products, setProducts] = useState([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState(null)
@@ -238,17 +238,13 @@ export default function TradeinManagePage() {
                             </CardHeader>
                             <CardContent>
                                 <div className="space-y-4">
-                                    {/* Categories */}
-                                    {product.category && product.category.length > 0 && (
+                                    {/* Category */}
+                                    {product.category && (
                                         <div>
-                                            <p className="text-sm font-medium mb-2">Categories:</p>
-                                            <div className="flex flex-wrap gap-1">
-                                                {product.category.map((cat, index) => (
-                                                    <Badge key={index} variant="secondary">
-                                                        {cat}
-                                                    </Badge>
-                                                ))}
-                                            </div>
+                                            <p className="text-sm font-medium mb-2">Category:</p>
+                                            <Badge variant="secondary">
+                                                {product.category}
+                                            </Badge>
                                         </div>
                                     )}
 

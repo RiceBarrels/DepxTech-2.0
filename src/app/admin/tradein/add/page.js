@@ -1,6 +1,7 @@
 "use client"
 
-import { useRouter, usePathname } from "next/navigation"
+import { usePathname } from "next/navigation"
+import { useTransitionRouter } from "@/components/ui/pageTransitions"
 import { useState } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -9,6 +10,7 @@ import { Badge } from '@/components/ui/badge'
 import { ArrowLeftIcon, SaveIcon, LoaderIcon, XIcon, PlusIcon, ArrowRightLeftIcon } from 'lucide-react'
 import { PictureInPictureIcon } from "lucide-react"
 import { openWindow } from "@/components/ui/windows"
+import { ImageUpload, uploadFiles, deleteFileFromBucket } from "@/components/admin/ImageUpload"
 
 export default function AddTradeinProductPage({defaultData={
     title: '',
@@ -29,7 +31,7 @@ export default function AddTradeinProductPage({defaultData={
     bad_def: '',
     broken_def: ''
 }}) {
-    const router = useRouter()
+    const router = useTransitionRouter()
     const pathname = usePathname()
     const [saving, setSaving] = useState(false)
     const [error, setError] = useState(null)
@@ -72,6 +74,12 @@ export default function AddTradeinProductPage({defaultData={
         setSuccess(false)
 
         try {
+            // Upload images first
+            const uploadedBrandImg = formData.brand_img instanceof File 
+                ? (await uploadFiles(formData.brand_img, 'tradein/brands'))[0]
+                : formData.brand_img
+            const uploadedProductImgs = await uploadFiles(formData.imgs, 'tradein/products')
+            
             const response = await fetch('/api/admin/tradein', {
                 method: 'POST',
                 headers: {
@@ -79,6 +87,8 @@ export default function AddTradeinProductPage({defaultData={
                 },
                 body: JSON.stringify({
                     ...formData,
+                    brand_img: uploadedBrandImg || null,
+                    imgs: uploadedProductImgs,
                     new_price: parseFloat(formData.new_price) || 0,
                     good_price: parseFloat(formData.good_price) || 0,
                     okay_price: parseFloat(formData.okay_price) || 0,
@@ -233,25 +243,26 @@ export default function AddTradeinProductPage({defaultData={
 
                         {/* Brand Image */}
                         <div className="space-y-2">
-                            <label className="text-sm font-medium">Brand Image URL</label>
-                            <Input
+                            <ImageUpload
                                 value={formData.brand_img}
-                                onChange={(e) => handleInputChange('brand_img', e.target.value)}
-                                placeholder="https://example.com/brand-logo.png"
-                                type="url"
+                                onChange={(url) => handleInputChange('brand_img', url)}
+                                multiple={false}
+                                folder="tradein/brands"
+                                label="Brand Image"
+                                onDelete={deleteFileFromBucket}
                             />
                         </div>
 
                         {/* Product Images */}
                         <div className="space-y-2">
-                            <label className="text-sm font-medium">Product Images</label>
-                            <textarea
-                                className="w-full min-h-[80px] px-3 py-2 border border-gray-200 rounded-md resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                value={formData.imgs ? formData.imgs.join('\n') : ''}
-                                onChange={(e) => handleInputChange('imgs', e.target.value.split('\n').filter(url => url.trim()))}
-                                placeholder="Enter image URLs (one per line)&#10;https://example.com/image1.jpg&#10;https://example.com/image2.jpg"
+                            <ImageUpload
+                                value={formData.imgs}
+                                onChange={(urls) => handleInputChange('imgs', urls)}
+                                multiple={true}
+                                folder="tradein/products"
+                                label="Product Images"
+                                onDelete={deleteFileFromBucket}
                             />
-                            <p className="text-xs text-muted-foreground">Enter one image URL per line</p>
                         </div>
 
                         {/* Trade-in Prices */}

@@ -1,6 +1,7 @@
 "use client"
 
-import { useParams, useRouter, usePathname } from "next/navigation"
+import { useParams, usePathname } from "next/navigation"
+import { useTransitionRouter } from "@/components/ui/pageTransitions"
 import { useState, useEffect } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -10,10 +11,11 @@ import { ArrowLeftIcon, SaveIcon, LoaderIcon, XIcon, EditIcon, ArrowRightLeftIco
 import { cn } from '@/lib/utils'
 import { PictureInPictureIcon } from "lucide-react"
 import { openWindow } from "@/components/ui/windows"
+import { ImageUpload, uploadFiles, deleteFileFromBucket } from "@/components/admin/ImageUpload"
 
 export default function EditTradeinProductPage() {
     const { id } = useParams()
-    const router = useRouter()
+    const router = useTransitionRouter()
     const pathname = usePathname()
     const [loading, setLoading] = useState(true)
     const [saving, setSaving] = useState(false)
@@ -30,7 +32,11 @@ export default function EditTradeinProductPage() {
         okay_price: '',
         bad_price: '',
         broken_price: '',
-        category: [],
+        category: '',
+        brand: '',
+        series: '',
+        brand_img: '',
+        imgs: [],
         new_def: '',
         good_def: '',
         okay_def: '',
@@ -38,8 +44,6 @@ export default function EditTradeinProductPage() {
         broken_def: ''
     })
     
-    // Category input state
-    const [categoryInput, setCategoryInput] = useState('')
 
     // Fetch product data
     useEffect(() => {
@@ -67,7 +71,11 @@ export default function EditTradeinProductPage() {
                     okay_price: foundProduct.okay_price?.toString() || '',
                     bad_price: foundProduct.bad_price?.toString() || '',
                     broken_price: foundProduct.broken_price?.toString() || '',
-                    category: foundProduct.category || [],
+                    category: foundProduct.category || '',
+                    brand: foundProduct.brand || '',
+                    series: foundProduct.series || '',
+                    brand_img: foundProduct.brand_img || '',
+                    imgs: foundProduct.imgs || [],
                     new_def: foundProduct.new_def || '',
                     good_def: foundProduct.good_def || '',
                     okay_def: foundProduct.okay_def || '',
@@ -93,22 +101,6 @@ export default function EditTradeinProductPage() {
         }))
     }
 
-    const addCategory = () => {
-        if (categoryInput.trim() && !formData.category.includes(categoryInput.trim())) {
-            setFormData(prev => ({
-                ...prev,
-                category: [...prev.category, categoryInput.trim()]
-            }))
-            setCategoryInput('')
-        }
-    }
-
-    const removeCategory = (categoryToRemove) => {
-        setFormData(prev => ({
-            ...prev,
-            category: prev.category.filter(cat => cat !== categoryToRemove)
-        }))
-    }
 
     const handleSubmit = async (e) => {
         e.preventDefault()
@@ -117,6 +109,12 @@ export default function EditTradeinProductPage() {
         setSuccess(false)
 
         try {
+            // Upload images first
+            const uploadedBrandImg = formData.brand_img instanceof File 
+                ? (await uploadFiles(formData.brand_img, 'tradein/brands'))[0]
+                : formData.brand_img
+            const uploadedProductImgs = await uploadFiles(formData.imgs, 'tradein/products')
+            
             const response = await fetch('/api/admin/tradein', {
                 method: 'PUT',
                 headers: {
@@ -125,6 +123,8 @@ export default function EditTradeinProductPage() {
                 body: JSON.stringify({
                     id: id,
                     ...formData,
+                    brand_img: uploadedBrandImg || null,
+                    imgs: uploadedProductImgs,
                     new_price: parseFloat(formData.new_price) || 0,
                     good_price: parseFloat(formData.good_price) || 0,
                     okay_price: parseFloat(formData.okay_price) || 0,
@@ -265,34 +265,61 @@ export default function EditTradeinProductPage() {
                             />
                         </div>
 
-                        {/* Categories */}
+                        {/* Category */}
                         <div className="space-y-2">
-                            <label className="text-sm font-medium">Categories</label>
-                            <div className="flex gap-2">
-                                <Input
-                                    value={categoryInput}
-                                    onChange={(e) => setCategoryInput(e.target.value)}
-                                    placeholder="Add category"
-                                    onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addCategory())}
-                                />
-                                <Button type="button" onClick={addCategory} variant="outline">
-                                    Add
-                                </Button>
-                            </div>
-                            <div className="flex flex-wrap gap-2 mt-2">
-                                {formData.category.map((cat, index) => (
-                                    <Badge key={index} variant="secondary" className="flex items-center gap-1">
-                                        {cat}
-                                        <button
-                                            type="button"
-                                            onClick={() => removeCategory(cat)}
-                                            className="ml-1 hover:text-red-600"
-                                        >
-                                            <XIcon className="w-3 h-3" />
-                                        </button>
-                                    </Badge>
-                                ))}
-                            </div>
+                            <label className="text-sm font-medium">Category *</label>
+                            <Input
+                                value={formData.category}
+                                onChange={(e) => handleInputChange('category', e.target.value)}
+                                placeholder="e.g., Smartphones, Laptops, Tablets"
+                                required
+                            />
+                        </div>
+
+                        {/* Brand */}
+                        <div className="space-y-2">
+                            <label className="text-sm font-medium">Brand *</label>
+                            <Input
+                                value={formData.brand}
+                                onChange={(e) => handleInputChange('brand', e.target.value)}
+                                placeholder="e.g., Apple, Samsung, Dell"
+                                required
+                            />
+                        </div>
+
+                        {/* Series */}
+                        <div className="space-y-2">
+                            <label className="text-sm font-medium">Series *</label>
+                            <Input
+                                value={formData.series}
+                                onChange={(e) => handleInputChange('series', e.target.value)}
+                                placeholder="e.g., iPhone, Galaxy, XPS"
+                                required
+                            />
+                        </div>
+
+                        {/* Brand Image */}
+                        <div className="space-y-2">
+                            <ImageUpload
+                                value={formData.brand_img}
+                                onChange={(url) => handleInputChange('brand_img', url)}
+                                multiple={false}
+                                folder="tradein/brands"
+                                label="Brand Image"
+                                onDelete={deleteFileFromBucket}
+                            />
+                        </div>
+
+                        {/* Product Images */}
+                        <div className="space-y-2">
+                            <ImageUpload
+                                value={formData.imgs}
+                                onChange={(urls) => handleInputChange('imgs', urls)}
+                                multiple={true}
+                                folder="tradein/products"
+                                label="Product Images"
+                                onDelete={deleteFileFromBucket}
+                            />
                         </div>
 
                         {/* Trade-in Prices */}

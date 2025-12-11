@@ -3,6 +3,79 @@
 import ProductDetails from '@/components/ui/productDetails'
 import Recommends from '@/components/ui/recommends'
 import TopNav from '@/components/ui/topNav'
+import { ProductStructuredData } from '@/components/seo/StructuredData'
+
+export async function generateMetadata({ params }) {
+  const { id } = await params
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://depxtech.com'
+  
+  try {
+    const product = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/products?id=${id}`)
+    const productData = await product.json()
+    const productDetails = productData.products?.[0]
+    
+    if (!productDetails) {
+      return {
+        title: 'Product Not Found',
+        description: 'The requested product could not be found.',
+      }
+    }
+    
+    const title = `${productDetails.title} | DepxTech`
+    const description = productDetails.des 
+      ? `${productDetails.des.substring(0, 155)}...` 
+      : `Buy ${productDetails.title} at DepxTech. Premium quality electronics with competitive pricing.`
+    const image = productDetails.imgs && productDetails.imgs.length > 0 
+      ? productDetails.imgs[0] 
+      : `${baseUrl}/placeholder-image.svg`
+    
+    return {
+      title,
+      description,
+      keywords: [
+        productDetails.title,
+        ...(productDetails.category || []),
+        'electronics',
+        'depxtech',
+        'buy online',
+      ],
+      openGraph: {
+        title,
+        description,
+        type: 'website',
+        url: `${baseUrl}/products/${id}`,
+        images: [
+          {
+            url: image,
+            width: 1200,
+            height: 630,
+            alt: productDetails.title,
+          },
+        ],
+      },
+      twitter: {
+        card: 'summary_large_image',
+        title,
+        description,
+        images: [image],
+      },
+      alternates: {
+        canonical: `${baseUrl}/products/${id}`,
+      },
+      other: {
+        'product:price:amount': productDetails.price?.toString() || '',
+        'product:price:currency': 'USD',
+        'product:availability': productDetails.stocks > 0 ? 'in stock' : 'out of stock',
+      },
+    }
+  } catch (error) {
+    console.error('Error generating metadata:', error)
+    return {
+      title: 'Product | DepxTech',
+      description: 'View product details at DepxTech.',
+    }
+  }
+}
 
 export default async function ProductPage({ params }) {
     const { id } = await params
@@ -36,10 +109,13 @@ export default async function ProductPage({ params }) {
     }
     
     return (
-        <div className='p-4 flex flex-col items-center justify-center'>
-            <TopNav backURL="/products" />
-            <ProductDetails product={productDetails} />
-            <Recommends title="Recommended for You" limit={8} className="mt-8" excludeId={id} categories={productDetails.category}/>
-        </div>
+        <>
+            <ProductStructuredData product={productDetails} />
+            <div className='p-4 flex flex-col items-center justify-center'>
+                <TopNav backURL="/products" />
+                <ProductDetails product={productDetails} />
+                <Recommends title="Recommended for You" limit={8} className="mt-8" excludeId={id} categories={productDetails.category}/>
+            </div>
+        </>
     )
 }

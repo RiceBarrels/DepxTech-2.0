@@ -17,7 +17,32 @@ import {
   ShieldCheckIcon,
   PackageIcon
 } from 'lucide-react'
-import { ForwardLink } from '@/components/ui/pageTransitions'
+import { TransitionLink } from '@/components/ui/pageTransitions'
+
+export const metadata = {
+  title: 'Trade In Your Tech',
+  description: 'Trade in your old electronics at DepxTech. Get instant quotes for smartphones, laptops, tablets, gaming consoles, and more. Fast, secure, and eco-friendly trade-in process.',
+  keywords: [
+    'trade in',
+    'electronics trade in',
+    'smartphone trade in',
+    'laptop trade in',
+    'tablet trade in',
+    'gaming console trade in',
+    'depxtech',
+    'sell electronics',
+    'recycle electronics',
+  ],
+  openGraph: {
+    title: 'Trade In Your Tech | DepxTech',
+    description: 'Trade in your old electronics at DepxTech. Get instant quotes and turn your devices into cash.',
+    type: 'website',
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
+}
 
 export default function TradePage() {
   const tradeCategories = [
@@ -139,7 +164,7 @@ export default function TradePage() {
         {/* Trade Categories Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
           {tradeCategories.map((category) => (
-            <ForwardLink
+            <TransitionLink
                 key={category.id} 
                 href={`/trade/category/${encodeURIComponent(category.title)}`}
             >
@@ -181,7 +206,7 @@ export default function TradePage() {
                     </div>
                 </CardContent>
                 </Card>
-            </ForwardLink>
+            </TransitionLink>
           ))}
         </div>
 
