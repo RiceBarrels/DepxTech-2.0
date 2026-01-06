@@ -67,4 +67,5 @@ export async function updateSession(request) {
   // of sync and terminate the user's session prematurely!
 
   return supabaseResponse
-} 
+}
+

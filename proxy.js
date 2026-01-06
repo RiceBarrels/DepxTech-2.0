@@ -1,7 +1,7 @@
-import { updateSession } from './src/utils/supabase/middleware'
+import { updateSession } from './src/utils/supabase/session'
 import { NextResponse } from 'next/server'
 
-export async function middleware(request) {
+export async function proxy(request) {
   // Check for password authentication cookie
   const passwordAuth = request.cookies.get('site_password_auth')
   
@@ -17,7 +17,7 @@ export async function middleware(request) {
   if (!isStaticFile && !isApiRoute && !isAuthRoute) {
     // If password is required but not authenticated, allow through
     // The client-side PasswordWall component will handle the actual blocking
-    // This middleware check is mainly for additional security
+    // This proxy check is mainly for additional security
   }
   
   return await updateSession(request)
@@ -34,4 +34,5 @@ export const config = {
      */
     '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
   ],
-} 
+}
+
