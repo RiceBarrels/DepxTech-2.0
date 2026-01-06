@@ -937,6 +937,46 @@ export function AuthProvider({ children }) {
     }
   }
 
+  // Update user profile
+  const updateProfile = async (updates) => {
+    try {
+      if (!user?.id) {
+        throw new Error('User not authenticated')
+      }
+
+      const supabase = createClient()
+
+      // Update profile in database
+      const { data, error } = await supabase
+        .from('profiles')
+        .update(updates)
+        .eq('id', user.id)
+        .select()
+        .single()
+
+      if (error) {
+        console.error('Error updating profile:', error)
+        throw error
+      }
+
+      // Update local profile data
+      if (data) {
+        setProfileData(prev => ({
+          ...prev,
+          ...data
+        }))
+      }
+
+      // Refresh profile data to ensure consistency
+      await fetchProfileData(user.id, null)
+
+      return { success: true, data }
+    } catch (error) {
+      console.error('Error in updateProfile:', error)
+      return { success: false, error: error.message }
+    }
+  }
+
   const value = {
     user,
     profileData,
@@ -955,6 +995,7 @@ export function AuthProvider({ children }) {
     updateTransaction,
     getTransactionById,
     getUserTransactionsFromProfile,
+    updateProfile,
   }
 
   return (

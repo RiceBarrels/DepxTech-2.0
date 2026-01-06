@@ -1,13 +1,14 @@
 "use client"
 
 import { useTransitionRouter } from "@/components/ui/pageTransitions"
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
-import { ArrowLeftIcon, EditIcon, TrashIcon, PlusIcon, SearchIcon, ArrowRightLeftIcon } from 'lucide-react'
+import { ArrowLeftIcon, EditIcon, TrashIcon, PlusIcon, SearchIcon, ArrowRightLeftIcon, DownloadIcon, UploadIcon } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { toast } from 'sonner'
 
 export default function TradeinManagePage() {
     const router = useTransitionRouter()
@@ -17,6 +18,9 @@ export default function TradeinManagePage() {
     const [searchTerm, setSearchTerm] = useState('')
     const [filteredProducts, setFilteredProducts] = useState([])
     const [deleting, setDeleting] = useState(null)
+    const [exporting, setExporting] = useState(false)
+    const [importing, setImporting] = useState(false)
+    const fileInputRef = useRef(null)
 
     // Fetch tradable products
     useEffect(() => {
@@ -55,6 +59,81 @@ export default function TradeinManagePage() {
             setFilteredProducts(filtered)
         }
     }, [searchTerm, products])
+
+    const handleExport = async () => {
+        try {
+            setExporting(true)
+            const response = await fetch('/api/admin/tradein/export')
+            
+            if (!response.ok) {
+                throw new Error('Failed to export tradable products')
+            }
+
+            const blob = await response.blob()
+            const url = window.URL.createObjectURL(blob)
+            const a = document.createElement('a')
+            a.href = url
+            a.download = `tradable-products-${new Date().toISOString().split('T')[0]}.csv`
+            document.body.appendChild(a)
+            a.click()
+            window.URL.revokeObjectURL(url)
+            document.body.removeChild(a)
+            
+            toast.success('Tradable products exported successfully!')
+        } catch (error) {
+            console.error('Export error:', error)
+            toast.error('Failed to export tradable products: ' + error.message)
+        } finally {
+            setExporting(false)
+        }
+    }
+
+    const handleImport = async (e) => {
+        const file = e.target.files?.[0]
+        if (!file) return
+
+        if (!file.name.endsWith('.csv')) {
+            toast.error('Please select a CSV file')
+            return
+        }
+
+        try {
+            setImporting(true)
+            const formData = new FormData()
+            formData.append('file', file)
+
+            const response = await fetch('/api/admin/tradein/import', {
+                method: 'POST',
+                body: formData
+            })
+
+            const data = await response.json()
+
+            if (!response.ok) {
+                throw new Error(data.error || 'Failed to import tradable products')
+            }
+
+            toast.success(`Successfully imported ${data.imported} products${data.failed > 0 ? `, ${data.failed} failed` : ''}`)
+            
+            // Refresh products list
+            const fetchResponse = await fetch('/api/admin/tradein')
+            const fetchData = await fetchResponse.json()
+            if (fetchResponse.ok) {
+                setProducts(fetchData.products || [])
+                setFilteredProducts(fetchData.products || [])
+            }
+            
+            // Reset file input
+            if (fileInputRef.current) {
+                fileInputRef.current.value = ''
+            }
+        } catch (error) {
+            console.error('Import error:', error)
+            toast.error('Failed to import tradable products: ' + error.message)
+        } finally {
+            setImporting(false)
+        }
+    }
 
     const handleDelete = async (productId) => {
         if (!confirm('Are you sure you want to delete this tradable product?')) {
@@ -142,10 +221,37 @@ export default function TradeinManagePage() {
                     </Button>
                     <h1 className="text-2xl font-bold">Manage Trade-in Products</h1>
                 </div>
-                <Button onClick={() => router.push('/admin/tradein/add')} className="bg-blue-600 hover:bg-blue-700">
-                    <PlusIcon className="w-4 h-4 mr-2" />
-                    Add Trade-in Product
-                </Button>
+                <div className="flex gap-2">
+                    <Button 
+                        variant="outline" 
+                        size="sm" 
+                        onClick={handleExport}
+                        disabled={exporting}
+                    >
+                        <DownloadIcon className="w-4 h-4 mr-2" /> 
+                        {exporting ? 'Exporting...' : 'Export CSV'}
+                    </Button>
+                    <Button 
+                        variant="outline" 
+                        size="sm" 
+                        onClick={() => fileInputRef.current?.click()}
+                        disabled={importing}
+                    >
+                        <UploadIcon className="w-4 h-4 mr-2" /> 
+                        {importing ? 'Importing...' : 'Import CSV'}
+                    </Button>
+                    <Button onClick={() => router.push('/admin/tradein/add')} className="bg-blue-600 hover:bg-blue-700">
+                        <PlusIcon className="w-4 h-4 mr-2" />
+                        Add Trade-in Product
+                    </Button>
+                </div>
+                <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept=".csv"
+                    onChange={handleImport}
+                    className="hidden"
+                />
             </div>
 
             {/* Search and Stats */}

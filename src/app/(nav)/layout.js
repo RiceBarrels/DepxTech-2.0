@@ -1,7 +1,7 @@
 // "use client"
 
 import { TopSafeArea, BottomSafeArea } from "@/components/safe-area";
-import { Footer } from "@/components/ui/footer";
+import { ConditionalFooter } from "@/components/ui/conditional-footer";
 import Nav from "@/components/ui/nav";
 import { PageLoadHaptics } from "@/components/ui/pageLoadHaptics";
 
@@ -16,7 +16,7 @@ export default function NavLayout({ children }) {
             <TopSafeArea/>
             <div className="h-16 hidden sm:block"/>
             {children}
-            <Footer />
+            <ConditionalFooter />
             <BottomSafeArea/>
         </div>
         <Nav />

@@ -2,7 +2,8 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { PlusIcon, SearchIcon, ChevronLeftIcon, ChevronRightIcon } from 'lucide-react'
+import { PlusIcon, SearchIcon, ChevronLeftIcon, ChevronRightIcon, DownloadIcon, UploadIcon } from 'lucide-react'
+import { toast } from 'sonner'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import {
     Drawer,
@@ -13,7 +14,7 @@ import {
     DrawerTitle,
     DrawerOverlay,
   } from "@/components/ui/drawer"
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { EditIcon } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import Image from 'next/image'
@@ -41,6 +42,79 @@ export default function ProductPage() {
         hasPrevPage: false
     })
     const router = useTransitionRouter()
+    const [exporting, setExporting] = useState(false)
+    const [importing, setImporting] = useState(false)
+    const fileInputRef = useRef(null)
+
+    const handleExport = async () => {
+        try {
+            setExporting(true)
+            const response = await fetch('/api/admin/products/export')
+            
+            if (!response.ok) {
+                throw new Error('Failed to export products')
+            }
+
+            const blob = await response.blob()
+            const url = window.URL.createObjectURL(blob)
+            const a = document.createElement('a')
+            a.href = url
+            a.download = `products-${new Date().toISOString().split('T')[0]}.csv`
+            document.body.appendChild(a)
+            a.click()
+            window.URL.revokeObjectURL(url)
+            document.body.removeChild(a)
+            
+            toast.success('Products exported successfully!')
+        } catch (error) {
+            console.error('Export error:', error)
+            toast.error('Failed to export products: ' + error.message)
+        } finally {
+            setExporting(false)
+        }
+    }
+
+    const handleImport = async (e) => {
+        const file = e.target.files?.[0]
+        if (!file) return
+
+        if (!file.name.endsWith('.csv')) {
+            toast.error('Please select a CSV file')
+            return
+        }
+
+        try {
+            setImporting(true)
+            const formData = new FormData()
+            formData.append('file', file)
+
+            const response = await fetch('/api/admin/products/import', {
+                method: 'POST',
+                body: formData
+            })
+
+            const data = await response.json()
+
+            if (!response.ok) {
+                throw new Error(data.error || 'Failed to import products')
+            }
+
+            toast.success(`Successfully imported ${data.imported} products${data.failed > 0 ? `, ${data.failed} failed` : ''}`)
+            
+            // Refresh products list
+            fetchProducts(currentPage, appliedSearchTerm)
+            
+            // Reset file input
+            if (fileInputRef.current) {
+                fileInputRef.current.value = ''
+            }
+        } catch (error) {
+            console.error('Import error:', error)
+            toast.error('Failed to import products: ' + error.message)
+        } finally {
+            setImporting(false)
+        }
+    }
 
     const fetchProducts = useCallback(async (page = 1, search = '', limit = 10) => {
         try {
@@ -108,10 +182,37 @@ export default function ProductPage() {
                     <CardDescription>Manage your products</CardDescription>
                 </CardHeader>
                 <CardContent className="flex flex-col gap-4">
-                    <div className="flex flex-col gap-2">
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                         <Button variant="outline" size="sm" className="w-full" onClick={() => router.push('/admin/products/add')}>
-                            <PlusIcon className="w-4 h-4" /> Add Product
+                            <PlusIcon className="w-4 h-4 mr-2" /> Add Product
                         </Button>
+                        <Button 
+                            variant="outline" 
+                            size="sm" 
+                            className="w-full" 
+                            onClick={handleExport}
+                            disabled={exporting}
+                        >
+                            <DownloadIcon className="w-4 h-4 mr-2" /> 
+                            {exporting ? 'Exporting...' : 'Export CSV'}
+                        </Button>
+                        <Button 
+                            variant="outline" 
+                            size="sm" 
+                            className="w-full" 
+                            onClick={() => fileInputRef.current?.click()}
+                            disabled={importing}
+                        >
+                            <UploadIcon className="w-4 h-4 mr-2" /> 
+                            {importing ? 'Importing...' : 'Import CSV'}
+                        </Button>
+                        <input
+                            ref={fileInputRef}
+                            type="file"
+                            accept=".csv"
+                            onChange={handleImport}
+                            className="hidden"
+                        />
                     </div>
                     <div className="flex flex-col gap-2">
                         {/* Search and Filters */}
@@ -241,7 +342,7 @@ export default function ProductPage() {
                                                             <div className="grid grid-cols-1 gap-4">
                                                                 {/* Product Title */}
                                                                 <div className="text-center border-b pb-4">
-                                                                    <h1 className="text-3xl font-bold text-accent-foreground mb-2">{product.title}</h1>
+                                                                    <h1 className="text-3xl font-bold text-foreground mb-2">{product.title}</h1>
                                                                     <div className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-gray-100 text-muted-foreground">
                                                                         ID: {product.id}
                                                                     </div>
@@ -251,11 +352,11 @@ export default function ProductPage() {
                                                                 <div className="grid grid-cols-2 gap-4">
                                                                     <div className=" p-4 rounded-lg border border-gray-200">
                                                                         <div className="text-sm font-medium text-muted-foreground mb-1">Price</div>
-                                                                        <div className="text-2xl font-bold text-accent-foreground">${product.price}</div>
+                                                                        <div className="text-2xl font-bold text-foreground">${product.price}</div>
                                                                     </div>
                                                                     <div className=" p-4 rounded-lg border border-gray-200">
                                                                         <div className="text-sm font-medium text-muted-foreground mb-1">Category</div>
-                                                                        <div className="text-lg font-semibold text-accent-foreground capitalize flex flex-wrap gap-2">{product.category.map((category) => (<Badge key={category}>{category}</Badge>))}</div>
+                                                                        <div className="text-lg font-semibold text-foreground capitalize flex flex-wrap gap-2">{product.category.map((category) => (<Badge key={category}>{category}</Badge>))}</div>
                                                                     </div>
                                                                 </div>
                             
@@ -266,12 +367,12 @@ export default function ProductPage() {
                                                                         <div className={cn("text-lg font-semibold",
                                                                             product.stocks === 0 ? "text-red-600" : 
                                                                             product.stocks < 5 ? "text-orange-600" : 
-                                                                            "text-accent-foreground"
+                                                                            "text-foreground"
                                                                         )}>{product.stocks} units</div>
                                                                     </div>
                                                                     <div className=" p-4 rounded-lg border border-gray-200">
                                                                         <div className="text-sm font-medium text-muted-foreground mb-1">Views</div>
-                                                                        <div className="text-lg font-semibold text-accent-foreground">{product.views}</div>
+                                                                        <div className="text-lg font-semibold text-foreground">{product.views}</div>
                                                                     </div>
                                                                 </div>
                             

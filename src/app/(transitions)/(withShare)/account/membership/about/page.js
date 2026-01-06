@@ -5,17 +5,17 @@ import { Check, Gift, Truck, Clock, Ticket, Star, Sparkles, Crown, Zap } from "l
 
 export const metadata = {
   title: "Premium Membership Benefits | DepxTech 2.0",
-  description: "Join our exclusive membership program with free shipping, monthly gifts valued at $50, 24hr NYC delivery, and weekly surprise coupons. Starting at $14.99/month.",
-  keywords: "membership, premium benefits, free shipping, monthly gifts, fast delivery, exclusive coupons, subscription",
+  description: "Join our exclusive membership program with free shipping, monthly gifts valued at $50, 24hr NYC delivery, and weekly surprise offers. Starting at $14.99/month.",
+  keywords: "membership, premium benefits, free shipping, monthly gifts, fast delivery, exclusive offers, subscription",
   openGraph: {
     title: "Premium Membership Benefits | DepxTech 2.0",
-    description: "Unlock exclusive perks with free shipping, $50 monthly gifts, 24hr NYC delivery & weekly coupons",
+    description: "Unlock exclusive perks with free shipping, $50 monthly gifts, 24hr NYC delivery & weekly offers",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
     title: "Premium Membership Benefits | DepxTech 2.0",
-    description: "Unlock exclusive perks with free shipping, $50 monthly gifts, 24hr NYC delivery & weekly coupons",
+    description: "Unlock exclusive perks with free shipping, $50 monthly gifts, 24hr NYC delivery & weekly offers",
   }
 }
 
@@ -44,8 +44,8 @@ export default function AboutPage() {
     },
     {
       icon: <Ticket className="h-6 w-6" />,
-      title: "Surprise Weekly Coupons",
-      description: "Random high-value coupons every week",
+      title: "Surprise Weekly Offers",
+      description: "Random high-value offers every week",
       highlight: "$5-20 Value",
       gradient: "from-green-500/20 to-emerald-500/20"
     }

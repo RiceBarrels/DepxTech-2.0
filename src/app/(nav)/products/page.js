@@ -1,5 +1,6 @@
 import { Metadata } from 'next'
 import ProductsPageClient from './page.client'
+import { supabaseAdmin } from '@/lib/supabase-admin'
 
 const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://depxtech.com'
 
@@ -98,8 +99,62 @@ export async function generateMetadata({ searchParams }) {
   }
 }
 
+async function fetchProductsServer(search = '', page = 1, limit = 12) {
+  try {
+    let query = supabaseAdmin
+      .from('products')
+      .select('*', { count: 'exact' })
+
+    if (search) {
+      query = query.ilike('title', `%${search}%`)
+    }
+
+    // Only show in-stock products
+    query = query.gt('stocks', 0)
+
+    const { data: products, error, count } = await query
+      .order('created_at', { ascending: false })
+      .range((page - 1) * limit, page * limit - 1)
+    
+    if (error) {
+      console.error('Error fetching products:', error)
+      return { products: [], pagination: null }
+    }
+
+    const totalPages = Math.ceil((count || 0) / limit)
+
+    return {
+      products: products || [],
+      pagination: {
+        currentPage: page,
+        totalPages,
+        totalItems: count || 0,
+        limit,
+        hasNextPage: page < totalPages,
+        hasPrevPage: page > 1
+      }
+    }
+  } catch (error) {
+    console.error('Unexpected error:', error)
+    return { products: [], pagination: null }
+  }
+}
+
 export default async function ProductsPage({ searchParams }) {
   // Handle both Promise and direct object (Next.js 15 compatibility)
   const params = searchParams instanceof Promise ? await searchParams : searchParams
-  return <ProductsPageClient />
+  const search = params?.search || ''
+  const page = parseInt(params?.page || '1')
+  
+  // Fetch initial products on server for SEO
+  const initialData = await fetchProductsServer(search, page, 12)
+  
+  return (
+    <ProductsPageClient 
+      initialProducts={initialData.products}
+      initialPagination={initialData.pagination}
+      initialSearch={search}
+      initialPage={page}
+    />
+  )
 }

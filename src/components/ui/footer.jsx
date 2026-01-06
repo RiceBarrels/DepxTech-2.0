@@ -16,7 +16,7 @@ export function Footer(){
             <p className="text-sm text-muted-foreground">
                 DepxTech is a technology company that provides a range of products and services to the public.
             </p>
-            <Accordion type="single" collapsible className="w-full">
+            <Accordion type="single" collapsible className="w-full border-1">
                 <AccordionItem value="item-1" className="">
                     <AccordionTrigger className="">About DepxTech</AccordionTrigger>
                     <AccordionContent className="">
@@ -116,7 +116,7 @@ export function Footer(){
                     </AccordionContent>
                 </AccordionItem>
             </Accordion>
-            <small className="text-sm text-muted-foreground text-center py-4">Copyright © 2025 DepxTech. All rights reserved.</small>
+            <small className="text-sm text-muted-foreground text-center py-4">Copyright © {new Date().getFullYear()} DepxTech. All rights reserved.</small>
         </footer>
     )
 }

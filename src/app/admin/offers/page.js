@@ -1,12 +1,13 @@
 "use client"
 
 import { useTransitionRouter } from "@/components/ui/pageTransitions"
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
-import { ArrowLeftIcon, EditIcon, TrashIcon, PlusIcon, SearchIcon, TicketPercentIcon } from 'lucide-react'
+import { ArrowLeftIcon, EditIcon, TrashIcon, PlusIcon, SearchIcon, TicketPercentIcon, DownloadIcon, UploadIcon } from 'lucide-react'
+import { toast } from 'sonner'
 
 export default function OffersManagePage() {
     const router = useTransitionRouter()
@@ -16,6 +17,9 @@ export default function OffersManagePage() {
     const [searchTerm, setSearchTerm] = useState('')
     const [filteredOffers, setFilteredOffers] = useState([])
     const [deleting, setDeleting] = useState(null)
+    const [exporting, setExporting] = useState(false)
+    const [importing, setImporting] = useState(false)
+    const fileInputRef = useRef(null)
 
     // Fetch offers
     useEffect(() => {
@@ -54,6 +58,81 @@ export default function OffersManagePage() {
             setFilteredOffers(filtered)
         }
     }, [searchTerm, offers])
+
+    const handleExport = async () => {
+        try {
+            setExporting(true)
+            const response = await fetch('/api/admin/offers/export')
+            
+            if (!response.ok) {
+                throw new Error('Failed to export offers')
+            }
+
+            const blob = await response.blob()
+            const url = window.URL.createObjectURL(blob)
+            const a = document.createElement('a')
+            a.href = url
+            a.download = `offers-${new Date().toISOString().split('T')[0]}.csv`
+            document.body.appendChild(a)
+            a.click()
+            window.URL.revokeObjectURL(url)
+            document.body.removeChild(a)
+            
+            toast.success('Offers exported successfully!')
+        } catch (error) {
+            console.error('Export error:', error)
+            toast.error('Failed to export offers: ' + error.message)
+        } finally {
+            setExporting(false)
+        }
+    }
+
+    const handleImport = async (e) => {
+        const file = e.target.files?.[0]
+        if (!file) return
+
+        if (!file.name.endsWith('.csv')) {
+            toast.error('Please select a CSV file')
+            return
+        }
+
+        try {
+            setImporting(true)
+            const formData = new FormData()
+            formData.append('file', file)
+
+            const response = await fetch('/api/admin/offers/import', {
+                method: 'POST',
+                body: formData
+            })
+
+            const data = await response.json()
+
+            if (!response.ok) {
+                throw new Error(data.error || 'Failed to import offers')
+            }
+
+            toast.success(`Successfully imported ${data.imported} offers${data.failed > 0 ? `, ${data.failed} failed` : ''}`)
+            
+            // Refresh offers list
+            const fetchResponse = await fetch('/api/admin/offers')
+            const fetchData = await fetchResponse.json()
+            if (fetchResponse.ok) {
+                setOffers(fetchData.offers || [])
+                setFilteredOffers(fetchData.offers || [])
+            }
+            
+            // Reset file input
+            if (fileInputRef.current) {
+                fileInputRef.current.value = ''
+            }
+        } catch (error) {
+            console.error('Import error:', error)
+            toast.error('Failed to import offers: ' + error.message)
+        } finally {
+            setImporting(false)
+        }
+    }
 
     const handleDelete = async (offerId) => {
         if (!confirm('Are you sure you want to delete this offer?')) {
@@ -157,10 +236,37 @@ export default function OffersManagePage() {
                     </Button>
                     <h1 className="text-2xl font-bold">Manage Offers</h1>
                 </div>
-                <Button onClick={() => router.push('/admin/offers/add')} className="bg-blue-600 hover:bg-blue-700">
-                    <PlusIcon className="w-4 h-4 mr-2" />
-                    Add Offer
-                </Button>
+                <div className="flex gap-2">
+                    <Button 
+                        variant="outline" 
+                        size="sm" 
+                        onClick={handleExport}
+                        disabled={exporting}
+                    >
+                        <DownloadIcon className="w-4 h-4 mr-2" /> 
+                        {exporting ? 'Exporting...' : 'Export CSV'}
+                    </Button>
+                    <Button 
+                        variant="outline" 
+                        size="sm" 
+                        onClick={() => fileInputRef.current?.click()}
+                        disabled={importing}
+                    >
+                        <UploadIcon className="w-4 h-4 mr-2" /> 
+                        {importing ? 'Importing...' : 'Import CSV'}
+                    </Button>
+                    <Button onClick={() => router.push('/admin/offers/add')} className="bg-blue-600 hover:bg-blue-700">
+                        <PlusIcon className="w-4 h-4 mr-2" />
+                        Add Offer
+                    </Button>
+                </div>
+                <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept=".csv"
+                    onChange={handleImport}
+                    className="hidden"
+                />
             </div>
 
             {/* Search and Stats */}

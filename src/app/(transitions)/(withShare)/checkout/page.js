@@ -16,7 +16,10 @@ import {
     Loader2,
     CheckCircle,
     AlertCircle,
-    ZapIcon
+    ZapIcon,
+    TicketPercentIcon,
+    XIcon,
+    PlusIcon
 } from "lucide-react"
 import Image from "next/image"
 import { toast } from "sonner"
@@ -201,7 +204,7 @@ function ExpressCheckout({ cartTotal, cartItems, onPaymentSuccess }) {
 }
 
 // Payment Form Component
-function CheckoutForm({ cartTotal, cartItems, onPaymentSuccess }) {
+function CheckoutForm({ cartTotal, cartItems, onPaymentSuccess, appliedOffers = [], offerDiscounts = {} }) {
     const stripe = useStripe()
     const elements = useElements()
     const { user, clearCart } = useAuth()
@@ -463,7 +466,27 @@ export default function CheckoutPage() {
     const [loading, setLoading] = useState(true)
     const [paymentSuccess, setPaymentSuccess] = useState(false)
     const [orderDetails, setOrderDetails] = useState(null)
+    const [appliedOffers, setAppliedOffers] = useState([])
+    const [offerDiscounts, setOfferDiscounts] = useState({})
+    const [promoCode, setPromoCode] = useState('')
+    const [applyingPromo, setApplyingPromo] = useState(false)
+    const [validatingOffers, setValidatingOffers] = useState(false)
     const router = useTransitionRouter()
+
+    useEffect(() => {
+        // Load applied offers from localStorage
+        if (typeof window !== 'undefined') {
+            try {
+                const saved = localStorage.getItem('appliedOffers')
+                if (saved) {
+                    const offers = JSON.parse(saved)
+                    setAppliedOffers(offers)
+                }
+            } catch (error) {
+                console.error('Error loading applied offers:', error)
+            }
+        }
+    }, [])
 
     useEffect(() => {
         if (user) {
@@ -472,6 +495,15 @@ export default function CheckoutPage() {
             setLoading(false)
         }
     }, [user])
+
+    // Validate and calculate discounts for applied offers
+    useEffect(() => {
+        if (appliedOffers.length > 0 && products.length > 0) {
+            validateOffers()
+        } else {
+            setOfferDiscounts({})
+        }
+    }, [appliedOffers, products])
 
     const fetchCartData = async () => {
         setLoading(true)
@@ -505,10 +537,134 @@ export default function CheckoutPage() {
         }
     }
 
-    const calculateTotal = () => {
+    const validateOffers = async () => {
+        if (appliedOffers.length === 0 || products.length === 0) return
+        
+        setValidatingOffers(true)
+        const cartTotal = calculateSubtotal()
+        const cartItems = products.map(p => ({
+            id: p.id,
+            category: p.category,
+            price: p.price
+        }))
+
+        const discountMap = {}
+        
+        for (const offer of appliedOffers) {
+            try {
+                const response = await fetch('/api/offers/validate', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        offerCode: offer.code,
+                        cartTotal: cartTotal,
+                        cartItems: cartItems
+                    })
+                })
+
+                const data = await response.json()
+                
+                if (data.success) {
+                    discountMap[offer.id] = {
+                        discount: data.discount,
+                        offer: offer
+                    }
+                } else {
+                    // Remove invalid offer
+                    removeAppliedOffer(offer.id)
+                    toast.error(`Offer "${offer.title}" is no longer valid: ${data.error}`)
+                }
+            } catch (error) {
+                console.error('Error validating offer:', error)
+            }
+        }
+        
+        setOfferDiscounts(discountMap)
+        setValidatingOffers(false)
+    }
+
+    const applyPromoCode = async () => {
+        if (!promoCode.trim()) {
+            toast.error('Please enter a promo code')
+            return
+        }
+
+        setApplyingPromo(true)
+        try {
+            const cartTotal = calculateSubtotal()
+            const cartItems = products.map(p => ({
+                id: p.id,
+                category: p.category,
+                price: p.price
+            }))
+
+            const response = await fetch('/api/offers/validate', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    offerCode: promoCode.trim(),
+                    cartTotal: cartTotal,
+                    cartItems: cartItems
+                })
+            })
+
+            const data = await response.json()
+
+            if (data.success) {
+                // Check if already applied
+                if (appliedOffers.find(o => o.id === data.offer.id)) {
+                    toast.info('This offer is already applied')
+                } else {
+                    const newOffers = [...appliedOffers, data.offer]
+                    setAppliedOffers(newOffers)
+                    
+                    if (typeof window !== 'undefined') {
+                        localStorage.setItem('appliedOffers', JSON.stringify(newOffers))
+                    }
+                    
+                    toast.success('Promo code applied successfully!')
+                    setPromoCode('')
+                }
+            } else {
+                toast.error(data.error || 'Invalid promo code')
+            }
+        } catch (error) {
+            console.error('Error applying promo code:', error)
+            toast.error('Failed to apply promo code')
+        } finally {
+            setApplyingPromo(false)
+        }
+    }
+
+    const removeAppliedOffer = (offerId) => {
+        const newOffers = appliedOffers.filter(offer => offer.id !== offerId)
+        setAppliedOffers(newOffers)
+        
+        if (typeof window !== 'undefined') {
+            localStorage.setItem('appliedOffers', JSON.stringify(newOffers))
+        }
+    }
+
+    const calculateSubtotal = () => {
         return products.reduce((total, product) => {
             return total + (product.price * product.cartAmount)
         }, 0)
+    }
+
+    const calculateTotalDiscount = () => {
+        return Object.values(offerDiscounts).reduce((total, offerData) => {
+            return total + (offerData.discount || 0)
+        }, 0)
+    }
+
+    const calculateTotal = () => {
+        const subtotal = calculateSubtotal()
+        const discount = calculateTotalDiscount()
+        return Math.max(0, subtotal - discount)
     }
 
     const formatPrice = (price) => {
@@ -661,6 +817,93 @@ export default function CheckoutPage() {
                             ))}
                             
                             <Separator />
+
+                            {/* Promo Code Input */}
+                            <div className="space-y-2">
+                                <Label className="text-sm font-medium">Promo Code</Label>
+                                <div className="flex gap-2">
+                                    <Input
+                                        placeholder="Enter promo code"
+                                        value={promoCode}
+                                        onChange={(e) => setPromoCode(e.target.value.toUpperCase())}
+                                        onKeyPress={(e) => e.key === 'Enter' && applyPromoCode()}
+                                        className="flex-1"
+                                    />
+                                    <Button
+                                        onClick={applyPromoCode}
+                                        disabled={applyingPromo || !promoCode.trim()}
+                                        size="icon"
+                                    >
+                                        {applyingPromo ? (
+                                            <Loader2 className="w-4 h-4 animate-spin" />
+                                        ) : (
+                                            <PlusIcon className="w-4 h-4" />
+                                        )}
+                                    </Button>
+                                </div>
+                            </div>
+
+                            {/* Applied Offers */}
+                            {appliedOffers.length > 0 && (
+                                <>
+                                    <Separator />
+                                    <div className="space-y-2">
+                                        <p className="text-sm font-medium text-muted-foreground">Applied Offers:</p>
+                                        {appliedOffers.map((offer) => {
+                                            const offerData = offerDiscounts[offer.id]
+                                            return (
+                                                <div key={offer.id} className="flex items-center justify-between p-2 bg-green-50 rounded-lg border border-green-200">
+                                                    <div className="flex-1 min-w-0">
+                                                        <div className="flex items-center gap-2">
+                                                            <TicketPercentIcon className="w-4 h-4 text-green-600 flex-shrink-0" />
+                                                            <div className="flex-1 min-w-0">
+                                                                <p className="text-xs font-medium text-green-800 truncate">{offer.title}</p>
+                                                                {offer.code && (
+                                                                    <p className="text-xs text-green-600 font-mono">{offer.code}</p>
+                                                                )}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div className="flex items-center gap-2">
+                                                        {validatingOffers ? (
+                                                            <Loader2 className="w-3 h-3 animate-spin text-green-600" />
+                                                        ) : offerData ? (
+                                                            <span className="text-sm font-semibold text-green-700">
+                                                                -{formatPrice(offerData.discount)}
+                                                            </span>
+                                                        ) : null}
+                                                        <Button
+                                                            variant="ghost"
+                                                            size="sm"
+                                                            className="h-6 w-6 p-0 text-green-600 hover:text-green-800"
+                                                            onClick={() => removeAppliedOffer(offer.id)}
+                                                        >
+                                                            <XIcon className="w-3 h-3" />
+                                                        </Button>
+                                                    </div>
+                                                </div>
+                                            )
+                                        })}
+                                    </div>
+                                </>
+                            )}
+                            
+                            <Separator />
+                            
+                            <div className="space-y-2">
+                                <div className="flex justify-between text-sm">
+                                    <span>Subtotal</span>
+                                    <span>{formatPrice(calculateSubtotal())}</span>
+                                </div>
+                                {calculateTotalDiscount() > 0 && (
+                                    <div className="flex justify-between text-sm text-green-600">
+                                        <span>Discount</span>
+                                        <span>-{formatPrice(calculateTotalDiscount())}</span>
+                                    </div>
+                                )}
+                            </div>
+                            
+                            <Separator />
                             
                             <div className="flex justify-between items-center font-semibold text-lg">
                                 <span>Total</span>
@@ -685,6 +928,8 @@ export default function CheckoutPage() {
                                     cartTotal={calculateTotal()}
                                     cartItems={cartItems}
                                     onPaymentSuccess={handlePaymentSuccess}
+                                    appliedOffers={appliedOffers}
+                                    offerDiscounts={offerDiscounts}
                                 />
                             </Elements>
                         </CardContent>

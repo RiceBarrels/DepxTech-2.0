@@ -61,7 +61,7 @@ export default function AccountPage() {
     <div className="min-h-screen py-12 px-4 sm:px-6 lg:px-8">
       <div className="flex justify-between items-center mb-12">
         <div>
-          <h1 className="text-3xl font-bold text-accent-foreground">My Account</h1>
+          <h1 className="text-3xl font-bold text-foreground">My Account</h1>
           <p className="text-muted-foreground">
             Welcome back, {profileData?.full_name || user?.email || 'User'}
           </p>
@@ -80,7 +80,7 @@ export default function AccountPage() {
           
           {/* user name and email */}
           <div className='flex flex-col gap-1 items-center'>
-            <h1 className='text-2xl font-bold text-accent-foreground'>{profileData?.full_name || user?.email || 'User'}</h1>
+            <h1 className='text-2xl font-bold text-foreground'>{profileData?.full_name || user?.email || 'User'}</h1>
             <p className='text-muted-foreground'>{profileData?.email || user?.email || 'User'}</p>
           </div>
 
@@ -90,7 +90,7 @@ export default function AccountPage() {
           </Button>
         </div>
 
-        <div className='flex justify-between items-center bg-accent/25 rounded-full overflow-hidden h-20'>
+        <div className='flex justify-between items-center bg-accent/25 rounded-full overflow-hidden h-20 border-1'>
           <Button variant="ghost" className="flex flex-col gap-1 items-center h-20 rounded-none flex-5" onClick={() => navigateWithTransition('/account/orders')}>
             <Package2Icon strokeWidth={1.1} className='size-5'/>
             <span className='text-xs font-light'>Orders</span>
@@ -105,9 +105,9 @@ export default function AccountPage() {
 
           <div className='h-14'><Separator orientation="vertical"/></div>
 
-          <Button variant="ghost" className="flex flex-col gap-1 items-center h-20 rounded-none flex-4" onClick={() => navigateWithTransition('/account/coupons')}>
+          <Button variant="ghost" className="flex flex-col gap-1 items-center h-20 rounded-none flex-4" onClick={() => navigateWithTransition('/offers')}>
             <TicketPercentIcon strokeWidth={1.1} className='size-5'/>
-            <span className='text-xs font-light'>Coupons</span>
+            <span className='text-xs font-light'>Offers</span>
           </Button>
 
           <div className='h-14'><Separator orientation="vertical"/></div>
@@ -117,7 +117,7 @@ export default function AccountPage() {
             <span className='text-xs font-light'>Settings</span>
           </Button>
         </div>
-        <div className='flex flex-col justify-center items-center bg-accent/25 light:bg-accent rounded-4xl overflow-hidden'>
+        <div className='flex flex-col justify-center items-center bg-accent/25 light:bg-accent rounded-4xl overflow-hidden border-1'>
           <Button variant="ghost" className='w-full p-8 px-8 justify-start gap-4 rounded-none' onClick={() => navigateWithTransition('/account/inbox')}>
             <div><InboxIcon strokeWidth={1.1} className='size-5'/></div>
             <span className='font-normal text-base flex-1 flex justify-start items-center'>Inbox</span>
@@ -131,7 +131,7 @@ export default function AccountPage() {
           </Button>
         </div>
 
-        <div className='flex flex-col justify-center items-center bg-accent/25 light:bg-accent rounded-4xl overflow-hidden'>
+        <div className='flex flex-col justify-center items-center bg-accent/25 light:bg-accent rounded-4xl overflow-hidden border-1'>
           <Button variant="ghost" className='w-full p-8 px-8 justify-start gap-4 rounded-none items-center text-destructive hover:text-destructive-foreground' onClick={signOut}>
             <div><LogOutIcon strokeWidth={1.1} className='size-5'/></div>
             <span className='font-normal text-base flex-1 flex justify-start items-center'>Sign out</span>

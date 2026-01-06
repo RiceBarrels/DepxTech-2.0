@@ -11,20 +11,25 @@ import { useSearchParams, usePathname } from "next/navigation"
 import { TransitionLink, useTransitionRouter } from "@/components/ui/pageTransitions"
 import { ItemListStructuredData } from "@/components/seo/StructuredData"
 
-export default function ProductsPageClient() {
+export default function ProductsPageClient({ 
+    initialProducts = [], 
+    initialPagination = null,
+    initialSearch = '',
+    initialPage = 1
+}) {
     const router = useTransitionRouter()
     const pathname = usePathname()
     const searchParams = useSearchParams()
     
-    // Initialize search from URL params
-    const [search, setSearch] = useState(searchParams.get('search') || "")
+    // Initialize search from URL params or props
+    const [search, setSearch] = useState(initialSearch || searchParams.get('search') || "")
     const [isFocused, setIsFocused] = useState(false)
     const [isSearching, setIsSearching] = useState(false)
-    const [products, setProducts] = useState([])
+    const [products, setProducts] = useState(initialProducts)
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState(null)
-    const [pagination, setPagination] = useState(null)
-    const [page, setPage] = useState(parseInt(searchParams.get('page')) || 1)
+    const [pagination, setPagination] = useState(initialPagination)
+    const [page, setPage] = useState(initialPage)
 
     // Function to update URL with search params
     const updateURL = useCallback((searchTerm, pageNum = 1) => {
@@ -76,15 +81,21 @@ export default function ProductsPageClient() {
     const isUpdatingURL = useRef(false)
     const prevSearchParams = useRef(searchParams.toString())
 
-    // Load initial products on mount
+    // Only fetch if we don't have initial data (client-side navigation)
     useEffect(() => {
-        const initialSearch = searchParams.get('search') || ""
-        const initialPage = parseInt(searchParams.get('page')) || 1
-        setSearch(initialSearch)
-        setPage(initialPage)
-        fetchProducts(initialSearch, initialPage)
+        const urlSearch = searchParams.get('search') || ""
+        const urlPage = parseInt(searchParams.get('page')) || 1
+        
+        // Only fetch if URL params differ from initial props (client-side navigation)
+        // This handles cases where user navigates via client-side routing
+        if (urlSearch !== initialSearch || urlPage !== initialPage) {
+            setSearch(urlSearch)
+            setPage(urlPage)
+            fetchProducts(urlSearch, urlPage)
+        }
         prevSearchParams.current = searchParams.toString()
-    }, []) // Only run on mount
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []) // Only run on mount - initial data already provided by server
 
     // Sync state with URL params when they change externally (e.g., browser back/forward)
     useEffect(() => {

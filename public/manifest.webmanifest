@@ -1,0 +1,48 @@
+{
+  "name": "DepxTech - Premium Electronics Store",
+  "short_name": "DepxTech",
+  "description": "Latest tech, best prices, premium quality electronics. Discover smartphones, laptops, headphones, gaming gear, smart home devices and accessories. Trade in your old devices for credit.",
+  "id": "/",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#ffffff",
+  "theme_color": "#0f172a",
+  "lang": "en",
+  "dir": "ltr",
+  "categories": ["shopping"],
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "32x32",
+      "type": "image/x-icon"
+    },
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Shop products",
+      "url": "/products",
+      "description": "Browse all products"
+    },
+    {
+      "name": "Trade-in",
+      "url": "/trade",
+      "description": "Start a device trade-in"
+    },
+    {
+      "name": "My account",
+      "url": "/account",
+      "description": "View your orders and settings"
+    }
+  ],
+  "prefer_related_applications": false
+}
+
+

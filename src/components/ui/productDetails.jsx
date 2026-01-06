@@ -76,7 +76,7 @@ export default function ProductDetails({
                 {/* Product Information */}
                 <div className="space-y-6">
                     <div className='flex flex-col py-8'>
-                        <h1 className="text-3xl font-bold text-accent-foreground mb-2">{title}</h1>
+                        <h1 className="text-3xl font-bold text-foreground mb-2">{title}</h1>
                         
                         {/* Price and Stock */}
                         <div className="flex items-center gap-4 mb-4">

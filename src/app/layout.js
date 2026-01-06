@@ -9,6 +9,8 @@ import { ThemeProvider } from "@/components/theme-provider"
 import { OrganizationStructuredData, WebSiteStructuredData } from "@/components/seo/StructuredData"
 import { DisableLinkContextMenu } from "@/components/ui/disableLinkContextMenu"
 import Nav from "@/components/ui/nav";
+import MobileSetupGuard from "@/components/mobile-setup-guard";
+import PasswordWall from "@/components/password-wall";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -104,19 +106,23 @@ export default function RootLayout({ children }) {
         <body
           className={`${geistSans.variable} ${geistMono.variable} antialiased select-none`}
         >
-          <AuthProvider>
-            <ThemeProvider
-              attribute="class"
-              defaultTheme="system"
-              enableSystem
-            >
-              <DisableLinkContextMenu />
-              {children}
-              <WindowsLayer />
-              <AdminUI/>
-              <Toaster />
-            </ThemeProvider>
-          </AuthProvider>
+          <PasswordWall>
+            <AuthProvider>
+              <ThemeProvider
+                attribute="class"
+                defaultTheme="system"
+                enableSystem
+              >
+                <DisableLinkContextMenu />
+                <MobileSetupGuard>
+                  {children}
+                </MobileSetupGuard>
+                <WindowsLayer />
+                <AdminUI/>
+                <Toaster />
+              </ThemeProvider>
+            </AuthProvider>
+          </PasswordWall>
         </body>
       </html>
     </ViewTransitions>

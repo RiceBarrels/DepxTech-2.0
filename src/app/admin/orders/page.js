@@ -389,7 +389,7 @@ export default function AdminOrders() {
       <div className="max-w-7xl mx-auto">
         <div className="flex justify-between items-center mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-accent-foreground">Orders & Transactions</h1>
+            <h1 className="text-3xl font-bold text-foreground">Orders & Transactions</h1>
             <p className="text-muted-foreground">Manage customer orders and transaction data</p>
           </div>
           <Button onClick={fetchTransactions} disabled={transactionsLoading}>
