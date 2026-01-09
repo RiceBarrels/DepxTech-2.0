@@ -1,7 +1,12 @@
 import { createClient } from '@supabase/supabase-js'
 
-const supabaseUrl = 'https://iyumymzfuppeqsuyjttk.supabase.co'
-const supabaseServiceRole = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml5dW15bXpmdXBwZXFzdXlqdHRrIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1MTIyNDE4MywiZXhwIjoyMDY2ODAwMTgzfQ.Yc8isvN-Ly5QFq3BEFEIidt2SHlMZvQndJpagOdGsfw'
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+const supabaseServiceRole = process.env.SUPABASE_SERVICE_ROLE
+
+if (!supabaseUrl || !supabaseServiceRole) {
+  console.error('Missing environment variables: NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE are required')
+  process.exit(1)
+}
 
 const supabase = createClient(supabaseUrl, supabaseServiceRole, {
   auth: {
