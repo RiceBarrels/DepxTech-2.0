@@ -4,7 +4,7 @@
 @custom-variant dark (&:is(.dark *));
 
 /* blue theme */
-/* :root {
+:root {
   --background: oklch(0.9818 0.0054 95.0986);
   --foreground: oklch(0.3438 0.0269 95.7226);
   --card: oklch(0.9818 0.0054 95.0986);
@@ -151,10 +151,10 @@
   --shadow-lg: var(--shadow-lg);
   --shadow-xl: var(--shadow-xl);
   --shadow-2xl: var(--shadow-2xl);
-} */
+}
 
 /* retro theme */
-:root {
+/* :root {
   --background: rgb(255, 255, 255);
   --foreground: rgb(0, 0, 0);
   --card: rgb(255, 255, 255);
@@ -313,7 +313,7 @@
   --shadow-lg: var(--shadow-lg);
   --shadow-xl: var(--shadow-xl);
   --shadow-2xl: var(--shadow-2xl);
-}
+} */
 @layer base {
   * {
     @apply border-border outline-ring/50;
