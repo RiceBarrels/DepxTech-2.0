@@ -8,9 +8,17 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Separator } from "@/components/ui/separator"
 import { Badge } from "@/components/ui/badge"
-import { 
-    ShoppingCartIcon, 
-    CreditCardIcon, 
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select"
+import {
+    ShoppingCartIcon,
+    CreditCardIcon,
     LockIcon,
     ArrowLeftIcon,
     Loader2,
@@ -19,7 +27,10 @@ import {
     ZapIcon,
     TicketPercentIcon,
     XIcon,
-    PlusIcon
+    PlusIcon,
+    TruckIcon,
+    MapPinIcon,
+    PackageIcon
 } from "lucide-react"
 import Image from "next/image"
 import { toast } from "sonner"
@@ -36,6 +47,452 @@ import {
 
 // Initialize Stripe
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY)
+
+// US States for address form
+const US_STATES = [
+    { value: 'AL', label: 'Alabama' }, { value: 'AK', label: 'Alaska' },
+    { value: 'AZ', label: 'Arizona' }, { value: 'AR', label: 'Arkansas' },
+    { value: 'CA', label: 'California' }, { value: 'CO', label: 'Colorado' },
+    { value: 'CT', label: 'Connecticut' }, { value: 'DE', label: 'Delaware' },
+    { value: 'FL', label: 'Florida' }, { value: 'GA', label: 'Georgia' },
+    { value: 'HI', label: 'Hawaii' }, { value: 'ID', label: 'Idaho' },
+    { value: 'IL', label: 'Illinois' }, { value: 'IN', label: 'Indiana' },
+    { value: 'IA', label: 'Iowa' }, { value: 'KS', label: 'Kansas' },
+    { value: 'KY', label: 'Kentucky' }, { value: 'LA', label: 'Louisiana' },
+    { value: 'ME', label: 'Maine' }, { value: 'MD', label: 'Maryland' },
+    { value: 'MA', label: 'Massachusetts' }, { value: 'MI', label: 'Michigan' },
+    { value: 'MN', label: 'Minnesota' }, { value: 'MS', label: 'Mississippi' },
+    { value: 'MO', label: 'Missouri' }, { value: 'MT', label: 'Montana' },
+    { value: 'NE', label: 'Nebraska' }, { value: 'NV', label: 'Nevada' },
+    { value: 'NH', label: 'New Hampshire' }, { value: 'NJ', label: 'New Jersey' },
+    { value: 'NM', label: 'New Mexico' }, { value: 'NY', label: 'New York' },
+    { value: 'NC', label: 'North Carolina' }, { value: 'ND', label: 'North Dakota' },
+    { value: 'OH', label: 'Ohio' }, { value: 'OK', label: 'Oklahoma' },
+    { value: 'OR', label: 'Oregon' }, { value: 'PA', label: 'Pennsylvania' },
+    { value: 'RI', label: 'Rhode Island' }, { value: 'SC', label: 'South Carolina' },
+    { value: 'SD', label: 'South Dakota' }, { value: 'TN', label: 'Tennessee' },
+    { value: 'TX', label: 'Texas' }, { value: 'UT', label: 'Utah' },
+    { value: 'VT', label: 'Vermont' }, { value: 'VA', label: 'Virginia' },
+    { value: 'WA', label: 'Washington' }, { value: 'WV', label: 'West Virginia' },
+    { value: 'WI', label: 'Wisconsin' }, { value: 'WY', label: 'Wyoming' },
+]
+
+// Shipping Section Component
+function ShippingSection({
+    user,
+    shippingAddress,
+    setShippingAddress,
+    shippingRates,
+    setShippingRates,
+    selectedRate,
+    setSelectedRate,
+    cartItems,
+    onAddressValidated
+}) {
+    const [savedAddresses, setSavedAddresses] = useState([])
+    const [addressMode, setAddressMode] = useState('saved') // 'saved' or 'new'
+    const [loadingAddresses, setLoadingAddresses] = useState(true)
+    const [loadingRates, setLoadingRates] = useState(false)
+    const [validatingAddress, setValidatingAddress] = useState(false)
+    const [addressValidation, setAddressValidation] = useState(null)
+    const [newAddress, setNewAddress] = useState({
+        full_name: user?.user_metadata?.full_name || '',
+        address_line_1: '',
+        address_line_2: '',
+        city: '',
+        state: '',
+        postal_code: '',
+        country: 'US',
+        phone: ''
+    })
+
+    // Fetch saved addresses
+    useEffect(() => {
+        const fetchAddresses = async () => {
+            try {
+                const response = await fetch('/api/addresses')
+                const data = await response.json()
+                if (data.success && data.addresses?.length > 0) {
+                    setSavedAddresses(data.addresses)
+                    // Auto-select default address
+                    const defaultAddr = data.addresses.find(a => a.is_default) || data.addresses[0]
+                    if (defaultAddr) {
+                        setShippingAddress(defaultAddr)
+                        setAddressMode('saved')
+                    }
+                } else {
+                    setAddressMode('new')
+                }
+            } catch (error) {
+                console.error('Error fetching addresses:', error)
+                setAddressMode('new')
+            } finally {
+                setLoadingAddresses(false)
+            }
+        }
+        fetchAddresses()
+    }, [])
+
+    // Fetch shipping rates when address changes
+    useEffect(() => {
+        const fetchRates = async () => {
+            const address = addressMode === 'saved' ? shippingAddress : newAddress
+            if (!address?.address_line_1 || !address?.city || !address?.state || !address?.postal_code) {
+                return
+            }
+
+            setLoadingRates(true)
+            setShippingRates([])
+            setSelectedRate(null)
+
+            try {
+                const response = await fetch('/api/shipping/rates', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        toAddress: address,
+                        cartItems: cartItems
+                    })
+                })
+
+                const data = await response.json()
+                if (data.success && data.rates?.length > 0) {
+                    setShippingRates(data.rates)
+                    // Auto-select cheapest rate
+                    setSelectedRate(data.rates[0])
+                    onAddressValidated(true)
+                } else {
+                    toast.error(data.error || 'No shipping rates available for this address')
+                    onAddressValidated(false)
+                }
+            } catch (error) {
+                console.error('Error fetching shipping rates:', error)
+                toast.error('Failed to fetch shipping rates')
+                onAddressValidated(false)
+            } finally {
+                setLoadingRates(false)
+            }
+        }
+
+        // Debounce rate fetching
+        const timeoutId = setTimeout(fetchRates, 500)
+        return () => clearTimeout(timeoutId)
+    }, [shippingAddress, newAddress, addressMode, cartItems])
+
+    const validateAddress = async () => {
+        const address = addressMode === 'saved' ? shippingAddress : newAddress
+        if (!address?.address_line_1 || !address?.city || !address?.state || !address?.postal_code) {
+            toast.error('Please fill in all required address fields')
+            return
+        }
+
+        setValidatingAddress(true)
+        try {
+            const response = await fetch('/api/shipping/validate-address', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ address })
+            })
+
+            const data = await response.json()
+            setAddressValidation(data)
+
+            if (data.is_valid) {
+                toast.success('Address verified successfully!')
+            } else {
+                toast.warning('Address may have issues. Please verify.')
+            }
+        } catch (error) {
+            console.error('Error validating address:', error)
+            toast.error('Failed to validate address')
+        } finally {
+            setValidatingAddress(false)
+        }
+    }
+
+    const handleNewAddressChange = (field, value) => {
+        setNewAddress(prev => ({ ...prev, [field]: value }))
+        setAddressValidation(null)
+        if (addressMode === 'new') {
+            setShippingAddress({ ...newAddress, [field]: value })
+        }
+    }
+
+    const handleSavedAddressSelect = (addressId) => {
+        const selected = savedAddresses.find(a => a.id === addressId)
+        if (selected) {
+            setShippingAddress(selected)
+            setAddressValidation(null)
+        }
+    }
+
+    if (loadingAddresses) {
+        return (
+            <div className="flex items-center justify-center py-8">
+                <Loader2 className="w-6 h-6 animate-spin" />
+            </div>
+        )
+    }
+
+    return (
+        <div className="space-y-6">
+            {/* Address Selection */}
+            <div className="space-y-4">
+                <div className="flex items-center gap-2">
+                    <MapPinIcon className="w-5 h-5 text-blue-600" />
+                    <h3 className="text-lg font-semibold">Shipping Address</h3>
+                </div>
+
+                {savedAddresses.length > 0 && (
+                    <div className="flex gap-2 mb-4">
+                        <Button
+                            variant={addressMode === 'saved' ? 'default' : 'outline'}
+                            size="sm"
+                            onClick={() => setAddressMode('saved')}
+                        >
+                            Saved Addresses
+                        </Button>
+                        <Button
+                            variant={addressMode === 'new' ? 'default' : 'outline'}
+                            size="sm"
+                            onClick={() => {
+                                setAddressMode('new')
+                                setShippingAddress(newAddress)
+                            }}
+                        >
+                            New Address
+                        </Button>
+                    </div>
+                )}
+
+                {addressMode === 'saved' && savedAddresses.length > 0 ? (
+                    <RadioGroup
+                        value={shippingAddress?.id}
+                        onValueChange={handleSavedAddressSelect}
+                        className="space-y-2"
+                    >
+                        {savedAddresses.map((address) => (
+                            <div
+                                key={address.id}
+                                className={`flex items-start gap-3 p-3 border rounded-lg cursor-pointer transition-colors ${
+                                    shippingAddress?.id === address.id ? 'border-blue-500 bg-blue-50' : 'hover:bg-gray-50'
+                                }`}
+                                onClick={() => handleSavedAddressSelect(address.id)}
+                            >
+                                <RadioGroupItem value={address.id} id={address.id} />
+                                <div className="flex-1">
+                                    <div className="flex items-center gap-2">
+                                        <span className="font-medium">{address.full_name}</span>
+                                        {address.is_default && (
+                                            <Badge variant="secondary" className="text-xs">Default</Badge>
+                                        )}
+                                    </div>
+                                    <p className="text-sm text-muted-foreground">
+                                        {address.address_line_1}
+                                        {address.address_line_2 && `, ${address.address_line_2}`}
+                                    </p>
+                                    <p className="text-sm text-muted-foreground">
+                                        {address.city}, {address.state} {address.postal_code}
+                                    </p>
+                                </div>
+                            </div>
+                        ))}
+                    </RadioGroup>
+                ) : (
+                    <div className="space-y-4">
+                        <div>
+                            <Label htmlFor="ship_name">Full Name</Label>
+                            <Input
+                                id="ship_name"
+                                value={newAddress.full_name}
+                                onChange={(e) => handleNewAddressChange('full_name', e.target.value)}
+                                placeholder="John Doe"
+                            />
+                        </div>
+                        <div>
+                            <Label htmlFor="ship_address1">Address Line 1</Label>
+                            <Input
+                                id="ship_address1"
+                                value={newAddress.address_line_1}
+                                onChange={(e) => handleNewAddressChange('address_line_1', e.target.value)}
+                                placeholder="123 Main St"
+                            />
+                        </div>
+                        <div>
+                            <Label htmlFor="ship_address2">Address Line 2 (Optional)</Label>
+                            <Input
+                                id="ship_address2"
+                                value={newAddress.address_line_2}
+                                onChange={(e) => handleNewAddressChange('address_line_2', e.target.value)}
+                                placeholder="Apt, Suite, Unit, etc."
+                            />
+                        </div>
+                        <div className="grid grid-cols-2 gap-4">
+                            <div>
+                                <Label htmlFor="ship_city">City</Label>
+                                <Input
+                                    id="ship_city"
+                                    value={newAddress.city}
+                                    onChange={(e) => handleNewAddressChange('city', e.target.value)}
+                                    placeholder="Los Angeles"
+                                />
+                            </div>
+                            <div>
+                                <Label htmlFor="ship_state">State</Label>
+                                <Select
+                                    value={newAddress.state}
+                                    onValueChange={(value) => handleNewAddressChange('state', value)}
+                                >
+                                    <SelectTrigger id="ship_state">
+                                        <SelectValue placeholder="Select state" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {US_STATES.map((state) => (
+                                            <SelectItem key={state.value} value={state.value}>
+                                                {state.label}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                        </div>
+                        <div className="grid grid-cols-2 gap-4">
+                            <div>
+                                <Label htmlFor="ship_zip">ZIP Code</Label>
+                                <Input
+                                    id="ship_zip"
+                                    value={newAddress.postal_code}
+                                    onChange={(e) => handleNewAddressChange('postal_code', e.target.value)}
+                                    placeholder="90001"
+                                />
+                            </div>
+                            <div>
+                                <Label htmlFor="ship_phone">Phone (Optional)</Label>
+                                <Input
+                                    id="ship_phone"
+                                    value={newAddress.phone}
+                                    onChange={(e) => handleNewAddressChange('phone', e.target.value)}
+                                    placeholder="(555) 123-4567"
+                                />
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                {/* Validate Address Button */}
+                <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={validateAddress}
+                    disabled={validatingAddress}
+                    className="mt-2"
+                >
+                    {validatingAddress ? (
+                        <>
+                            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                            Validating...
+                        </>
+                    ) : (
+                        <>
+                            <CheckCircle className="w-4 h-4 mr-2" />
+                            Verify Address
+                        </>
+                    )}
+                </Button>
+
+                {/* Address Validation Result */}
+                {addressValidation && (
+                    <div className={`p-3 rounded-lg ${
+                        addressValidation.is_valid
+                            ? 'bg-green-50 border border-green-200'
+                            : 'bg-yellow-50 border border-yellow-200'
+                    }`}>
+                        <div className="flex items-center gap-2">
+                            {addressValidation.is_valid ? (
+                                <CheckCircle className="w-4 h-4 text-green-600" />
+                            ) : (
+                                <AlertCircle className="w-4 h-4 text-yellow-600" />
+                            )}
+                            <span className={`text-sm font-medium ${
+                                addressValidation.is_valid ? 'text-green-800' : 'text-yellow-800'
+                            }`}>
+                                {addressValidation.is_valid ? 'Address verified' : 'Address may need review'}
+                            </span>
+                        </div>
+                        {addressValidation.messages?.length > 0 && (
+                            <ul className="mt-2 text-xs text-muted-foreground list-disc list-inside">
+                                {addressValidation.messages.map((msg, i) => (
+                                    <li key={i}>{msg.text || msg}</li>
+                                ))}
+                            </ul>
+                        )}
+                    </div>
+                )}
+            </div>
+
+            <Separator />
+
+            {/* Shipping Rates */}
+            <div className="space-y-4">
+                <div className="flex items-center gap-2">
+                    <TruckIcon className="w-5 h-5 text-blue-600" />
+                    <h3 className="text-lg font-semibold">Shipping Method</h3>
+                </div>
+
+                {loadingRates ? (
+                    <div className="flex items-center justify-center py-6">
+                        <Loader2 className="w-6 h-6 animate-spin mr-2" />
+                        <span className="text-muted-foreground">Calculating shipping rates...</span>
+                    </div>
+                ) : shippingRates.length > 0 ? (
+                    <RadioGroup
+                        value={selectedRate?.id}
+                        onValueChange={(id) => {
+                            const rate = shippingRates.find(r => r.id === id)
+                            setSelectedRate(rate)
+                        }}
+                        className="space-y-2"
+                    >
+                        {shippingRates.map((rate) => (
+                            <div
+                                key={rate.id}
+                                className={`flex items-center justify-between p-3 border rounded-lg cursor-pointer transition-colors ${
+                                    selectedRate?.id === rate.id ? 'border-blue-500 bg-blue-50' : 'hover:bg-gray-50'
+                                }`}
+                                onClick={() => setSelectedRate(rate)}
+                            >
+                                <div className="flex items-center gap-3">
+                                    <RadioGroupItem value={rate.id} id={rate.id} />
+                                    <div>
+                                        <div className="flex items-center gap-2">
+                                            <span className="font-medium">{rate.provider}</span>
+                                            <Badge variant="outline" className="text-xs">
+                                                {rate.service}
+                                            </Badge>
+                                        </div>
+                                        <p className="text-sm text-muted-foreground">
+                                            {rate.estimated_days
+                                                ? `${rate.estimated_days} business day${rate.estimated_days > 1 ? 's' : ''}`
+                                                : rate.duration_terms || 'Delivery time varies'}
+                                        </p>
+                                    </div>
+                                </div>
+                                <span className="font-semibold">
+                                    ${rate.amount.toFixed(2)}
+                                </span>
+                            </div>
+                        ))}
+                    </RadioGroup>
+                ) : (
+                    <div className="text-center py-6 text-muted-foreground">
+                        <PackageIcon className="w-8 h-8 mx-auto mb-2 opacity-50" />
+                        <p>Enter a complete shipping address to see available rates</p>
+                    </div>
+                )}
+            </div>
+        </div>
+    )
+}
 
 // Express Checkout Component
 function ExpressCheckout({ cartTotal, cartItems, onPaymentSuccess }) {
@@ -204,23 +661,41 @@ function ExpressCheckout({ cartTotal, cartItems, onPaymentSuccess }) {
 }
 
 // Payment Form Component
-function CheckoutForm({ cartTotal, cartItems, onPaymentSuccess, appliedOffers = [], offerDiscounts = {} }) {
+function CheckoutForm({ cartTotal, cartItems, onPaymentSuccess, appliedOffers = [], offerDiscounts = {}, shippingAddress, selectedRate }) {
     const stripe = useStripe()
     const elements = useElements()
     const { user, clearCart } = useAuth()
     const [isProcessing, setIsProcessing] = useState(false)
     const [paymentStatus, setPaymentStatus] = useState(null)
+    const [sameAsShipping, setSameAsShipping] = useState(true)
     const [billingDetails, setBillingDetails] = useState({
-        name: user?.user_metadata?.full_name || '',
+        name: shippingAddress?.full_name || user?.user_metadata?.full_name || '',
         email: user?.email || '',
         address: {
-            line1: '',
-            city: '',
-            state: '',
-            postal_code: '',
-            country: 'US'
+            line1: shippingAddress?.address_line_1 || '',
+            city: shippingAddress?.city || '',
+            state: shippingAddress?.state || '',
+            postal_code: shippingAddress?.postal_code || '',
+            country: shippingAddress?.country || 'US'
         }
     })
+
+    // Update billing details when shipping address changes and sameAsShipping is true
+    useEffect(() => {
+        if (sameAsShipping && shippingAddress) {
+            setBillingDetails({
+                name: shippingAddress.full_name || user?.user_metadata?.full_name || '',
+                email: user?.email || '',
+                address: {
+                    line1: shippingAddress.address_line_1 || '',
+                    city: shippingAddress.city || '',
+                    state: shippingAddress.state || '',
+                    postal_code: shippingAddress.postal_code || '',
+                    country: shippingAddress.country || 'US'
+                }
+            })
+        }
+    }, [shippingAddress, sameAsShipping])
 
     const handleSubmit = async (event) => {
         event.preventDefault()
@@ -277,6 +752,25 @@ function CheckoutForm({ cartTotal, cartItems, onPaymentSuccess, appliedOffers = 
                         amount: cartTotal,
                         cartItems: cartItems,
                         billingDetails: billingDetails,
+                        shippingDetails: shippingAddress ? {
+                            address: {
+                                full_name: shippingAddress.full_name,
+                                address_line_1: shippingAddress.address_line_1,
+                                address_line_2: shippingAddress.address_line_2,
+                                city: shippingAddress.city,
+                                state: shippingAddress.state,
+                                postal_code: shippingAddress.postal_code,
+                                country: shippingAddress.country,
+                                phone: shippingAddress.phone
+                            },
+                            method: selectedRate ? {
+                                rate_id: selectedRate.id,
+                                provider: selectedRate.provider,
+                                service: selectedRate.service,
+                                amount: selectedRate.amount,
+                                estimated_days: selectedRate.estimated_days
+                            } : null
+                        } : null,
                         status: 'completed',
                         order_status: 'processing'
                     }),
@@ -334,69 +828,99 @@ function CheckoutForm({ cartTotal, cartItems, onPaymentSuccess, appliedOffers = 
             <form onSubmit={handleSubmit} className="space-y-6">
                 {/* Billing Information */}
                 <div className="space-y-4">
-                    <h3 className="text-lg font-semibold">Billing Information</h3>
-                    
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <Label htmlFor="name">Full Name</Label>
-                            <Input
-                                id="name"
-                                value={billingDetails.name}
-                                onChange={(e) => handleBillingChange('name', e.target.value)}
-                                required
-                            />
-                        </div>
-                        <div>
-                            <Label htmlFor="email">Email</Label>
-                            <Input
-                                id="email"
-                                type="email"
-                                value={billingDetails.email}
-                                onChange={(e) => handleBillingChange('email', e.target.value)}
-                                required
-                            />
-                        </div>
+                    <div className="flex items-center justify-between">
+                        <h3 className="text-lg font-semibold">Billing Information</h3>
+                        {shippingAddress && (
+                            <label className="flex items-center gap-2 text-sm cursor-pointer">
+                                <input
+                                    type="checkbox"
+                                    checked={sameAsShipping}
+                                    onChange={(e) => setSameAsShipping(e.target.checked)}
+                                    className="rounded border-gray-300"
+                                />
+                                Same as shipping
+                            </label>
+                        )}
                     </div>
 
-                    <div>
-                        <Label htmlFor="address">Address</Label>
-                        <Input
-                            id="address"
-                            value={billingDetails.address.line1}
-                            onChange={(e) => handleBillingChange('address.line1', e.target.value)}
-                            required
-                        />
-                    </div>
+                    {!sameAsShipping && (
+                        <>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <Label htmlFor="name">Full Name</Label>
+                                    <Input
+                                        id="name"
+                                        value={billingDetails.name}
+                                        onChange={(e) => handleBillingChange('name', e.target.value)}
+                                        required
+                                    />
+                                </div>
+                                <div>
+                                    <Label htmlFor="email">Email</Label>
+                                    <Input
+                                        id="email"
+                                        type="email"
+                                        value={billingDetails.email}
+                                        onChange={(e) => handleBillingChange('email', e.target.value)}
+                                        required
+                                    />
+                                </div>
+                            </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div>
-                            <Label htmlFor="city">City</Label>
-                            <Input
-                                id="city"
-                                value={billingDetails.address.city}
-                                onChange={(e) => handleBillingChange('address.city', e.target.value)}
-                                required
-                            />
+                            <div>
+                                <Label htmlFor="address">Address</Label>
+                                <Input
+                                    id="address"
+                                    value={billingDetails.address.line1}
+                                    onChange={(e) => handleBillingChange('address.line1', e.target.value)}
+                                    required
+                                />
+                            </div>
+
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div>
+                                    <Label htmlFor="city">City</Label>
+                                    <Input
+                                        id="city"
+                                        value={billingDetails.address.city}
+                                        onChange={(e) => handleBillingChange('address.city', e.target.value)}
+                                        required
+                                    />
+                                </div>
+                                <div>
+                                    <Label htmlFor="state">State</Label>
+                                    <Input
+                                        id="state"
+                                        value={billingDetails.address.state}
+                                        onChange={(e) => handleBillingChange('address.state', e.target.value)}
+                                        required
+                                    />
+                                </div>
+                                <div>
+                                    <Label htmlFor="postal_code">ZIP Code</Label>
+                                    <Input
+                                        id="postal_code"
+                                        value={billingDetails.address.postal_code}
+                                        onChange={(e) => handleBillingChange('address.postal_code', e.target.value)}
+                                        required
+                                    />
+                                </div>
+                            </div>
+                        </>
+                    )}
+
+                    {sameAsShipping && shippingAddress && (
+                        <div className="p-3 bg-gray-50 rounded-lg text-sm">
+                            <p className="font-medium">{shippingAddress.full_name}</p>
+                            <p className="text-muted-foreground">
+                                {shippingAddress.address_line_1}
+                                {shippingAddress.address_line_2 && `, ${shippingAddress.address_line_2}`}
+                            </p>
+                            <p className="text-muted-foreground">
+                                {shippingAddress.city}, {shippingAddress.state} {shippingAddress.postal_code}
+                            </p>
                         </div>
-                        <div>
-                            <Label htmlFor="state">State</Label>
-                            <Input
-                                id="state"
-                                value={billingDetails.address.state}
-                                onChange={(e) => handleBillingChange('address.state', e.target.value)}
-                                required
-                            />
-                        </div>
-                        <div>
-                            <Label htmlFor="postal_code">ZIP Code</Label>
-                            <Input
-                                id="postal_code"
-                                value={billingDetails.address.postal_code}
-                                onChange={(e) => handleBillingChange('address.postal_code', e.target.value)}
-                                required
-                            />
-                        </div>
-                    </div>
+                    )}
                 </div>
 
                 {/* Payment Information */}
@@ -471,6 +995,10 @@ export default function CheckoutPage() {
     const [promoCode, setPromoCode] = useState('')
     const [applyingPromo, setApplyingPromo] = useState(false)
     const [validatingOffers, setValidatingOffers] = useState(false)
+    const [shippingAddress, setShippingAddress] = useState(null)
+    const [shippingRates, setShippingRates] = useState([])
+    const [selectedRate, setSelectedRate] = useState(null)
+    const [addressValidated, setAddressValidated] = useState(false)
     const router = useTransitionRouter()
 
     useEffect(() => {
@@ -661,10 +1189,15 @@ export default function CheckoutPage() {
         }, 0)
     }
 
+    const calculateShipping = () => {
+        return selectedRate?.amount || 0
+    }
+
     const calculateTotal = () => {
         const subtotal = calculateSubtotal()
         const discount = calculateTotalDiscount()
-        return Math.max(0, subtotal - discount)
+        const shipping = calculateShipping()
+        return Math.max(0, subtotal - discount + shipping)
     }
 
     const formatPrice = (price) => {
@@ -901,10 +1434,24 @@ export default function CheckoutPage() {
                                         <span>-{formatPrice(calculateTotalDiscount())}</span>
                                     </div>
                                 )}
+                                <div className="flex justify-between text-sm">
+                                    <span>Shipping</span>
+                                    <span>
+                                        {selectedRate
+                                            ? formatPrice(selectedRate.amount)
+                                            : <span className="text-muted-foreground">Select address</span>
+                                        }
+                                    </span>
+                                </div>
+                                {selectedRate && (
+                                    <div className="text-xs text-muted-foreground">
+                                        {selectedRate.provider} - {selectedRate.service}
+                                    </div>
+                                )}
                             </div>
-                            
+
                             <Separator />
-                            
+
                             <div className="flex justify-between items-center font-semibold text-lg">
                                 <span>Total</span>
                                 <span>{formatPrice(calculateTotal())}</span>
@@ -913,8 +1460,32 @@ export default function CheckoutPage() {
                     </Card>
                 </div>
 
-                {/* Payment Form */}
-                <div>
+                {/* Shipping & Payment */}
+                <div className="space-y-6">
+                    {/* Shipping Section */}
+                    <Card>
+                        <CardHeader>
+                            <CardTitle className="flex items-center gap-2">
+                                <TruckIcon className="w-5 h-5" />
+                                Shipping
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <ShippingSection
+                                user={user}
+                                shippingAddress={shippingAddress}
+                                setShippingAddress={setShippingAddress}
+                                shippingRates={shippingRates}
+                                setShippingRates={setShippingRates}
+                                selectedRate={selectedRate}
+                                setSelectedRate={setSelectedRate}
+                                cartItems={products}
+                                onAddressValidated={setAddressValidated}
+                            />
+                        </CardContent>
+                    </Card>
+
+                    {/* Payment Form */}
                     <Card>
                         <CardHeader>
                             <CardTitle className="flex items-center gap-2">
@@ -923,15 +1494,25 @@ export default function CheckoutPage() {
                             </CardTitle>
                         </CardHeader>
                         <CardContent>
-                            <Elements stripe={stripePromise}>
-                                <CheckoutForm
-                                    cartTotal={calculateTotal()}
-                                    cartItems={cartItems}
-                                    onPaymentSuccess={handlePaymentSuccess}
-                                    appliedOffers={appliedOffers}
-                                    offerDiscounts={offerDiscounts}
-                                />
-                            </Elements>
+                            {!selectedRate ? (
+                                <div className="text-center py-8 text-muted-foreground">
+                                    <TruckIcon className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                                    <p className="font-medium">Please select a shipping method</p>
+                                    <p className="text-sm mt-1">Enter your shipping address and select a delivery option to continue</p>
+                                </div>
+                            ) : (
+                                <Elements stripe={stripePromise}>
+                                    <CheckoutForm
+                                        cartTotal={calculateTotal()}
+                                        cartItems={cartItems}
+                                        onPaymentSuccess={handlePaymentSuccess}
+                                        appliedOffers={appliedOffers}
+                                        offerDiscounts={offerDiscounts}
+                                        shippingAddress={shippingAddress}
+                                        selectedRate={selectedRate}
+                                    />
+                                </Elements>
+                            )}
                         </CardContent>
                     </Card>
                 </div>
