@@ -103,26 +103,20 @@ export default async function SeriesProductsPage({ params }) {
                         )}
                         <div className="space-y-2">
                           <div className="flex items-center justify-between">
-                            <span className="text-sm text-muted-foreground">Trade-in value:</span>
+                            <span className="text-sm text-muted-foreground">Trade-in value up to:</span>
                           </div>
                           <div className="flex items-center justify-between">
                             <Badge variant="default" className="bg-green-600">
-                              New
+                              Est. Value
                             </Badge>
-                            <span className="font-semibold flex items-center">
+                            <span className="font-semibold flex items-center text-green-600">
                               <DollarSignIcon className="w-4 h-4" />
-                              {product.new_price}
+                              {product.base_price?.toFixed(2) || '0.00'}
                             </span>
                           </div>
-                          <div className="flex items-center justify-between">
-                            <Badge variant="secondary">
-                              Good
-                            </Badge>
-                            <span className="font-semibold flex items-center">
-                              <DollarSignIcon className="w-4 h-4" />
-                              {product.good_price}
-                            </span>
-                          </div>
+                          <p className="text-xs text-muted-foreground text-center">
+                            Live eBay pricing available on product page
+                          </p>
                         </div>
                         <div className="mt-4 flex items-center justify-end">
                           <span className="text-sm text-primary flex items-center">

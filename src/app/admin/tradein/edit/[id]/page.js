@@ -7,11 +7,20 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
-import { ArrowLeftIcon, SaveIcon, LoaderIcon, XIcon, EditIcon, ArrowRightLeftIcon } from 'lucide-react'
-import { cn } from '@/lib/utils'
+import { Label } from '@/components/ui/label'
+import { ArrowLeftIcon, SaveIcon, LoaderIcon, EditIcon, ArrowRightLeftIcon, CalendarIcon, StarIcon, TrendingUpIcon, RefreshCwIcon, PlusIcon, TrashIcon, HelpCircleIcon, CopyIcon, CheckIcon } from 'lucide-react'
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select"
 import { PictureInPictureIcon } from "lucide-react"
 import { openWindow } from "@/components/ui/windows"
 import { ImageUpload, uploadFiles, deleteFileFromBucket } from "@/components/admin/ImageUpload"
+import { Checkbox } from '@/components/ui/checkbox'
+import { toast } from 'sonner'
 
 export default function EditTradeinProductPage() {
     const { id } = useParams()
@@ -22,28 +31,102 @@ export default function EditTradeinProductPage() {
     const [error, setError] = useState(null)
     const [success, setSuccess] = useState(false)
     const [product, setProduct] = useState(null)
-    
-    // Form state
+
+    // eBay pricing state
+    const [ebayPricing, setEbayPricing] = useState(null)
+    const [ebayLoading, setEbayLoading] = useState(false)
+
+    // Copy questions from other products
+    const [otherProducts, setOtherProducts] = useState([])
+    const [loadingProducts, setLoadingProducts] = useState(false)
+    const [showCopySelect, setShowCopySelect] = useState(false)
+
+    // Fetch other products with questions
+    const fetchOtherProducts = async () => {
+        if (otherProducts.length > 0) {
+            setShowCopySelect(true)
+            return
+        }
+        setLoadingProducts(true)
+        try {
+            const response = await fetch('/api/admin/tradein')
+            const data = await response.json()
+            if (data.products) {
+                // Filter products that have questions and are not the current product
+                const productsWithQuestions = data.products.filter(
+                    p => p.id !== id && p.questions && p.questions.length > 0
+                )
+                setOtherProducts(productsWithQuestions)
+                setShowCopySelect(true)
+            }
+        } catch (error) {
+            toast.error('Failed to fetch products')
+        } finally {
+            setLoadingProducts(false)
+        }
+    }
+
+    const copyQuestionsFromProduct = (productId) => {
+        const sourceProduct = otherProducts.find(p => p.id === productId)
+        if (sourceProduct && sourceProduct.questions) {
+            // Deep copy the questions
+            const copiedQuestions = JSON.parse(JSON.stringify(sourceProduct.questions))
+            handleInputChange('questions', copiedQuestions)
+            toast.success(`Copied ${copiedQuestions.length} questions from "${sourceProduct.title}"`)
+            setShowCopySelect(false)
+        }
+    }
+
+    const fetchEbayPrice = async () => {
+        if (!formData.title) {
+            toast.error('Please enter a product title first')
+            return
+        }
+        setEbayLoading(true)
+        try {
+            const response = await fetch(
+                `/api/tradeins/ebay-price?query=${encodeURIComponent(formData.title)}`
+            )
+            const data = await response.json()
+            if (data.suggestedTradeIn) {
+                setEbayPricing(data)
+                toast.success(`eBay price fetched: $${data.suggestedTradeIn}`)
+            } else {
+                toast.error(data.error || 'No eBay data found', {
+                    description: data.details || (data.sandbox ? 'Sandbox mode - no real data available' : 'Try a different search term')
+                })
+            }
+        } catch (error) {
+            toast.error('Failed to fetch eBay price', {
+                description: error.message
+            })
+        } finally {
+            setEbayLoading(false)
+        }
+    }
+
+    const applyEbayPrice = () => {
+        if (ebayPricing?.suggestedTradeIn) {
+            handleInputChange('base_price', ebayPricing.suggestedTradeIn.toString())
+            toast.success('eBay price applied to base price')
+        }
+    }
+
+    // Form state with new schema
     const [formData, setFormData] = useState({
         title: '',
         des: '',
-        new_price: '',
-        good_price: '',
-        okay_price: '',
-        bad_price: '',
-        broken_price: '',
+        base_price: '',
         category: '',
         brand: '',
         series: '',
         brand_img: '',
         imgs: [],
-        new_def: '',
-        good_def: '',
-        okay_def: '',
-        bad_def: '',
-        broken_def: ''
+        release_date: '',
+        depreciation_schedule: 'standard',
+        is_featured: false,
+        questions: []
     })
-    
 
     // Fetch product data
     useEffect(() => {
@@ -52,35 +135,30 @@ export default function EditTradeinProductPage() {
                 setLoading(true)
                 const response = await fetch(`/api/admin/tradein?id=${id}`)
                 const data = await response.json()
-                
+
                 if (!response.ok) {
                     throw new Error(data.error || 'Failed to fetch tradable product')
                 }
-                
+
                 const foundProduct = data.product
                 if (!foundProduct) {
                     throw new Error('Tradable product not found')
                 }
-                
+
                 setProduct(foundProduct)
                 setFormData({
                     title: foundProduct.title || '',
                     des: foundProduct.des || '',
-                    new_price: foundProduct.new_price?.toString() || '',
-                    good_price: foundProduct.good_price?.toString() || '',
-                    okay_price: foundProduct.okay_price?.toString() || '',
-                    bad_price: foundProduct.bad_price?.toString() || '',
-                    broken_price: foundProduct.broken_price?.toString() || '',
+                    base_price: foundProduct.base_price?.toString() || '',
                     category: foundProduct.category || '',
                     brand: foundProduct.brand || '',
                     series: foundProduct.series || '',
                     brand_img: foundProduct.brand_img || '',
                     imgs: foundProduct.imgs || [],
-                    new_def: foundProduct.new_def || '',
-                    good_def: foundProduct.good_def || '',
-                    okay_def: foundProduct.okay_def || '',
-                    bad_def: foundProduct.bad_def || '',
-                    broken_def: foundProduct.broken_def || ''
+                    release_date: foundProduct.release_date ? foundProduct.release_date.split('T')[0] : '',
+                    depreciation_schedule: foundProduct.depreciation_schedule || 'standard',
+                    is_featured: foundProduct.is_featured || false,
+                    questions: foundProduct.questions || []
                 })
             } catch (err) {
                 setError(err.message)
@@ -88,7 +166,7 @@ export default function EditTradeinProductPage() {
                 setLoading(false)
             }
         }
-        
+
         if (id) {
             fetchProduct()
         }
@@ -101,6 +179,28 @@ export default function EditTradeinProductPage() {
         }))
     }
 
+    // Calculate estimated current value based on release date
+    const getEstimatedValue = () => {
+        if (!formData.base_price || !formData.release_date) {
+            return null
+        }
+        const release = new Date(formData.release_date)
+        const now = new Date()
+        const monthsOld = Math.floor((now - release) / (1000 * 60 * 60 * 24 * 30))
+
+        let multiplier = 100
+        if (monthsOld >= 36) multiplier = 45
+        else if (monthsOld >= 24) multiplier = 65
+        else if (monthsOld >= 12) multiplier = 80
+        else if (monthsOld >= 6) multiplier = 90
+
+        return {
+            value: (parseFloat(formData.base_price) || 0) * (multiplier / 100),
+            multiplier
+        }
+    }
+
+    const estimatedValue = getEstimatedValue()
 
     const handleSubmit = async (e) => {
         e.preventDefault()
@@ -110,11 +210,11 @@ export default function EditTradeinProductPage() {
 
         try {
             // Upload images first
-            const uploadedBrandImg = formData.brand_img instanceof File 
+            const uploadedBrandImg = formData.brand_img instanceof File
                 ? (await uploadFiles(formData.brand_img, 'tradein/brands'))[0]
                 : formData.brand_img
             const uploadedProductImgs = await uploadFiles(formData.imgs, 'tradein/products')
-            
+
             const response = await fetch('/api/admin/tradein', {
                 method: 'PUT',
                 headers: {
@@ -125,11 +225,11 @@ export default function EditTradeinProductPage() {
                     ...formData,
                     brand_img: uploadedBrandImg || null,
                     imgs: uploadedProductImgs,
-                    new_price: parseFloat(formData.new_price) || 0,
-                    good_price: parseFloat(formData.good_price) || 0,
-                    okay_price: parseFloat(formData.okay_price) || 0,
-                    bad_price: parseFloat(formData.bad_price) || 0,
-                    broken_price: parseFloat(formData.broken_price) || 0,
+                    base_price: parseFloat(formData.base_price) || 0,
+                    release_date: formData.release_date || null,
+                    depreciation_schedule: formData.depreciation_schedule || 'standard',
+                    is_featured: formData.is_featured || false,
+                    questions: formData.questions || []
                 })
             })
 
@@ -141,12 +241,14 @@ export default function EditTradeinProductPage() {
 
             setSuccess(true)
             setProduct(data.product)
-            
+            toast.success('Trade-in product updated successfully!')
+
             setTimeout(() => {
                 setSuccess(false)
             }, 3000)
         } catch (err) {
             setError(err.message)
+            toast.error('Error: ' + err.message)
         } finally {
             setSaving(false)
         }
@@ -245,57 +347,425 @@ export default function EditTradeinProductPage() {
                     <CardContent className="space-y-6">
                         {/* Title */}
                         <div className="space-y-2">
-                            <label className="text-sm font-medium">Product Title *</label>
+                            <Label htmlFor="title">Product Title *</Label>
                             <Input
+                                id="title"
                                 value={formData.title}
                                 onChange={(e) => handleInputChange('title', e.target.value)}
-                                placeholder="Enter product title"
+                                placeholder="Enter product title (e.g., iPhone 15 Pro Max 256GB)"
                                 required
                             />
                         </div>
 
                         {/* Description */}
                         <div className="space-y-2">
-                            <label className="text-sm font-medium">Description</label>
+                            <Label htmlFor="des">Description</Label>
                             <textarea
-                                className="w-full min-h-[120px] px-3 py-2 border border-gray-200 rounded-md resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                id="des"
+                                className="w-full min-h-[100px] px-3 py-2 border border-input rounded-md resize-none focus:outline-none focus:ring-2 focus:ring-ring bg-background"
                                 value={formData.des}
                                 onChange={(e) => handleInputChange('des', e.target.value)}
                                 placeholder="Enter product description"
                             />
                         </div>
 
-                        {/* Category */}
-                        <div className="space-y-2">
-                            <label className="text-sm font-medium">Category *</label>
-                            <Input
-                                value={formData.category}
-                                onChange={(e) => handleInputChange('category', e.target.value)}
-                                placeholder="e.g., Smartphones, Laptops, Tablets"
-                                required
-                            />
+                        {/* Category, Brand, Series */}
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div className="space-y-2">
+                                <Label htmlFor="category">Category *</Label>
+                                <Input
+                                    id="category"
+                                    value={formData.category}
+                                    onChange={(e) => handleInputChange('category', e.target.value)}
+                                    placeholder="e.g., Smartphones"
+                                    required
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="brand">Brand *</Label>
+                                <Input
+                                    id="brand"
+                                    value={formData.brand}
+                                    onChange={(e) => handleInputChange('brand', e.target.value)}
+                                    placeholder="e.g., Apple"
+                                    required
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="series">Series *</Label>
+                                <Input
+                                    id="series"
+                                    value={formData.series}
+                                    onChange={(e) => handleInputChange('series', e.target.value)}
+                                    placeholder="e.g., iPhone 15"
+                                    required
+                                />
+                            </div>
                         </div>
 
-                        {/* Brand */}
-                        <div className="space-y-2">
-                            <label className="text-sm font-medium">Brand *</label>
-                            <Input
-                                value={formData.brand}
-                                onChange={(e) => handleInputChange('brand', e.target.value)}
-                                placeholder="e.g., Apple, Samsung, Dell"
-                                required
-                            />
+                        {/* Pricing Section */}
+                        <div className="border rounded-lg p-4 space-y-4 bg-muted/30">
+                            <h3 className="font-semibold flex items-center gap-2">
+                                <span className="text-green-600">$</span>
+                                Pricing & Depreciation
+                            </h3>
+
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div className="space-y-2">
+                                    <Label htmlFor="base_price">Base Price ($) *</Label>
+                                    <Input
+                                        id="base_price"
+                                        type="number"
+                                        step="0.01"
+                                        min="0"
+                                        value={formData.base_price}
+                                        onChange={(e) => handleInputChange('base_price', e.target.value)}
+                                        placeholder="0.00"
+                                        required
+                                        className="border-green-200 focus:border-green-500"
+                                    />
+                                    <p className="text-xs text-muted-foreground">
+                                        Maximum trade-in value for new/mint condition
+                                    </p>
+                                </div>
+
+                                <div className="space-y-2">
+                                    <Label htmlFor="release_date" className="flex items-center gap-1">
+                                        <CalendarIcon className="w-4 h-4" />
+                                        Release Date
+                                    </Label>
+                                    <Input
+                                        id="release_date"
+                                        type="date"
+                                        value={formData.release_date}
+                                        onChange={(e) => handleInputChange('release_date', e.target.value)}
+                                    />
+                                    <p className="text-xs text-muted-foreground">
+                                        Used to calculate depreciation
+                                    </p>
+                                </div>
+
+                                <div className="space-y-2">
+                                    <Label htmlFor="depreciation_schedule">Depreciation Schedule</Label>
+                                    <select
+                                        id="depreciation_schedule"
+                                        value={formData.depreciation_schedule}
+                                        onChange={(e) => handleInputChange('depreciation_schedule', e.target.value)}
+                                        className="w-full h-10 px-3 border border-input rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-ring"
+                                    >
+                                        <option value="standard">Standard</option>
+                                        <option value="premium">Premium (Slower)</option>
+                                        <option value="budget">Budget (Faster)</option>
+                                    </select>
+                                    <p className="text-xs text-muted-foreground">
+                                        How quickly value decreases over time
+                                    </p>
+                                </div>
+                            </div>
+
+                            {/* Estimated Value Preview */}
+                            {estimatedValue && (
+                                <div className="mt-4 p-4 bg-blue-50 dark:bg-blue-950/30 rounded-lg border border-blue-200 dark:border-blue-800">
+                                    <div className="flex items-center justify-between">
+                                        <div>
+                                            <p className="text-sm text-blue-700 dark:text-blue-400 font-medium">
+                                                Estimated Current Value
+                                            </p>
+                                            <p className="text-2xl font-bold text-blue-600">
+                                                ${estimatedValue.value.toFixed(2)}
+                                            </p>
+                                        </div>
+                                        <Badge variant="secondary">
+                                            {estimatedValue.multiplier}% of base
+                                        </Badge>
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* eBay Market Price */}
+                            <div className="mt-4 p-4 bg-purple-50 dark:bg-purple-950/30 rounded-lg border border-purple-200 dark:border-purple-800">
+                                <div className="flex items-center justify-between mb-3">
+                                    <div className="flex items-center gap-2">
+                                        <TrendingUpIcon className="w-5 h-5 text-purple-600" />
+                                        <p className="text-sm text-purple-700 dark:text-purple-400 font-medium">
+                                            eBay Market Price
+                                        </p>
+                                    </div>
+                                    <Button
+                                        type="button"
+                                        variant="outline"
+                                        size="sm"
+                                        onClick={fetchEbayPrice}
+                                        disabled={ebayLoading}
+                                        className="border-purple-200 hover:bg-purple-100"
+                                    >
+                                        {ebayLoading ? (
+                                            <LoaderIcon className="w-4 h-4 animate-spin mr-1" />
+                                        ) : (
+                                            <RefreshCwIcon className="w-4 h-4 mr-1" />
+                                        )}
+                                        {ebayLoading ? 'Checking...' : 'Check eBay'}
+                                    </Button>
+                                </div>
+
+                                {ebayPricing ? (
+                                    <div className="space-y-3">
+                                        <div className="grid grid-cols-2 gap-4 text-sm">
+                                            <div>
+                                                <p className="text-muted-foreground">Suggested Trade-in</p>
+                                                <p className="text-xl font-bold text-purple-600">
+                                                    ${ebayPricing.suggestedTradeIn?.toFixed(2)}
+                                                </p>
+                                            </div>
+                                            <div>
+                                                <p className="text-muted-foreground">Trade-in Range</p>
+                                                <p className="font-medium">
+                                                    ${ebayPricing.tradeInRange?.low?.toFixed(2)} - ${ebayPricing.tradeInRange?.high?.toFixed(2)}
+                                                </p>
+                                            </div>
+                                        </div>
+                                        {ebayPricing.usedMarket && (
+                                            <div className="grid grid-cols-3 gap-2 text-xs pt-2 border-t">
+                                                <div>
+                                                    <p className="text-muted-foreground">Used Avg</p>
+                                                    <p className="font-medium">${ebayPricing.usedMarket.average?.toFixed(2)}</p>
+                                                </div>
+                                                <div>
+                                                    <p className="text-muted-foreground">Used Median</p>
+                                                    <p className="font-medium">${ebayPricing.usedMarket.median?.toFixed(2)}</p>
+                                                </div>
+                                                <div>
+                                                    <p className="text-muted-foreground">Listings</p>
+                                                    <p className="font-medium">{ebayPricing.usedMarket.count || 0}</p>
+                                                </div>
+                                            </div>
+                                        )}
+                                        <Button
+                                            type="button"
+                                            variant="default"
+                                            size="sm"
+                                            onClick={applyEbayPrice}
+                                            className="w-full bg-purple-600 hover:bg-purple-700"
+                                        >
+                                            Apply eBay Price as Base Price
+                                        </Button>
+                                    </div>
+                                ) : (
+                                    <p className="text-sm text-muted-foreground">
+                                        Click "Check eBay" to fetch current market prices
+                                    </p>
+                                )}
+                            </div>
                         </div>
 
-                        {/* Series */}
-                        <div className="space-y-2">
-                            <label className="text-sm font-medium">Series *</label>
-                            <Input
-                                value={formData.series}
-                                onChange={(e) => handleInputChange('series', e.target.value)}
-                                placeholder="e.g., iPhone, Galaxy, XPS"
-                                required
+                        {/* Featured Toggle */}
+                        <div className="flex items-center space-x-2">
+                            <Checkbox
+                                id="is_featured"
+                                checked={formData.is_featured}
+                                onCheckedChange={(checked) => handleInputChange('is_featured', checked)}
                             />
+                            <Label htmlFor="is_featured" className="flex items-center gap-2 cursor-pointer">
+                                <StarIcon className="w-4 h-4 text-yellow-500" />
+                                Featured Product
+                            </Label>
+                        </div>
+
+                        {/* Product-specific Questions */}
+                        <div className="border rounded-lg p-4 space-y-4 bg-muted/30">
+                            <div className="flex items-center justify-between flex-wrap gap-2">
+                                <h3 className="font-semibold flex items-center gap-2">
+                                    <HelpCircleIcon className="w-5 h-5 text-blue-600" />
+                                    Product Questions
+                                </h3>
+                                <div className="flex items-center gap-2">
+                                    {/* Copy from another product */}
+                                    {showCopySelect ? (
+                                        <div className="flex items-center gap-2">
+                                            <Select onValueChange={copyQuestionsFromProduct}>
+                                                <SelectTrigger className="w-[220px] h-8 text-sm">
+                                                    <SelectValue placeholder="Select product to copy from..." />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    {otherProducts.length === 0 ? (
+                                                        <SelectItem value="none" disabled>
+                                                            No products with questions found
+                                                        </SelectItem>
+                                                    ) : (
+                                                        otherProducts.map((p) => (
+                                                            <SelectItem key={p.id} value={p.id}>
+                                                                {p.title} ({p.questions.length} Q)
+                                                            </SelectItem>
+                                                        ))
+                                                    )}
+                                                </SelectContent>
+                                            </Select>
+                                            <Button
+                                                type="button"
+                                                variant="ghost"
+                                                size="sm"
+                                                onClick={() => setShowCopySelect(false)}
+                                            >
+                                                Cancel
+                                            </Button>
+                                        </div>
+                                    ) : (
+                                        <Button
+                                            type="button"
+                                            variant="outline"
+                                            size="sm"
+                                            onClick={fetchOtherProducts}
+                                            disabled={loadingProducts}
+                                        >
+                                            {loadingProducts ? (
+                                                <LoaderIcon className="w-4 h-4 mr-1 animate-spin" />
+                                            ) : (
+                                                <CopyIcon className="w-4 h-4 mr-1" />
+                                            )}
+                                            Copy from Product
+                                        </Button>
+                                    )}
+                                    <Button
+                                        type="button"
+                                        variant="outline"
+                                        size="sm"
+                                        onClick={() => {
+                                            const newQuestions = [...(formData.questions || []), {
+                                                title: '',
+                                                ans: []
+                                            }]
+                                            handleInputChange('questions', newQuestions)
+                                        }}
+                                    >
+                                        <PlusIcon className="w-4 h-4 mr-1" />
+                                        Add Question
+                                    </Button>
+                                </div>
+                            </div>
+
+                            <p className="text-sm text-muted-foreground">
+                                Add custom questions specific to this product, or copy from another product. Each answer can have a percentage adjustment (+/-) or fixed dollar amount.
+                            </p>
+
+                            {formData.questions && formData.questions.length > 0 ? (
+                                <div className="space-y-4">
+                                    {formData.questions.map((question, qIndex) => (
+                                        <div key={qIndex} className="border rounded-lg p-4 bg-background space-y-3">
+                                            <div className="flex items-start gap-2">
+                                                <div className="flex-1">
+                                                    <Label className="text-xs text-muted-foreground">Question {qIndex + 1}</Label>
+                                                    <Input
+                                                        value={question.title}
+                                                        onChange={(e) => {
+                                                            const newQuestions = [...formData.questions]
+                                                            newQuestions[qIndex].title = e.target.value
+                                                            handleInputChange('questions', newQuestions)
+                                                        }}
+                                                        placeholder="Enter question text..."
+                                                    />
+                                                </div>
+                                                <Button
+                                                    type="button"
+                                                    variant="ghost"
+                                                    size="sm"
+                                                    className="text-red-500 hover:text-red-700 mt-5"
+                                                    onClick={() => {
+                                                        const newQuestions = formData.questions.filter((_, i) => i !== qIndex)
+                                                        handleInputChange('questions', newQuestions)
+                                                    }}
+                                                >
+                                                    <TrashIcon className="w-4 h-4" />
+                                                </Button>
+                                            </div>
+
+                                            {/* Answers */}
+                                            <div className="pl-4 border-l-2 border-muted space-y-2">
+                                                <div className="flex items-center justify-between">
+                                                    <Label className="text-xs text-muted-foreground">Answers</Label>
+                                                    <Button
+                                                        type="button"
+                                                        variant="ghost"
+                                                        size="sm"
+                                                        onClick={() => {
+                                                            const newQuestions = [...formData.questions]
+                                                            if (!newQuestions[qIndex].ans) {
+                                                                newQuestions[qIndex].ans = []
+                                                            }
+                                                            newQuestions[qIndex].ans.push({
+                                                                content: '',
+                                                                persentage: '',
+                                                                fixed: ''
+                                                            })
+                                                            handleInputChange('questions', newQuestions)
+                                                        }}
+                                                    >
+                                                        <PlusIcon className="w-3 h-3 mr-1" />
+                                                        Add Answer
+                                                    </Button>
+                                                </div>
+
+                                                {question.ans && question.ans.map((answer, aIndex) => (
+                                                    <div key={aIndex} className="flex items-center gap-2 bg-muted/50 rounded p-2">
+                                                        <Input
+                                                            value={answer.content}
+                                                            onChange={(e) => {
+                                                                const newQuestions = [...formData.questions]
+                                                                newQuestions[qIndex].ans[aIndex].content = e.target.value
+                                                                handleInputChange('questions', newQuestions)
+                                                            }}
+                                                            placeholder="Answer text"
+                                                            className="flex-1 h-8 text-sm"
+                                                        />
+                                                        <div className="flex items-center gap-1">
+                                                            <Input
+                                                                value={answer.persentage}
+                                                                onChange={(e) => {
+                                                                    const newQuestions = [...formData.questions]
+                                                                    newQuestions[qIndex].ans[aIndex].persentage = e.target.value
+                                                                    handleInputChange('questions', newQuestions)
+                                                                }}
+                                                                placeholder="+10 or -5"
+                                                                className="w-20 h-8 text-sm"
+                                                            />
+                                                            <span className="text-xs text-muted-foreground">%</span>
+                                                        </div>
+                                                        <div className="flex items-center gap-1">
+                                                            <span className="text-xs text-muted-foreground">$</span>
+                                                            <Input
+                                                                value={answer.fixed}
+                                                                onChange={(e) => {
+                                                                    const newQuestions = [...formData.questions]
+                                                                    newQuestions[qIndex].ans[aIndex].fixed = e.target.value
+                                                                    handleInputChange('questions', newQuestions)
+                                                                }}
+                                                                placeholder="Fixed"
+                                                                className="w-16 h-8 text-sm"
+                                                            />
+                                                        </div>
+                                                        <Button
+                                                            type="button"
+                                                            variant="ghost"
+                                                            size="sm"
+                                                            className="h-8 w-8 p-0 text-red-500"
+                                                            onClick={() => {
+                                                                const newQuestions = [...formData.questions]
+                                                                newQuestions[qIndex].ans = newQuestions[qIndex].ans.filter((_, i) => i !== aIndex)
+                                                                handleInputChange('questions', newQuestions)
+                                                            }}
+                                                        >
+                                                            <TrashIcon className="w-3 h-3" />
+                                                        </Button>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            ) : (
+                                <p className="text-sm text-muted-foreground text-center py-4">
+                                    No product-specific questions. Click "Add Question" to create one.
+                                </p>
+                            )}
                         </div>
 
                         {/* Brand Image */}
@@ -322,146 +792,28 @@ export default function EditTradeinProductPage() {
                             />
                         </div>
 
-                        {/* Trade-in Prices */}
-                        <div className="space-y-4">
-                            <label className="text-sm font-medium">Trade-in Prices by Condition *</label>
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-                                <div className="space-y-2">
-                                    <label className="text-sm font-medium text-green-700">New Condition ($) *</label>
-                                    <Input
-                                        type="number"
-                                        step="0.01"
-                                        value={formData.new_price}
-                                        onChange={(e) => handleInputChange('new_price', e.target.value)}
-                                        placeholder="0.00"
-                                        required
-                                        className="border-green-200 focus:border-green-500"
-                                    />
-                                </div>
-                                <div className="space-y-2">
-                                    <label className="text-sm font-medium text-blue-700">Good Condition ($) *</label>
-                                    <Input
-                                        type="number"
-                                        step="0.01"
-                                        value={formData.good_price}
-                                        onChange={(e) => handleInputChange('good_price', e.target.value)}
-                                        placeholder="0.00"
-                                        required
-                                        className="border-blue-200 focus:border-blue-500"
-                                    />
-                                </div>
-                                <div className="space-y-2">
-                                    <label className="text-sm font-medium text-yellow-700">Okay Condition ($) *</label>
-                                    <Input
-                                        type="number"
-                                        step="0.01"
-                                        value={formData.okay_price}
-                                        onChange={(e) => handleInputChange('okay_price', e.target.value)}
-                                        placeholder="0.00"
-                                        required
-                                        className="border-yellow-200 focus:border-yellow-500"
-                                    />
-                                </div>
-                                <div className="space-y-2">
-                                    <label className="text-sm font-medium text-orange-700">Bad Condition ($) *</label>
-                                    <Input
-                                        type="number"
-                                        step="0.01"
-                                        value={formData.bad_price}
-                                        onChange={(e) => handleInputChange('bad_price', e.target.value)}
-                                        placeholder="0.00"
-                                        required
-                                        className="border-orange-200 focus:border-orange-500"
-                                    />
-                                </div>
-                                <div className="space-y-2">
-                                    <label className="text-sm font-medium text-red-700">Broken Condition ($) *</label>
-                                    <Input
-                                        type="number"
-                                        step="0.01"
-                                        value={formData.broken_price}
-                                        onChange={(e) => handleInputChange('broken_price', e.target.value)}
-                                        placeholder="0.00"
-                                        required
-                                        className="border-red-200 focus:border-red-500"
-                                    />
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Condition Definitions */}
-                        <div className="space-y-4">
-                            <label className="text-sm font-medium">Condition Definitions *</label>
-                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                                <div className="space-y-2">
-                                    <label className="text-sm font-medium text-green-700">New Definition *</label>
-                                    <textarea
-                                        className="w-full min-h-[80px] px-3 py-2 border border-green-200 rounded-md resize-none focus:outline-none focus:ring-2 focus:ring-green-500"
-                                        value={formData.new_def}
-                                        onChange={(e) => handleInputChange('new_def', e.target.value)}
-                                        placeholder="Define what constitutes 'new' condition"
-                                        required
-                                    />
-                                </div>
-                                <div className="space-y-2">
-                                    <label className="text-sm font-medium text-blue-700">Good Definition *</label>
-                                    <textarea
-                                        className="w-full min-h-[80px] px-3 py-2 border border-blue-200 rounded-md resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                        value={formData.good_def}
-                                        onChange={(e) => handleInputChange('good_def', e.target.value)}
-                                        placeholder="Define what constitutes 'good' condition"
-                                        required
-                                    />
-                                </div>
-                                <div className="space-y-2">
-                                    <label className="text-sm font-medium text-yellow-700">Okay Definition *</label>
-                                    <textarea
-                                        className="w-full min-h-[80px] px-3 py-2 border border-yellow-200 rounded-md resize-none focus:outline-none focus:ring-2 focus:ring-yellow-500"
-                                        value={formData.okay_def}
-                                        onChange={(e) => handleInputChange('okay_def', e.target.value)}
-                                        placeholder="Define what constitutes 'okay' condition"
-                                        required
-                                    />
-                                </div>
-                                <div className="space-y-2">
-                                    <label className="text-sm font-medium text-orange-700">Bad Definition *</label>
-                                    <textarea
-                                        className="w-full min-h-[80px] px-3 py-2 border border-orange-200 rounded-md resize-none focus:outline-none focus:ring-2 focus:ring-orange-500"
-                                        value={formData.bad_def}
-                                        onChange={(e) => handleInputChange('bad_def', e.target.value)}
-                                        placeholder="Define what constitutes 'bad' condition"
-                                        required
-                                    />
-                                </div>
-                                <div className="space-y-2 lg:col-span-2">
-                                    <label className="text-sm font-medium text-red-700">Broken Definition *</label>
-                                    <textarea
-                                        className="w-full min-h-[80px] px-3 py-2 border border-red-200 rounded-md resize-none focus:outline-none focus:ring-2 focus:ring-red-500"
-                                        value={formData.broken_def}
-                                        onChange={(e) => handleInputChange('broken_def', e.target.value)}
-                                        placeholder="Define what constitutes 'broken' condition"
-                                        required
-                                    />
-                                </div>
-                            </div>
-                        </div>
-
                         {/* Product Stats (Read-only) */}
                         {product && (
                             <div className="space-y-2">
-                                <label className="text-sm font-medium">Product Statistics</label>
-                                <div className="grid grid-cols-3 gap-4 p-3 bg-gray-50 rounded-lg">
+                                <Label>Product Statistics</Label>
+                                <div className="grid grid-cols-4 gap-4 p-4 bg-muted/50 rounded-lg">
                                     <div className="text-center">
                                         <div className="text-sm text-muted-foreground">Views</div>
-                                        <div className="text-lg font-semibold">{product.views}</div>
+                                        <div className="text-lg font-semibold">{product.views || 0}</div>
                                     </div>
                                     <div className="text-center">
                                         <div className="text-sm text-muted-foreground">Trades</div>
-                                        <div className="text-lg font-semibold">{product.trades}</div>
+                                        <div className="text-lg font-semibold">{product.trades || 0}</div>
                                     </div>
                                     <div className="text-center">
                                         <div className="text-sm text-muted-foreground">Likes</div>
-                                        <div className="text-lg font-semibold">{product.likes}</div>
+                                        <div className="text-lg font-semibold">{product.likes || 0}</div>
+                                    </div>
+                                    <div className="text-center">
+                                        <div className="text-sm text-muted-foreground">Created</div>
+                                        <div className="text-sm font-medium">
+                                            {new Date(product.created_at).toLocaleDateString()}
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -491,4 +843,4 @@ export default function EditTradeinProductPage() {
             </form>
         </div>
     )
-} 
+}

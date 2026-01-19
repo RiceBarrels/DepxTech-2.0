@@ -6,11 +6,11 @@ import { createClient } from '@supabase/supabase-js'
 function createServiceRoleClient() {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
   const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE
-  
+
   if (!supabaseUrl || !supabaseServiceRoleKey) {
     throw new Error('Missing Supabase environment variables')
   }
-  
+
   return createClient(supabaseUrl, supabaseServiceRoleKey, {
     auth: {
       autoRefreshToken: false,
@@ -23,10 +23,10 @@ export async function GET(request) {
   try {
     // Verify admin access
     const adminVerification = await verifyAdminAccess(request)
-    
+
     if (!adminVerification.authorized) {
       return NextResponse.json(
-        { error: adminVerification.error }, 
+        { error: adminVerification.error },
         { status: adminVerification.status }
       )
     }
@@ -49,7 +49,7 @@ export async function GET(request) {
       if (error) {
         console.error('Error fetching tradable product:', error)
         return NextResponse.json(
-          { error: 'Failed to fetch tradable product' }, 
+          { error: 'Failed to fetch tradable product' },
           { status: 500 }
         )
       }
@@ -70,7 +70,7 @@ export async function GET(request) {
       if (error) {
         console.error('Error fetching tradable products:', error)
         return NextResponse.json(
-          { error: 'Failed to fetch tradable products' }, 
+          { error: 'Failed to fetch tradable products' },
           { status: 500 }
         )
       }
@@ -86,7 +86,7 @@ export async function GET(request) {
   } catch (error) {
     console.error('Error in admin tradein GET route:', error)
     return NextResponse.json(
-      { error: 'Internal server error' }, 
+      { error: 'Internal server error' },
       { status: 500 }
     )
   }
@@ -96,10 +96,10 @@ export async function POST(request) {
   try {
     // Verify admin access
     const adminVerification = await verifyAdminAccess(request)
-    
+
     if (!adminVerification.authorized) {
       return NextResponse.json(
-        { error: adminVerification.error }, 
+        { error: adminVerification.error },
         { status: adminVerification.status }
       )
     }
@@ -111,70 +111,35 @@ export async function POST(request) {
     // Validate required fields
     if (!body.title) {
       return NextResponse.json(
-        { error: 'Product title is required' }, 
+        { error: 'Product title is required' },
         { status: 400 }
       )
     }
 
     if (!body.category) {
       return NextResponse.json(
-        { error: 'Category is required' }, 
+        { error: 'Category is required' },
         { status: 400 }
       )
     }
 
     if (!body.brand) {
       return NextResponse.json(
-        { error: 'Brand is required' }, 
+        { error: 'Brand is required' },
         { status: 400 }
       )
     }
 
     if (!body.series) {
       return NextResponse.json(
-        { error: 'Series is required' }, 
+        { error: 'Series is required' },
         { status: 400 }
       )
     }
 
-    if (!body.new_price || body.new_price < 0) {
+    if (!body.base_price || body.base_price < 0) {
       return NextResponse.json(
-        { error: 'Valid new price is required' }, 
-        { status: 400 }
-      )
-    }
-
-    if (!body.good_price || body.good_price < 0) {
-      return NextResponse.json(
-        { error: 'Valid good condition price is required' }, 
-        { status: 400 }
-      )
-    }
-
-    if (!body.okay_price || body.okay_price < 0) {
-      return NextResponse.json(
-        { error: 'Valid okay condition price is required' }, 
-        { status: 400 }
-      )
-    }
-
-    if (!body.bad_price || body.bad_price < 0) {
-      return NextResponse.json(
-        { error: 'Valid bad condition price is required' }, 
-        { status: 400 }
-      )
-    }
-
-    if (!body.broken_price || body.broken_price < 0) {
-      return NextResponse.json(
-        { error: 'Valid broken condition price is required' }, 
-        { status: 400 }
-      )
-    }
-
-    if (!body.new_def || !body.good_def || !body.okay_def || !body.bad_def || !body.broken_def) {
-      return NextResponse.json(
-        { error: 'All condition definitions are required' }, 
+        { error: 'Valid base price is required' },
         { status: 400 }
       )
     }
@@ -183,45 +148,35 @@ export async function POST(request) {
     const {
       title,
       des,
-      new_price,
-      good_price,
-      okay_price,
-      bad_price,
-      broken_price,
+      base_price,
       category,
       brand,
       series,
       brand_img,
       imgs,
-      new_def,
-      good_def,
-      okay_def,
-      bad_def,
-      broken_def
+      release_date,
+      depreciation_schedule,
+      is_featured,
+      questions
     } = body
 
     // Create service role client for admin operations
     const supabase = createServiceRoleClient()
 
-    // Prepare insert data
+    // Prepare insert data with new schema
     const insertData = {
       title,
       des: des || '',
-      new_price,
-      good_price,
-      okay_price,
-      bad_price,
-      broken_price,
+      base_price: parseFloat(base_price) || 0,
       category,
       brand,
       series,
       brand_img: brand_img || null,
       imgs: imgs || [],
-      new_def,
-      good_def,
-      okay_def,
-      bad_def,
-      broken_def,
+      release_date: release_date || null,
+      depreciation_schedule: depreciation_schedule || 'standard',
+      is_featured: is_featured || false,
+      questions: questions || [],
       trades: 0,
       views: 0,
       likes: 0
@@ -237,7 +192,7 @@ export async function POST(request) {
     if (error) {
       console.error('Error creating tradable product:', error)
       return NextResponse.json(
-        { error: 'Failed to create tradable product' }, 
+        { error: 'Failed to create tradable product: ' + error.message },
         { status: 500 }
       )
     }
@@ -253,7 +208,7 @@ export async function POST(request) {
   } catch (error) {
     console.error('Error in admin tradein POST route:', error)
     return NextResponse.json(
-      { error: 'Internal server error' }, 
+      { error: 'Internal server error' },
       { status: 500 }
     )
   }
@@ -263,10 +218,10 @@ export async function PUT(request) {
   try {
     // Verify admin access
     const adminVerification = await verifyAdminAccess(request)
-    
+
     if (!adminVerification.authorized) {
       return NextResponse.json(
-        { error: adminVerification.error }, 
+        { error: adminVerification.error },
         { status: adminVerification.status }
       )
     }
@@ -278,14 +233,14 @@ export async function PUT(request) {
     // Validate required fields
     if (!body.id) {
       return NextResponse.json(
-        { error: 'Product ID is required for update' }, 
+        { error: 'Product ID is required for update' },
         { status: 400 }
       )
     }
 
     if (!body.title) {
       return NextResponse.json(
-        { error: 'Product title is required' }, 
+        { error: 'Product title is required' },
         { status: 400 }
       )
     }
@@ -295,37 +250,35 @@ export async function PUT(request) {
       id,
       title,
       des,
-      new_price,
-      good_price,
-      okay_price,
-      bad_price,
-      broken_price,
+      base_price,
       category,
-      new_def,
-      good_def,
-      okay_def,
-      bad_def,
-      broken_def
+      brand,
+      series,
+      brand_img,
+      imgs,
+      release_date,
+      depreciation_schedule,
+      is_featured,
+      questions
     } = body
 
     // Create service role client for admin operations
     const supabase = createServiceRoleClient()
 
-    // Prepare update data
+    // Prepare update data with new schema
     const updateData = {
       title,
       des: des || '',
-      new_price,
-      good_price,
-      okay_price,
-      bad_price,
-      broken_price,
-      category: category || [],
-      new_def,
-      good_def,
-      okay_def,
-      bad_def,
-      broken_def
+      base_price: parseFloat(base_price) || 0,
+      category: category || '',
+      brand: brand || '',
+      series: series || '',
+      brand_img: brand_img || null,
+      imgs: imgs || [],
+      release_date: release_date || null,
+      depreciation_schedule: depreciation_schedule || 'standard',
+      is_featured: is_featured || false,
+      questions: questions || []
     }
 
     // Update the tradable product in the database
@@ -339,7 +292,7 @@ export async function PUT(request) {
     if (error) {
       console.error('Error updating tradable product:', error)
       return NextResponse.json(
-        { error: 'Failed to update tradable product' }, 
+        { error: 'Failed to update tradable product: ' + error.message },
         { status: 500 }
       )
     }
@@ -355,7 +308,7 @@ export async function PUT(request) {
   } catch (error) {
     console.error('Error in admin tradein PUT route:', error)
     return NextResponse.json(
-      { error: 'Internal server error' }, 
+      { error: 'Internal server error' },
       { status: 500 }
     )
   }
@@ -365,10 +318,10 @@ export async function DELETE(request) {
   try {
     // Verify admin access
     const adminVerification = await verifyAdminAccess(request)
-    
+
     if (!adminVerification.authorized) {
       return NextResponse.json(
-        { error: adminVerification.error }, 
+        { error: adminVerification.error },
         { status: adminVerification.status }
       )
     }
@@ -379,7 +332,7 @@ export async function DELETE(request) {
 
     if (!id) {
       return NextResponse.json(
-        { error: 'Product ID is required for deletion' }, 
+        { error: 'Product ID is required for deletion' },
         { status: 400 }
       )
     }
@@ -396,7 +349,7 @@ export async function DELETE(request) {
     if (error) {
       console.error('Error deleting tradable product:', error)
       return NextResponse.json(
-        { error: 'Failed to delete tradable product' }, 
+        { error: 'Failed to delete tradable product' },
         { status: 500 }
       )
     }
@@ -411,8 +364,8 @@ export async function DELETE(request) {
   } catch (error) {
     console.error('Error in admin tradein DELETE route:', error)
     return NextResponse.json(
-      { error: 'Internal server error' }, 
+      { error: 'Internal server error' },
       { status: 500 }
     )
   }
-} 
+}

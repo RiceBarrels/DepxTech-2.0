@@ -1,15 +1,15 @@
 import { supabaseAdmin } from '@/lib/supabase-admin'
 import { notFound } from 'next/navigation'
 import TradeProductPageClient from './page.client'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { ArrowLeftIcon, DollarSignIcon } from 'lucide-react'
+import { ArrowLeftIcon } from 'lucide-react'
 import Image from 'next/image'
 import { TransitionLink } from '@/components/ui/pageTransitions'
 
 export async function generateMetadata({ params }) {
   const { id } = await params
-  
+
   try {
     const { data: product } = await supabaseAdmin
       .from('tradable_products')
@@ -18,13 +18,11 @@ export async function generateMetadata({ params }) {
       .single()
 
     if (!product) {
-      return {
-        title: 'Product Not Found | DepxTech',
-      }
+      return { title: 'Product Not Found | DepxTech' }
     }
 
     const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://depxtech.com'
-    
+
     return {
       title: `Trade In ${product.title} | DepxTech`,
       description: `Get a quote for trading in your ${product.title}. ${product.des || ''}`,
@@ -41,10 +39,32 @@ export async function generateMetadata({ params }) {
       },
     }
   } catch (error) {
-    return {
-      title: 'Product | DepxTech',
+    return { title: 'Product | DepxTech' }
+  }
+}
+
+// Calculate depreciation based on release date
+function calculateDepreciation(releaseDate, tiers) {
+  if (!releaseDate || !tiers || tiers.length === 0) {
+    return { multiplier: 100, label: 'Current' }
+  }
+
+  const release = new Date(releaseDate)
+  const now = new Date()
+  const monthsOld = Math.floor((now - release) / (1000 * 60 * 60 * 24 * 30))
+
+  for (const tier of tiers) {
+    const minMonths = tier.min_months || 0
+    const maxMonths = tier.max_months
+
+    if (monthsOld >= minMonths && (maxMonths === null || monthsOld < maxMonths)) {
+      return { multiplier: Number(tier.multiplier), label: tier.label }
     }
   }
+
+  // Default to last tier if no match
+  const lastTier = tiers[tiers.length - 1]
+  return { multiplier: Number(lastTier?.multiplier || 45), label: lastTier?.label || 'Older' }
 }
 
 export default async function TradeProductPage({ params }) {
@@ -61,69 +81,53 @@ export default async function TradeProductPage({ params }) {
     notFound()
   }
 
+  // Use product-specific questions from the questions column
+  const productQuestions = product.questions || []
+
+  // Fetch accessories for this category
+  const { data: accessories } = await supabaseAdmin
+    .from('trade_accessories')
+    .select('*')
+    .or(`category.eq.all,category.eq.${product.category}`)
+    .eq('is_active', true)
+    .order('display_order', { ascending: true })
+
+  // Fetch depreciation schedule
+  const scheduleName = product.depreciation_schedule || 'standard'
+  const { data: schedule } = await supabaseAdmin
+    .from('trade_depreciation_schedules')
+    .select('id')
+    .eq('name', scheduleName)
+    .single()
+
+  let depreciationTiers = []
+  if (schedule) {
+    const { data: tiers } = await supabaseAdmin
+      .from('trade_depreciation_tiers')
+      .select('*')
+      .eq('schedule_id', schedule.id)
+      .order('min_months', { ascending: true })
+    depreciationTiers = tiers || []
+  }
+
   // Increment views
   await supabaseAdmin
     .from('tradable_products')
     .update({ views: (product.views || 0) + 1 })
     .eq('id', id)
 
-  const formatCurrency = (amount) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD'
-    }).format(amount)
-  }
-
-  const conditions = [
-    {
-      key: 'new',
-      label: 'New',
-      price: product.new_price,
-      definition: product.new_def,
-      badge: 'default',
-      badgeColor: 'bg-green-600'
-    },
-    {
-      key: 'good',
-      label: 'Good',
-      price: product.good_price,
-      definition: product.good_def,
-      badge: 'secondary',
-      badgeColor: 'bg-blue-600'
-    },
-    {
-      key: 'okay',
-      label: 'Okay',
-      price: product.okay_price,
-      definition: product.okay_def,
-      badge: 'outline',
-      badgeColor: 'bg-yellow-600'
-    },
-    {
-      key: 'bad',
-      label: 'Bad',
-      price: product.bad_price,
-      definition: product.bad_def,
-      badge: 'outline',
-      badgeColor: 'bg-orange-600'
-    },
-    {
-      key: 'broken',
-      label: 'Broken',
-      price: product.broken_price,
-      definition: product.broken_def,
-      badge: 'destructive',
-      badgeColor: 'bg-red-600'
-    }
-  ]
+  // Calculate base price with depreciation
+  const basePrice = Number(product.base_price) || 0
+  const depreciation = calculateDepreciation(product.release_date, depreciationTiers)
+  const depreciatedPrice = basePrice * (depreciation.multiplier / 100)
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Hero Section - Google Store Style */}
+      {/* Hero Section */}
       <div className="bg-gradient-to-b from-muted/50 to-background border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           {/* Back Button */}
-          <TransitionLink 
+          <TransitionLink
             href={`/trade/category/${encodeURIComponent(product.category)}/brand/${encodeURIComponent(product.brand)}/series/${encodeURIComponent(product.series)}`}
             className="inline-flex items-center text-muted-foreground hover:text-foreground transition-colors mb-6"
           >
@@ -157,32 +161,37 @@ export default async function TradeProductPage({ params }) {
                 <h1 className="text-4xl md:text-5xl font-bold mb-4 leading-tight">
                   {product.title}
                 </h1>
-                <p className="text-xl text-muted-foreground mb-6">
+                <p className="text-xl text-muted-foreground mb-4">
                   {product.category}
                 </p>
+
+                {/* Price Display */}
+                <div className="bg-gradient-to-r from-green-50 to-green-100 dark:from-green-950/30 dark:to-green-900/30 border-2 border-green-200 dark:border-green-800 rounded-xl p-6">
+                  <p className="text-sm text-green-700 dark:text-green-400 mb-1">Trade-in value up to</p>
+                  <p className="text-4xl font-bold text-green-600 dark:text-green-400">
+                    ${depreciatedPrice.toFixed(2)}
+                  </p>
+                  {depreciation.multiplier < 100 && (
+                    <p className="text-xs text-green-600/70 dark:text-green-400/70 mt-2">
+                      {depreciation.label} • {depreciation.multiplier}% of original value
+                    </p>
+                  )}
+                </div>
               </div>
 
               {product.des && (
-                <div className="prose prose-sm max-w-none">
-                  <p className="text-muted-foreground leading-relaxed">
-                    {product.des}
-                  </p>
-                </div>
+                <p className="text-muted-foreground leading-relaxed">{product.des}</p>
               )}
 
-              {/* Trust Badges - Back Market Style */}
+              {/* Trust Badges */}
               <div className="flex flex-wrap gap-3 pt-4">
                 <div className="flex items-center gap-2 px-3 py-2 bg-green-50 dark:bg-green-950/20 rounded-full border border-green-200 dark:border-green-800">
                   <Badge className="bg-green-600">Best Price</Badge>
                   <span className="text-sm font-medium text-green-700 dark:text-green-400">Guaranteed</span>
                 </div>
                 <div className="flex items-center gap-2 px-3 py-2 bg-blue-50 dark:bg-blue-950/20 rounded-full border border-blue-200 dark:border-blue-800">
-                  <Badge className="bg-blue-600">Secure</Badge>
-                  <span className="text-sm font-medium text-blue-700 dark:text-blue-400">Data Wiped</span>
-                </div>
-                <div className="flex items-center gap-2 px-3 py-2 bg-purple-50 dark:bg-purple-950/20 rounded-full border border-purple-200 dark:border-purple-800">
-                  <Badge className="bg-purple-600">Fast</Badge>
-                  <span className="text-sm font-medium text-purple-700 dark:text-purple-400">24hr Response</span>
+                  <Badge className="bg-blue-600">Free</Badge>
+                  <span className="text-sm font-medium text-blue-700 dark:text-blue-400">Shipping</span>
                 </div>
               </div>
             </div>
@@ -190,82 +199,15 @@ export default async function TradeProductPage({ params }) {
         </div>
       </div>
 
-      {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Condition Prices - Back Market Style */}
-          <div className="lg:col-span-2 space-y-6">
-            <div>
-              <h2 className="text-2xl font-bold mb-2">Trade-In Values by Condition</h2>
-              <p className="text-muted-foreground mb-6">
-                Select the condition that best matches your device to see your estimated trade-in value
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {conditions.map((condition) => (
-                <Card 
-                  key={condition.key}
-                  className="hover:shadow-lg transition-all duration-300 border-2 hover:border-primary/50"
-                >
-                  <CardContent className="p-6">
-                    <div className="flex items-start justify-between mb-3">
-                      <Badge 
-                        variant={condition.badge}
-                        className={`${condition.badgeColor} text-white text-sm px-3 py-1`}
-                      >
-                        {condition.label}
-                      </Badge>
-                      <div className="text-right">
-                        <p className="text-xs text-muted-foreground mb-1">Up to</p>
-                        <p className="text-2xl font-bold flex items-center justify-end gap-1">
-                          {formatCurrency(condition.price)}
-                        </p>
-                      </div>
-                    </div>
-                    <p className="text-sm text-muted-foreground leading-relaxed">
-                      {condition.definition}
-                    </p>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-
-            {/* Additional Info */}
-            <Card className="bg-muted/50">
-              <CardContent className="p-6">
-                <h3 className="font-semibold mb-3">How it works</h3>
-                <div className="space-y-3 text-sm text-muted-foreground">
-                  <div className="flex gap-3">
-                    <span className="font-bold text-primary">1.</span>
-                    <span>Select your device condition above</span>
-                  </div>
-                  <div className="flex gap-3">
-                    <span className="font-bold text-primary">2.</span>
-                    <span>Fill out the quote form with your contact information</span>
-                  </div>
-                  <div className="flex gap-3">
-                    <span className="font-bold text-primary">3.</span>
-                    <span>We'll review and contact you within 24 hours</span>
-                  </div>
-                  <div className="flex gap-3">
-                    <span className="font-bold text-primary">4.</span>
-                    <span>Ship your device (we cover shipping costs)</span>
-                  </div>
-                  <div className="flex gap-3">
-                    <span className="font-bold text-primary">5.</span>
-                    <span>Get paid after we verify the condition</span>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Get Quote Form - Sticky Sidebar */}
-          <div className="lg:sticky lg:top-8 lg:self-start">
-            <TradeProductPageClient product={product} conditions={conditions} />
-          </div>
-        </div>
+      {/* Main Content - Questionnaire */}
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <TradeProductPageClient
+          product={product}
+          questions={productQuestions}
+          accessories={accessories || []}
+          basePrice={depreciatedPrice}
+          depreciation={depreciation}
+        />
       </div>
     </div>
   )
