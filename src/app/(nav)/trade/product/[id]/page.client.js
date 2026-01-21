@@ -6,7 +6,6 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Badge } from '@/components/ui/badge'
-import { Checkbox } from '@/components/ui/checkbox'
 import {
   CheckCircle,
   Loader2,
@@ -18,8 +17,6 @@ import {
   AlertCircle,
   ChevronRight,
   ChevronLeft,
-  Package,
-  HelpCircle,
   TrendingUp,
   RefreshCw
 } from 'lucide-react'
@@ -50,7 +47,7 @@ const getImageUrl = (img) => {
   return null
 }
 
-export default function TradeProductPageClient({ product, questions, accessories, basePrice: fallbackBasePrice, minPrice, depreciation }) {
+export default function TradeProductPageClient({ product, questions, basePrice: fallbackBasePrice, minPrice, depreciation }) {
   const { user } = useAuth()
 
   // eBay price fetching state
@@ -63,8 +60,6 @@ export default function TradeProductPageClient({ product, questions, accessories
 
   // Track answers for each question: { questionIndex: answerIndex }
   const [answers, setAnswers] = useState({})
-  // Track selected accessories: { accessoryId: boolean }
-  const [selectedAccessories, setSelectedAccessories] = useState({})
   // Current step in the questionnaire
   const [currentStep, setCurrentStep] = useState(0)
   // Contact form data
@@ -76,7 +71,6 @@ export default function TradeProductPageClient({ product, questions, accessories
   })
   const [submitting, setSubmitting] = useState(false)
   const [submitted, setSubmitted] = useState(false)
-  const [isDealBreaker, setIsDealBreaker] = useState(false)
 
   // Fetch eBay prices on mount
   useEffect(() => {
@@ -131,9 +125,8 @@ export default function TradeProductPageClient({ product, questions, accessories
     }
   }
 
-  // Total steps: questions + accessories (if any) + contact form
-  const hasAccessories = accessories && accessories.length > 0
-  const totalSteps = questions.length + (hasAccessories ? 1 : 0) + 1 // +1 for contact form
+  // Total steps: questions + contact form
+  const totalSteps = (questions?.length || 0) + 1 // +1 for contact form
 
   const formatCurrency = (amount) => {
     return new Intl.NumberFormat('en-US', {
@@ -142,71 +135,52 @@ export default function TradeProductPageClient({ product, questions, accessories
     }).format(amount)
   }
 
-  // Calculate current quote value based on answers and accessories
-  const calculatedQuote = useMemo(() => {
+  // Calculate current quote value based on answers
+  const calculatedQuote = useMemo(function calculateQuote() {
+    const questionsList = questions || []
     let totalPercentageAdjustment = 0
     let totalFixedAdjustment = 0
     let hasDealBreaker = false
 
-    // Calculate adjustments from question answers
-    // Format: questions = [{title, type, ans: [{content, persentage, fixed}]}]
-    questions.forEach((question, qIndex) => {
+    for (let qIndex = 0; qIndex < questionsList.length; qIndex++) {
+      const question = questionsList[qIndex]
       const selectedAnswer = answers[qIndex]
       const isMultiple = question.type === 'multiple'
 
       if (isMultiple && Array.isArray(selectedAnswer)) {
-        // Multi-select: sum adjustments from all selected answers
-        selectedAnswer.forEach(answerIndex => {
+        for (let i = 0; i < selectedAnswer.length; i++) {
+          const answerIndex = selectedAnswer[i]
           if (question.ans && question.ans[answerIndex]) {
             const answer = question.ans[answerIndex]
             const percentage = parsePercentage(answer.persentage)
             const fixed = parseFixed(answer.fixed)
-
             totalPercentageAdjustment += percentage
             totalFixedAdjustment += fixed
-
-            // Treat -100% as a deal breaker
             if (percentage <= -100) {
               hasDealBreaker = true
             }
           }
-        })
+        }
       } else if (selectedAnswer !== undefined && question.ans && question.ans[selectedAnswer]) {
-        // Single-select: use the single selected answer
         const answer = question.ans[selectedAnswer]
         const percentage = parsePercentage(answer.persentage)
         const fixed = parseFixed(answer.fixed)
-
         totalPercentageAdjustment += percentage
         totalFixedAdjustment += fixed
-
-        // Treat -100% as a deal breaker
         if (percentage <= -100) {
           hasDealBreaker = true
         }
       }
-    })
-
-    // Calculate bonus from accessories
-    accessories.forEach(accessory => {
-      if (selectedAccessories[accessory.id]) {
-        totalPercentageAdjustment += Number(accessory.bonus_percent) || 0
-      }
-    })
-
-    setIsDealBreaker(hasDealBreaker)
+    }
 
     if (hasDealBreaker) {
       return { value: 0, deduction: 100, bonus: 0, isDealBreaker: true }
     }
 
-    // Apply percentage adjustments and fixed amounts
-    // Positive percentage = bonus, negative percentage = deduction
     const afterPercentage = basePrice * (1 + totalPercentageAdjustment / 100)
     let finalValue = afterPercentage + totalFixedAdjustment
-
-    // Apply minimum price floor if set
     const appliedMinPrice = minPrice && finalValue < minPrice
+
     if (minPrice && finalValue < minPrice) {
       finalValue = minPrice
     }
@@ -220,15 +194,21 @@ export default function TradeProductPageClient({ product, questions, accessories
       isDealBreaker: false,
       appliedMinPrice: appliedMinPrice
     }
-  }, [answers, selectedAccessories, questions, accessories, basePrice, minPrice])
+  }, [answers, questions, basePrice, minPrice])
 
   // Check if current step is complete
   const isStepComplete = (stepIndex) => {
-    if (stepIndex < questions.length) {
-      // It's a question step - all questions are required by default
-      const question = questions[stepIndex]
+    const questionsList = questions || []
+    if (stepIndex < questionsList.length) {
+      const question = questionsList[stepIndex]
       const answer = answers[stepIndex]
 
+      // Optional questions are always complete (can skip)
+      if (question.required === false) {
+        return true
+      }
+
+      // Required questions need an answer
       if (question.type === 'multiple') {
         // Multi-select: must have at least one answer selected
         return Array.isArray(answer) && answer.length > 0
@@ -236,9 +216,6 @@ export default function TradeProductPageClient({ product, questions, accessories
         // Single-select: must have an answer
         return answer !== undefined
       }
-    } else if (hasAccessories && stepIndex === questions.length) {
-      // Accessories step - always complete (optional)
-      return true
     } else {
       // Contact form step
       return formData.name && formData.email
@@ -248,8 +225,8 @@ export default function TradeProductPageClient({ product, questions, accessories
   const canProceed = isStepComplete(currentStep)
 
   const handleAnswerSelect = (questionIndex, answerIndex) => {
-    const question = questions[questionIndex]
-    const isMultiple = question.type === 'multiple'
+    const question = questions?.[questionIndex]
+    const isMultiple = question?.type === 'multiple'
 
     setAnswers(prev => {
       if (isMultiple) {
@@ -280,13 +257,6 @@ export default function TradeProductPageClient({ product, questions, accessories
     })
   }
 
-  const handleAccessoryToggle = (accessoryId) => {
-    setSelectedAccessories(prev => ({
-      ...prev,
-      [accessoryId]: !prev[accessoryId]
-    }))
-  }
-
   const handleInputChange = (field, value) => {
     setFormData(prev => ({
       ...prev,
@@ -309,8 +279,12 @@ export default function TradeProductPageClient({ product, questions, accessories
   const handleSubmit = async (e) => {
     e.preventDefault()
 
-    // Validate all questions are answered
-    const unansweredQuestions = questions.filter((q, idx) => {
+    // Validate all required questions are answered
+    const unansweredQuestions = (questions || []).filter((q, idx) => {
+      // Skip optional questions
+      if (q.required === false) {
+        return false
+      }
       const answer = answers[idx]
       if (q.type === 'multiple') {
         return !Array.isArray(answer) || answer.length === 0
@@ -318,7 +292,7 @@ export default function TradeProductPageClient({ product, questions, accessories
       return answer === undefined
     })
     if (unansweredQuestions.length > 0) {
-      toast.error('Please answer all questions')
+      toast.error('Please answer all required questions')
       return
     }
 
@@ -337,7 +311,7 @@ export default function TradeProductPageClient({ product, questions, accessories
 
     try {
       // Build answers summary for submission
-      const answersSummary = questions.map((q, qIndex) => {
+      const answersSummary = (questions || []).map((q, qIndex) => {
         const selectedAnswer = answers[qIndex]
         const isMultiple = q.type === 'multiple'
 
@@ -368,14 +342,6 @@ export default function TradeProductPageClient({ product, questions, accessories
         }
       })
 
-      const accessoriesSummary = accessories
-        .filter(a => selectedAccessories[a.id])
-        .map(a => ({
-          accessoryId: a.id,
-          name: a.name,
-          bonusPercent: a.bonus_percent
-        }))
-
       const response = await fetch('/api/tradeins/quote', {
         method: 'POST',
         headers: {
@@ -385,7 +351,6 @@ export default function TradeProductPageClient({ product, questions, accessories
           productId: product.id,
           productTitle: product.title,
           answers: answersSummary,
-          accessories: accessoriesSummary,
           estimatedValue: calculatedQuote.value,
           totalDeduction: calculatedQuote.deduction,
           totalBonus: calculatedQuote.bonus,
@@ -472,7 +437,6 @@ export default function TradeProductPageClient({ product, questions, accessories
                 setSubmitted(false)
                 setCurrentStep(0)
                 setAnswers({})
-                setSelectedAccessories({})
                 setFormData({
                   name: user?.user_metadata?.full_name || '',
                   email: user?.email || '',
@@ -494,8 +458,9 @@ export default function TradeProductPageClient({ product, questions, accessories
   // Render current step content
   const renderStepContent = () => {
     // Question steps
-    if (currentStep < questions.length) {
-      const question = questions[currentStep]
+    const questionsList = questions || []
+    if (currentStep < questionsList.length) {
+      const question = questionsList[currentStep]
       const questionAnswers = question.ans || []
       const isMultiple = question.type === 'multiple'
       const currentAnswers = answers[currentStep]
@@ -513,7 +478,11 @@ export default function TradeProductPageClient({ product, questions, accessories
           <div className="space-y-2">
             <div className="flex items-start gap-2">
               <h3 className="text-lg font-semibold">{question.title}</h3>
-              <Badge variant="destructive" className="text-xs">Required</Badge>
+              {question.required !== false ? (
+                <Badge variant="destructive" className="text-xs">Required</Badge>
+              ) : (
+                <Badge variant="secondary" className="text-xs">Optional</Badge>
+              )}
               {isMultiple && (
                 <Badge variant="outline" className="text-xs">Select multiple</Badge>
               )}
@@ -538,12 +507,19 @@ export default function TradeProductPageClient({ product, questions, accessories
               const isDealBreakerAnswer = percentage <= -100
 
               return (
-                <button
+                <div
                   key={ansIdx}
-                  type="button"
+                  role="button"
+                  tabIndex={0}
                   onClick={() => handleAnswerSelect(currentStep, ansIdx)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault()
+                      handleAnswerSelect(currentStep, ansIdx)
+                    }
+                  }}
                   className={cn(
-                    "w-full text-left p-4 border-2 rounded-xl transition-all",
+                    "w-full text-left p-4 border-2 rounded-xl transition-all cursor-pointer",
                     isSelected
                       ? "border-primary bg-primary/10 shadow-md"
                       : "border-border hover:border-primary/50 hover:bg-muted/50",
@@ -551,13 +527,15 @@ export default function TradeProductPageClient({ product, questions, accessories
                   )}
                 >
                   <div className="flex items-start gap-3">
-                    {/* Checkbox for multi-select */}
+                    {/* Checkbox indicator for multi-select */}
                     {isMultiple && (
-                      <div className="flex-shrink-0 mt-0.5">
-                        <Checkbox
-                          checked={isSelected}
-                          className="pointer-events-none"
-                        />
+                      <div className={cn(
+                        "flex-shrink-0 mt-0.5 w-4 h-4 rounded border-2 flex items-center justify-center",
+                        isSelected
+                          ? "bg-primary border-primary text-primary-foreground"
+                          : "border-input bg-background"
+                      )}>
+                        {isSelected && <CheckCircle className="w-3 h-3" />}
                       </div>
                     )}
                     {/* Answer image */}
@@ -603,63 +581,7 @@ export default function TradeProductPageClient({ product, questions, accessories
                       </div>
                     </div>
                   </div>
-                </button>
-              )
-            })}
-          </div>
-        </div>
-      )
-    }
-
-    // Accessories step
-    if (hasAccessories && currentStep === questions.length) {
-      return (
-        <div className="space-y-4">
-          <div className="space-y-2">
-            <div className="flex items-center gap-2">
-              <Package className="w-5 h-5" />
-              <h3 className="text-lg font-semibold">Included Accessories</h3>
-            </div>
-            <p className="text-sm text-muted-foreground">
-              Select any accessories you're including to increase your trade-in value
-            </p>
-          </div>
-
-          <div className="space-y-2">
-            {accessories.map((accessory) => {
-              const isSelected = selectedAccessories[accessory.id]
-              const bonus = Number(accessory.bonus_percent) || 0
-
-              return (
-                <button
-                  key={accessory.id}
-                  type="button"
-                  onClick={() => handleAccessoryToggle(accessory.id)}
-                  className={cn(
-                    "w-full text-left p-4 border-2 rounded-xl transition-all",
-                    isSelected
-                      ? "border-green-500 bg-green-50 dark:bg-green-950/30 shadow-md"
-                      : "border-border hover:border-green-500/50 hover:bg-muted/50"
-                  )}
-                >
-                  <div className="flex items-center justify-between gap-3">
-                    <div className="flex items-center gap-3">
-                      <Checkbox
-                        checked={isSelected}
-                        className="pointer-events-none"
-                      />
-                      <div>
-                        <span className="font-medium">{accessory.name}</span>
-                        {accessory.description && (
-                          <p className="text-sm text-muted-foreground">{accessory.description}</p>
-                        )}
-                      </div>
-                    </div>
-                    <Badge className="bg-green-600 text-white">
-                      +{bonus}%
-                    </Badge>
-                  </div>
-                </button>
+                </div>
               )
             })}
           </div>
@@ -774,7 +696,7 @@ export default function TradeProductPageClient({ product, questions, accessories
           {/* Current quote display */}
           <div className={cn(
             "p-4 rounded-xl border-2 transition-all",
-            isDealBreaker
+            calculatedQuote.isDealBreaker
               ? "bg-red-50 dark:bg-red-950/30 border-red-200 dark:border-red-800"
               : "bg-gradient-to-br from-green-50 to-green-100 dark:from-green-950/30 dark:to-green-900/30 border-green-200 dark:border-green-800"
           )}>
@@ -782,9 +704,9 @@ export default function TradeProductPageClient({ product, questions, accessories
               <div>
                 <p className={cn(
                   "text-sm font-medium flex items-center gap-2",
-                  isDealBreaker ? "text-red-700 dark:text-red-400" : "text-green-700 dark:text-green-400"
+                  calculatedQuote.isDealBreaker ? "text-red-700 dark:text-red-400" : "text-green-700 dark:text-green-400"
                 )}>
-                  {isDealBreaker ? "Not Eligible for Trade-in" : "Current Estimate"}
+                  {calculatedQuote.isDealBreaker ? "Not Eligible for Trade-in" : "Current Estimate"}
                   {ebayLoading && (
                     <Loader2 className="w-3 h-3 animate-spin" />
                   )}
@@ -797,18 +719,18 @@ export default function TradeProductPageClient({ product, questions, accessories
                 </p>
                 <p className={cn(
                   "text-3xl font-bold",
-                  isDealBreaker ? "text-red-600 dark:text-red-400" : "text-green-600 dark:text-green-400"
+                  calculatedQuote.isDealBreaker ? "text-red-600 dark:text-red-400" : "text-green-600 dark:text-green-400"
                 )}>
                   {ebayLoading ? (
                     <span className="text-2xl text-muted-foreground">Checking market...</span>
-                  ) : isDealBreaker ? (
+                  ) : calculatedQuote.isDealBreaker ? (
                     "N/A"
                   ) : (
                     formatCurrency(calculatedQuote.value)
                   )}
                 </p>
               </div>
-              {!isDealBreaker && !ebayLoading && (
+              {!calculatedQuote.isDealBreaker && !ebayLoading && (
                 <div className="text-right text-xs space-y-1">
                   {calculatedQuote.deduction > 0 && (
                     <p className="text-muted-foreground">
@@ -845,13 +767,13 @@ export default function TradeProductPageClient({ product, questions, accessories
                 </div>
               )}
             </div>
-            {isDealBreaker && (
+            {calculatedQuote.isDealBreaker && (
               <p className="text-xs text-red-600/70 dark:text-red-400/70 mt-2">
                 Based on your answers, this device is not eligible for our trade-in program
               </p>
             )}
             {/* eBay market info */}
-            {ebayPricing && !ebayLoading && !isDealBreaker && (
+            {ebayPricing && !ebayLoading && !calculatedQuote.isDealBreaker && (
               <div className="mt-3 pt-3 border-t border-green-200 dark:border-green-800">
                 <div className="flex items-center justify-between text-xs">
                   <span className="text-muted-foreground">
@@ -889,7 +811,7 @@ export default function TradeProductPageClient({ product, questions, accessories
             {isLastStep ? (
               <Button
                 type="submit"
-                disabled={submitting || !canProceed || isDealBreaker}
+                disabled={submitting || !canProceed || calculatedQuote.isDealBreaker}
                 className="gap-2"
               >
                 {submitting ? (

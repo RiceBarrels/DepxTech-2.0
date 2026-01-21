@@ -84,14 +84,6 @@ export default async function TradeProductPage({ params }) {
   // Use product-specific questions from the questions column
   const productQuestions = product.questions || []
 
-  // Fetch accessories for this category
-  const { data: accessories } = await supabaseAdmin
-    .from('trade_accessories')
-    .select('*')
-    .or(`category.eq.all,category.eq.${product.category}`)
-    .eq('is_active', true)
-    .order('display_order', { ascending: true })
-
   // Fetch depreciation schedule
   const scheduleName = product.depreciation_schedule || 'standard'
   const { data: schedule } = await supabaseAdmin
@@ -204,7 +196,6 @@ export default async function TradeProductPage({ params }) {
         <TradeProductPageClient
           product={product}
           questions={productQuestions}
-          accessories={accessories || []}
           basePrice={depreciatedPrice}
           minPrice={product.min_price ? Number(product.min_price) : null}
           depreciation={depreciation}

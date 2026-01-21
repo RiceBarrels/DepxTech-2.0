@@ -610,6 +610,7 @@ export default function AddTradeinProductPage({defaultData={
                                             const newQuestions = [...(formData.questions || []), {
                                                 title: '',
                                                 type: 'single', // 'single' or 'multiple'
+                                                required: true, // whether question is required
                                                 ans: []
                                             }]
                                             handleInputChange('questions', newQuestions)
@@ -631,7 +632,7 @@ export default function AddTradeinProductPage({defaultData={
                                         <div key={qIndex} className="border rounded-lg p-4 bg-background space-y-3">
                                             <div className="flex items-start gap-2">
                                                 <div className="flex-1 space-y-2">
-                                                    <div className="flex items-center gap-2">
+                                                    <div className="flex items-center gap-2 flex-wrap">
                                                         <Label className="text-xs text-muted-foreground">Question {qIndex + 1}</Label>
                                                         <Select
                                                             value={question.type || 'single'}
@@ -649,6 +650,20 @@ export default function AddTradeinProductPage({defaultData={
                                                                 <SelectItem value="multiple">Multiple Select</SelectItem>
                                                             </SelectContent>
                                                         </Select>
+                                                        <div className="flex items-center gap-1">
+                                                            <Checkbox
+                                                                id={`required-${qIndex}`}
+                                                                checked={question.required !== false}
+                                                                onCheckedChange={(checked) => {
+                                                                    const newQuestions = [...formData.questions]
+                                                                    newQuestions[qIndex].required = checked
+                                                                    handleInputChange('questions', newQuestions)
+                                                                }}
+                                                            />
+                                                            <Label htmlFor={`required-${qIndex}`} className="text-xs text-muted-foreground cursor-pointer">
+                                                                Required
+                                                            </Label>
+                                                        </div>
                                                     </div>
                                                     <Input
                                                         value={question.title}

@@ -705,6 +705,7 @@ export default function EditTradeinProductPage() {
                                             const newQuestions = [...(formData.questions || []), {
                                                 title: '',
                                                 type: 'single', // 'single' or 'multiple'
+                                                required: true,
                                                 ans: []
                                             }]
                                             handleInputChange('questions', newQuestions)
@@ -744,6 +745,20 @@ export default function EditTradeinProductPage() {
                                                                 <SelectItem value="multiple">Multiple Select</SelectItem>
                                                             </SelectContent>
                                                         </Select>
+                                                        <div className="flex items-center gap-1">
+                                                            <Checkbox
+                                                                id={`required-${qIndex}`}
+                                                                checked={question.required !== false}
+                                                                onCheckedChange={(checked) => {
+                                                                    const newQuestions = [...formData.questions]
+                                                                    newQuestions[qIndex].required = checked
+                                                                    handleInputChange('questions', newQuestions)
+                                                                }}
+                                                            />
+                                                            <Label htmlFor={`required-${qIndex}`} className="text-xs text-muted-foreground cursor-pointer">
+                                                                Required
+                                                            </Label>
+                                                        </div>
                                                     </div>
                                                     <Input
                                                         value={question.title}
