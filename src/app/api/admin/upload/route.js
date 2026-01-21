@@ -47,10 +47,11 @@ export async function POST(request) {
   try {
     // Verify admin access
     const adminVerification = await verifyAdminAccess(request)
-    
+
     if (!adminVerification.authorized) {
+      console.log('Upload denied - admin verification failed:', adminVerification.error)
       return NextResponse.json(
-        { error: adminVerification.error }, 
+        { error: adminVerification.error },
         { status: adminVerification.status }
       )
     }
@@ -60,18 +61,22 @@ export async function POST(request) {
     const file = formData.get('file')
     const folder = formData.get('folder') || 'uploads' // Default folder
 
+    console.log('Upload request - file:', file?.name, 'type:', file?.type, 'size:', file?.size, 'folder:', folder)
+
     if (!file) {
+      console.log('Upload error: No file provided')
       return NextResponse.json(
-        { error: 'No file provided' }, 
+        { error: 'No file provided' },
         { status: 400 }
       )
     }
 
     // Validate file type
-    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp']
+    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp', 'image/svg+xml','image/avif','image/heic','image/heif']
     if (!allowedTypes.includes(file.type)) {
+      console.log('Upload error: Invalid file type:', file.type)
       return NextResponse.json(
-        { error: 'Invalid file type. Only images are allowed.' }, 
+        { error: `Invalid file type: ${file.type}. Only images are allowed (jpeg, png, gif, webp, svg).` },
         { status: 400 }
       )
     }
@@ -79,8 +84,9 @@ export async function POST(request) {
     // Validate file size (max 10MB)
     const maxSize = 10 * 1024 * 1024 // 10MB
     if (file.size > maxSize) {
+      console.log('Upload error: File too large:', file.size)
       return NextResponse.json(
-        { error: 'File size exceeds 10MB limit' }, 
+        { error: 'File size exceeds 10MB limit' },
         { status: 400 }
       )
     }

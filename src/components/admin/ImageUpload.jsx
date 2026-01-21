@@ -8,20 +8,39 @@ import { LoaderIcon, UploadIcon, XIcon } from 'lucide-react'
 // Helper to check if a value is a File object
 const isFile = (value) => value instanceof File
 
-// Helper to check if a value is a URL string
-const isUrl = (value) => typeof value === 'string' && (value.startsWith('http://') || value.startsWith('https://') || value.startsWith('blob:'))
+// Helper to extract URL from value (handles string URLs and {url: "..."} objects)
+const extractUrl = (value) => {
+  if (!value) return null
+  if (typeof value === 'string') return value
+  if (typeof value === 'object' && value.url) return value.url
+  return null
+}
+
+// Helper to check if a value is a URL string or object with URL
+const isUrl = (value) => {
+  const url = extractUrl(value)
+  return url && (url.startsWith('http://') || url.startsWith('https://') || url.startsWith('blob:') || url.startsWith('data:'))
+}
+
+// Helper to check if a value is an external URL (not a blob or data URL)
+const isExternalUrl = (value) => {
+  const url = extractUrl(value)
+  return url && (url.startsWith('http://') || url.startsWith('https://'))
+}
 
 // Helper to create preview URL from File
 const createPreview = (file) => URL.createObjectURL(file)
 
-export function ImageUpload({ 
-  value, 
-  onChange, 
-  multiple = false, 
+export function ImageUpload({
+  value,
+  onChange,
+  multiple = false,
   folder = 'uploads',
   label = 'Upload Image',
   accept = 'image/*',
-  onDelete // Callback when an image is deleted (for bucket cleanup)
+  onDelete, // Callback when an image is deleted (for bucket cleanup)
+  compact = false, // Compact mode for inline use
+  placeholder = 'Click to select or drag and drop'
 }) {
   const [error, setError] = useState(null)
   const fileInputRef = useRef(null)
@@ -106,7 +125,8 @@ export function ImageUpload({
     if (isFile(item)) {
       return createPreview(item)
     }
-    return item
+    // Handle both string URLs and {url: "..."} objects
+    return extractUrl(item) || item
   }
 
   // Get display name
@@ -114,17 +134,66 @@ export function ImageUpload({
     if (isFile(item)) {
       return item.name
     }
-    return item
+    // Handle both string URLs and {url: "..."} objects
+    return extractUrl(item) || item
   }
 
   const hasValue = multiple 
     ? (Array.isArray(value) && value.length > 0)
     : (value && value !== '' && (isFile(value) || isUrl(value)))
 
+  // Compact mode - inline image upload
+  if (compact) {
+    return (
+      <div className="flex items-center gap-2">
+        {hasValue ? (
+          <div className="flex items-center gap-2 p-1 border rounded bg-muted/30">
+            <img
+              src={getPreviewUrl(multiple && Array.isArray(value) ? value[0] : value)}
+              alt="Preview"
+              className="w-8 h-8 object-cover rounded"
+            />
+            <span className="text-xs text-muted-foreground truncate max-w-[100px]">
+              {isFile(multiple && Array.isArray(value) ? value[0] : value) ? 'New image' : 'Uploaded'}
+            </span>
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation()
+                removeImage(multiple && Array.isArray(value) ? value[0] : value, 0)
+              }}
+              className="text-red-500 hover:text-red-700 p-1"
+            >
+              <XIcon className="w-3 h-3" />
+            </button>
+          </div>
+        ) : (
+          <div
+            className="flex items-center gap-2 px-3 py-1.5 border border-dashed border-gray-300 rounded hover:border-gray-400 transition-colors cursor-pointer text-muted-foreground"
+            onClick={() => fileInputRef.current?.click()}
+            onDrop={handleDrop}
+            onDragOver={handleDragOver}
+          >
+            <UploadIcon className="w-4 h-4" />
+            <span className="text-xs">{placeholder}</span>
+          </div>
+        )}
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept={accept}
+          multiple={multiple}
+          onChange={handleFileSelect}
+          className="hidden"
+        />
+      </div>
+    )
+  }
+
   return (
     <div className="space-y-2">
-      <label className="text-sm font-medium">{label}</label>
-      
+      {label && <label className="text-sm font-medium">{label}</label>}
+
       {/* Upload Area */}
       <div
         className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-gray-400 transition-colors cursor-pointer"
@@ -140,11 +209,11 @@ export function ImageUpload({
           onChange={handleFileSelect}
           className="hidden"
         />
-        
+
         <div className="flex flex-col items-center gap-2">
           <UploadIcon className="w-8 h-8 text-gray-400" />
           <p className="text-sm text-muted-foreground">
-            Click to select or drag and drop
+            {placeholder}
           </p>
           <p className="text-xs text-muted-foreground">
             PNG, JPG, GIF, WEBP up to 10MB (uploaded on save)
@@ -235,44 +304,89 @@ export function ImageUpload({
   )
 }
 
+// Helper function to check if value is a valid URL string
+function isValidUrl(value) {
+  if (!value) return false
+  if (typeof value === 'string') {
+    return value.startsWith('http://') || value.startsWith('https://')
+  }
+  if (typeof value === 'object' && value?.url) {
+    return value.url.startsWith('http://') || value.url.startsWith('https://')
+  }
+  return false
+}
+
+// Helper function to extract URL string from various formats
+function getUrlString(value) {
+  if (!value) return null
+  if (typeof value === 'string') return value
+  if (typeof value === 'object' && value?.url) return value.url
+  return null
+}
+
 // Helper function to upload files and return URLs
+// External URLs (http/https) are passed through without uploading
 export async function uploadFiles(files, folder = 'uploads') {
   if (!files || (Array.isArray(files) && files.length === 0)) {
     return []
   }
 
   const fileArray = Array.isArray(files) ? files : [files]
-  
-  // Check if all are already URLs
-  const allUrls = fileArray.every(f => !(f instanceof File))
-  if (allUrls) {
-    return fileArray
-  }
 
-  // Upload files and preserve order
+  // Process each item - upload Files, pass through URLs
   const uploadPromises = fileArray.map(async (item) => {
+    // Skip empty/null values
+    if (!item) return null
+
+    // If it's already a URL (string or object with url), just return it
+    if (isValidUrl(item)) {
+      const url = getUrlString(item)
+      console.log('Using existing URL (no upload needed):', url?.substring(0, 50) + '...')
+      return url
+    }
+
+    // If it's a File, upload it
     if (item instanceof File) {
+      console.log('Uploading file:', item.name, 'type:', item.type, 'size:', item.size, 'to folder:', folder)
+
       const formData = new FormData()
       formData.append('file', item)
       formData.append('folder', folder)
 
-      const response = await fetch('/api/admin/upload', {
-        method: 'POST',
-        body: formData
-      })
-      
-      const data = await response.json()
-      if (!response.ok) {
-        throw new Error(data.error || 'Upload failed')
+      try {
+        const response = await fetch('/api/admin/upload', {
+          method: 'POST',
+          body: formData,
+          credentials: 'include' // Ensure cookies are sent for auth
+        })
+
+        const data = await response.json()
+        console.log('Upload response:', data)
+
+        if (!response.ok) {
+          console.error('Upload failed:', data.error)
+          throw new Error(data.error || 'Upload failed')
+        }
+
+        if (!data.url) {
+          console.error('Upload succeeded but no URL returned:', data)
+          throw new Error('Upload succeeded but no URL returned')
+        }
+
+        return data.url
+      } catch (err) {
+        console.error('Upload error for file:', item.name, err)
+        throw err
       }
-      return data.url
-    } else {
-      // Already a URL, return as is
-      return item
     }
+
+    // Unknown type - skip
+    console.warn('Skipping unknown item type:', typeof item, item)
+    return null
   })
 
-  return await Promise.all(uploadPromises)
+  const results = await Promise.all(uploadPromises)
+  return results.filter(Boolean) // Remove null values
 }
 
 // Helper function to delete a file from bucket

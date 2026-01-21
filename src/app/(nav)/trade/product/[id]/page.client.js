@@ -42,7 +42,15 @@ const parseFixed = (value) => {
   return isNaN(num) ? 0 : num
 }
 
-export default function TradeProductPageClient({ product, questions, accessories, basePrice: fallbackBasePrice, depreciation }) {
+// Helper to get image URL (handles both string URLs and {url: "..."} objects)
+const getImageUrl = (img) => {
+  if (!img) return null
+  if (typeof img === 'string') return img
+  if (typeof img === 'object' && img.url) return img.url
+  return null
+}
+
+export default function TradeProductPageClient({ product, questions, accessories, basePrice: fallbackBasePrice, minPrice, depreciation }) {
   const { user } = useAuth()
 
   // eBay price fetching state
@@ -141,11 +149,31 @@ export default function TradeProductPageClient({ product, questions, accessories
     let hasDealBreaker = false
 
     // Calculate adjustments from question answers
-    // New format: questions = [{title, ans: [{content, persentage, fixed}]}]
+    // Format: questions = [{title, type, ans: [{content, persentage, fixed}]}]
     questions.forEach((question, qIndex) => {
-      const selectedAnswerIndex = answers[qIndex]
-      if (selectedAnswerIndex !== undefined && question.ans && question.ans[selectedAnswerIndex]) {
-        const answer = question.ans[selectedAnswerIndex]
+      const selectedAnswer = answers[qIndex]
+      const isMultiple = question.type === 'multiple'
+
+      if (isMultiple && Array.isArray(selectedAnswer)) {
+        // Multi-select: sum adjustments from all selected answers
+        selectedAnswer.forEach(answerIndex => {
+          if (question.ans && question.ans[answerIndex]) {
+            const answer = question.ans[answerIndex]
+            const percentage = parsePercentage(answer.persentage)
+            const fixed = parseFixed(answer.fixed)
+
+            totalPercentageAdjustment += percentage
+            totalFixedAdjustment += fixed
+
+            // Treat -100% as a deal breaker
+            if (percentage <= -100) {
+              hasDealBreaker = true
+            }
+          }
+        })
+      } else if (selectedAnswer !== undefined && question.ans && question.ans[selectedAnswer]) {
+        // Single-select: use the single selected answer
+        const answer = question.ans[selectedAnswer]
         const percentage = parsePercentage(answer.persentage)
         const fixed = parseFixed(answer.fixed)
 
@@ -175,7 +203,13 @@ export default function TradeProductPageClient({ product, questions, accessories
     // Apply percentage adjustments and fixed amounts
     // Positive percentage = bonus, negative percentage = deduction
     const afterPercentage = basePrice * (1 + totalPercentageAdjustment / 100)
-    const finalValue = afterPercentage + totalFixedAdjustment
+    let finalValue = afterPercentage + totalFixedAdjustment
+
+    // Apply minimum price floor if set
+    const appliedMinPrice = minPrice && finalValue < minPrice
+    if (minPrice && finalValue < minPrice) {
+      finalValue = minPrice
+    }
 
     return {
       value: Math.max(0, finalValue),
@@ -183,15 +217,25 @@ export default function TradeProductPageClient({ product, questions, accessories
       fixedAdjustment: totalFixedAdjustment,
       deduction: totalPercentageAdjustment < 0 ? Math.abs(totalPercentageAdjustment) : 0,
       bonus: totalPercentageAdjustment > 0 ? totalPercentageAdjustment : 0,
-      isDealBreaker: false
+      isDealBreaker: false,
+      appliedMinPrice: appliedMinPrice
     }
-  }, [answers, selectedAccessories, questions, accessories, basePrice])
+  }, [answers, selectedAccessories, questions, accessories, basePrice, minPrice])
 
   // Check if current step is complete
   const isStepComplete = (stepIndex) => {
     if (stepIndex < questions.length) {
       // It's a question step - all questions are required by default
-      return answers[stepIndex] !== undefined
+      const question = questions[stepIndex]
+      const answer = answers[stepIndex]
+
+      if (question.type === 'multiple') {
+        // Multi-select: must have at least one answer selected
+        return Array.isArray(answer) && answer.length > 0
+      } else {
+        // Single-select: must have an answer
+        return answer !== undefined
+      }
     } else if (hasAccessories && stepIndex === questions.length) {
       // Accessories step - always complete (optional)
       return true
@@ -204,10 +248,36 @@ export default function TradeProductPageClient({ product, questions, accessories
   const canProceed = isStepComplete(currentStep)
 
   const handleAnswerSelect = (questionIndex, answerIndex) => {
-    setAnswers(prev => ({
-      ...prev,
-      [questionIndex]: answerIndex
-    }))
+    const question = questions[questionIndex]
+    const isMultiple = question.type === 'multiple'
+
+    setAnswers(prev => {
+      if (isMultiple) {
+        // Multi-select: toggle the answer in the array
+        const currentAnswers = Array.isArray(prev[questionIndex]) ? prev[questionIndex] : []
+        const isSelected = currentAnswers.includes(answerIndex)
+
+        if (isSelected) {
+          // Remove from selection
+          return {
+            ...prev,
+            [questionIndex]: currentAnswers.filter(idx => idx !== answerIndex)
+          }
+        } else {
+          // Add to selection
+          return {
+            ...prev,
+            [questionIndex]: [...currentAnswers, answerIndex]
+          }
+        }
+      } else {
+        // Single-select: replace the answer
+        return {
+          ...prev,
+          [questionIndex]: answerIndex
+        }
+      }
+    })
   }
 
   const handleAccessoryToggle = (accessoryId) => {
@@ -240,7 +310,13 @@ export default function TradeProductPageClient({ product, questions, accessories
     e.preventDefault()
 
     // Validate all questions are answered
-    const unansweredQuestions = questions.filter((q, idx) => answers[idx] === undefined)
+    const unansweredQuestions = questions.filter((q, idx) => {
+      const answer = answers[idx]
+      if (q.type === 'multiple') {
+        return !Array.isArray(answer) || answer.length === 0
+      }
+      return answer === undefined
+    })
     if (unansweredQuestions.length > 0) {
       toast.error('Please answer all questions')
       return
@@ -260,17 +336,35 @@ export default function TradeProductPageClient({ product, questions, accessories
     setSubmitting(true)
 
     try {
-      // Build answers summary for submission using new format
+      // Build answers summary for submission
       const answersSummary = questions.map((q, qIndex) => {
-        const selectedAnswerIndex = answers[qIndex]
-        const selectedAnswer = q.ans && q.ans[selectedAnswerIndex]
-        return {
-          questionIndex: qIndex,
-          questionText: q.title,
-          answerIndex: selectedAnswerIndex,
-          answerText: selectedAnswer?.content || 'Not answered',
-          percentageAdjustment: parsePercentage(selectedAnswer?.persentage),
-          fixedAdjustment: parseFixed(selectedAnswer?.fixed)
+        const selectedAnswer = answers[qIndex]
+        const isMultiple = q.type === 'multiple'
+
+        if (isMultiple && Array.isArray(selectedAnswer)) {
+          // Multi-select: include all selected answers
+          const selectedAnswers = selectedAnswer.map(ansIdx => q.ans && q.ans[ansIdx]).filter(Boolean)
+          return {
+            questionIndex: qIndex,
+            questionText: q.title,
+            questionType: 'multiple',
+            answerIndices: selectedAnswer,
+            answerTexts: selectedAnswers.map(a => a?.content || 'Not answered'),
+            percentageAdjustment: selectedAnswers.reduce((sum, a) => sum + parsePercentage(a?.persentage), 0),
+            fixedAdjustment: selectedAnswers.reduce((sum, a) => sum + parseFixed(a?.fixed), 0)
+          }
+        } else {
+          // Single-select: single answer
+          const answer = q.ans && q.ans[selectedAnswer]
+          return {
+            questionIndex: qIndex,
+            questionText: q.title,
+            questionType: 'single',
+            answerIndex: selectedAnswer,
+            answerText: answer?.content || 'Not answered',
+            percentageAdjustment: parsePercentage(answer?.persentage),
+            fixedAdjustment: parseFixed(answer?.fixed)
+          }
         }
       })
 
@@ -403,6 +497,16 @@ export default function TradeProductPageClient({ product, questions, accessories
     if (currentStep < questions.length) {
       const question = questions[currentStep]
       const questionAnswers = question.ans || []
+      const isMultiple = question.type === 'multiple'
+      const currentAnswers = answers[currentStep]
+
+      // Helper to check if an answer is selected
+      const isAnswerSelected = (ansIdx) => {
+        if (isMultiple) {
+          return Array.isArray(currentAnswers) && currentAnswers.includes(ansIdx)
+        }
+        return currentAnswers === ansIdx
+      }
 
       return (
         <div className="space-y-4">
@@ -410,12 +514,25 @@ export default function TradeProductPageClient({ product, questions, accessories
             <div className="flex items-start gap-2">
               <h3 className="text-lg font-semibold">{question.title}</h3>
               <Badge variant="destructive" className="text-xs">Required</Badge>
+              {isMultiple && (
+                <Badge variant="outline" className="text-xs">Select multiple</Badge>
+              )}
             </div>
+            {/* Question image */}
+            {getImageUrl(question.img) && (
+              <div className="mt-2">
+                <img
+                  src={getImageUrl(question.img)}
+                  alt={question.title}
+                  className="max-w-full h-auto max-h-48 rounded-lg border object-contain"
+                />
+              </div>
+            )}
           </div>
 
           <div className="space-y-2">
             {questionAnswers.map((answer, ansIdx) => {
-              const isSelected = answers[currentStep] === ansIdx
+              const isSelected = isAnswerSelected(ansIdx)
               const percentage = parsePercentage(answer.persentage)
               const fixed = parseFixed(answer.fixed)
               const isDealBreakerAnswer = percentage <= -100
@@ -433,32 +550,57 @@ export default function TradeProductPageClient({ product, questions, accessories
                     isDealBreakerAnswer && isSelected && "border-red-500 bg-red-50 dark:bg-red-950/30"
                   )}
                 >
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2">
-                        <span className="font-medium">{answer.content}</span>
-                        {isDealBreakerAnswer && (
-                          <Badge variant="destructive" className="text-xs">
-                            <AlertCircle className="w-3 h-3 mr-1" />
-                            Not Accepted
-                          </Badge>
-                        )}
+                  <div className="flex items-start gap-3">
+                    {/* Checkbox for multi-select */}
+                    {isMultiple && (
+                      <div className="flex-shrink-0 mt-0.5">
+                        <Checkbox
+                          checked={isSelected}
+                          className="pointer-events-none"
+                        />
                       </div>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      {percentage !== 0 && !isDealBreakerAnswer && (
-                        <Badge variant={percentage > 0 ? "default" : "secondary"} className="text-xs">
-                          {percentage > 0 ? '+' : ''}{percentage}%
-                        </Badge>
-                      )}
-                      {fixed !== 0 && !isDealBreakerAnswer && (
-                        <Badge variant={fixed > 0 ? "default" : "secondary"} className="text-xs">
-                          {fixed > 0 ? '+' : ''}{formatCurrency(fixed)}
-                        </Badge>
-                      )}
-                      {isSelected && (
-                        <CheckCircle className="w-5 h-5 text-primary flex-shrink-0" />
-                      )}
+                    )}
+                    {/* Answer image */}
+                    {getImageUrl(answer.img) && (
+                      <img
+                        src={getImageUrl(answer.img)}
+                        alt={answer.content}
+                        className="w-16 h-16 rounded-lg border object-cover flex-shrink-0"
+                      />
+                    )}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-start justify-between gap-2">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <span className="font-medium">{answer.content}</span>
+                            {isDealBreakerAnswer && (
+                              <Badge variant="destructive" className="text-xs">
+                                <AlertCircle className="w-3 h-3 mr-1" />
+                                Not Accepted
+                              </Badge>
+                            )}
+                          </div>
+                          {/* Answer description */}
+                          {answer.description && (
+                            <p className="text-sm text-muted-foreground mt-1">{answer.description}</p>
+                          )}
+                        </div>
+                        <div className="flex items-center gap-2 flex-shrink-0">
+                          {percentage !== 0 && !isDealBreakerAnswer && (
+                            <Badge variant={percentage > 0 ? "default" : "secondary"} className="text-xs">
+                              {percentage > 0 ? '+' : ''}{percentage}%
+                            </Badge>
+                          )}
+                          {fixed !== 0 && !isDealBreakerAnswer && (
+                            <Badge variant={fixed > 0 ? "default" : "secondary"} className="text-xs">
+                              {fixed > 0 ? '+' : ''}{formatCurrency(fixed)}
+                            </Badge>
+                          )}
+                          {isSelected && !isMultiple && (
+                            <CheckCircle className="w-5 h-5 text-primary flex-shrink-0" />
+                          )}
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </button>
@@ -684,6 +826,11 @@ export default function TradeProductPageClient({ product, questions, accessories
                       : "text-muted-foreground"
                     }>
                       Fixed: {calculatedQuote.fixedAdjustment > 0 ? '+' : ''}{formatCurrency(calculatedQuote.fixedAdjustment)}
+                    </p>
+                  )}
+                  {calculatedQuote.appliedMinPrice && (
+                    <p className="text-orange-600 dark:text-orange-400 font-medium">
+                      Min. guaranteed price applied
                     </p>
                   )}
                   <button

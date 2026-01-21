@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
 import { Label } from '@/components/ui/label'
-import { ArrowLeftIcon, SaveIcon, LoaderIcon, XIcon, PlusIcon, ArrowRightLeftIcon, CalendarIcon, StarIcon, TrendingUpIcon, RefreshCwIcon, TrashIcon, HelpCircleIcon, CopyIcon } from 'lucide-react'
+import { ArrowLeftIcon, SaveIcon, LoaderIcon, XIcon, PlusIcon, ArrowRightLeftIcon, CalendarIcon, StarIcon, TrendingUpIcon, RefreshCwIcon, TrashIcon, HelpCircleIcon, CopyIcon, ImageIcon } from 'lucide-react'
 import {
     Select,
     SelectContent,
@@ -26,6 +26,7 @@ export default function AddTradeinProductPage({defaultData={
     title: '',
     des: '',
     base_price: '',
+    min_price: '',
     category: '',
     brand: '',
     series: '',
@@ -145,6 +146,35 @@ export default function AddTradeinProductPage({defaultData={
                 : formData.brand_img
             const uploadedProductImgs = await uploadFiles(formData.imgs, 'tradein/products')
 
+            // Upload question and answer images
+            const processedQuestions = await Promise.all(
+                (formData.questions || []).map(async (question) => {
+                    // Upload question image if it's a File
+                    const questionImg = question.img instanceof File
+                        ? (await uploadFiles(question.img, 'tradein/questions'))[0]
+                        : question.img || null
+
+                    // Upload answer images if they're Files
+                    const processedAnswers = await Promise.all(
+                        (question.ans || []).map(async (answer) => {
+                            const answerImg = answer.img instanceof File
+                                ? (await uploadFiles(answer.img, 'tradein/answers'))[0]
+                                : answer.img || null
+                            return {
+                                ...answer,
+                                img: answerImg
+                            }
+                        })
+                    )
+
+                    return {
+                        ...question,
+                        img: questionImg,
+                        ans: processedAnswers
+                    }
+                })
+            )
+
             const response = await fetch('/api/admin/tradein', {
                 method: 'POST',
                 headers: {
@@ -155,10 +185,11 @@ export default function AddTradeinProductPage({defaultData={
                     brand_img: uploadedBrandImg || null,
                     imgs: uploadedProductImgs,
                     base_price: parseFloat(formData.base_price) || 0,
+                    min_price: formData.min_price ? parseFloat(formData.min_price) : null,
                     release_date: formData.release_date || null,
                     depreciation_schedule: formData.depreciation_schedule || 'standard',
                     is_featured: formData.is_featured || false,
-                    questions: formData.questions || []
+                    questions: processedQuestions
                 })
             })
 
@@ -176,6 +207,7 @@ export default function AddTradeinProductPage({defaultData={
                 title: '',
                 des: '',
                 base_price: '',
+                min_price: '',
                 category: '',
                 brand: '',
                 series: '',
@@ -183,7 +215,8 @@ export default function AddTradeinProductPage({defaultData={
                 imgs: [],
                 release_date: '',
                 depreciation_schedule: 'standard',
-                is_featured: false
+                is_featured: false,
+                questions: []
             })
 
             setTimeout(() => {
@@ -335,7 +368,7 @@ export default function AddTradeinProductPage({defaultData={
                                 Pricing & Depreciation
                             </h3>
 
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div className="space-y-2">
                                     <Label htmlFor="base_price">Base Price ($) *</Label>
                                     <Input
@@ -354,6 +387,25 @@ export default function AddTradeinProductPage({defaultData={
                                     </p>
                                 </div>
 
+                                <div className="space-y-2">
+                                    <Label htmlFor="min_price">Minimum Price ($)</Label>
+                                    <Input
+                                        id="min_price"
+                                        type="number"
+                                        step="0.01"
+                                        min="0"
+                                        value={formData.min_price}
+                                        onChange={(e) => handleInputChange('min_price', e.target.value)}
+                                        placeholder="0.00"
+                                        className="border-orange-200 focus:border-orange-500"
+                                    />
+                                    <p className="text-xs text-muted-foreground">
+                                        Floor value - quote won't go below this (optional)
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div className="space-y-2">
                                     <Label htmlFor="release_date" className="flex items-center gap-1">
                                         <CalendarIcon className="w-4 h-4" />
@@ -557,6 +609,7 @@ export default function AddTradeinProductPage({defaultData={
                                         onClick={() => {
                                             const newQuestions = [...(formData.questions || []), {
                                                 title: '',
+                                                type: 'single', // 'single' or 'multiple'
                                                 ans: []
                                             }]
                                             handleInputChange('questions', newQuestions)
@@ -577,8 +630,26 @@ export default function AddTradeinProductPage({defaultData={
                                     {formData.questions.map((question, qIndex) => (
                                         <div key={qIndex} className="border rounded-lg p-4 bg-background space-y-3">
                                             <div className="flex items-start gap-2">
-                                                <div className="flex-1">
-                                                    <Label className="text-xs text-muted-foreground">Question {qIndex + 1}</Label>
+                                                <div className="flex-1 space-y-2">
+                                                    <div className="flex items-center gap-2">
+                                                        <Label className="text-xs text-muted-foreground">Question {qIndex + 1}</Label>
+                                                        <Select
+                                                            value={question.type || 'single'}
+                                                            onValueChange={(value) => {
+                                                                const newQuestions = [...formData.questions]
+                                                                newQuestions[qIndex].type = value
+                                                                handleInputChange('questions', newQuestions)
+                                                            }}
+                                                        >
+                                                            <SelectTrigger className="h-7 w-[130px] text-xs">
+                                                                <SelectValue />
+                                                            </SelectTrigger>
+                                                            <SelectContent>
+                                                                <SelectItem value="single">Single Select</SelectItem>
+                                                                <SelectItem value="multiple">Multiple Select</SelectItem>
+                                                            </SelectContent>
+                                                        </Select>
+                                                    </div>
                                                     <Input
                                                         value={question.title}
                                                         onChange={(e) => {
@@ -588,6 +659,23 @@ export default function AddTradeinProductPage({defaultData={
                                                         }}
                                                         placeholder="Enter question text..."
                                                     />
+                                                    {/* Question Image Upload */}
+                                                    <div className="flex items-center gap-2">
+                                                        <ImageUpload
+                                                            value={question.img || ''}
+                                                            onChange={(url) => {
+                                                                const newQuestions = [...formData.questions]
+                                                                newQuestions[qIndex].img = url
+                                                                handleInputChange('questions', newQuestions)
+                                                            }}
+                                                            multiple={false}
+                                                            folder="tradein/questions"
+                                                            label=""
+                                                            onDelete={deleteFileFromBucket}
+                                                            compact={true}
+                                                            placeholder="Question image (optional)"
+                                                        />
+                                                    </div>
                                                 </div>
                                                 <Button
                                                     type="button"
@@ -618,6 +706,8 @@ export default function AddTradeinProductPage({defaultData={
                                                             }
                                                             newQuestions[qIndex].ans.push({
                                                                 content: '',
+                                                                description: '',
+                                                                img: '',
                                                                 persentage: '',
                                                                 fixed: ''
                                                             })
@@ -630,56 +720,85 @@ export default function AddTradeinProductPage({defaultData={
                                                 </div>
 
                                                 {question.ans && question.ans.map((answer, aIndex) => (
-                                                    <div key={aIndex} className="flex items-center gap-2 bg-muted/50 rounded p-2">
+                                                    <div key={aIndex} className="bg-muted/50 rounded p-3 space-y-2">
+                                                        {/* Answer main row */}
+                                                        <div className="flex items-center gap-2">
+                                                            <Input
+                                                                value={answer.content}
+                                                                onChange={(e) => {
+                                                                    const newQuestions = [...formData.questions]
+                                                                    newQuestions[qIndex].ans[aIndex].content = e.target.value
+                                                                    handleInputChange('questions', newQuestions)
+                                                                }}
+                                                                placeholder="Answer text"
+                                                                className="flex-1 h-8 text-sm"
+                                                            />
+                                                            <div className="flex items-center gap-1">
+                                                                <Input
+                                                                    value={answer.persentage}
+                                                                    onChange={(e) => {
+                                                                        const newQuestions = [...formData.questions]
+                                                                        newQuestions[qIndex].ans[aIndex].persentage = e.target.value
+                                                                        handleInputChange('questions', newQuestions)
+                                                                    }}
+                                                                    placeholder="+10 or -5"
+                                                                    className="w-20 h-8 text-sm"
+                                                                />
+                                                                <span className="text-xs text-muted-foreground">%</span>
+                                                            </div>
+                                                            <div className="flex items-center gap-1">
+                                                                <span className="text-xs text-muted-foreground">$</span>
+                                                                <Input
+                                                                    value={answer.fixed}
+                                                                    onChange={(e) => {
+                                                                        const newQuestions = [...formData.questions]
+                                                                        newQuestions[qIndex].ans[aIndex].fixed = e.target.value
+                                                                        handleInputChange('questions', newQuestions)
+                                                                    }}
+                                                                    placeholder="Fixed"
+                                                                    className="w-16 h-8 text-sm"
+                                                                />
+                                                            </div>
+                                                            <Button
+                                                                type="button"
+                                                                variant="ghost"
+                                                                size="sm"
+                                                                className="h-8 w-8 p-0 text-red-500"
+                                                                onClick={() => {
+                                                                    const newQuestions = [...formData.questions]
+                                                                    newQuestions[qIndex].ans = newQuestions[qIndex].ans.filter((_, i) => i !== aIndex)
+                                                                    handleInputChange('questions', newQuestions)
+                                                                }}
+                                                            >
+                                                                <TrashIcon className="w-3 h-3" />
+                                                            </Button>
+                                                        </div>
+                                                        {/* Answer description */}
                                                         <Input
-                                                            value={answer.content}
+                                                            value={answer.description || ''}
                                                             onChange={(e) => {
                                                                 const newQuestions = [...formData.questions]
-                                                                newQuestions[qIndex].ans[aIndex].content = e.target.value
+                                                                newQuestions[qIndex].ans[aIndex].description = e.target.value
                                                                 handleInputChange('questions', newQuestions)
                                                             }}
-                                                            placeholder="Answer text"
-                                                            className="flex-1 h-8 text-sm"
+                                                            placeholder="Description (optional) - helps explain this answer"
+                                                            className="h-8 text-sm text-muted-foreground"
                                                         />
-                                                        <div className="flex items-center gap-1">
-                                                            <Input
-                                                                value={answer.persentage}
-                                                                onChange={(e) => {
-                                                                    const newQuestions = [...formData.questions]
-                                                                    newQuestions[qIndex].ans[aIndex].persentage = e.target.value
-                                                                    handleInputChange('questions', newQuestions)
-                                                                }}
-                                                                placeholder="+10 or -5"
-                                                                className="w-20 h-8 text-sm"
-                                                            />
-                                                            <span className="text-xs text-muted-foreground">%</span>
-                                                        </div>
-                                                        <div className="flex items-center gap-1">
-                                                            <span className="text-xs text-muted-foreground">$</span>
-                                                            <Input
-                                                                value={answer.fixed}
-                                                                onChange={(e) => {
-                                                                    const newQuestions = [...formData.questions]
-                                                                    newQuestions[qIndex].ans[aIndex].fixed = e.target.value
-                                                                    handleInputChange('questions', newQuestions)
-                                                                }}
-                                                                placeholder="Fixed"
-                                                                className="w-16 h-8 text-sm"
-                                                            />
-                                                        </div>
-                                                        <Button
-                                                            type="button"
-                                                            variant="ghost"
-                                                            size="sm"
-                                                            className="h-8 w-8 p-0 text-red-500"
-                                                            onClick={() => {
+                                                        {/* Answer image upload */}
+                                                        <ImageUpload
+                                                            value={answer.img || ''}
+                                                            onChange={(url) => {
                                                                 const newQuestions = [...formData.questions]
-                                                                newQuestions[qIndex].ans = newQuestions[qIndex].ans.filter((_, i) => i !== aIndex)
+                                                                newQuestions[qIndex].ans[aIndex].img = url
                                                                 handleInputChange('questions', newQuestions)
                                                             }}
-                                                        >
-                                                            <TrashIcon className="w-3 h-3" />
-                                                        </Button>
+                                                            multiple={false}
+                                                            folder="tradein/answers"
+                                                            label=""
+                                                            onDelete={deleteFileFromBucket}
+                                                            compact={true}
+                                                            placeholder="Answer image (optional)"
+                                                        />
                                                     </div>
                                                 ))}
                                             </div>

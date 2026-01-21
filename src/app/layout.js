@@ -11,6 +11,7 @@ import { DisableLinkContextMenu } from "@/components/ui/disableLinkContextMenu"
 import Nav from "@/components/ui/nav";
 import MobileSetupGuard from "@/components/mobile-setup-guard";
 import PasswordWall from "@/components/password-wall";
+import ServiceWorkerRegistration from "@/components/pwa/ServiceWorkerRegistration";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -50,6 +51,27 @@ export const metadata = {
     email: false,
     address: false,
     telephone: false,
+  },
+  // PWA Configuration
+  manifest: '/manifest.webmanifest',
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: '#ffffff' },
+    { media: '(prefers-color-scheme: dark)', color: '#0f172a' },
+  ],
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'default',
+    title: 'DepxTech',
+  },
+  icons: {
+    icon: [
+      { url: '/favicon.ico', sizes: '32x32', type: 'image/x-icon' },
+      { url: '/icon-192.png', sizes: '192x192', type: 'image/png' },
+      { url: '/icon-512.png', sizes: '512x512', type: 'image/png' },
+    ],
+    apple: [
+      { url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' },
+    ],
   },
   openGraph: {
     type: 'website',
@@ -120,6 +142,7 @@ export default function RootLayout({ children }) {
                 <WindowsLayer />
                 <AdminUI/>
                 <Toaster />
+                <ServiceWorkerRegistration />
               </ThemeProvider>
             </AuthProvider>
           </PasswordWall>

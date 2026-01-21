@@ -206,6 +206,7 @@ export default async function TradeProductPage({ params }) {
           questions={productQuestions}
           accessories={accessories || []}
           basePrice={depreciatedPrice}
+          minPrice={product.min_price ? Number(product.min_price) : null}
           depreciation={depreciation}
         />
       </div>
