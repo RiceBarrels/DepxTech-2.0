@@ -247,17 +247,17 @@ export default function Recommends({
     )
 }
 
-function ProductCard({ 
-    product, 
+function ProductCard({
+    product,
     index,
     mounted,
-    onProductClick, 
-    onAddToCart, 
-    onToggleFavorite, 
-    formatPrice, 
-    getStockStatus 
+    onProductClick,
+    onAddToCart,
+    onToggleFavorite,
+    formatPrice,
+    getStockStatus
 }) {
-    const { title, price, stocks, category, imgs, views, rating, review_count } = product
+    const { title, price, stocks, category, imgs, views, rating, review_count, recommendation_reason } = product
     const stockStatus = getStockStatus(stocks)
     const mainImage = imgs && imgs.length > 0 ? imgs[0] : null
     const [isHovered, setIsHovered] = useState(false)
@@ -423,7 +423,17 @@ function ProductCard({
                             >
                                 {title}
                             </h3>
-                            
+
+                            {/* Recommendation Reason */}
+                            {recommendation_reason && (
+                                <div className="flex items-center gap-1 mb-2">
+                                    <ZapIcon className="w-3 h-3 text-amber-500" />
+                                    <span className="text-xs text-muted-foreground">
+                                        {recommendation_reason}
+                                    </span>
+                                </div>
+                            )}
+
                             {/* Rating - only show if rating exists */}
                             {productRating && (
                                 <div className="flex items-center gap-1 mb-2">
