@@ -6,6 +6,14 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
+import { Label } from '@/components/ui/label'
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select"
 import {
     ArrowLeftIcon,
     EditIcon,
@@ -20,10 +28,16 @@ import {
     HelpCircleIcon,
     PackageIcon,
     StarIcon,
-    SettingsIcon
+    SettingsIcon,
+    ImageIcon,
+    ArrowUpDownIcon,
+    FilterIcon,
+    CopyIcon,
+    FileTextIcon
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { toast } from 'sonner'
+import Image from 'next/image'
 
 export default function TradeinManagePage() {
     const router = useTransitionRouter()
@@ -37,6 +51,16 @@ export default function TradeinManagePage() {
     const [importing, setImporting] = useState(false)
     const [activeTab, setActiveTab] = useState('products')
     const fileInputRef = useRef(null)
+
+    // Filter and sort state
+    const [categoryFilter, setCategoryFilter] = useState('all')
+    const [sortBy, setSortBy] = useState('created_desc')
+
+    // Question templates state
+    const [templates, setTemplates] = useState([])
+    const [loadingTemplates, setLoadingTemplates] = useState(false)
+    const [newTemplateName, setNewTemplateName] = useState('')
+    const [editingTemplate, setEditingTemplate] = useState(null)
 
     // Fetch tradable products
     useEffect(() => {
@@ -62,21 +86,111 @@ export default function TradeinManagePage() {
         fetchProducts()
     }, [])
 
-    // Filter products based on search term
+    // Get unique categories for filter
+    const categories = [...new Set(products.map(p => p.category).filter(Boolean))].sort()
+
+    // Filter and sort products
     useEffect(() => {
-        if (!searchTerm) {
-            setFilteredProducts(products)
-        } else {
-            const filtered = products.filter(product =>
+        let filtered = [...products]
+
+        // Apply category filter
+        if (categoryFilter !== 'all') {
+            filtered = filtered.filter(p => p.category === categoryFilter)
+        }
+
+        // Apply search filter
+        if (searchTerm) {
+            filtered = filtered.filter(product =>
                 product.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
                 product.des?.toLowerCase().includes(searchTerm.toLowerCase()) ||
                 product.category?.toLowerCase().includes(searchTerm.toLowerCase()) ||
                 product.brand?.toLowerCase().includes(searchTerm.toLowerCase()) ||
                 product.series?.toLowerCase().includes(searchTerm.toLowerCase())
             )
-            setFilteredProducts(filtered)
         }
-    }, [searchTerm, products])
+
+        // Apply sorting
+        filtered.sort((a, b) => {
+            switch (sortBy) {
+                case 'title_asc':
+                    return (a.title || '').localeCompare(b.title || '')
+                case 'title_desc':
+                    return (b.title || '').localeCompare(a.title || '')
+                case 'price_asc':
+                    return (a.base_price || 0) - (b.base_price || 0)
+                case 'price_desc':
+                    return (b.base_price || 0) - (a.base_price || 0)
+                case 'created_asc':
+                    return new Date(a.created_at) - new Date(b.created_at)
+                case 'created_desc':
+                default:
+                    return new Date(b.created_at) - new Date(a.created_at)
+            }
+        })
+
+        setFilteredProducts(filtered)
+    }, [searchTerm, products, categoryFilter, sortBy])
+
+    // Fetch question templates
+    useEffect(() => {
+        if (activeTab === 'templates') {
+            fetchTemplates()
+        }
+    }, [activeTab])
+
+    const fetchTemplates = async () => {
+        setLoadingTemplates(true)
+        try {
+            const response = await fetch('/api/admin/tradein/templates')
+            const data = await response.json()
+            if (response.ok) {
+                setTemplates(data.templates || [])
+            }
+        } catch (error) {
+            console.error('Error fetching templates:', error)
+        } finally {
+            setLoadingTemplates(false)
+        }
+    }
+
+    const createTemplate = async () => {
+        if (!newTemplateName.trim()) {
+            toast.error('Please enter a template name')
+            return
+        }
+        try {
+            const response = await fetch('/api/admin/tradein/templates', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name: newTemplateName, questions: [] })
+            })
+            const data = await response.json()
+            if (response.ok) {
+                setTemplates(prev => [...prev, data.template])
+                setNewTemplateName('')
+                toast.success('Template created')
+            } else {
+                toast.error(data.error || 'Failed to create template')
+            }
+        } catch (error) {
+            toast.error('Failed to create template')
+        }
+    }
+
+    const deleteTemplate = async (templateId) => {
+        if (!confirm('Delete this template?')) return
+        try {
+            const response = await fetch(`/api/admin/tradein/templates?id=${templateId}`, {
+                method: 'DELETE'
+            })
+            if (response.ok) {
+                setTemplates(prev => prev.filter(t => t.id !== templateId))
+                toast.success('Template deleted')
+            }
+        } catch (error) {
+            toast.error('Failed to delete template')
+        }
+    }
 
     const handleExport = async () => {
         try {
@@ -294,7 +408,7 @@ export default function TradeinManagePage() {
             </div>
 
             {/* Tab Navigation */}
-            <div className="flex gap-2 border-b pb-2">
+            <div className="flex gap-2 border-b pb-2 flex-wrap">
                 <Button
                     variant={activeTab === 'products' ? 'default' : 'ghost'}
                     size="sm"
@@ -304,20 +418,12 @@ export default function TradeinManagePage() {
                     Products ({products.length})
                 </Button>
                 <Button
-                    variant={activeTab === 'questions' ? 'default' : 'ghost'}
+                    variant={activeTab === 'templates' ? 'default' : 'ghost'}
                     size="sm"
-                    onClick={() => setActiveTab('questions')}
+                    onClick={() => setActiveTab('templates')}
                 >
-                    <HelpCircleIcon className="w-4 h-4 mr-2" />
-                    Questions
-                </Button>
-                <Button
-                    variant={activeTab === 'accessories' ? 'default' : 'ghost'}
-                    size="sm"
-                    onClick={() => setActiveTab('accessories')}
-                >
-                    <PackageIcon className="w-4 h-4 mr-2" />
-                    Accessories
+                    <FileTextIcon className="w-4 h-4 mr-2" />
+                    Question Templates
                 </Button>
                 <Button
                     variant={activeTab === 'depreciation' ? 'default' : 'ghost'}
@@ -331,24 +437,68 @@ export default function TradeinManagePage() {
 
             {activeTab === 'products' && (
                 <>
-                    {/* Search and Stats */}
-                    <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    {/* Search, Filter, and Sort */}
+                    <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
                         <Card className="md:col-span-2">
                             <CardHeader className="pb-2">
                                 <CardTitle className="text-sm">Search Products</CardTitle>
                             </CardHeader>
                             <CardContent>
-                                <div className="flex gap-2">
-                                    <div className="relative flex-1">
-                                        <SearchIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-                                        <Input
-                                            value={searchTerm}
-                                            onChange={(e) => setSearchTerm(e.target.value)}
-                                            placeholder="Search by title, brand, series, category..."
-                                            className="pl-10"
-                                        />
-                                    </div>
+                                <div className="relative">
+                                    <SearchIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                                    <Input
+                                        value={searchTerm}
+                                        onChange={(e) => setSearchTerm(e.target.value)}
+                                        placeholder="Search by title, brand, series..."
+                                        className="pl-10"
+                                    />
                                 </div>
+                            </CardContent>
+                        </Card>
+
+                        <Card>
+                            <CardHeader className="pb-2">
+                                <CardTitle className="text-sm flex items-center gap-1">
+                                    <FilterIcon className="w-3 h-3" />
+                                    Category
+                                </CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                                <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+                                    <SelectTrigger>
+                                        <SelectValue placeholder="All Categories" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="all">All Categories</SelectItem>
+                                        {categories.map(cat => (
+                                            <SelectItem key={cat} value={cat}>{cat}</SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                            </CardContent>
+                        </Card>
+
+                        <Card>
+                            <CardHeader className="pb-2">
+                                <CardTitle className="text-sm flex items-center gap-1">
+                                    <ArrowUpDownIcon className="w-3 h-3" />
+                                    Sort By
+                                </CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                                <Select value={sortBy} onValueChange={setSortBy}>
+                                    <SelectTrigger>
+                                        <SelectValue />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="created_desc">Newest First</SelectItem>
+                                        <SelectItem value="created_asc">Oldest First</SelectItem>
+                                        <SelectItem value="title_asc">Title A-Z</SelectItem>
+                                        <SelectItem value="title_desc">Title Z-A</SelectItem>
+                                        <SelectItem value="price_desc">Price High-Low</SelectItem>
+                                        <SelectItem value="price_asc">Price Low-High</SelectItem>
+                                    </SelectContent>
+                                </Select>
                             </CardContent>
                         </Card>
 
@@ -363,7 +513,7 @@ export default function TradeinManagePage() {
 
                         <Card>
                             <CardHeader className="pb-2">
-                                <CardTitle className="text-sm">Filtered Results</CardTitle>
+                                <CardTitle className="text-sm">Showing</CardTitle>
                             </CardHeader>
                             <CardContent>
                                 <div className="text-2xl font-bold">{filteredProducts.length}</div>
@@ -386,14 +536,30 @@ export default function TradeinManagePage() {
                                 const depreciationInfo = getDepreciatedInfo(product)
                                 const basePrice = Number(product.base_price) || 0
                                 const depreciatedPrice = basePrice * (depreciationInfo.multiplier / 100)
+                                const productImage = product.imgs && product.imgs.length > 0 ? product.imgs[0] : null
 
                                 return (
                                     <Card key={product.id} className="hover:shadow-md transition-shadow">
                                         <CardHeader className="pb-2">
-                                            <div className="flex items-start justify-between">
-                                                <div className="flex-1">
-                                                    <CardTitle className="flex items-center gap-2">
-                                                        <ArrowRightLeftIcon className="w-5 h-5" />
+                                            <div className="flex items-start gap-4">
+                                                {/* Product Image */}
+                                                <div className="flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden bg-muted border">
+                                                    {productImage ? (
+                                                        <Image
+                                                            src={productImage}
+                                                            alt={product.title}
+                                                            width={80}
+                                                            height={80}
+                                                            className="w-full h-full object-contain"
+                                                        />
+                                                    ) : (
+                                                        <div className="w-full h-full flex items-center justify-center">
+                                                            <ImageIcon className="w-8 h-8 text-muted-foreground/50" />
+                                                        </div>
+                                                    )}
+                                                </div>
+                                                <div className="flex-1 min-w-0">
+                                                    <CardTitle className="flex items-center gap-2 flex-wrap">
                                                         {product.title}
                                                         {product.is_featured && (
                                                             <Badge className="bg-yellow-500">
@@ -402,7 +568,7 @@ export default function TradeinManagePage() {
                                                             </Badge>
                                                         )}
                                                     </CardTitle>
-                                                    <CardDescription className="flex items-center gap-2 mt-1">
+                                                    <CardDescription className="flex items-center gap-2 mt-1 flex-wrap">
                                                         <span>{product.brand}</span>
                                                         <span>•</span>
                                                         <span>{product.series}</span>
@@ -410,7 +576,7 @@ export default function TradeinManagePage() {
                                                         <Badge variant="outline">{product.category}</Badge>
                                                     </CardDescription>
                                                 </div>
-                                                <div className="flex gap-2">
+                                                <div className="flex gap-2 flex-shrink-0">
                                                     <Button
                                                         variant="outline"
                                                         size="sm"
@@ -487,62 +653,85 @@ export default function TradeinManagePage() {
                 </>
             )}
 
-            {activeTab === 'questions' && (
+            {activeTab === 'templates' && (
                 <Card>
                     <CardHeader>
                         <CardTitle className="flex items-center gap-2">
-                            <HelpCircleIcon className="w-5 h-5" />
-                            Trade-in Questions
+                            <FileTextIcon className="w-5 h-5" />
+                            Question Templates
                         </CardTitle>
                         <CardDescription>
-                            Manage the questionnaire questions used to evaluate device condition
+                            Create reusable question templates that can be applied to products
                         </CardDescription>
                     </CardHeader>
-                    <CardContent>
-                        <div className="text-center py-8 text-muted-foreground">
-                            <HelpCircleIcon className="w-12 h-12 mx-auto mb-4 opacity-50" />
-                            <p className="mb-4">Questions are managed in the database.</p>
-                            <p className="text-sm">
-                                Tables: <code className="bg-muted px-2 py-1 rounded">trade_questions</code> and <code className="bg-muted px-2 py-1 rounded">trade_question_options</code>
-                            </p>
-                            <Button
-                                variant="outline"
-                                className="mt-4"
-                                onClick={() => router.push('/admin/tradein/questions')}
-                            >
-                                Manage Questions
+                    <CardContent className="space-y-6">
+                        {/* Create New Template */}
+                        <div className="flex gap-2">
+                            <Input
+                                value={newTemplateName}
+                                onChange={(e) => setNewTemplateName(e.target.value)}
+                                placeholder="New template name (e.g., 'Smartphone Questions')"
+                                className="flex-1"
+                                onKeyPress={(e) => e.key === 'Enter' && createTemplate()}
+                            />
+                            <Button onClick={createTemplate}>
+                                <PlusIcon className="w-4 h-4 mr-2" />
+                                Create Template
                             </Button>
                         </div>
-                    </CardContent>
-                </Card>
-            )}
 
-            {activeTab === 'accessories' && (
-                <Card>
-                    <CardHeader>
-                        <CardTitle className="flex items-center gap-2">
-                            <PackageIcon className="w-5 h-5" />
-                            Trade-in Accessories
-                        </CardTitle>
-                        <CardDescription>
-                            Manage accessories that add bonus value to trade-ins
-                        </CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                        <div className="text-center py-8 text-muted-foreground">
-                            <PackageIcon className="w-12 h-12 mx-auto mb-4 opacity-50" />
-                            <p className="mb-4">Accessories are managed in the database.</p>
-                            <p className="text-sm">
-                                Table: <code className="bg-muted px-2 py-1 rounded">trade_accessories</code>
-                            </p>
-                            <Button
-                                variant="outline"
-                                className="mt-4"
-                                onClick={() => router.push('/admin/tradein/accessories')}
-                            >
-                                Manage Accessories
-                            </Button>
-                        </div>
+                        {/* Templates List */}
+                        {loadingTemplates ? (
+                            <div className="text-center py-8 text-muted-foreground">
+                                Loading templates...
+                            </div>
+                        ) : templates.length === 0 ? (
+                            <div className="text-center py-8 text-muted-foreground">
+                                <FileTextIcon className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                                <p>No templates yet. Create your first template above.</p>
+                            </div>
+                        ) : (
+                            <div className="space-y-4">
+                                {templates.map((template) => (
+                                    <Card key={template.id} className="border">
+                                        <CardHeader className="pb-2">
+                                            <div className="flex items-center justify-between">
+                                                <CardTitle className="text-lg">{template.name}</CardTitle>
+                                                <div className="flex gap-2">
+                                                    <Button
+                                                        variant="outline"
+                                                        size="sm"
+                                                        onClick={() => router.push(`/admin/tradein/templates/${template.id}`)}
+                                                    >
+                                                        <EditIcon className="w-4 h-4 mr-1" />
+                                                        Edit Questions
+                                                    </Button>
+                                                    <Button
+                                                        variant="outline"
+                                                        size="sm"
+                                                        onClick={() => deleteTemplate(template.id)}
+                                                        className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                                                    >
+                                                        <TrashIcon className="w-4 h-4" />
+                                                    </Button>
+                                                </div>
+                                            </div>
+                                        </CardHeader>
+                                        <CardContent>
+                                            <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                                                <span className="flex items-center gap-1">
+                                                    <HelpCircleIcon className="w-4 h-4" />
+                                                    {template.questions?.length || 0} questions
+                                                </span>
+                                                <span>
+                                                    Created: {new Date(template.created_at).toLocaleDateString()}
+                                                </span>
+                                            </div>
+                                        </CardContent>
+                                    </Card>
+                                ))}
+                            </div>
+                        )}
                     </CardContent>
                 </Card>
             )}

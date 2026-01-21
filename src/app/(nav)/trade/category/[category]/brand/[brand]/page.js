@@ -1,4 +1,5 @@
 import { supabaseAdmin } from '@/lib/supabase-admin'
+import { redirect } from 'next/navigation'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { ArrowLeftIcon, ArrowRightIcon } from 'lucide-react'
@@ -45,6 +46,11 @@ export default async function BrandSeriesPage({ params }) {
 
   // Get unique series
   const uniqueSeries = [...new Set(series?.map(item => item.series) || [])]
+
+  // If only one series, skip directly to that series page
+  if (uniqueSeries.length === 1) {
+    redirect(`/trade/category/${encodeURIComponent(category)}/brand/${encodeURIComponent(brand)}/series/${encodeURIComponent(uniqueSeries[0])}`)
+  }
 
   return (
     <div className="min-h-screen py-12 px-4 sm:px-6 lg:px-8">

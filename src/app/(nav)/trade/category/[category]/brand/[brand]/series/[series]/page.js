@@ -48,16 +48,35 @@ export default async function SeriesProductsPage({ params }) {
     console.error('Error fetching products:', error)
   }
 
+  // Check how many series this brand has (to determine back button behavior)
+  const { data: allSeries } = await supabaseAdmin
+    .from('tradable_products')
+    .select('series')
+    .eq('category', category)
+    .eq('brand', brand)
+
+  const uniqueSeriesCount = new Set(allSeries?.map(item => item.series) || []).size
+  const hasMultipleSeries = uniqueSeriesCount > 1
+
   return (
     <div className="min-h-screen py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-6xl mx-auto">
         <div className="mb-8">
-          <TransitionLink href={`/trade/category/${encodeURIComponent(category)}/brand/${encodeURIComponent(brand)}`}>
-            <Button variant="outline" size="sm">
-              <ArrowLeftIcon className="w-4 h-4 mr-2" />
-              Back to Series
-            </Button>
-          </TransitionLink>
+          {hasMultipleSeries ? (
+            <TransitionLink href={`/trade/category/${encodeURIComponent(category)}/brand/${encodeURIComponent(brand)}`}>
+              <Button variant="outline" size="sm">
+                <ArrowLeftIcon className="w-4 h-4 mr-2" />
+                Back to Series
+              </Button>
+            </TransitionLink>
+          ) : (
+            <TransitionLink href={`/trade/category/${encodeURIComponent(category)}`}>
+              <Button variant="outline" size="sm">
+                <ArrowLeftIcon className="w-4 h-4 mr-2" />
+                Back to Brands
+              </Button>
+            </TransitionLink>
+          )}
         </div>
 
         <div className="text-center mb-12">
