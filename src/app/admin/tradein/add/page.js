@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
 import { Label } from '@/components/ui/label'
-import { ArrowLeftIcon, SaveIcon, LoaderIcon, XIcon, PlusIcon, ArrowRightLeftIcon, CalendarIcon, StarIcon, TrendingUpIcon, RefreshCwIcon, TrashIcon, HelpCircleIcon, CopyIcon, ImageIcon } from 'lucide-react'
+import { ArrowLeftIcon, SaveIcon, LoaderIcon, XIcon, PlusIcon, ArrowRightLeftIcon, CalendarIcon, StarIcon, TrashIcon, HelpCircleIcon, CopyIcon, ImageIcon } from 'lucide-react'
 import {
     Select,
     SelectContent,
@@ -32,8 +32,8 @@ export default function AddTradeinProductPage({defaultData={
     series: '',
     brand_img: '',
     imgs: [],
-    release_date: '',
-    depreciation_schedule: 'standard',
+    base_date: '',
+    depreciation_rate: '',
     is_featured: false,
     questions: []
 }}) {
@@ -42,10 +42,6 @@ export default function AddTradeinProductPage({defaultData={
     const [saving, setSaving] = useState(false)
     const [error, setError] = useState(null)
     const [success, setSuccess] = useState(false)
-
-    // eBay pricing state
-    const [ebayPricing, setEbayPricing] = useState(null)
-    const [ebayLoading, setEbayLoading] = useState(false)
 
     // Copy questions from other products
     const [otherProducts, setOtherProducts] = useState([])
@@ -85,41 +81,6 @@ export default function AddTradeinProductPage({defaultData={
             handleInputChange('questions', copiedQuestions)
             toast.success(`Copied ${copiedQuestions.length} questions from "${sourceProduct.title}"`)
             setShowCopySelect(false)
-        }
-    }
-
-    const fetchEbayPrice = async () => {
-        if (!formData.title) {
-            toast.error('Please enter a product title first')
-            return
-        }
-        setEbayLoading(true)
-        try {
-            const response = await fetch(
-                `/api/tradeins/ebay-price?query=${encodeURIComponent(formData.title)}`
-            )
-            const data = await response.json()
-            if (data.suggestedTradeIn) {
-                setEbayPricing(data)
-                toast.success(`eBay price fetched: $${data.suggestedTradeIn}`)
-            } else {
-                toast.error(data.error || 'No eBay data found', {
-                    description: data.details || (data.sandbox ? 'Sandbox mode - no real data available' : 'Try a different search term')
-                })
-            }
-        } catch (error) {
-            toast.error('Failed to fetch eBay price', {
-                description: error.message
-            })
-        } finally {
-            setEbayLoading(false)
-        }
-    }
-
-    const applyEbayPrice = () => {
-        if (ebayPricing?.suggestedTradeIn) {
-            handleInputChange('base_price', ebayPricing.suggestedTradeIn.toString())
-            toast.success('eBay price applied to base price')
         }
     }
 
@@ -186,8 +147,8 @@ export default function AddTradeinProductPage({defaultData={
                     imgs: uploadedProductImgs,
                     base_price: parseFloat(formData.base_price) || 0,
                     min_price: formData.min_price ? parseFloat(formData.min_price) : null,
-                    release_date: formData.release_date || null,
-                    depreciation_schedule: formData.depreciation_schedule || 'standard',
+                    base_date: formData.base_date || null,
+                    depreciation_rate: parseFloat(formData.depreciation_rate) || 0,
                     is_featured: formData.is_featured || false,
                     questions: processedQuestions
                 })
@@ -213,8 +174,8 @@ export default function AddTradeinProductPage({defaultData={
                 series: '',
                 brand_img: '',
                 imgs: [],
-                release_date: '',
-                depreciation_schedule: 'standard',
+                base_date: '',
+                depreciation_rate: '',
                 is_featured: false,
                 questions: []
             })
@@ -230,20 +191,13 @@ export default function AddTradeinProductPage({defaultData={
         }
     }
 
-    // Calculate estimated current value based on release date
+    // Calculate estimated current value based on depreciation rate
     const getEstimatedValue = () => {
-        if (!formData.base_price || !formData.release_date) {
+        if (!formData.base_price) {
             return null
         }
-        const release = new Date(formData.release_date)
-        const now = new Date()
-        const monthsOld = Math.floor((now - release) / (1000 * 60 * 60 * 24 * 30))
-
-        let multiplier = 100
-        if (monthsOld >= 36) multiplier = 45
-        else if (monthsOld >= 24) multiplier = 65
-        else if (monthsOld >= 12) multiplier = 80
-        else if (monthsOld >= 6) multiplier = 90
+        const depRate = parseFloat(formData.depreciation_rate) || 0
+        const multiplier = 100 - depRate
 
         return {
             value: (parseFloat(formData.base_price) || 0) * (multiplier / 100),
@@ -407,35 +361,36 @@ export default function AddTradeinProductPage({defaultData={
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div className="space-y-2">
-                                    <Label htmlFor="release_date" className="flex items-center gap-1">
+                                    <Label htmlFor="base_date" className="flex items-center gap-1">
                                         <CalendarIcon className="w-4 h-4" />
-                                        Release Date
+                                        Base Date
                                     </Label>
                                     <Input
-                                        id="release_date"
+                                        id="base_date"
                                         type="date"
-                                        value={formData.release_date}
-                                        onChange={(e) => handleInputChange('release_date', e.target.value)}
+                                        value={formData.base_date}
+                                        onChange={(e) => handleInputChange('base_date', e.target.value)}
                                     />
                                     <p className="text-xs text-muted-foreground">
-                                        Used to calculate depreciation
+                                        Reference date for this product's pricing
                                     </p>
                                 </div>
 
                                 <div className="space-y-2">
-                                    <Label htmlFor="depreciation_schedule">Depreciation Schedule</Label>
-                                    <select
-                                        id="depreciation_schedule"
-                                        value={formData.depreciation_schedule}
-                                        onChange={(e) => handleInputChange('depreciation_schedule', e.target.value)}
-                                        className="w-full h-10 px-3 border border-input rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-ring"
-                                    >
-                                        <option value="standard">Standard</option>
-                                        <option value="premium">Premium (Slower)</option>
-                                        <option value="budget">Budget (Faster)</option>
-                                    </select>
+                                    <Label htmlFor="depreciation_rate">Depreciation Rate (%)</Label>
+                                    <Input
+                                        id="depreciation_rate"
+                                        type="number"
+                                        step="1"
+                                        min="0"
+                                        max="100"
+                                        value={formData.depreciation_rate}
+                                        onChange={(e) => handleInputChange('depreciation_rate', e.target.value)}
+                                        placeholder="0"
+                                        className="border-orange-200 focus:border-orange-500"
+                                    />
                                     <p className="text-xs text-muted-foreground">
-                                        How quickly value decreases over time
+                                        Percentage to reduce from base price (e.g., 10 = 10% off)
                                     </p>
                                 </div>
                             </div>
@@ -458,81 +413,6 @@ export default function AddTradeinProductPage({defaultData={
                                     </div>
                                 </div>
                             )}
-
-                            {/* eBay Market Price */}
-                            <div className="mt-4 p-4 bg-purple-50 dark:bg-purple-950/30 rounded-lg border border-purple-200 dark:border-purple-800">
-                                <div className="flex items-center justify-between mb-3">
-                                    <div className="flex items-center gap-2">
-                                        <TrendingUpIcon className="w-5 h-5 text-purple-600" />
-                                        <p className="text-sm text-purple-700 dark:text-purple-400 font-medium">
-                                            eBay Market Price
-                                        </p>
-                                    </div>
-                                    <Button
-                                        type="button"
-                                        variant="outline"
-                                        size="sm"
-                                        onClick={fetchEbayPrice}
-                                        disabled={ebayLoading}
-                                        className="border-purple-200 hover:bg-purple-100"
-                                    >
-                                        {ebayLoading ? (
-                                            <LoaderIcon className="w-4 h-4 animate-spin mr-1" />
-                                        ) : (
-                                            <RefreshCwIcon className="w-4 h-4 mr-1" />
-                                        )}
-                                        {ebayLoading ? 'Checking...' : 'Check eBay'}
-                                    </Button>
-                                </div>
-
-                                {ebayPricing ? (
-                                    <div className="space-y-3">
-                                        <div className="grid grid-cols-2 gap-4 text-sm">
-                                            <div>
-                                                <p className="text-muted-foreground">Suggested Trade-in</p>
-                                                <p className="text-xl font-bold text-purple-600">
-                                                    ${ebayPricing.suggestedTradeIn?.toFixed(2)}
-                                                </p>
-                                            </div>
-                                            <div>
-                                                <p className="text-muted-foreground">Trade-in Range</p>
-                                                <p className="font-medium">
-                                                    ${ebayPricing.tradeInRange?.low?.toFixed(2)} - ${ebayPricing.tradeInRange?.high?.toFixed(2)}
-                                                </p>
-                                            </div>
-                                        </div>
-                                        {ebayPricing.usedMarket && (
-                                            <div className="grid grid-cols-3 gap-2 text-xs pt-2 border-t">
-                                                <div>
-                                                    <p className="text-muted-foreground">Used Avg</p>
-                                                    <p className="font-medium">${ebayPricing.usedMarket.average?.toFixed(2)}</p>
-                                                </div>
-                                                <div>
-                                                    <p className="text-muted-foreground">Used Median</p>
-                                                    <p className="font-medium">${ebayPricing.usedMarket.median?.toFixed(2)}</p>
-                                                </div>
-                                                <div>
-                                                    <p className="text-muted-foreground">Listings</p>
-                                                    <p className="font-medium">{ebayPricing.usedMarket.count || 0}</p>
-                                                </div>
-                                            </div>
-                                        )}
-                                        <Button
-                                            type="button"
-                                            variant="default"
-                                            size="sm"
-                                            onClick={applyEbayPrice}
-                                            className="w-full bg-purple-600 hover:bg-purple-700"
-                                        >
-                                            Apply eBay Price as Base Price
-                                        </Button>
-                                    </div>
-                                ) : (
-                                    <p className="text-sm text-muted-foreground">
-                                        Click "Check eBay" to fetch current market prices
-                                    </p>
-                                )}
-                            </div>
                         </div>
 
                         {/* Featured Toggle */}

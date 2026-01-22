@@ -555,21 +555,21 @@ body {
 /* Slide transitions when navigating to/from transition routes (no nav) */
 :root.transition-slide ::view-transition-old(root) {
   animation-name: slide-out-left;
-  animation-duration: 0.5s;
-  animation-timing-function: ease-in-out;
+  animation-duration: 0.35s;
+  animation-timing-function: cubic-bezier(0.32, 0.72, 0, 1);
 }
 
 :root.transition-slide ::view-transition-new(root) {
   animation-name: slide-in-right;
-  animation-duration: 0.5s;
-  animation-timing-function: ease-in-out;
+  animation-duration: 0.35s;
+  animation-timing-function: cubic-bezier(0.32, 0.72, 0, 1);
 }
 
 /* View Transitions for Main Content Only - Enhanced animations */
 ::view-transition-old(main-content),
 ::view-transition-new(main-content) {
-  animation-duration: 0.5s;
-  animation-timing-function: ease-in-out;
+  animation-duration: 0.3s;
+  animation-timing-function: cubic-bezier(0.32, 0.72, 0, 1);
 }
 
 ::view-transition-old(main-content) {
@@ -583,8 +583,8 @@ body {
 /* View Transitions for transition pages - fancy left-to-right slide */
 ::view-transition-old(transition-page),
 ::view-transition-new(transition-page) {
-  animation-duration: 0.5s;
-  animation-timing-function: ease-in-out;
+  animation-duration: 0.35s;
+  animation-timing-function: cubic-bezier(0.32, 0.72, 0, 1);
 }
 
 ::view-transition-old(transition-page) {
@@ -604,8 +604,8 @@ body {
 /* View Transitions for fade-and-scale Only */
 ::view-transition-old(fade-and-scale),
 ::view-transition-new(fade-and-scale) {
-  animation-duration: 0.4s;
-  animation-timing-function: ease-in-out;
+  animation-duration: 0.3s;
+  animation-timing-function: cubic-bezier(0.32, 0.72, 0, 1);
 }
 
 ::view-transition-old(fade-and-scale) {
@@ -619,8 +619,8 @@ body {
 /* View Transitions for auth-card Only */
 ::view-transition-old(auth-card),
 ::view-transition-new(auth-card) {
-  animation-duration: 0.4s;
-  animation-timing-function: ease-in-out;
+  animation-duration: 0.3s;
+  animation-timing-function: cubic-bezier(0.32, 0.72, 0, 1);
 }
 
 ::view-transition-old(auth-card) {
@@ -634,8 +634,8 @@ body {
 /* sidebar */
 ::view-transition-old(side-bar),
 ::view-transition-new(side-bar) {
-  animation-duration: 0.4s;
-  animation-timing-function: ease-in-out;
+  animation-duration: 0.3s;
+  animation-timing-function: cubic-bezier(0.32, 0.72, 0, 1);
 }
 
 ::view-transition-old(side-bar) {
@@ -697,14 +697,14 @@ nav[class*="fixed"] {
   }
   to {
     opacity: 0;
-    transform: translateX(-50px);
+    transform: translateX(-20px);
   }
 }
 
 @keyframes slide-in-fade {
   from {
     opacity: 0;
-    transform: translateX(50px);
+    transform: translateX(20px);
   }
   to {
     opacity: 1;
@@ -736,102 +736,70 @@ nav[class*="fixed"] {
 }
 
 @keyframes fade-and-scale-out {
-  0% {
+  from {
     opacity: 1;
     transform: scale(1) translateX(0);
-    filter: blur(0);
   }
-  100% {
+  to {
     opacity: 0;
-    transform: scale(0.8) translateX(-10px);
-    filter: blur(2px);
+    transform: scale(0.96) translateX(-8px);
   }
 }
 
 @keyframes fade-and-scale-in {
-  0% {
+  from {
     opacity: 0;
-    transform: scale(1.2) translateX(10px);
-    filter: blur(2px);
+    transform: scale(1.04) translateX(8px);
   }
-  100% {
+  to {
     opacity: 1;
     transform: scale(1) translateX(0);
-    filter: blur(0);
   }
 }
 
-/* Enhanced main-content animations with fancy effects */
+/* Smooth main-content animations */
 @keyframes main-content-fade-out {
-  0% {
+  from {
     opacity: 1;
-    transform: scale(1) translateY(0) translateX(0);
-    filter: blur(0);
+    transform: translateY(0);
   }
-  50% {
-    opacity: 0.7;
-    transform: scale(0.95) translateY(-10px) translateX(-5px);
-    filter: blur(2px);
-  }
-  100% {
+  to {
     opacity: 0;
-    transform: scale(0.9) translateY(-20px) translateX(-10px);
-    filter: blur(4px);
+    transform: translateY(-12px);
   }
 }
 
 @keyframes main-content-fade-in {
-  0% {
+  from {
     opacity: 0;
-    transform: scale(0.9) translateY(20px) translateX(10px);
-    filter: blur(4px);
+    transform: translateY(12px);
   }
-  50% {
-    opacity: 0.7;
-    transform: scale(1.05) translateY(10px) translateX(5px);
-    filter: blur(2px);
-  }
-  100% {
+  to {
     opacity: 1;
-    transform: scale(1) translateY(0) translateX(0);
-    filter: blur(0);
+    transform: translateY(0);
   }
 }
 
-/* Smooth slide transitions - mobile-like full screen slide with fancy effects */
+/* Smooth slide transitions - mobile-like full screen slide */
 @keyframes slide-out-left {
-  0% {
+  from {
     opacity: 1;
     transform: translateX(0) scale(1);
-    filter: blur(0);
   }
-  50% {
-    opacity: 0.7;
-    transform: translateX(-15%) scale(0.97);
-    filter: blur(2px);
-  }
-  100% {
-    opacity: 0.5;
-    transform: translateX(-100%) scale(0.9);
-    filter: blur(6px);
+  to {
+    opacity: 0;
+    transform: translateX(-30%) scale(0.95);
   }
 }
 
 @keyframes slide-in-right {
-  0% {
+  from {
     opacity: 0;
-    transform: translateX(100%) scale(0.9);
-    filter: blur(6px);
+    transform: translateX(30%) scale(0.95);
   }
-  50% {
-    opacity: 0.7;
-    transform: translateX(15%) scale(0.97);
-    filter: blur(2px);
-  }
-  100% {
+  to {
     opacity: 1;
     transform: translateX(0) scale(1);
-    filter: blur(0);
   }
 }
 
@@ -855,13 +823,13 @@ nav[class*="fixed"] {
 }
 
 @keyframes fade-in-up {
-  from { 
-    opacity: 0; 
-    transform: translateY(20px); 
+  from {
+    opacity: 0;
+    transform: translateY(12px);
   }
-  to { 
-    opacity: 1; 
-    transform: translateY(0); 
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
@@ -881,15 +849,15 @@ nav[class*="fixed"] {
 }
 
 .animate-fade-in {
-  animation: fade-in 0.6s ease-out both;
+  animation: fade-in 0.4s cubic-bezier(0.32, 0.72, 0, 1) both;
 }
 
 .animate-fade-in-up {
-  animation: fade-in-up 0.6s ease-out both;
+  animation: fade-in-up 0.4s cubic-bezier(0.32, 0.72, 0, 1) both;
 }
 
 .animate-slide-down {
-  animation: slide-down 0.3s ease-out both;
+  animation: slide-down 0.25s cubic-bezier(0.32, 0.72, 0, 1) both;
 }
 
 /* Optional: Add transition to specific elements */

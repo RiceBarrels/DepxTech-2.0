@@ -2,7 +2,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { PlusIcon, SearchIcon, ChevronLeftIcon, ChevronRightIcon, DownloadIcon, UploadIcon, RefreshCwIcon } from 'lucide-react'
+import { PlusIcon, SearchIcon, ChevronLeftIcon, ChevronRightIcon, DownloadIcon, UploadIcon } from 'lucide-react'
 import { toast } from 'sonner'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import {
@@ -44,7 +44,6 @@ export default function ProductPage() {
     const router = useTransitionRouter()
     const [exporting, setExporting] = useState(false)
     const [importing, setImporting] = useState(false)
-    const [syncing, setSyncing] = useState(false)
     const fileInputRef = useRef(null)
 
     const handleExport = async () => {
@@ -117,40 +116,6 @@ export default function ProductPage() {
         }
     }
 
-    const handleEbaySync = async () => {
-        try {
-            setSyncing(true)
-            toast.info('Fetching products from eBay...')
-
-            const response = await fetch('/api/admin/products/ebay-sync', {
-                method: 'POST',
-            })
-
-            const data = await response.json()
-
-            if (!response.ok) {
-                throw new Error(data.error || 'Failed to sync products from eBay')
-            }
-
-            if (data.total === 0) {
-                toast.info('No products found in eBay inventory')
-            } else if (data.failed > 0) {
-                toast.warning(`eBay sync: ${data.imported} imported, ${data.updated} updated, ${data.failed} failed`)
-            } else {
-                toast.success(`Imported ${data.imported} new, updated ${data.updated} existing products from eBay!`)
-            }
-
-            // Refresh the products list
-            fetchProducts(currentPage, appliedSearchTerm)
-
-        } catch (error) {
-            console.error('eBay sync error:', error)
-            toast.error('Failed to sync from eBay: ' + error.message)
-        } finally {
-            setSyncing(false)
-        }
-    }
-
     const fetchProducts = useCallback(async (page = 1, search = '', limit = 10) => {
         try {
             setLoading(true)
@@ -217,7 +182,7 @@ export default function ProductPage() {
                     <CardDescription>Manage your products</CardDescription>
                 </CardHeader>
                 <CardContent className="flex flex-col gap-4">
-                    <div className="grid grid-cols-1 sm:grid-cols-4 gap-2">
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                         <Button variant="outline" size="sm" className="w-full" onClick={() => router.push('/admin/products/add')}>
                             <PlusIcon className="w-4 h-4 mr-2" /> Add Product
                         </Button>
@@ -240,16 +205,6 @@ export default function ProductPage() {
                         >
                             <UploadIcon className="w-4 h-4 mr-2" />
                             {importing ? 'Importing...' : 'Import CSV'}
-                        </Button>
-                        <Button
-                            variant="outline"
-                            size="sm"
-                            className="w-full"
-                            onClick={handleEbaySync}
-                            disabled={syncing}
-                        >
-                            <RefreshCwIcon className={`w-4 h-4 mr-2 ${syncing ? 'animate-spin' : ''}`} />
-                            {syncing ? 'Syncing...' : 'Sync from eBay'}
                         </Button>
                         <input
                             ref={fileInputRef}

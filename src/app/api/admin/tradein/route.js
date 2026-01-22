@@ -154,8 +154,8 @@ export async function POST(request) {
       series,
       brand_img,
       imgs,
-      release_date,
-      depreciation_schedule,
+      base_date,
+      depreciation_rate,
       is_featured,
       questions
     } = body
@@ -173,8 +173,8 @@ export async function POST(request) {
       series,
       brand_img: brand_img || null,
       imgs: imgs || [],
-      release_date: release_date || null,
-      depreciation_schedule: depreciation_schedule || 'standard',
+      base_date: base_date || null,
+      depreciation_rate: parseFloat(depreciation_rate) || 0,
       is_featured: is_featured || false,
       questions: questions || [],
       trades: 0,
@@ -256,8 +256,8 @@ export async function PUT(request) {
       series,
       brand_img,
       imgs,
-      release_date,
-      depreciation_schedule,
+      base_date,
+      depreciation_rate,
       is_featured,
       questions
     } = body
@@ -275,8 +275,8 @@ export async function PUT(request) {
       series: series || '',
       brand_img: brand_img || null,
       imgs: imgs || [],
-      release_date: release_date || null,
-      depreciation_schedule: depreciation_schedule || 'standard',
+      base_date: base_date || null,
+      depreciation_rate: parseFloat(depreciation_rate) || 0,
       is_featured: is_featured || false,
       questions: questions || []
     }

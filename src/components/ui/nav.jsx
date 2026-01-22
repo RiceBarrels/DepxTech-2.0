@@ -2,7 +2,7 @@
 
 import { usePathname } from "next/navigation";
 import { TransitionLink } from "@/components/ui/pageTransitions";
-import { HomeIcon, ArrowRightLeftIcon, PaletteIcon, UserIcon, ShoppingCartIcon, TicketPercentIcon } from "lucide-react";
+import { HomeIcon, ArrowRightLeftIcon, PaletteIcon, UserIcon, ShoppingCartIcon, TicketPercentIcon, LogInIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { TextSearchIcon } from "lucide-react";
 import { SearchIcon } from "lucide-react";
@@ -12,6 +12,7 @@ import { Button } from "./button";
 import { Separator } from "./separator";
 import { ModeToggle } from "./modeToggle";
 import { BottomSafeArea, useSafeArea } from "../safe-area";
+import { useAuth } from "@/lib/auth";
 
 export default function Nav({}) {
     const pathname = usePathname();
@@ -20,6 +21,7 @@ export default function Nav({}) {
     const [indicatorStyle, setIndicatorStyle] = useState({});
     const navRef = useRef(null);
     const safeArea = useSafeArea();
+    const { user, profileData, loading } = useAuth();
 
     // Helper function to check if a path is active
     const isActive = (path) => {
@@ -246,37 +248,63 @@ export default function Nav({}) {
                     <div className="h-8 ml-1 mx-4">
                         <Separator orientation="vertical" className="h-4"/>
                     </div>
-                    
-                    <TransitionLink 
-                        href="/account" 
-                        className="flex items-center justify-center relative"
-                        data-active={isActive("/account")}
-                        hapticsOnPressRelease={true}
-                    >
-                        <Button 
-                            className={cn(
-                                "font-light rounded-xl",
-                                isActive("/account") && "bg-blue-500/20"
-                            )}
-                            size="icon"
-                            style={{ 
-                                transition: 'all 0.4s cubic-bezier(0.22, 0.61, 0.36, 1)',
-                                transform: isActive("/account") ? 'scale(1.1)' : 'scale(1)'
-                            }}
+
+                    {/* Profile / Sign In */}
+                    {!loading && user ? (
+                        <TransitionLink
+                            href="/account"
+                            className="flex items-center justify-center relative"
+                            data-active={isActive("/account")}
+                            hapticsOnPressRelease={true}
                         >
-                            <UserIcon 
-                                strokeWidth={isActive("/account") ? 2.2 : 1.5} 
-                                className={cn(
-                                    "size-4",
-                                    isActive("/account") && "text-blue-500"
-                                )}
-                                style={{ 
-                                    transition: 'all 0.4s cubic-bezier(0.22, 0.61, 0.36, 1)',
-                                    transform: isActive("/account") ? 'scale(1.1)' : 'scale(1)'
-                                }}
-                            />
-                        </Button>
-                    </TransitionLink>
+                            {profileData?.avatar && profileData?.avatar !== "default" ? (
+                                <img
+                                    src={profileData.avatar}
+                                    alt="Profile"
+                                    className={cn(
+                                        "size-9 rounded-full object-cover border-2 border-transparent",
+                                        isActive("/account") && "border-blue-500"
+                                    )}
+                                    style={{
+                                        transition: 'all 0.4s cubic-bezier(0.22, 0.61, 0.36, 1)',
+                                        transform: isActive("/account") ? 'scale(1.1)' : 'scale(1)'
+                                    }}
+                                />
+                            ) : (
+                                <div
+                                    className={cn(
+                                        "size-9 rounded-full bg-primary flex items-center justify-center border-2 border-transparent",
+                                        isActive("/account") && "border-blue-500"
+                                    )}
+                                    style={{
+                                        transition: 'all 0.4s cubic-bezier(0.22, 0.61, 0.36, 1)',
+                                        transform: isActive("/account") ? 'scale(1.1)' : 'scale(1)'
+                                    }}
+                                >
+                                    <UserIcon
+                                        strokeWidth={1.5}
+                                        className="size-5 text-primary-foreground"
+                                    />
+                                </div>
+                            )}
+                        </TransitionLink>
+                    ) : !loading ? (
+                        <TransitionLink
+                            href="/login"
+                            className="flex items-center justify-center"
+                            hapticsOnPressRelease={true}
+                        >
+                            <Button
+                                className="font-medium rounded-xl gap-2"
+                                size="sm"
+                            >
+                                <LogInIcon className="size-4" />
+                                Sign In
+                            </Button>
+                        </TransitionLink>
+                    ) : (
+                        <div className="size-9 rounded-full bg-muted animate-pulse" />
+                    )}
                 </div>
             </nav>
             <nav 

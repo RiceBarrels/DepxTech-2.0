@@ -1,16 +1,19 @@
+
 import { createClient } from '@supabase/supabase-js'
-import { cookies } from 'next/headers'
 import { NextResponse } from 'next/server'
 
-const supabaseAdmin = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL,
-    process.env.SUPABASE_SERVICE_ROLE_KEY
-)
+// Lazily initialize Supabase client to avoid build-time errors
+function getSupabaseAdmin() {
+    return createClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL,
+        process.env.SUPABASE_SERVICE_ROLE_KEY
+    )
+}
 
 // GET - Fetch all question templates
 export async function GET(request) {
     try {
-        const { data: templates, error } = await supabaseAdmin
+        const { data: templates, error } = await getSupabaseAdmin()
             .from('trade_question_templates')
             .select('*')
             .order('created_at', { ascending: false })
@@ -37,7 +40,7 @@ export async function POST(request) {
             return NextResponse.json({ error: 'Template name is required' }, { status: 400 })
         }
 
-        const { data: template, error } = await supabaseAdmin
+        const { data: template, error } = await getSupabaseAdmin()
             .from('trade_question_templates')
             .insert({
                 name,
@@ -72,7 +75,7 @@ export async function PUT(request) {
         if (name !== undefined) updateData.name = name
         if (questions !== undefined) updateData.questions = questions
 
-        const { data: template, error } = await supabaseAdmin
+        const { data: template, error } = await getSupabaseAdmin()
             .from('trade_question_templates')
             .update(updateData)
             .eq('id', id)
@@ -101,7 +104,7 @@ export async function DELETE(request) {
             return NextResponse.json({ error: 'Template ID is required' }, { status: 400 })
         }
 
-        const { error } = await supabaseAdmin
+        const { error } = await getSupabaseAdmin()
             .from('trade_question_templates')
             .delete()
             .eq('id', id)

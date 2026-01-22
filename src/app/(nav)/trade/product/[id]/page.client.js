@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useMemo, useEffect } from "react"
+import { useState, useMemo } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -16,9 +16,7 @@ import {
   MessageSquareIcon,
   AlertCircle,
   ChevronRight,
-  ChevronLeft,
-  TrendingUp,
-  RefreshCw
+  ChevronLeft
 } from 'lucide-react'
 import { toast } from 'sonner'
 import { useAuth } from '@/lib/auth'
@@ -47,16 +45,8 @@ const getImageUrl = (img) => {
   return null
 }
 
-export default function TradeProductPageClient({ product, questions, basePrice: fallbackBasePrice, minPrice, depreciation }) {
+export default function TradeProductPageClient({ product, questions, basePrice, minPrice, depreciation }) {
   const { user } = useAuth()
-
-  // eBay price fetching state
-  const [ebayPricing, setEbayPricing] = useState(null)
-  const [ebayLoading, setEbayLoading] = useState(true)
-  const [ebayError, setEbayError] = useState(null)
-
-  // Determine actual base price (eBay or fallback)
-  const basePrice = ebayPricing?.suggestedTradeIn ?? fallbackBasePrice
 
   // Track answers for each question: { questionIndex: answerIndex }
   const [answers, setAnswers] = useState({})
@@ -71,59 +61,6 @@ export default function TradeProductPageClient({ product, questions, basePrice: 
   })
   const [submitting, setSubmitting] = useState(false)
   const [submitted, setSubmitted] = useState(false)
-
-  // Fetch eBay prices on mount
-  useEffect(() => {
-    async function fetchEbayPrice() {
-      try {
-        setEbayLoading(true)
-        setEbayError(null)
-
-        const response = await fetch(
-          `/api/tradeins/ebay-price?query=${encodeURIComponent(product.title)}&productId=${product.id}`
-        )
-
-        const data = await response.json()
-
-        if (!response.ok) {
-          throw new Error(data.error || 'Failed to fetch eBay price')
-        }
-
-        if (data.suggestedTradeIn) {
-          setEbayPricing(data)
-        } else {
-          // No eBay data found, will use fallback
-          setEbayError('No market data available')
-        }
-      } catch (error) {
-        console.error('Error fetching eBay price:', error)
-        setEbayError(error.message)
-      } finally {
-        setEbayLoading(false)
-      }
-    }
-
-    fetchEbayPrice()
-  }, [product.id, product.title])
-
-  const refreshEbayPrice = async () => {
-    setEbayLoading(true)
-    try {
-      const response = await fetch(
-        `/api/tradeins/ebay-price?query=${encodeURIComponent(product.title)}&productId=${product.id}&refresh=true`
-      )
-      const data = await response.json()
-      if (data.suggestedTradeIn) {
-        setEbayPricing(data)
-        setEbayError(null)
-        toast.success('Price updated from eBay')
-      }
-    } catch (error) {
-      toast.error('Failed to refresh price')
-    } finally {
-      setEbayLoading(false)
-    }
-  }
 
   // Total steps: questions + contact form
   const totalSteps = (questions?.length || 0) + 1 // +1 for contact form
@@ -356,15 +293,7 @@ export default function TradeProductPageClient({ product, questions, basePrice: 
           totalBonus: calculatedQuote.bonus,
           basePrice: basePrice,
           depreciation: depreciation,
-          // eBay pricing data
-          ebayPricing: ebayPricing ? {
-            suggestedTradeIn: ebayPricing.suggestedTradeIn,
-            tradeInRange: ebayPricing.tradeInRange,
-            usedMarketMedian: ebayPricing.usedMarket?.median,
-            newMarketMedian: ebayPricing.newMarket?.median,
-            fetchedAt: ebayPricing.fetchedAt
-          } : null,
-          priceSource: ebayPricing ? 'ebay' : 'database',
+          priceSource: 'database',
           name: formData.name,
           email: formData.email,
           phone: formData.phone || null,
@@ -707,30 +636,15 @@ export default function TradeProductPageClient({ product, questions, basePrice: 
                   calculatedQuote.isDealBreaker ? "text-red-700 dark:text-red-400" : "text-green-700 dark:text-green-400"
                 )}>
                   {calculatedQuote.isDealBreaker ? "Not Eligible for Trade-in" : "Current Estimate"}
-                  {ebayLoading && (
-                    <Loader2 className="w-3 h-3 animate-spin" />
-                  )}
-                  {ebayPricing && !ebayLoading && (
-                    <Badge variant="outline" className="text-xs bg-blue-50 border-blue-200 text-blue-700">
-                      <TrendingUp className="w-3 h-3 mr-1" />
-                      eBay Market
-                    </Badge>
-                  )}
                 </p>
                 <p className={cn(
                   "text-3xl font-bold",
                   calculatedQuote.isDealBreaker ? "text-red-600 dark:text-red-400" : "text-green-600 dark:text-green-400"
                 )}>
-                  {ebayLoading ? (
-                    <span className="text-2xl text-muted-foreground">Checking market...</span>
-                  ) : calculatedQuote.isDealBreaker ? (
-                    "N/A"
-                  ) : (
-                    formatCurrency(calculatedQuote.value)
-                  )}
+                  {calculatedQuote.isDealBreaker ? "N/A" : formatCurrency(calculatedQuote.value)}
                 </p>
               </div>
-              {!calculatedQuote.isDealBreaker && !ebayLoading && (
+              {!calculatedQuote.isDealBreaker && (
                 <div className="text-right text-xs space-y-1">
                   {calculatedQuote.deduction > 0 && (
                     <p className="text-muted-foreground">
@@ -755,15 +669,6 @@ export default function TradeProductPageClient({ product, questions, basePrice: 
                       Min. guaranteed price applied
                     </p>
                   )}
-                  <button
-                    type="button"
-                    onClick={refreshEbayPrice}
-                    disabled={ebayLoading}
-                    className="text-blue-600 hover:text-blue-700 flex items-center gap-1 ml-auto"
-                  >
-                    <RefreshCw className={cn("w-3 h-3", ebayLoading && "animate-spin")} />
-                    Refresh
-                  </button>
                 </div>
               )}
             </div>
@@ -771,24 +676,6 @@ export default function TradeProductPageClient({ product, questions, basePrice: 
               <p className="text-xs text-red-600/70 dark:text-red-400/70 mt-2">
                 Based on your answers, this device is not eligible for our trade-in program
               </p>
-            )}
-            {/* eBay market info */}
-            {ebayPricing && !ebayLoading && !calculatedQuote.isDealBreaker && (
-              <div className="mt-3 pt-3 border-t border-green-200 dark:border-green-800">
-                <div className="flex items-center justify-between text-xs">
-                  <span className="text-muted-foreground">
-                    Based on {ebayPricing.usedMarket?.count || ebayPricing.newMarket?.count || 0} eBay listings
-                  </span>
-                  <span className="text-muted-foreground">
-                    Range: {formatCurrency(ebayPricing.tradeInRange?.low || 0)} - {formatCurrency(ebayPricing.tradeInRange?.high || 0)}
-                  </span>
-                </div>
-              </div>
-            )}
-            {ebayError && !ebayLoading && (
-              <div className="mt-2 text-xs text-muted-foreground">
-                Using estimated price (eBay data unavailable)
-              </div>
             )}
           </div>
 

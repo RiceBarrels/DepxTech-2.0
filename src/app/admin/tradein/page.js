@@ -6,7 +6,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
-import { Label } from '@/components/ui/label'
 import {
     Select,
     SelectContent,
@@ -23,21 +22,30 @@ import {
     ArrowRightLeftIcon,
     DownloadIcon,
     UploadIcon,
-    CalendarIcon,
-    TrendingDownIcon,
-    HelpCircleIcon,
-    PackageIcon,
     StarIcon,
     SettingsIcon,
     ImageIcon,
-    ArrowUpDownIcon,
-    FilterIcon,
     CopyIcon,
-    FileTextIcon
+    FileTextIcon,
+    LayoutGridIcon,
+    LayoutListIcon,
+    ChevronDownIcon,
+    ChevronRightIcon,
+    PackageIcon,
+    PercentIcon,
+    EyeIcon,
+    MoreHorizontalIcon
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { toast } from 'sonner'
 import Image from 'next/image'
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 
 export default function TradeinManagePage() {
     const router = useTransitionRouter()
@@ -49,18 +57,15 @@ export default function TradeinManagePage() {
     const [deleting, setDeleting] = useState(null)
     const [exporting, setExporting] = useState(false)
     const [importing, setImporting] = useState(false)
-    const [activeTab, setActiveTab] = useState('products')
     const fileInputRef = useRef(null)
 
-    // Filter and sort state
+    // View and filter state
+    const [viewMode, setViewMode] = useState('grid') // 'grid' or 'table'
     const [categoryFilter, setCategoryFilter] = useState('all')
+    const [brandFilter, setBrandFilter] = useState('all')
     const [sortBy, setSortBy] = useState('created_desc')
-
-    // Question templates state
-    const [templates, setTemplates] = useState([])
-    const [loadingTemplates, setLoadingTemplates] = useState(false)
-    const [newTemplateName, setNewTemplateName] = useState('')
-    const [editingTemplate, setEditingTemplate] = useState(null)
+    const [groupBy, setGroupBy] = useState('none') // 'none', 'category', 'brand', 'series'
+    const [expandedGroups, setExpandedGroups] = useState({})
 
     // Fetch tradable products
     useEffect(() => {
@@ -86,8 +91,9 @@ export default function TradeinManagePage() {
         fetchProducts()
     }, [])
 
-    // Get unique categories for filter
+    // Get unique values for filters
     const categories = [...new Set(products.map(p => p.category).filter(Boolean))].sort()
+    const brands = [...new Set(products.map(p => p.brand).filter(Boolean))].sort()
 
     // Filter and sort products
     useEffect(() => {
@@ -98,14 +104,20 @@ export default function TradeinManagePage() {
             filtered = filtered.filter(p => p.category === categoryFilter)
         }
 
+        // Apply brand filter
+        if (brandFilter !== 'all') {
+            filtered = filtered.filter(p => p.brand === brandFilter)
+        }
+
         // Apply search filter
         if (searchTerm) {
+            const search = searchTerm.toLowerCase()
             filtered = filtered.filter(product =>
-                product.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                product.des?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                product.category?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                product.brand?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                product.series?.toLowerCase().includes(searchTerm.toLowerCase())
+                product.title?.toLowerCase().includes(search) ||
+                product.des?.toLowerCase().includes(search) ||
+                product.category?.toLowerCase().includes(search) ||
+                product.brand?.toLowerCase().includes(search) ||
+                product.series?.toLowerCase().includes(search)
             )
         }
 
@@ -129,67 +141,26 @@ export default function TradeinManagePage() {
         })
 
         setFilteredProducts(filtered)
-    }, [searchTerm, products, categoryFilter, sortBy])
+    }, [searchTerm, products, categoryFilter, brandFilter, sortBy])
 
-    // Fetch question templates
-    useEffect(() => {
-        if (activeTab === 'templates') {
-            fetchTemplates()
-        }
-    }, [activeTab])
+    // Group products
+    const groupedProducts = () => {
+        if (groupBy === 'none') return { 'All Products': filteredProducts }
 
-    const fetchTemplates = async () => {
-        setLoadingTemplates(true)
-        try {
-            const response = await fetch('/api/admin/tradein/templates')
-            const data = await response.json()
-            if (response.ok) {
-                setTemplates(data.templates || [])
-            }
-        } catch (error) {
-            console.error('Error fetching templates:', error)
-        } finally {
-            setLoadingTemplates(false)
-        }
+        const groups = {}
+        filteredProducts.forEach(product => {
+            const key = product[groupBy] || 'Unknown'
+            if (!groups[key]) groups[key] = []
+            groups[key].push(product)
+        })
+        return groups
     }
 
-    const createTemplate = async () => {
-        if (!newTemplateName.trim()) {
-            toast.error('Please enter a template name')
-            return
-        }
-        try {
-            const response = await fetch('/api/admin/tradein/templates', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ name: newTemplateName, questions: [] })
-            })
-            const data = await response.json()
-            if (response.ok) {
-                setTemplates(prev => [...prev, data.template])
-                setNewTemplateName('')
-                toast.success('Template created')
-            } else {
-                toast.error(data.error || 'Failed to create template')
-            }
-        } catch (error) {
-            toast.error('Failed to create template')
-        }
-    }
-
-    const deleteTemplate = async (templateId) => {
-        if (!confirm('Delete this template?')) return
-        try {
-            const response = await fetch(`/api/admin/tradein/templates?id=${templateId}`, {
-                method: 'DELETE'
-            })
-            if (response.ok) {
-                setTemplates(prev => prev.filter(t => t.id !== templateId))
-                toast.success('Template deleted')
-            }
-        } catch (error) {
-            toast.error('Failed to delete template')
-        }
+    const toggleGroup = (groupName) => {
+        setExpandedGroups(prev => ({
+            ...prev,
+            [groupName]: !prev[groupName]
+        }))
     }
 
     const handleExport = async () => {
@@ -211,10 +182,9 @@ export default function TradeinManagePage() {
             window.URL.revokeObjectURL(url)
             document.body.removeChild(a)
 
-            toast.success('Tradable products exported successfully!')
+            toast.success('Exported successfully!')
         } catch (error) {
-            console.error('Export error:', error)
-            toast.error('Failed to export tradable products: ' + error.message)
+            toast.error('Failed to export: ' + error.message)
         } finally {
             setExporting(false)
         }
@@ -242,35 +212,30 @@ export default function TradeinManagePage() {
             const data = await response.json()
 
             if (!response.ok) {
-                throw new Error(data.error || 'Failed to import tradable products')
+                throw new Error(data.error || 'Failed to import')
             }
 
-            toast.success(`Successfully imported ${data.imported} products${data.failed > 0 ? `, ${data.failed} failed` : ''}`)
+            toast.success(`Imported ${data.imported} products${data.failed > 0 ? `, ${data.failed} failed` : ''}`)
 
             // Refresh products list
             const fetchResponse = await fetch('/api/admin/tradein')
             const fetchData = await fetchResponse.json()
             if (fetchResponse.ok) {
                 setProducts(fetchData.products || [])
-                setFilteredProducts(fetchData.products || [])
             }
 
-            // Reset file input
             if (fileInputRef.current) {
                 fileInputRef.current.value = ''
             }
         } catch (error) {
-            console.error('Import error:', error)
-            toast.error('Failed to import tradable products: ' + error.message)
+            toast.error('Failed to import: ' + error.message)
         } finally {
             setImporting(false)
         }
     }
 
     const handleDelete = async (productId) => {
-        if (!confirm('Are you sure you want to delete this tradable product?')) {
-            return
-        }
+        if (!confirm('Delete this product?')) return
 
         setDeleting(productId)
         try {
@@ -278,20 +243,47 @@ export default function TradeinManagePage() {
                 method: 'DELETE'
             })
 
+            if (!response.ok) {
+                const data = await response.json()
+                throw new Error(data.error || 'Failed to delete')
+            }
+
+            setProducts(prev => prev.filter(p => p.id !== productId))
+            toast.success('Product deleted')
+        } catch (err) {
+            toast.error('Error: ' + err.message)
+        } finally {
+            setDeleting(null)
+        }
+    }
+
+    const handleDuplicate = async (product) => {
+        try {
+            const response = await fetch('/api/admin/tradein', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    ...product,
+                    id: undefined,
+                    title: `${product.title} (Copy)`,
+                    created_at: undefined,
+                    updated_at: undefined,
+                    views: 0,
+                    trades: 0,
+                    likes: 0
+                })
+            })
+
             const data = await response.json()
 
             if (!response.ok) {
-                throw new Error(data.error || 'Failed to delete product')
+                throw new Error(data.error || 'Failed to duplicate')
             }
 
-            // Remove the deleted product from state
-            setProducts(prev => prev.filter(p => p.id !== productId))
-            setFilteredProducts(prev => prev.filter(p => p.id !== productId))
-            toast.success('Product deleted successfully')
-        } catch (err) {
-            toast.error('Error deleting product: ' + err.message)
-        } finally {
-            setDeleting(null)
+            setProducts(prev => [data.product, ...prev])
+            toast.success('Product duplicated')
+        } catch (error) {
+            toast.error('Failed to duplicate: ' + error.message)
         }
     }
 
@@ -302,83 +294,84 @@ export default function TradeinManagePage() {
         }).format(price || 0)
     }
 
-    // Calculate depreciated price based on release date
-    const getDepreciatedInfo = (product) => {
-        if (!product.release_date) {
-            return { multiplier: 100, label: 'No release date' }
-        }
-        const release = new Date(product.release_date)
-        const now = new Date()
-        const monthsOld = Math.floor((now - release) / (1000 * 60 * 60 * 24 * 30))
-
-        if (monthsOld < 6) return { multiplier: 100, label: '0-6 months' }
-        if (monthsOld < 12) return { multiplier: 90, label: '6-12 months' }
-        if (monthsOld < 24) return { multiplier: 80, label: '1-2 years' }
-        if (monthsOld < 36) return { multiplier: 65, label: '2-3 years' }
-        return { multiplier: 45, label: '3+ years' }
+    // Calculate current value based on depreciation rate
+    const getCurrentValue = (product) => {
+        const basePrice = Number(product.base_price) || 0
+        const depRate = Number(product.depreciation_rate) || 0
+        const multiplier = 100 - depRate
+        return basePrice * (multiplier / 100)
     }
+
+    const clearFilters = () => {
+        setSearchTerm('')
+        setCategoryFilter('all')
+        setBrandFilter('all')
+        setSortBy('created_desc')
+        setGroupBy('none')
+    }
+
+    const hasActiveFilters = searchTerm || categoryFilter !== 'all' || brandFilter !== 'all'
 
     if (loading) {
         return (
-            <div className="flex flex-col gap-4 p-4">
-                <div className="flex items-center gap-2">
-                    <Button variant="outline" size="sm" onClick={() => router.back()}>
+            <div className="flex flex-col gap-4 p-4 md:p-6">
+                <div className="flex items-center gap-3">
+                    <Button variant="ghost" size="icon" onClick={() => router.back()}>
                         <ArrowLeftIcon className="w-4 h-4" />
-                        Back
                     </Button>
-                    <h1 className="text-2xl font-bold">Manage Trade-in Products</h1>
+                    <h1 className="text-2xl font-bold">Trade-in Products</h1>
                 </div>
-                <Card>
-                    <CardContent className="pt-6">
-                        <div className="text-center text-muted-foreground">
-                            Loading tradable products...
-                        </div>
-                    </CardContent>
-                </Card>
+                <div className="flex items-center justify-center py-20">
+                    <div className="animate-spin w-8 h-8 border-2 border-primary border-t-transparent rounded-full" />
+                </div>
             </div>
         )
     }
 
     if (error) {
         return (
-            <div className="flex flex-col gap-4 p-4">
-                <div className="flex items-center gap-2">
-                    <Button variant="outline" size="sm" onClick={() => router.back()}>
+            <div className="flex flex-col gap-4 p-4 md:p-6">
+                <div className="flex items-center gap-3">
+                    <Button variant="ghost" size="icon" onClick={() => router.back()}>
                         <ArrowLeftIcon className="w-4 h-4" />
-                        Back
                     </Button>
-                    <h1 className="text-2xl font-bold">Manage Trade-in Products</h1>
+                    <h1 className="text-2xl font-bold">Trade-in Products</h1>
                 </div>
-                <Card className="border-red-200 bg-red-50">
+                <Card className="border-red-200 bg-red-50 dark:bg-red-950/20">
                     <CardContent className="pt-6">
-                        <div className="text-red-800 text-center">
-                            Error: {error}
-                        </div>
+                        <p className="text-red-800 dark:text-red-400 text-center">{error}</p>
                     </CardContent>
                 </Card>
             </div>
         )
     }
 
+    const groups = groupedProducts()
+
     return (
-        <div className="flex flex-col gap-4 p-4">
-            <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                    <Button variant="outline" size="sm" onClick={() => router.back()}>
+        <div className="flex flex-col gap-4 p-4 md:p-6">
+            {/* Header */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div className="flex items-center gap-3">
+                    <Button variant="ghost" size="icon" onClick={() => router.back()}>
                         <ArrowLeftIcon className="w-4 h-4" />
-                        Back
                     </Button>
-                    <h1 className="text-2xl font-bold">Manage Trade-in Products</h1>
+                    <div>
+                        <h1 className="text-2xl font-bold">Trade-in Products</h1>
+                        <p className="text-sm text-muted-foreground">
+                            {products.length} products total
+                        </p>
+                    </div>
                 </div>
-                <div className="flex gap-2">
+                <div className="flex items-center gap-2 flex-wrap">
                     <Button
                         variant="outline"
                         size="sm"
                         onClick={handleExport}
                         disabled={exporting}
                     >
-                        <DownloadIcon className="w-4 h-4 mr-2" />
-                        {exporting ? 'Exporting...' : 'Export CSV'}
+                        <DownloadIcon className="w-4 h-4 mr-1.5" />
+                        {exporting ? 'Exporting...' : 'Export'}
                     </Button>
                     <Button
                         variant="outline"
@@ -386,15 +379,19 @@ export default function TradeinManagePage() {
                         onClick={() => fileInputRef.current?.click()}
                         disabled={importing}
                     >
-                        <UploadIcon className="w-4 h-4 mr-2" />
-                        {importing ? 'Importing...' : 'Import CSV'}
+                        <UploadIcon className="w-4 h-4 mr-1.5" />
+                        {importing ? 'Importing...' : 'Import'}
                     </Button>
-                    <Button variant="outline" onClick={() => router.push('/admin/tradein/settings')}>
-                        <SettingsIcon className="w-4 h-4 mr-2" />
-                        Settings
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => router.push('/admin/tradein/templates')}
+                    >
+                        <FileTextIcon className="w-4 h-4 mr-1.5" />
+                        Templates
                     </Button>
-                    <Button onClick={() => router.push('/admin/tradein/add')} className="bg-blue-600 hover:bg-blue-700">
-                        <PlusIcon className="w-4 h-4 mr-2" />
+                    <Button onClick={() => router.push('/admin/tradein/add')} size="sm">
+                        <PlusIcon className="w-4 h-4 mr-1.5" />
                         Add Product
                     </Button>
                 </div>
@@ -407,363 +404,413 @@ export default function TradeinManagePage() {
                 />
             </div>
 
-            {/* Tab Navigation */}
-            <div className="flex gap-2 border-b pb-2 flex-wrap">
-                <Button
-                    variant={activeTab === 'products' ? 'default' : 'ghost'}
-                    size="sm"
-                    onClick={() => setActiveTab('products')}
-                >
-                    <ArrowRightLeftIcon className="w-4 h-4 mr-2" />
-                    Products ({products.length})
-                </Button>
-                <Button
-                    variant={activeTab === 'templates' ? 'default' : 'ghost'}
-                    size="sm"
-                    onClick={() => setActiveTab('templates')}
-                >
-                    <FileTextIcon className="w-4 h-4 mr-2" />
-                    Question Templates
-                </Button>
-                <Button
-                    variant={activeTab === 'depreciation' ? 'default' : 'ghost'}
-                    size="sm"
-                    onClick={() => setActiveTab('depreciation')}
-                >
-                    <TrendingDownIcon className="w-4 h-4 mr-2" />
-                    Depreciation
-                </Button>
+            {/* Toolbar */}
+            <div className="flex flex-col lg:flex-row gap-3 p-3 bg-muted/50 rounded-lg border">
+                {/* Search */}
+                <div className="relative flex-1 min-w-[200px]">
+                    <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                    <Input
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        placeholder="Search products..."
+                        className="pl-9 h-9"
+                    />
+                </div>
+
+                {/* Filters */}
+                <div className="flex items-center gap-2 flex-wrap">
+                    <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+                        <SelectTrigger className="w-[140px] h-9">
+                            <SelectValue placeholder="Category" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="all">All Categories</SelectItem>
+                            {categories.map(cat => (
+                                <SelectItem key={cat} value={cat}>{cat}</SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
+
+                    <Select value={brandFilter} onValueChange={setBrandFilter}>
+                        <SelectTrigger className="w-[130px] h-9">
+                            <SelectValue placeholder="Brand" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="all">All Brands</SelectItem>
+                            {brands.map(brand => (
+                                <SelectItem key={brand} value={brand}>{brand}</SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
+
+                    <Select value={sortBy} onValueChange={setSortBy}>
+                        <SelectTrigger className="w-[130px] h-9">
+                            <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="created_desc">Newest</SelectItem>
+                            <SelectItem value="created_asc">Oldest</SelectItem>
+                            <SelectItem value="title_asc">A-Z</SelectItem>
+                            <SelectItem value="title_desc">Z-A</SelectItem>
+                            <SelectItem value="price_desc">Price ↓</SelectItem>
+                            <SelectItem value="price_asc">Price ↑</SelectItem>
+                        </SelectContent>
+                    </Select>
+
+                    <Select value={groupBy} onValueChange={setGroupBy}>
+                        <SelectTrigger className="w-[120px] h-9">
+                            <SelectValue placeholder="Group by" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="none">No Grouping</SelectItem>
+                            <SelectItem value="category">Category</SelectItem>
+                            <SelectItem value="brand">Brand</SelectItem>
+                            <SelectItem value="series">Series</SelectItem>
+                        </SelectContent>
+                    </Select>
+
+                    {hasActiveFilters && (
+                        <Button variant="ghost" size="sm" onClick={clearFilters} className="h-9">
+                            Clear
+                        </Button>
+                    )}
+
+                    <div className="border-l h-6 mx-1" />
+
+                    {/* View Toggle */}
+                    <div className="flex border rounded-md">
+                        <Button
+                            variant={viewMode === 'grid' ? 'secondary' : 'ghost'}
+                            size="sm"
+                            className="h-9 px-2.5 rounded-r-none"
+                            onClick={() => setViewMode('grid')}
+                        >
+                            <LayoutGridIcon className="w-4 h-4" />
+                        </Button>
+                        <Button
+                            variant={viewMode === 'table' ? 'secondary' : 'ghost'}
+                            size="sm"
+                            className="h-9 px-2.5 rounded-l-none"
+                            onClick={() => setViewMode('table')}
+                        >
+                            <LayoutListIcon className="w-4 h-4" />
+                        </Button>
+                    </div>
+                </div>
             </div>
 
-            {activeTab === 'products' && (
-                <>
-                    {/* Search, Filter, and Sort */}
-                    <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
-                        <Card className="md:col-span-2">
-                            <CardHeader className="pb-2">
-                                <CardTitle className="text-sm">Search Products</CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                                <div className="relative">
-                                    <SearchIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-                                    <Input
-                                        value={searchTerm}
-                                        onChange={(e) => setSearchTerm(e.target.value)}
-                                        placeholder="Search by title, brand, series..."
-                                        className="pl-10"
-                                    />
-                                </div>
-                            </CardContent>
-                        </Card>
+            {/* Results info */}
+            <div className="flex items-center justify-between text-sm text-muted-foreground">
+                <span>
+                    Showing {filteredProducts.length} of {products.length} products
+                </span>
+            </div>
 
-                        <Card>
-                            <CardHeader className="pb-2">
-                                <CardTitle className="text-sm flex items-center gap-1">
-                                    <FilterIcon className="w-3 h-3" />
-                                    Category
-                                </CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                                <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-                                    <SelectTrigger>
-                                        <SelectValue placeholder="All Categories" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="all">All Categories</SelectItem>
-                                        {categories.map(cat => (
-                                            <SelectItem key={cat} value={cat}>{cat}</SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
-                            </CardContent>
-                        </Card>
-
-                        <Card>
-                            <CardHeader className="pb-2">
-                                <CardTitle className="text-sm flex items-center gap-1">
-                                    <ArrowUpDownIcon className="w-3 h-3" />
-                                    Sort By
-                                </CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                                <Select value={sortBy} onValueChange={setSortBy}>
-                                    <SelectTrigger>
-                                        <SelectValue />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="created_desc">Newest First</SelectItem>
-                                        <SelectItem value="created_asc">Oldest First</SelectItem>
-                                        <SelectItem value="title_asc">Title A-Z</SelectItem>
-                                        <SelectItem value="title_desc">Title Z-A</SelectItem>
-                                        <SelectItem value="price_desc">Price High-Low</SelectItem>
-                                        <SelectItem value="price_asc">Price Low-High</SelectItem>
-                                    </SelectContent>
-                                </Select>
-                            </CardContent>
-                        </Card>
-
-                        <Card>
-                            <CardHeader className="pb-2">
-                                <CardTitle className="text-sm">Total Products</CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                                <div className="text-2xl font-bold">{products.length}</div>
-                            </CardContent>
-                        </Card>
-
-                        <Card>
-                            <CardHeader className="pb-2">
-                                <CardTitle className="text-sm">Showing</CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                                <div className="text-2xl font-bold">{filteredProducts.length}</div>
-                            </CardContent>
-                        </Card>
-                    </div>
-
-                    {/* Products List */}
-                    <div className="grid gap-4">
-                        {filteredProducts.length === 0 ? (
-                            <Card>
-                                <CardContent className="pt-6">
-                                    <div className="text-center text-muted-foreground">
-                                        {searchTerm ? 'No products found matching your search.' : 'No tradable products found. Add your first product to get started.'}
-                                    </div>
-                                </CardContent>
-                            </Card>
-                        ) : (
-                            filteredProducts.map((product) => {
-                                const depreciationInfo = getDepreciatedInfo(product)
-                                const basePrice = Number(product.base_price) || 0
-                                const depreciatedPrice = basePrice * (depreciationInfo.multiplier / 100)
-                                const productImage = product.imgs && product.imgs.length > 0 ? product.imgs[0] : null
-
-                                return (
-                                    <Card key={product.id} className="hover:shadow-md transition-shadow">
-                                        <CardHeader className="pb-2">
-                                            <div className="flex items-start gap-4">
-                                                {/* Product Image */}
-                                                <div className="flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden bg-muted border">
-                                                    {productImage ? (
-                                                        <Image
-                                                            src={productImage}
-                                                            alt={product.title}
-                                                            width={80}
-                                                            height={80}
-                                                            className="w-full h-full object-contain"
-                                                        />
-                                                    ) : (
-                                                        <div className="w-full h-full flex items-center justify-center">
-                                                            <ImageIcon className="w-8 h-8 text-muted-foreground/50" />
-                                                        </div>
-                                                    )}
-                                                </div>
-                                                <div className="flex-1 min-w-0">
-                                                    <CardTitle className="flex items-center gap-2 flex-wrap">
-                                                        {product.title}
-                                                        {product.is_featured && (
-                                                            <Badge className="bg-yellow-500">
-                                                                <StarIcon className="w-3 h-3 mr-1" />
-                                                                Featured
-                                                            </Badge>
-                                                        )}
-                                                    </CardTitle>
-                                                    <CardDescription className="flex items-center gap-2 mt-1 flex-wrap">
-                                                        <span>{product.brand}</span>
-                                                        <span>•</span>
-                                                        <span>{product.series}</span>
-                                                        <span>•</span>
-                                                        <Badge variant="outline">{product.category}</Badge>
-                                                    </CardDescription>
-                                                </div>
-                                                <div className="flex gap-2 flex-shrink-0">
-                                                    <Button
-                                                        variant="outline"
-                                                        size="sm"
-                                                        onClick={() => router.push(`/admin/tradein/edit/${product.id}`)}
-                                                    >
-                                                        <EditIcon className="w-4 h-4" />
-                                                    </Button>
-                                                    <Button
-                                                        variant="outline"
-                                                        size="sm"
-                                                        onClick={() => handleDelete(product.id)}
-                                                        disabled={deleting === product.id}
-                                                        className="text-red-600 hover:text-red-700 hover:bg-red-50"
-                                                    >
-                                                        {deleting === product.id ? (
-                                                            <div className="w-4 h-4 animate-spin border-2 border-red-600 border-t-transparent rounded-full" />
-                                                        ) : (
-                                                            <TrashIcon className="w-4 h-4" />
-                                                        )}
-                                                    </Button>
-                                                </div>
-                                            </div>
-                                        </CardHeader>
-                                        <CardContent>
-                                            <div className="space-y-4">
-                                                {/* Pricing Info */}
-                                                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                                                    <div className="bg-green-50 dark:bg-green-950/30 p-3 rounded-lg">
-                                                        <div className="text-xs text-green-700 dark:text-green-400 font-medium">Base Price</div>
-                                                        <div className="text-lg font-bold text-green-600">{formatPrice(basePrice)}</div>
-                                                    </div>
-                                                    <div className="bg-blue-50 dark:bg-blue-950/30 p-3 rounded-lg">
-                                                        <div className="text-xs text-blue-700 dark:text-blue-400 font-medium">Current Value</div>
-                                                        <div className="text-lg font-bold text-blue-600">{formatPrice(depreciatedPrice)}</div>
-                                                        <div className="text-xs text-blue-500">{depreciationInfo.multiplier}% of base</div>
-                                                    </div>
-                                                    <div className="bg-purple-50 dark:bg-purple-950/30 p-3 rounded-lg">
-                                                        <div className="text-xs text-purple-700 dark:text-purple-400 font-medium flex items-center gap-1">
-                                                            <CalendarIcon className="w-3 h-3" />
-                                                            Release Date
-                                                        </div>
-                                                        <div className="text-sm font-medium">
-                                                            {product.release_date
-                                                                ? new Date(product.release_date).toLocaleDateString()
-                                                                : 'Not set'}
-                                                        </div>
-                                                        <div className="text-xs text-purple-500">{depreciationInfo.label}</div>
-                                                    </div>
-                                                    <div className="bg-orange-50 dark:bg-orange-950/30 p-3 rounded-lg">
-                                                        <div className="text-xs text-orange-700 dark:text-orange-400 font-medium flex items-center gap-1">
-                                                            <TrendingDownIcon className="w-3 h-3" />
-                                                            Schedule
-                                                        </div>
-                                                        <div className="text-sm font-medium capitalize">
-                                                            {product.depreciation_schedule || 'standard'}
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                {/* Stats */}
-                                                <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
-                                                    <span>Views: {product.views || 0}</span>
-                                                    <span>Trades: {product.trades || 0}</span>
-                                                    <span>Likes: {product.likes || 0}</span>
-                                                    <span>Created: {new Date(product.created_at).toLocaleDateString()}</span>
-                                                </div>
-                                            </div>
-                                        </CardContent>
-                                    </Card>
-                                )
-                            })
-                        )}
-                    </div>
-                </>
-            )}
-
-            {activeTab === 'templates' && (
+            {/* Products */}
+            {filteredProducts.length === 0 ? (
                 <Card>
-                    <CardHeader>
-                        <CardTitle className="flex items-center gap-2">
-                            <FileTextIcon className="w-5 h-5" />
-                            Question Templates
-                        </CardTitle>
-                        <CardDescription>
-                            Create reusable question templates that can be applied to products
-                        </CardDescription>
-                    </CardHeader>
-                    <CardContent className="space-y-6">
-                        {/* Create New Template */}
-                        <div className="flex gap-2">
-                            <Input
-                                value={newTemplateName}
-                                onChange={(e) => setNewTemplateName(e.target.value)}
-                                placeholder="New template name (e.g., 'Smartphone Questions')"
-                                className="flex-1"
-                                onKeyPress={(e) => e.key === 'Enter' && createTemplate()}
-                            />
-                            <Button onClick={createTemplate}>
-                                <PlusIcon className="w-4 h-4 mr-2" />
-                                Create Template
-                            </Button>
-                        </div>
-
-                        {/* Templates List */}
-                        {loadingTemplates ? (
-                            <div className="text-center py-8 text-muted-foreground">
-                                Loading templates...
-                            </div>
-                        ) : templates.length === 0 ? (
-                            <div className="text-center py-8 text-muted-foreground">
-                                <FileTextIcon className="w-12 h-12 mx-auto mb-4 opacity-50" />
-                                <p>No templates yet. Create your first template above.</p>
-                            </div>
-                        ) : (
-                            <div className="space-y-4">
-                                {templates.map((template) => (
-                                    <Card key={template.id} className="border">
-                                        <CardHeader className="pb-2">
-                                            <div className="flex items-center justify-between">
-                                                <CardTitle className="text-lg">{template.name}</CardTitle>
-                                                <div className="flex gap-2">
-                                                    <Button
-                                                        variant="outline"
-                                                        size="sm"
-                                                        onClick={() => router.push(`/admin/tradein/templates/${template.id}`)}
-                                                    >
-                                                        <EditIcon className="w-4 h-4 mr-1" />
-                                                        Edit Questions
-                                                    </Button>
-                                                    <Button
-                                                        variant="outline"
-                                                        size="sm"
-                                                        onClick={() => deleteTemplate(template.id)}
-                                                        className="text-red-600 hover:text-red-700 hover:bg-red-50"
-                                                    >
-                                                        <TrashIcon className="w-4 h-4" />
-                                                    </Button>
-                                                </div>
-                                            </div>
-                                        </CardHeader>
-                                        <CardContent>
-                                            <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                                                <span className="flex items-center gap-1">
-                                                    <HelpCircleIcon className="w-4 h-4" />
-                                                    {template.questions?.length || 0} questions
-                                                </span>
-                                                <span>
-                                                    Created: {new Date(template.created_at).toLocaleDateString()}
-                                                </span>
-                                            </div>
-                                        </CardContent>
-                                    </Card>
-                                ))}
-                            </div>
-                        )}
-                    </CardContent>
-                </Card>
-            )}
-
-            {activeTab === 'depreciation' && (
-                <Card>
-                    <CardHeader>
-                        <CardTitle className="flex items-center gap-2">
-                            <TrendingDownIcon className="w-5 h-5" />
-                            Depreciation Schedules
-                        </CardTitle>
-                        <CardDescription>
-                            Manage how product values decrease over time based on age
-                        </CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                        <div className="text-center py-8 text-muted-foreground">
-                            <TrendingDownIcon className="w-12 h-12 mx-auto mb-4 opacity-50" />
-                            <p className="mb-4">Depreciation schedules are managed in the database.</p>
-                            <p className="text-sm">
-                                Tables: <code className="bg-muted px-2 py-1 rounded">trade_depreciation_schedules</code> and <code className="bg-muted px-2 py-1 rounded">trade_depreciation_tiers</code>
+                    <CardContent className="py-12">
+                        <div className="text-center">
+                            <PackageIcon className="w-12 h-12 mx-auto mb-4 text-muted-foreground/50" />
+                            <p className="text-muted-foreground">
+                                {hasActiveFilters ? 'No products match your filters.' : 'No products yet.'}
                             </p>
-                            <Button
-                                variant="outline"
-                                className="mt-4"
-                                onClick={() => router.push('/admin/tradein/depreciation')}
-                            >
-                                Manage Schedules
-                            </Button>
+                            {!hasActiveFilters && (
+                                <Button className="mt-4" onClick={() => router.push('/admin/tradein/add')}>
+                                    <PlusIcon className="w-4 h-4 mr-2" />
+                                    Add First Product
+                                </Button>
+                            )}
                         </div>
                     </CardContent>
                 </Card>
+            ) : viewMode === 'table' ? (
+                /* Table View */
+                <div className="border rounded-lg overflow-hidden">
+                    <div className="overflow-x-auto">
+                        <table className="w-full text-sm">
+                            <thead className="bg-muted/50 border-b">
+                                <tr>
+                                    <th className="text-left p-3 font-medium">Product</th>
+                                    <th className="text-left p-3 font-medium hidden md:table-cell">Category</th>
+                                    <th className="text-left p-3 font-medium hidden lg:table-cell">Brand / Series</th>
+                                    <th className="text-right p-3 font-medium">Base Price</th>
+                                    <th className="text-right p-3 font-medium hidden sm:table-cell">Current Value</th>
+                                    <th className="text-center p-3 font-medium hidden lg:table-cell">Depreciation</th>
+                                    <th className="text-center p-3 font-medium w-[100px]">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody className="divide-y">
+                                {Object.entries(groups).map(([groupName, groupProducts]) => (
+                                    <>
+                                        {groupBy !== 'none' && (
+                                            <tr
+                                                key={`group-${groupName}`}
+                                                className="bg-muted/30 cursor-pointer hover:bg-muted/50"
+                                                onClick={() => toggleGroup(groupName)}
+                                            >
+                                                <td colSpan={7} className="p-2 px-3">
+                                                    <div className="flex items-center gap-2 font-medium">
+                                                        {expandedGroups[groupName] === false ? (
+                                                            <ChevronRightIcon className="w-4 h-4" />
+                                                        ) : (
+                                                            <ChevronDownIcon className="w-4 h-4" />
+                                                        )}
+                                                        {groupName}
+                                                        <Badge variant="secondary" className="ml-2">
+                                                            {groupProducts.length}
+                                                        </Badge>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        )}
+                                        {(groupBy === 'none' || expandedGroups[groupName] !== false) && groupProducts.map((product) => {
+                                            const currentValue = getCurrentValue(product)
+                                            const depRate = Number(product.depreciation_rate) || 0
+
+                                            return (
+                                                <tr key={product.id} className="hover:bg-muted/30">
+                                                    <td className="p-3">
+                                                        <div className="flex items-center gap-3">
+                                                            <div className="w-10 h-10 rounded bg-muted flex-shrink-0 overflow-hidden">
+                                                                {product.imgs?.[0] ? (
+                                                                    <Image
+                                                                        src={product.imgs[0]}
+                                                                        alt=""
+                                                                        width={40}
+                                                                        height={40}
+                                                                        className="w-full h-full object-contain"
+                                                                    />
+                                                                ) : (
+                                                                    <div className="w-full h-full flex items-center justify-center">
+                                                                        <ImageIcon className="w-4 h-4 text-muted-foreground/50" />
+                                                                    </div>
+                                                                )}
+                                                            </div>
+                                                            <div className="min-w-0">
+                                                                <div className="font-medium truncate flex items-center gap-2">
+                                                                    {product.title}
+                                                                    {product.is_featured && (
+                                                                        <StarIcon className="w-3 h-3 text-yellow-500 fill-yellow-500" />
+                                                                    )}
+                                                                </div>
+                                                                <div className="text-xs text-muted-foreground md:hidden">
+                                                                    {product.brand} · {product.category}
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td className="p-3 hidden md:table-cell">
+                                                        <Badge variant="outline">{product.category}</Badge>
+                                                    </td>
+                                                    <td className="p-3 hidden lg:table-cell text-muted-foreground">
+                                                        {product.brand} / {product.series}
+                                                    </td>
+                                                    <td className="p-3 text-right font-medium">
+                                                        {formatPrice(product.base_price)}
+                                                    </td>
+                                                    <td className="p-3 text-right hidden sm:table-cell">
+                                                        <span className="text-green-600 font-medium">
+                                                            {formatPrice(currentValue)}
+                                                        </span>
+                                                    </td>
+                                                    <td className="p-3 text-center hidden lg:table-cell">
+                                                        {depRate > 0 ? (
+                                                            <Badge variant="secondary" className="font-mono">
+                                                                -{depRate}%
+                                                            </Badge>
+                                                        ) : (
+                                                            <span className="text-muted-foreground">-</span>
+                                                        )}
+                                                    </td>
+                                                    <td className="p-3">
+                                                        <div className="flex items-center justify-center gap-1">
+                                                            <Button
+                                                                variant="ghost"
+                                                                size="icon"
+                                                                className="h-8 w-8"
+                                                                onClick={() => router.push(`/admin/tradein/edit/${product.id}`)}
+                                                            >
+                                                                <EditIcon className="w-4 h-4" />
+                                                            </Button>
+                                                            <DropdownMenu>
+                                                                <DropdownMenuTrigger asChild>
+                                                                    <Button variant="ghost" size="icon" className="h-8 w-8">
+                                                                        <MoreHorizontalIcon className="w-4 h-4" />
+                                                                    </Button>
+                                                                </DropdownMenuTrigger>
+                                                                <DropdownMenuContent align="end">
+                                                                    <DropdownMenuItem onClick={() => window.open(`/trade/product/${product.id}`, '_blank')}>
+                                                                        <EyeIcon className="w-4 h-4 mr-2" />
+                                                                        View Live
+                                                                    </DropdownMenuItem>
+                                                                    <DropdownMenuItem onClick={() => handleDuplicate(product)}>
+                                                                        <CopyIcon className="w-4 h-4 mr-2" />
+                                                                        Duplicate
+                                                                    </DropdownMenuItem>
+                                                                    <DropdownMenuSeparator />
+                                                                    <DropdownMenuItem
+                                                                        className="text-red-600"
+                                                                        onClick={() => handleDelete(product.id)}
+                                                                        disabled={deleting === product.id}
+                                                                    >
+                                                                        <TrashIcon className="w-4 h-4 mr-2" />
+                                                                        Delete
+                                                                    </DropdownMenuItem>
+                                                                </DropdownMenuContent>
+                                                            </DropdownMenu>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            )
+                                        })}
+                                    </>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            ) : (
+                /* Grid View */
+                <div className="space-y-6">
+                    {Object.entries(groups).map(([groupName, groupProducts]) => (
+                        <div key={groupName}>
+                            {groupBy !== 'none' && (
+                                <button
+                                    className="flex items-center gap-2 mb-3 font-semibold text-lg hover:text-primary transition-colors"
+                                    onClick={() => toggleGroup(groupName)}
+                                >
+                                    {expandedGroups[groupName] === false ? (
+                                        <ChevronRightIcon className="w-5 h-5" />
+                                    ) : (
+                                        <ChevronDownIcon className="w-5 h-5" />
+                                    )}
+                                    {groupName}
+                                    <Badge variant="secondary">{groupProducts.length}</Badge>
+                                </button>
+                            )}
+
+                            {(groupBy === 'none' || expandedGroups[groupName] !== false) && (
+                                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+                                    {groupProducts.map((product) => {
+                                        const currentValue = getCurrentValue(product)
+                                        const depRate = Number(product.depreciation_rate) || 0
+
+                                        return (
+                                            <Card key={product.id} className="group hover:shadow-md transition-shadow">
+                                                <CardContent className="p-4">
+                                                    <div className="flex gap-4">
+                                                        {/* Image */}
+                                                        <div className="w-20 h-20 rounded-lg bg-muted flex-shrink-0 overflow-hidden">
+                                                            {product.imgs?.[0] ? (
+                                                                <Image
+                                                                    src={product.imgs[0]}
+                                                                    alt={product.title}
+                                                                    width={80}
+                                                                    height={80}
+                                                                    className="w-full h-full object-contain"
+                                                                />
+                                                            ) : (
+                                                                <div className="w-full h-full flex items-center justify-center">
+                                                                    <ImageIcon className="w-8 h-8 text-muted-foreground/30" />
+                                                                </div>
+                                                            )}
+                                                        </div>
+
+                                                        {/* Info */}
+                                                        <div className="flex-1 min-w-0">
+                                                            <div className="flex items-start justify-between gap-2">
+                                                                <div className="min-w-0">
+                                                                    <h3 className="font-semibold truncate flex items-center gap-2">
+                                                                        {product.title}
+                                                                        {product.is_featured && (
+                                                                            <StarIcon className="w-4 h-4 text-yellow-500 fill-yellow-500 flex-shrink-0" />
+                                                                        )}
+                                                                    </h3>
+                                                                    <p className="text-sm text-muted-foreground">
+                                                                        {product.brand} · {product.series}
+                                                                    </p>
+                                                                </div>
+                                                                <Badge variant="outline" className="flex-shrink-0">
+                                                                    {product.category}
+                                                                </Badge>
+                                                            </div>
+
+                                                            {/* Pricing */}
+                                                            <div className="flex items-center gap-3 mt-3">
+                                                                <div>
+                                                                    <p className="text-xs text-muted-foreground">Base</p>
+                                                                    <p className="font-semibold">{formatPrice(product.base_price)}</p>
+                                                                </div>
+                                                                <div className="text-muted-foreground">→</div>
+                                                                <div>
+                                                                    <p className="text-xs text-muted-foreground">Current</p>
+                                                                    <p className="font-semibold text-green-600">{formatPrice(currentValue)}</p>
+                                                                </div>
+                                                                {depRate > 0 && (
+                                                                    <Badge variant="secondary" className="ml-auto font-mono">
+                                                                        <PercentIcon className="w-3 h-3 mr-1" />
+                                                                        -{depRate}%
+                                                                    </Badge>
+                                                                )}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    {/* Actions */}
+                                                    <div className="flex items-center justify-between mt-4 pt-3 border-t">
+                                                        <div className="flex items-center gap-3 text-xs text-muted-foreground">
+                                                            <span>{product.questions?.length || 0} questions</span>
+                                                            <span>·</span>
+                                                            <span>{product.views || 0} views</span>
+                                                        </div>
+                                                        <div className="flex items-center gap-1">
+                                                            <Button
+                                                                variant="ghost"
+                                                                size="sm"
+                                                                className="h-8"
+                                                                onClick={() => router.push(`/admin/tradein/edit/${product.id}`)}
+                                                            >
+                                                                <EditIcon className="w-4 h-4 mr-1" />
+                                                                Edit
+                                                            </Button>
+                                                            <DropdownMenu>
+                                                                <DropdownMenuTrigger asChild>
+                                                                    <Button variant="ghost" size="icon" className="h-8 w-8">
+                                                                        <MoreHorizontalIcon className="w-4 h-4" />
+                                                                    </Button>
+                                                                </DropdownMenuTrigger>
+                                                                <DropdownMenuContent align="end">
+                                                                    <DropdownMenuItem onClick={() => window.open(`/trade/product/${product.id}`, '_blank')}>
+                                                                        <EyeIcon className="w-4 h-4 mr-2" />
+                                                                        View Live
+                                                                    </DropdownMenuItem>
+                                                                    <DropdownMenuItem onClick={() => handleDuplicate(product)}>
+                                                                        <CopyIcon className="w-4 h-4 mr-2" />
+                                                                        Duplicate
+                                                                    </DropdownMenuItem>
+                                                                    <DropdownMenuSeparator />
+                                                                    <DropdownMenuItem
+                                                                        className="text-red-600"
+                                                                        onClick={() => handleDelete(product.id)}
+                                                                        disabled={deleting === product.id}
+                                                                    >
+                                                                        <TrashIcon className="w-4 h-4 mr-2" />
+                                                                        Delete
+                                                                    </DropdownMenuItem>
+                                                                </DropdownMenuContent>
+                                                            </DropdownMenu>
+                                                        </div>
+                                                    </div>
+                                                </CardContent>
+                                            </Card>
+                                        )
+                                    })}
+                                </div>
+                            )}
+                        </div>
+                    ))}
+                </div>
             )}
         </div>
     )

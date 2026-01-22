@@ -43,28 +43,18 @@ export async function generateMetadata({ params }) {
   }
 }
 
-// Calculate depreciation based on release date
-function calculateDepreciation(releaseDate, tiers) {
-  if (!releaseDate || !tiers || tiers.length === 0) {
-    return { multiplier: 100, label: 'Current' }
-  }
+// Calculate depreciation based on admin-set depreciation rate
+function calculateDepreciation(depreciationRate) {
+  const rate = Number(depreciationRate) || 0
+  const multiplier = 100 - rate
 
-  const release = new Date(releaseDate)
-  const now = new Date()
-  const monthsOld = Math.floor((now - release) / (1000 * 60 * 60 * 24 * 30))
+  let label = 'Current'
+  if (rate >= 50) label = 'Significant Depreciation'
+  else if (rate >= 30) label = 'Moderate Depreciation'
+  else if (rate >= 10) label = 'Minor Depreciation'
+  else if (rate > 0) label = 'Like New'
 
-  for (const tier of tiers) {
-    const minMonths = tier.min_months || 0
-    const maxMonths = tier.max_months
-
-    if (monthsOld >= minMonths && (maxMonths === null || monthsOld < maxMonths)) {
-      return { multiplier: Number(tier.multiplier), label: tier.label }
-    }
-  }
-
-  // Default to last tier if no match
-  const lastTier = tiers[tiers.length - 1]
-  return { multiplier: Number(lastTier?.multiplier || 45), label: lastTier?.label || 'Older' }
+  return { multiplier, label, rate }
 }
 
 export default async function TradeProductPage({ params }) {
@@ -84,24 +74,6 @@ export default async function TradeProductPage({ params }) {
   // Use product-specific questions from the questions column
   const productQuestions = product.questions || []
 
-  // Fetch depreciation schedule
-  const scheduleName = product.depreciation_schedule || 'standard'
-  const { data: schedule } = await supabaseAdmin
-    .from('trade_depreciation_schedules')
-    .select('id')
-    .eq('name', scheduleName)
-    .single()
-
-  let depreciationTiers = []
-  if (schedule) {
-    const { data: tiers } = await supabaseAdmin
-      .from('trade_depreciation_tiers')
-      .select('*')
-      .eq('schedule_id', schedule.id)
-      .order('min_months', { ascending: true })
-    depreciationTiers = tiers || []
-  }
-
   // Increment views
   await supabaseAdmin
     .from('tradable_products')
@@ -110,7 +82,7 @@ export default async function TradeProductPage({ params }) {
 
   // Calculate base price with depreciation
   const basePrice = Number(product.base_price) || 0
-  const depreciation = calculateDepreciation(product.release_date, depreciationTiers)
+  const depreciation = calculateDepreciation(product.depreciation_rate)
   const depreciatedPrice = basePrice * (depreciation.multiplier / 100)
 
   return (

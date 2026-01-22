@@ -133,9 +133,6 @@ export default async function SeriesProductsPage({ params }) {
                               {product.base_price?.toFixed(2) || '0.00'}
                             </span>
                           </div>
-                          <p className="text-xs text-muted-foreground text-center">
-                            Live eBay pricing available on product page
-                          </p>
                         </div>
                         <div className="mt-4 flex items-center justify-end">
                           <span className="text-sm text-primary flex items-center">
