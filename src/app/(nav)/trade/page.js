@@ -23,6 +23,7 @@ import {
 import { TransitionLink } from '@/components/ui/pageTransitions'
 import Image from 'next/image'
 import { supabase } from '@/lib/supabase'
+import TradeSearch from '@/components/trade/TradeSearch'
 
 export const metadata = {
   title: 'Trade In Your Tech',
@@ -126,70 +127,75 @@ export default async function TradePage() {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <div className="bg-gradient-to-b from-background via-muted/30 to-background py-16 md:py-24 px-4 sm:px-6 lg:px-8">
+      <div className="flex flex-col justify-center items-center bg-gradient-to-b from-background via-muted/30 to-background py-16 md:py-24 px-4 sm:px-6 lg:px-8 h-screen">
         <div className="max-w-6xl mx-auto text-center">
-          <h1 className="text-4xl md:text-6xl font-bold mb-6 tracking-tight">
-            The simplest & fastest way to{' '}
+          <h1 className="text-4xl md:text-6xl font-bold mb-12 tracking-tight">
+            The Simplest & Fastest way to{' '}
             <span className="bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
-              sell your tech
+              Sell Your Tech
             </span>
           </h1>
-          <p className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-3xl mx-auto">
+          <p className="text-xl md:text-2xl text-muted-foreground mb-16 max-w-3xl mx-auto">
             Sell your functioning devices to DepxTech directly for instant cash.
           </p>
+
+          {/* Search Bar */}
+          <div className="max-w-2xl mx-auto mb-16">
+            <TradeSearch />
+          </div>
 
           {/* Trust Badge */}
           <div className="flex items-center justify-center gap-2 mb-12">
             <StarIcon className="w-5 h-5 text-yellow-500 fill-yellow-500" />
             <span className="text-sm font-medium">Check us out on Trustpilot</span>
           </div>
-
-          {/* Featured Categories - Dynamic */}
-          {featuredCategories.length > 0 && (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto mb-16">
-              {featuredCategories.map((category) => {
-                const IconComponent = iconMap[category.icon] || PackageIcon
-                return (
-                  <TransitionLink key={category.id} href={`/trade/category/${encodeURIComponent(category.name)}`}>
-                    <Card className="group hover:shadow-xl transition-all duration-300 cursor-pointer border-2 hover:border-primary/50 h-full">
-                      <CardContent className="p-8">
-                        <div className="flex flex-col items-center text-center">
-                          <div className="w-32 h-32 mb-6 relative flex items-center justify-center">
-                            {category.featured_image ? (
-                              <Image
-                                src={category.featured_image}
-                                alt={category.name}
-                                fill
-                                className="object-contain group-hover:scale-110 transition-transform duration-300"
-                              />
-                            ) : (
-                              <IconComponent className="w-24 h-24 text-primary group-hover:scale-110 transition-transform duration-300" />
-                            )}
-                          </div>
-                          <h2 className="text-2xl font-bold mb-2">Sell your {category.name}</h2>
-                          <p className="text-muted-foreground mb-4">{category.description}</p>
-                          <div className="w-full bg-muted/50 rounded-lg p-4 mb-4">
-                            <p className="text-sm text-muted-foreground mb-2">Estimated Payout</p>
-                            <p className="text-2xl font-bold text-green-600">
-                              {formatPriceRange(category.min_price, category.max_price)}
-                            </p>
-                          </div>
-                          <Button size="lg" className="w-full">
-                            Get an instant offer
-                            <ArrowRightIcon className="w-4 h-4 ml-2" />
-                          </Button>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  </TransitionLink>
-                )
-              })}
-            </div>
-          )}
         </div>
       </div>
 
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+
+        {/* Featured Categories - Dynamic */}
+        {featuredCategories.length > 0 && (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto mb-16">
+            {featuredCategories.map((category) => {
+              const IconComponent = iconMap[category.icon] || PackageIcon
+              return (
+                <TransitionLink key={category.id} href={`/trade/category/${encodeURIComponent(category.name)}`}>
+                  <Card className="group hover:shadow-xl transition-all duration-300 cursor-pointer border-2 hover:border-primary/50 h-full">
+                    <CardContent className="p-8">
+                      <div className="flex flex-col items-center text-center">
+                        <div className="w-32 h-32 mb-6 relative flex items-center justify-center">
+                          {category.featured_image ? (
+                            <Image
+                              src={category.featured_image}
+                              alt={category.name}
+                              fill
+                              className="object-contain group-hover:scale-110 transition-transform duration-300"
+                            />
+                          ) : (
+                            <IconComponent className="w-24 h-24 text-primary group-hover:scale-110 transition-transform duration-300" />
+                          )}
+                        </div>
+                        <h2 className="text-2xl font-bold mb-2">Sell your {category.name}</h2>
+                        <p className="text-muted-foreground mb-4">{category.description}</p>
+                        <div className="w-full bg-muted/50 rounded-lg p-4 mb-4">
+                          <p className="text-sm text-muted-foreground mb-2">Estimated Payout</p>
+                          <p className="text-2xl font-bold text-green-600">
+                            {formatPriceRange(category.min_price, category.max_price)}
+                          </p>
+                        </div>
+                        <Button size="lg" className="w-full">
+                          Get an instant offer
+                          <ArrowRightIcon className="w-4 h-4 ml-2" />
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </TransitionLink>
+              )
+            })}
+          </div>
+        )}
         {/* Get the best price section with dynamic featured products */}
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-4xl font-bold mb-4">Get the best price for your tech</h2>

@@ -90,14 +90,6 @@ export default async function TradeProductPage({ params }) {
       {/* Hero Section */}
       <div className="bg-gradient-to-b from-muted/50 to-background border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          {/* Back Button */}
-          <TransitionLink
-            href={`/trade/category/${encodeURIComponent(product.category)}/brand/${encodeURIComponent(product.brand)}/series/${encodeURIComponent(product.series)}`}
-            className="inline-flex items-center text-muted-foreground hover:text-foreground transition-colors mb-6"
-          >
-            <ArrowLeftIcon className="w-4 h-4 mr-2" />
-            Back to {product.series}
-          </TransitionLink>
 
           {/* Product Hero */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">

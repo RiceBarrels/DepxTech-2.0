@@ -116,10 +116,6 @@ export default function OrdersPage() {
     return (
         <div className="container mx-auto px-4 py-8">
             <div className="mb-6">
-                <TransitionLink href="/account" className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-4">
-                    <ArrowLeftIcon className="h-4 w-4 mr-1" />
-                    Back
-                </TransitionLink>
                 <h1 className="text-3xl font-bold">Order History</h1>
                 <p className="text-muted-foreground">View all your past orders and transactions</p>
             </div>

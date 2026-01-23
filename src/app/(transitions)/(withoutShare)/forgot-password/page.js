@@ -238,13 +238,6 @@ export default function ForgotPasswordPage() {
                   </>
                 )}
               </Button>
-
-              <TransitionLink href="/login">
-                <Button type="button" variant="outline">
-                  <ArrowLeftIcon className="size-4 mr-2" />
-                  Back to Login
-                </Button>
-              </TransitionLink>
             </div>
 
             <div className="text-center">

@@ -338,10 +338,6 @@ export default function AddressPage() {
     return (
         <div className="container mx-auto px-4 py-8 max-w-4xl">
             <div className="mb-6">
-                <TransitionLink href="/account" className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-4">
-                    <ArrowLeftIcon className="h-4 w-4 mr-1" />
-                    Back
-                </TransitionLink>
                 <div className="flex items-center justify-between">
                     <div>
                         <h1 className="text-3xl font-bold">Shipping Addresses</h1>

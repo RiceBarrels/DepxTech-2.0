@@ -154,15 +154,6 @@ export default function EditAccountPage() {
   return (
     <div className="min-h-screen py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-2xl mx-auto">
-        {/* Back Button */}
-        <Button
-          variant="ghost"
-          onClick={() => router.push('/account')}
-          className="mb-6"
-        >
-          <ArrowLeftIcon className="w-4 h-4 mr-2" />
-          Back to Account
-        </Button>
 
         <Card>
           <CardHeader>

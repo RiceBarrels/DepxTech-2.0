@@ -191,10 +191,6 @@ export default function SettingsPage() {
     return (
         <div className="container mx-auto px-4 py-8 max-w-2xl">
             <div className="mb-6">
-                <TransitionLink href="/account" className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-4">
-                    <ArrowLeftIcon className="h-4 w-4 mr-1" />
-                    Back
-                </TransitionLink>
                 <h1 className="text-3xl font-bold">Settings</h1>
                 <p className="text-muted-foreground">Manage your account preferences</p>
             </div>

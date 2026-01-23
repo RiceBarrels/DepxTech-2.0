@@ -14,7 +14,9 @@ export default function transitionLayout({ children }) {
             style={{ viewTransitionName: 'transition-page' }}
         >
             <PageLoadHaptics />
-            {children}
+            <div className="min-h-screen">
+              {children}
+            </div>
             <ConditionalFooter />
             <BottomSafeArea />
         </div>

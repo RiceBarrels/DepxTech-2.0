@@ -56,12 +56,6 @@ export default async function BrandSeriesPage({ params }) {
     <div className="min-h-screen py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto">
         <div className="mb-8">
-          <TransitionLink href={`/trade/category/${encodeURIComponent(category)}`}>
-            <Button variant="outline" size="sm">
-              <ArrowLeftIcon className="w-4 h-4 mr-2" />
-              Back to Brands
-            </Button>
-          </TransitionLink>
         </div>
 
         <div className="text-center mb-12">

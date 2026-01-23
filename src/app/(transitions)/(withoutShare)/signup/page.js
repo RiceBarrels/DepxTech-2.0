@@ -4,9 +4,9 @@ import { useState } from 'react'
 import { createClient } from '@/utils/supabase/client'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { TransitionLink, useTransitionRouter } from '@/components/ui/pageTransitions'
-import { ArrowLeftIcon, MailIcon, KeyIcon, CheckCircleIcon, Loader2Icon } from 'lucide-react'
+import { Separator } from '@/components/ui/separator'
+import { UserPlusIcon, MailIcon, KeyIcon, CheckCircleIcon, Loader2Icon, ArrowLeftIcon } from 'lucide-react'
 
 export default function SignupPage() {
   const [email, setEmail] = useState('')
@@ -196,23 +196,41 @@ export default function SignupPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
-        <Card>
-          <CardHeader className="text-center">
-            <CardTitle className="text-2xl font-bold">
-              {step === 1 ? 'Create your account' : 'Verify your email'}
-            </CardTitle>
-            <CardDescription>
+    <div className="flex flex-col py-4 px-4 gap-2 w-full justify-between items-center">
+
+      <div className='flex-1 flex flex-col justify-center items-center max-w-256 w-full'>
+        <div className="flex flex-col md:flex-row w-full md:min-h-100 items-center m-8 border rounded-4xl">
+          <div className="w-full flex flex-col md:min-h-100 p-12 pb-8 md:p-12 gap-5 justify-center">
+            <h1 className="text-2xl font-black">DepxTech</h1>
+            <h2 className="text-4xl font-bold flex items-center gap-4">
+              {step === 1 ? (
+                <>
+                  <UserPlusIcon className="size-8" />
+                  Sign Up
+                </>
+              ) : (
+                <>
+                  <KeyIcon className="size-8" />
+                  Verify Email
+                </>
+              )}
+            </h2>
+            <p className="text-md">
               {step === 1
-                ? 'Enter your details to create a new account'
-                : `Enter the 6-digit code sent to ${email}`}
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
+                ? 'Create an account to track your orders, save your wishlist, and get personalized recommendations'
+                : `We sent a verification code to ${email}`}
+            </p>
+          </div>
+          <div className="h-72 hidden md:block">
+            <Separator orientation="vertical" className="h-72"/>
+          </div>
+          <div className="w-72 block md:hidden">
+            <Separator orientation="horizontal" className="w-72"/>
+          </div>
+          <div className="w-full flex flex-col p-8 pt-6 md:p-12">
             {step === 1 ? (
               // Step 1: Account Information
-              <form onSubmit={handleSignup} className="space-y-4">
+              <form onSubmit={handleSignup} className="space-y-4 w-full p-4">
                 {error && (
                   <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-md text-sm">
                     {error}
@@ -226,7 +244,7 @@ export default function SignupPage() {
                 )}
 
                 <div>
-                  <label htmlFor="email" className="block text-sm font-medium mb-1">
+                  <label htmlFor="email" className="block font-medium mb-1">
                     Email address
                   </label>
                   <Input
@@ -244,7 +262,7 @@ export default function SignupPage() {
 
                 <div className='flex gap-2'>
                   <div className='flex-1'>
-                    <label htmlFor="firstName" className="block text-sm font-medium mb-1">
+                    <label htmlFor="firstName" className="block font-medium mb-1">
                       First Name
                     </label>
                     <Input
@@ -255,13 +273,13 @@ export default function SignupPage() {
                       value={firstName}
                       onChange={(e) => setFirstName(e.target.value)}
                       required
-                      placeholder="Enter your first name"
+                      placeholder="First name"
                       className="w-full"
                     />
                   </div>
 
                   <div className='flex-1'>
-                    <label htmlFor="lastName" className="block text-sm font-medium mb-1">
+                    <label htmlFor="lastName" className="block font-medium mb-1">
                       Last Name
                     </label>
                     <Input
@@ -272,14 +290,14 @@ export default function SignupPage() {
                       value={lastName}
                       onChange={(e) => setLastName(e.target.value)}
                       required
-                      placeholder="Enter your last name"
+                      placeholder="Last name"
                       className="w-full"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label htmlFor="password" className="block text-sm font-medium mb-1">
+                  <label htmlFor="password" className="block font-medium mb-1">
                     Password
                   </label>
                   <Input
@@ -296,7 +314,7 @@ export default function SignupPage() {
                 </div>
 
                 <div>
-                  <label htmlFor="confirmPassword" className="block text-sm font-medium mb-1">
+                  <label htmlFor="confirmPassword" className="block font-medium mb-1">
                     Confirm Password
                   </label>
                   <Input
@@ -312,36 +330,32 @@ export default function SignupPage() {
                   />
                 </div>
 
-                <Button
-                  type="submit"
-                  disabled={loading}
-                  className="w-full"
-                >
-                  {loading ? (
-                    <>
-                      <Loader2Icon className="w-4 h-4 mr-2 animate-spin" />
-                      Creating account...
-                    </>
-                  ) : (
-                    <>
-                      <MailIcon className="w-4 h-4 mr-2" />
-                      Continue
-                    </>
-                  )}
-                </Button>
+                <div className="flex gap-2">
+                  <Button
+                    type="submit"
+                    disabled={loading}
+                    className="flex-1"
+                  >
+                    {loading ? (
+                      <>
+                        <Loader2Icon className="w-4 h-4 mr-2 animate-spin" />
+                        Creating...
+                      </>
+                    ) : (
+                      'Create Account'
+                    )}
+                  </Button>
 
-                <div className="text-center">
-                  <p className="text-sm text-muted-foreground">
-                    Already have an account?{' '}
-                    <TransitionLink href="/login" className="font-medium text-blue-600 hover:text-blue-500">
-                      Sign in
-                    </TransitionLink>
-                  </p>
+                  <TransitionLink href="/login">
+                    <Button type="button" variant="outline">
+                      Sign In
+                    </Button>
+                  </TransitionLink>
                 </div>
               </form>
             ) : (
               // Step 2: Verification Code
-              <form onSubmit={handleVerifyCode} className="space-y-4">
+              <form onSubmit={handleVerifyCode} className="space-y-4 w-full p-4">
                 {error && (
                   <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-md text-sm">
                     {error}
@@ -355,18 +369,8 @@ export default function SignupPage() {
                   </div>
                 )}
 
-                <div className="text-center py-4">
-                  <div className="w-16 h-16 mx-auto mb-4 bg-primary/10 rounded-full flex items-center justify-center">
-                    <KeyIcon className="w-8 h-8 text-primary" />
-                  </div>
-                  <p className="text-sm text-muted-foreground mb-2">
-                    We sent a verification code to
-                  </p>
-                  <p className="font-medium">{email}</p>
-                </div>
-
                 <div>
-                  <label htmlFor="code" className="block text-sm font-medium mb-1">
+                  <label htmlFor="code" className="block font-medium mb-1">
                     Verification Code
                   </label>
                   <Input
@@ -430,8 +434,8 @@ export default function SignupPage() {
                 </p>
               </form>
             )}
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       </div>
     </div>
   )

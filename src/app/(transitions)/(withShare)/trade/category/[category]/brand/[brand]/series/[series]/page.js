@@ -61,23 +61,6 @@ export default async function SeriesProductsPage({ params }) {
   return (
     <div className="min-h-screen py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-6xl mx-auto">
-        <div className="mb-8">
-          {hasMultipleSeries ? (
-            <TransitionLink href={`/trade/category/${encodeURIComponent(category)}/brand/${encodeURIComponent(brand)}`}>
-              <Button variant="outline" size="sm">
-                <ArrowLeftIcon className="w-4 h-4 mr-2" />
-                Back to Series
-              </Button>
-            </TransitionLink>
-          ) : (
-            <TransitionLink href={`/trade/category/${encodeURIComponent(category)}`}>
-              <Button variant="outline" size="sm">
-                <ArrowLeftIcon className="w-4 h-4 mr-2" />
-                Back to Brands
-              </Button>
-            </TransitionLink>
-          )}
-        </div>
 
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold mb-4">Select Your Device</h1>
