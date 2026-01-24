@@ -30,35 +30,35 @@ export default function TradePage() {
   // Category image mapping
   const categoryImageMap = {
     'Smartphone': {
-      image: '/stockImg/tradein-cata-img/Smartphone.svg',
+      image: '/stockImg/tradein-cata-img/Smartphone.png',
       href: '/trade/category/Smartphones',
     },
     'Laptop': {
-      image: '/stockImg/tradein-cata-img/Laptop.svg',
+      image: '/stockImg/tradein-cata-img/Laptop.png',
       href: '/trade/category/Laptops',
     },
     'Tablet': {
-      image: '/stockImg/tradein-cata-img/Tablet.svg',
+      image: '/stockImg/tradein-cata-img/Tablet.png',
       href: '/trade/category/Tablets',
     },
     'Gaming': {
-      image: '/stockImg/tradein-cata-img/Gaming.svg',
+      image: '/stockImg/tradein-cata-img/Gaming.png',
       href: '/trade/category/Gaming',
     },
     'CPU': {
-      image: '/stockImg/tradein-cata-img/CPU.svg',
+      image: '/stockImg/tradein-cata-img/CPU.png',
       href: '/trade/category/Processors',
     },
     'GPU': {
-      image: '/stockImg/tradein-cata-img/GPU.svg',
+      image: '/stockImg/tradein-cata-img/GPU.png',
       href: '/trade/category/Graphics Cards',
     },
     'RAM': {
-      image: '/stockImg/tradein-cata-img/RAM.svg',
+      image: '/stockImg/tradein-cata-img/RAM.png',
       href: '/trade/category/Memory',
     },
     'Wearable': {
-      image: '/stockImg/tradein-cata-img/Wearable.svg',
+      image: '/stockImg/tradein-cata-img/Wearable.png',
       href: '/trade/category/Wearables',
     }
   }

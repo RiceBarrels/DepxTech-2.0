@@ -6,12 +6,13 @@
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
-  "orientation": "portrait",
+  "display_override": ["standalone", "minimal-ui"],
+  "orientation": "any",
   "background_color": "#ffffff",
   "theme_color": "#0f172a",
   "lang": "en",
   "dir": "ltr",
-  "categories": ["shopping"],
+  "categories": ["shopping", "electronics", "technology"],
   "icons": [
     {
       "src": "/favicon.ico",
@@ -35,36 +36,50 @@
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
+    },
+    {
+      "src": "/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any"
     }
   ],
   "shortcuts": [
     {
-      "name": "Shop products",
+      "name": "Shop Products",
+      "short_name": "Shop",
       "url": "/products",
       "description": "Browse all products",
       "icons": [{"src": "/icon-192.png", "sizes": "192x192"}]
     },
     {
       "name": "Trade-in",
+      "short_name": "Trade",
       "url": "/trade",
-      "description": "Start a device trade-in",
+      "description": "Trade in your old devices",
       "icons": [{"src": "/icon-192.png", "sizes": "192x192"}]
     },
     {
-      "name": "My account",
+      "name": "My Cart",
+      "short_name": "Cart",
+      "url": "/cart",
+      "description": "View your shopping cart",
+      "icons": [{"src": "/icon-192.png", "sizes": "192x192"}]
+    },
+    {
+      "name": "My Account",
+      "short_name": "Account",
       "url": "/account",
-      "description": "View your orders and settings",
+      "description": "View your account and orders",
       "icons": [{"src": "/icon-192.png", "sizes": "192x192"}]
     }
   ],
   "prefer_related_applications": false,
-  "screenshots": [
-    {
-      "src": "/og-image.jpg",
-      "sizes": "1200x630",
-      "type": "image/jpeg",
-      "form_factor": "wide",
-      "label": "DepxTech Homepage"
-    }
-  ]
+  "handle_links": "preferred",
+  "launch_handler": {
+    "client_mode": "navigate-existing"
+  },
+  "edge_side_panel": {
+    "preferred_width": 400
+  }
 }
