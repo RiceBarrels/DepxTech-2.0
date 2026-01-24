@@ -127,7 +127,7 @@ export default async function TradePage() {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <div className="flex flex-col justify-center items-center bg-gradient-to-b from-background via-muted/30 to-background py-16 md:py-24 px-4 sm:px-6 lg:px-8 h-screen">
+      <div className="flex flex-col justify-center items-center bg-gradient-to-b from-background via-muted/30 to-background py-16 md:py-24 px-4 sm:px-6 lg:px-8">
         <div className="max-w-6xl mx-auto text-center">
           <h1 className="text-4xl md:text-6xl font-bold mb-12 tracking-tight">
             The Simplest & Fastest way to{' '}
@@ -152,7 +152,7 @@ export default async function TradePage() {
         </div>
       </div>
 
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
 
         {/* Featured Categories - Dynamic */}
         {featuredCategories.length > 0 && (

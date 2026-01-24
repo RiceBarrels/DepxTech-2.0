@@ -77,7 +77,6 @@ export default function TradeProductPageClient({ product, questions, basePrice, 
     const questionsList = questions || []
     let totalPercentageAdjustment = 0
     let totalFixedAdjustment = 0
-    let hasDealBreaker = false
 
     for (let qIndex = 0; qIndex < questionsList.length; qIndex++) {
       const question = questionsList[qIndex]
@@ -93,9 +92,6 @@ export default function TradeProductPageClient({ product, questions, basePrice, 
             const fixed = parseFixed(answer.fixed)
             totalPercentageAdjustment += percentage
             totalFixedAdjustment += fixed
-            if (percentage <= -100) {
-              hasDealBreaker = true
-            }
           }
         }
       } else if (selectedAnswer !== undefined && question.ans && question.ans[selectedAnswer]) {
@@ -104,14 +100,7 @@ export default function TradeProductPageClient({ product, questions, basePrice, 
         const fixed = parseFixed(answer.fixed)
         totalPercentageAdjustment += percentage
         totalFixedAdjustment += fixed
-        if (percentage <= -100) {
-          hasDealBreaker = true
-        }
       }
-    }
-
-    if (hasDealBreaker) {
-      return { value: 0, deduction: 100, bonus: 0, isDealBreaker: true }
     }
 
     const afterPercentage = basePrice * (1 + totalPercentageAdjustment / 100)
@@ -122,13 +111,16 @@ export default function TradeProductPageClient({ product, questions, basePrice, 
       finalValue = minPrice
     }
 
+    // Ensure value doesn't go below 0
+    finalValue = Math.max(0, finalValue)
+
     return {
-      value: Math.max(0, finalValue),
+      value: finalValue,
       percentageAdjustment: totalPercentageAdjustment,
       fixedAdjustment: totalFixedAdjustment,
       deduction: totalPercentageAdjustment < 0 ? Math.abs(totalPercentageAdjustment) : 0,
       bonus: totalPercentageAdjustment > 0 ? totalPercentageAdjustment : 0,
-      isDealBreaker: false,
+      isZeroValue: finalValue === 0,
       appliedMinPrice: appliedMinPrice
     }
   }, [answers, questions, basePrice, minPrice])
@@ -433,7 +425,7 @@ export default function TradeProductPageClient({ product, questions, basePrice, 
               const isSelected = isAnswerSelected(ansIdx)
               const percentage = parsePercentage(answer.persentage)
               const fixed = parseFixed(answer.fixed)
-              const isDealBreakerAnswer = percentage <= -100
+              const isZeroValueAnswer = percentage <= -100
 
               return (
                 <div
@@ -452,7 +444,7 @@ export default function TradeProductPageClient({ product, questions, basePrice, 
                     isSelected
                       ? "border-primary bg-primary/10 shadow-md"
                       : "border-border hover:border-primary/50 hover:bg-muted/50",
-                    isDealBreakerAnswer && isSelected && "border-red-500 bg-red-50 dark:bg-red-950/30"
+                    isZeroValueAnswer && isSelected && "border-orange-500 bg-orange-50 dark:bg-orange-950/30"
                   )}
                 >
                   <div className="flex items-start gap-3">
@@ -480,10 +472,10 @@ export default function TradeProductPageClient({ product, questions, basePrice, 
                         <div className="flex-1">
                           <div className="flex items-center gap-2 flex-wrap">
                             <span className="font-medium">{answer.content}</span>
-                            {isDealBreakerAnswer && (
-                              <Badge variant="destructive" className="text-xs">
+                            {isZeroValueAnswer && (
+                              <Badge variant="outline" className="text-xs text-orange-600 border-orange-300">
                                 <AlertCircle className="w-3 h-3 mr-1" />
-                                Not Accepted
+                                No Value
                               </Badge>
                             )}
                           </div>
@@ -493,12 +485,12 @@ export default function TradeProductPageClient({ product, questions, basePrice, 
                           )}
                         </div>
                         <div className="flex items-center gap-2 flex-shrink-0">
-                          {percentage !== 0 && !isDealBreakerAnswer && (
+                          {percentage !== 0 && !isZeroValueAnswer && (
                             <Badge variant={percentage > 0 ? "default" : "secondary"} className="text-xs">
                               {percentage > 0 ? '+' : ''}{percentage}%
                             </Badge>
                           )}
-                          {fixed !== 0 && !isDealBreakerAnswer && (
+                          {fixed !== 0 && !isZeroValueAnswer && (
                             <Badge variant={fixed > 0 ? "default" : "secondary"} className="text-xs">
                               {fixed > 0 ? '+' : ''}{formatCurrency(fixed)}
                             </Badge>
@@ -625,56 +617,54 @@ export default function TradeProductPageClient({ product, questions, basePrice, 
           {/* Current quote display */}
           <div className={cn(
             "p-4 rounded-xl border-2 transition-all",
-            calculatedQuote.isDealBreaker
-              ? "bg-red-50 dark:bg-red-950/30 border-red-200 dark:border-red-800"
+            calculatedQuote.isZeroValue
+              ? "bg-orange-50 dark:bg-orange-950/30 border-orange-200 dark:border-orange-800"
               : "bg-gradient-to-br from-green-50 to-green-100 dark:from-green-950/30 dark:to-green-900/30 border-green-200 dark:border-green-800"
           )}>
             <div className="flex items-center justify-between">
               <div>
                 <p className={cn(
                   "text-sm font-medium flex items-center gap-2",
-                  calculatedQuote.isDealBreaker ? "text-red-700 dark:text-red-400" : "text-green-700 dark:text-green-400"
+                  calculatedQuote.isZeroValue ? "text-orange-700 dark:text-orange-400" : "text-green-700 dark:text-green-400"
                 )}>
-                  {calculatedQuote.isDealBreaker ? "Not Eligible for Trade-in" : "Current Estimate"}
+                  {calculatedQuote.isZeroValue ? "Free Recycling Available" : "Current Estimate"}
                 </p>
                 <p className={cn(
                   "text-3xl font-bold",
-                  calculatedQuote.isDealBreaker ? "text-red-600 dark:text-red-400" : "text-green-600 dark:text-green-400"
+                  calculatedQuote.isZeroValue ? "text-orange-600 dark:text-orange-400" : "text-green-600 dark:text-green-400"
                 )}>
-                  {calculatedQuote.isDealBreaker ? "N/A" : formatCurrency(calculatedQuote.value)}
+                  {formatCurrency(calculatedQuote.value)}
                 </p>
               </div>
-              {!calculatedQuote.isDealBreaker && (
-                <div className="text-right text-xs space-y-1">
-                  {calculatedQuote.deduction > 0 && (
-                    <p className="text-muted-foreground">
-                      Deductions: -{calculatedQuote.deduction}%
-                    </p>
-                  )}
-                  {calculatedQuote.bonus > 0 && (
-                    <p className="text-green-600 dark:text-green-400">
-                      Bonuses: +{calculatedQuote.bonus}%
-                    </p>
-                  )}
-                  {calculatedQuote.fixedAdjustment !== 0 && (
-                    <p className={calculatedQuote.fixedAdjustment > 0
-                      ? "text-green-600 dark:text-green-400"
-                      : "text-muted-foreground"
-                    }>
-                      Fixed: {calculatedQuote.fixedAdjustment > 0 ? '+' : ''}{formatCurrency(calculatedQuote.fixedAdjustment)}
-                    </p>
-                  )}
-                  {calculatedQuote.appliedMinPrice && (
-                    <p className="text-orange-600 dark:text-orange-400 font-medium">
-                      Min. guaranteed price applied
-                    </p>
-                  )}
-                </div>
-              )}
+              <div className="text-right text-xs space-y-1">
+                {calculatedQuote.deduction > 0 && (
+                  <p className="text-muted-foreground">
+                    Deductions: -{calculatedQuote.deduction}%
+                  </p>
+                )}
+                {calculatedQuote.bonus > 0 && (
+                  <p className="text-green-600 dark:text-green-400">
+                    Bonuses: +{calculatedQuote.bonus}%
+                  </p>
+                )}
+                {calculatedQuote.fixedAdjustment !== 0 && (
+                  <p className={calculatedQuote.fixedAdjustment > 0
+                    ? "text-green-600 dark:text-green-400"
+                    : "text-muted-foreground"
+                  }>
+                    Fixed: {calculatedQuote.fixedAdjustment > 0 ? '+' : ''}{formatCurrency(calculatedQuote.fixedAdjustment)}
+                  </p>
+                )}
+                {calculatedQuote.appliedMinPrice && (
+                  <p className="text-orange-600 dark:text-orange-400 font-medium">
+                    Min. guaranteed price applied
+                  </p>
+                )}
+              </div>
             </div>
-            {calculatedQuote.isDealBreaker && (
-              <p className="text-xs text-red-600/70 dark:text-red-400/70 mt-2">
-                Based on your answers, this device is not eligible for our trade-in program
+            {calculatedQuote.isZeroValue && (
+              <p className="text-xs text-orange-600/70 dark:text-orange-400/70 mt-2">
+                We can still accept your device for free recycling. Submit to proceed.
               </p>
             )}
           </div>
@@ -698,7 +688,7 @@ export default function TradeProductPageClient({ product, questions, basePrice, 
             {isLastStep ? (
               <Button
                 type="submit"
-                disabled={submitting || !canProceed || calculatedQuote.isDealBreaker}
+                disabled={submitting || !canProceed}
                 className="gap-2"
               >
                 {submitting ? (

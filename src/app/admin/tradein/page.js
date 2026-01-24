@@ -822,7 +822,7 @@ export default function TradeinManagePage() {
                                                     const isEditing = editingProduct?.id === product.id
 
                                                     return (
-                                                        <tr key={product.id} className={cn("hover:bg-muted/30", isEditing && "bg-primary/5", isSelected && "bg-primary/10")}>
+                                                        <tr key={product.id} className={cn("hover:bg-muted/30 cursor-pointer", isEditing && "bg-primary/5", isSelected && "bg-primary/10")} onDoubleClick={() => router.push(`/admin/tradein/edit/${product.id}`)}>
                                                             <td className="p-3">
                                                                 <button onClick={(e) => { e.stopPropagation(); toggleSelect(product.id) }} className={cn(
                                                                     "w-4 h-4 border rounded flex items-center justify-center",
@@ -916,7 +916,7 @@ export default function TradeinManagePage() {
 
                                                 return (
                                                     <Card key={product.id} className={cn("group hover:shadow-md transition-all cursor-pointer", isEditing && "ring-2 ring-primary", isSelected && "bg-primary/5")}>
-                                                        <CardContent className="p-4" onClick={() => openEditPanel(product)}>
+                                                        <CardContent className="p-4" onClick={() => openEditPanel(product)} onDoubleClick={() => router.push(`/admin/tradein/edit/${product.id}`)}>
                                                             <div className="flex gap-4">
                                                                 {/* Checkbox */}
                                                                 <button
@@ -1047,6 +1047,39 @@ export default function TradeinManagePage() {
                                     </div>
                                 </div>
 
+                                {/* Brand Image */}
+                                <div className="space-y-1.5">
+                                    <Label className="text-sm">Brand Image</Label>
+                                    <div className="flex items-center gap-3">
+                                        {editFormData.brand_img && (
+                                            <div className="relative w-12 h-12 rounded border bg-muted flex-shrink-0">
+                                                <Image
+                                                    src={normalizeImageUrl(editFormData.brand_img)}
+                                                    alt="Brand"
+                                                    fill
+                                                    className="object-contain p-1"
+                                                />
+                                                <button
+                                                    type="button"
+                                                    onClick={() => handleEditInputChange('brand_img', '')}
+                                                    className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full p-0.5 hover:bg-red-600"
+                                                >
+                                                    <XIcon className="w-3 h-3" />
+                                                </button>
+                                            </div>
+                                        )}
+                                        <ImageUpload
+                                            value={editFormData.brand_img ? [editFormData.brand_img] : []}
+                                            onChange={(urls) => handleEditInputChange('brand_img', urls[0] || '')}
+                                            multiple={false}
+                                            folder="tradein/brands"
+                                            label={editFormData.brand_img ? "Change" : "Upload"}
+                                            onDelete={deleteFileFromBucket}
+                                            compact={true}
+                                        />
+                                    </div>
+                                </div>
+
                                 {/* Pricing */}
                                 <div className="border rounded-lg p-3 space-y-3 bg-muted/30">
                                     <h4 className="font-medium text-sm flex items-center gap-2">
@@ -1145,7 +1178,7 @@ export default function TradeinManagePage() {
                                             {editFormData.questions.map((question, qIndex) => (
                                                 <div key={qIndex} className="border rounded p-2 bg-background space-y-2 text-sm">
                                                     <div className="flex items-start gap-2">
-                                                        <div className="flex-1">
+                                                        <div className="flex-1 space-y-1">
                                                             <Input
                                                                 value={question.title}
                                                                 onChange={(e) => {
@@ -1155,6 +1188,16 @@ export default function TradeinManagePage() {
                                                                 }}
                                                                 placeholder="Question text..."
                                                                 className="h-8 text-sm"
+                                                            />
+                                                            <Input
+                                                                value={question.description || ''}
+                                                                onChange={(e) => {
+                                                                    const newQuestions = [...editFormData.questions]
+                                                                    newQuestions[qIndex].description = e.target.value
+                                                                    handleEditInputChange('questions', newQuestions)
+                                                                }}
+                                                                placeholder="Description (optional)..."
+                                                                className="h-7 text-xs text-muted-foreground"
                                                             />
                                                         </div>
                                                         <Select
