@@ -84,7 +84,7 @@ export default function Nav({}) {
             >
                 {/* Animated indicator for desktop nav */}
                 <div 
-                    className="absolute bottom-0 h-0.5 bg-blue-500 rounded-full pointer-events-none z-10"
+                    className="absolute bottom-0 h-0.5 bg-primary rounded-full pointer-events-none z-10"
                     style={{ 
                         ...indicatorStyle, 
                         transition: 'all 0.4s cubic-bezier(0.22, 0.61, 0.36, 1)'
@@ -106,7 +106,7 @@ export default function Nav({}) {
                             variant="ghost" 
                             className={cn(
                                 "font-light",
-                                isActive("/") && "text-blue-500"
+                                isActive("/") && "text-primary"
                             )}
                             style={{ 
                                 transition: 'all 0.4s cubic-bezier(0.22, 0.61, 0.36, 1)',
@@ -134,7 +134,7 @@ export default function Nav({}) {
                             variant="ghost" 
                             className={cn(
                                 "font-light",
-                                isActive("/trade") && "text-blue-500"
+                                isActive("/trade") && "text-primary"
                             )}
                             style={{ 
                                 transition: 'all 0.4s cubic-bezier(0.22, 0.61, 0.36, 1)',
@@ -162,7 +162,7 @@ export default function Nav({}) {
                             variant="ghost" 
                             className={cn(
                                 "font-light",
-                                isActive("/offers") && "text-blue-500"
+                                isActive("/offers") && "text-primary"
                             )}
                             style={{ 
                                 transition: 'all 0.4s cubic-bezier(0.22, 0.61, 0.36, 1)',
@@ -192,7 +192,7 @@ export default function Nav({}) {
                             variant="ghost" 
                             className={cn(
                                 "font-light",
-                                isActive("/products") && "text-blue-500"
+                                isActive("/products") && "text-primary"
                             )}
                             size="icon"
                             style={{ 
@@ -220,7 +220,7 @@ export default function Nav({}) {
                             variant="ghost" 
                             className={cn(
                                 "font-light",
-                                isActive("/cart") && "text-blue-500"
+                                isActive("/cart") && "text-primary"
                             )}
                             size="icon"
                             style={{ 
@@ -263,7 +263,7 @@ export default function Nav({}) {
                                     alt="Profile"
                                     className={cn(
                                         "size-9 rounded-full object-cover border-2 border-transparent",
-                                        isActive("/account") && "border-blue-500"
+                                        isActive("/account") && "border-primary"
                                     )}
                                     style={{
                                         transition: 'all 0.4s cubic-bezier(0.22, 0.61, 0.36, 1)',
@@ -274,7 +274,7 @@ export default function Nav({}) {
                                 <div
                                     className={cn(
                                         "size-9 rounded-full bg-primary flex items-center justify-center border-2 border-transparent",
-                                        isActive("/account") && "border-blue-500"
+                                        isActive("/account") && "border-primary"
                                     )}
                                     style={{
                                         transition: 'all 0.4s cubic-bezier(0.22, 0.61, 0.36, 1)',
@@ -319,8 +319,8 @@ export default function Nav({}) {
                 <TransitionLink 
                     href="/" 
                     className={cn(
-                        'size-16 flex flex-col items-center justify-center md:gap-1 hover:text-blue-500 relative',
-                        isActive("/") && "text-blue-500"
+                        'size-16 flex flex-col items-center justify-center md:gap-1 hover:text-primary relative',
+                        isActive("/") && "text-primary"
                     )}
                     style={{ 
                         transition: 'all 0.4s cubic-bezier(0.22, 0.61, 0.36, 1)'
@@ -332,7 +332,7 @@ export default function Nav({}) {
                 >
                     {isActive("/") && (
                         <div 
-                            className="absolute top-0 left-1/2 -translate-x-1/2 w-12 h-0.5 bg-blue-500 rounded-full"
+                            className="absolute top-0 left-1/2 -translate-x-1/2 w-12 h-0.5 bg-primary rounded-full"
                             style={{ 
                                 animation: 'fade-and-scale-in 0.4s cubic-bezier(0.22, 0.61, 0.36, 1)'
                             }}
@@ -343,7 +343,7 @@ export default function Nav({}) {
                                 strokeWidth={pathname === "/" || justOpenedPage === "/" || touchedLink === "/" ? 2.2 : 1.2} 
                                 className={cn(
                                     "size-5.5 md:size-6", 
-                                    (pathname === "/" || justOpenedPage === "/"|| touchedLink === "/") && "text-blue-500"
+                                    (pathname === "/" || justOpenedPage === "/"|| touchedLink === "/") && "text-primary"
                                 )}
                                 style={{ 
                                     transition: 'all 0.4s cubic-bezier(0.22, 0.61, 0.36, 1)',
@@ -366,8 +366,8 @@ export default function Nav({}) {
                 <TransitionLink 
                     href="/products" 
                     className={cn(
-                        'size-16 flex flex-col items-center justify-center md:gap-1 hover:text-blue-500 relative',
-                        isActive("/products") && "text-blue-500"
+                        'size-16 flex flex-col items-center justify-center md:gap-1 hover:text-primary relative',
+                        isActive("/products") && "text-primary"
                     )}
                     style={{ 
                         transition: 'all 0.4s cubic-bezier(0.22, 0.61, 0.36, 1)'
@@ -379,7 +379,7 @@ export default function Nav({}) {
                 >
                     {isActive("/products") && (
                         <div 
-                            className="absolute top-0 left-1/2 -translate-x-1/2 w-12 h-0.5 bg-blue-500 rounded-full"
+                            className="absolute top-0 left-1/2 -translate-x-1/2 w-12 h-0.5 bg-primary rounded-full"
                             style={{ 
                                 animation: 'fade-and-scale-in 0.4s cubic-bezier(0.22, 0.61, 0.36, 1)'
                             }}
@@ -390,7 +390,7 @@ export default function Nav({}) {
                             strokeWidth={pathname === "/products" || justOpenedPage === "/products" || touchedLink === "/products" ? 2.2 : 1.2} 
                             className={cn(
                                 "size-5.5 md:size-6", 
-                                (pathname === "/products" || justOpenedPage === "/products" || touchedLink === "/products") && "text-blue-500"
+                                (pathname === "/products" || justOpenedPage === "/products" || touchedLink === "/products") && "text-primary"
                             )}
                             style={{ 
                                 transition: 'all 0.4s cubic-bezier(0.22, 0.61, 0.36, 1)',
@@ -413,8 +413,8 @@ export default function Nav({}) {
                 <TransitionLink 
                     href="/trade" 
                     className={cn(
-                        'size-16 flex flex-col items-center justify-center md:gap-1 hover:text-blue-500 relative',
-                        isActive("/trade") && "text-blue-500"
+                        'size-16 flex flex-col items-center justify-center md:gap-1 hover:text-primary relative',
+                        isActive("/trade") && "text-primary"
                     )}
                     style={{ 
                         transition: 'all 0.4s cubic-bezier(0.22, 0.61, 0.36, 1)'
@@ -426,7 +426,7 @@ export default function Nav({}) {
                 >
                     {isActive("/trade") && (
                         <div 
-                            className="absolute top-0 left-1/2 -translate-x-1/2 w-12 h-0.5 bg-blue-500 rounded-full"
+                            className="absolute top-0 left-1/2 -translate-x-1/2 w-12 h-0.5 bg-primary rounded-full"
                             style={{ 
                                 animation: 'fade-and-scale-in 0.4s cubic-bezier(0.22, 0.61, 0.36, 1)'
                             }}
@@ -437,7 +437,7 @@ export default function Nav({}) {
                             strokeWidth={pathname === "/trade" || justOpenedPage === "/trade" || touchedLink === "/trade" ? 2.2 : 1.2} 
                             className={cn(
                                 "size-5.5 md:size-6", 
-                                (pathname === "/trade" || justOpenedPage === "/trade" || touchedLink === "/trade") && "text-blue-500"
+                                (pathname === "/trade" || justOpenedPage === "/trade" || touchedLink === "/trade") && "text-primary"
                             )}
                             style={{ 
                                 transition: 'all 0.4s cubic-bezier(0.22, 0.61, 0.36, 1)',
@@ -460,8 +460,8 @@ export default function Nav({}) {
                 <TransitionLink 
                     href="/cart" 
                     className={cn(
-                        'size-16 flex flex-col items-center justify-center md:gap-1 hover:text-blue-500 relative',
-                        isActive("/cart") && "text-blue-500"
+                        'size-16 flex flex-col items-center justify-center md:gap-1 hover:text-primary relative',
+                        isActive("/cart") && "text-primary"
                     )}
                     style={{ 
                         transition: 'all 0.4s cubic-bezier(0.22, 0.61, 0.36, 1)'
@@ -473,7 +473,7 @@ export default function Nav({}) {
                 >
                     {isActive("/cart") && (
                         <div 
-                            className="absolute top-0 left-1/2 -translate-x-1/2 w-12 h-0.5 bg-blue-500 rounded-full"
+                            className="absolute top-0 left-1/2 -translate-x-1/2 w-12 h-0.5 bg-primary rounded-full"
                             style={{ 
                                 animation: 'fade-and-scale-in 0.4s cubic-bezier(0.22, 0.61, 0.36, 1)'
                             }}
@@ -484,7 +484,7 @@ export default function Nav({}) {
                             strokeWidth={pathname === "/cart" || justOpenedPage === "/cart" || touchedLink === "/cart" ? 2.2 : 1.2} 
                             className={cn(
                                 "size-5.5 md:size-6", 
-                                (pathname === "/cart" || justOpenedPage === "/cart" || touchedLink === "/cart") && "text-blue-500"
+                                (pathname === "/cart" || justOpenedPage === "/cart" || touchedLink === "/cart") && "text-primary"
                             )}
                             style={{ 
                                 transition: 'all 0.4s cubic-bezier(0.22, 0.61, 0.36, 1)',
@@ -508,8 +508,8 @@ export default function Nav({}) {
                 <TransitionLink 
                     href="/account" 
                     className={cn(
-                        'size-16 flex flex-col items-center justify-center md:gap-1 hover:text-blue-500 relative',
-                        isActive("/account") && "text-blue-500"
+                        'size-16 flex flex-col items-center justify-center md:gap-1 hover:text-primary relative',
+                        isActive("/account") && "text-primary"
                     )}
                     style={{ 
                         transition: 'all 0.4s cubic-bezier(0.22, 0.61, 0.36, 1)'
@@ -521,7 +521,7 @@ export default function Nav({}) {
                 >
                     {isActive("/account") && (
                         <div 
-                            className="absolute top-0 left-1/2 -translate-x-1/2 w-12 h-0.5 bg-blue-500 rounded-full"
+                            className="absolute top-0 left-1/2 -translate-x-1/2 w-12 h-0.5 bg-primary rounded-full"
                             style={{ 
                                 animation: 'fade-and-scale-in 0.4s cubic-bezier(0.22, 0.61, 0.36, 1)'
                             }}
@@ -532,7 +532,7 @@ export default function Nav({}) {
                             strokeWidth={pathname === "/account" || justOpenedPage === "/account" || touchedLink === "/account" ? 2.2 : 1.2} 
                             className={cn(
                                 "size-5.5 md:size-6", 
-                                (pathname === "/account" || justOpenedPage === "/account" || touchedLink === "/account") && "text-blue-500"
+                                (pathname === "/account" || justOpenedPage === "/account" || touchedLink === "/account") && "text-primary"
                             )}
                             style={{ 
                                 transition: 'all 0.4s cubic-bezier(0.22, 0.61, 0.36, 1)',

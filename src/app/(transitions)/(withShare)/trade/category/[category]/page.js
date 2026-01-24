@@ -60,7 +60,7 @@ export default async function CategoryBrandPage({ params }) {
           </p>
         </div>
 
-        <Card>
+        <Card className="shadow-none border-none">
           <CardHeader>
             <CardTitle>Step 2: Choose Brand</CardTitle>
             <CardDescription>
@@ -76,7 +76,7 @@ export default async function CategoryBrandPage({ params }) {
                     href={`/trade/category/${encodeURIComponent(category)}/brand/${encodeURIComponent(item.brand)}`}
                     className="block"
                   >
-                    <Card className="hover:shadow-lg transition-all duration-300 cursor-pointer">
+                    <Card className="transition-all duration-300 cursor-pointer shadow-none">
                       <CardContent className="p-6 flex flex-col items-center justify-center text-center">
                         {item.brand_img ? (
                           <div className="w-20 h-20 mb-4 relative">

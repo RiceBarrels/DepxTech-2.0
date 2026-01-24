@@ -88,7 +88,7 @@ export default async function TradeProductPage({ params }) {
   return (
     <div className="min-h-screen bg-background">
       {/* Hero Section */}
-      <div className="bg-gradient-to-b from-muted/50 to-background border-b">
+      <div>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
           {/* Product Hero */}

@@ -104,51 +104,6 @@ const FeatureCard = ({ icon: Icon, title, description }) => {
   )
 }
 
-const CategoryShowcase = () => {
-  const categories = [
-    { name: "Smartphones", emoji: "📱", count: 85, color: "from-blue-500/10 to-cyan-500/10" },
-    { name: "Laptops", emoji: "💻", count: 62, color: "from-purple-500/10 to-pink-500/10" },
-    { name: "Headphones", emoji: "🎧", count: 47, color: "from-green-500/10 to-emerald-500/10" },
-    { name: "Gaming", emoji: "🎮", count: 38, color: "from-orange-500/10 to-red-500/10" },
-    { name: "Smart Home", emoji: "🏠", count: 29, color: "from-indigo-500/10 to-blue-500/10" },
-    { name: "Accessories", emoji: "🔌", count: 94, color: "from-yellow-500/10 to-amber-500/10" }
-  ]
-
-  return (
-    <div className="py-12 md:py-20">
-      <div className="text-center mb-10 md:mb-16">
-        <h2 className="text-3xl md:text-5xl font-bold mb-4 tracking-tight">
-          Shop by Category
-        </h2>
-        <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-          Explore our wide range of premium electronics
-        </p>
-      </div>
-
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 md:gap-6">
-        {categories.map((category) => (
-          <TransitionLink
-            key={category.name}
-            href="/products"
-            className="group relative bg-gradient-to-br bg-card border rounded-2xl p-6 text-center hover:shadow-lg hover:scale-105 transition-all duration-300 overflow-hidden"
-          >
-            <div className={`absolute inset-0 bg-gradient-to-br ${category.color} opacity-0 group-hover:opacity-100 transition-opacity duration-300`} />
-            <div className="relative z-10">
-              <div className="text-5xl md:text-6xl mb-3 transform group-hover:scale-110 transition-transform duration-300">
-                {category.emoji}
-              </div>
-              <h3 className="font-semibold text-base md:text-lg mb-1 group-hover:text-primary transition-colors">
-                {category.name}
-              </h3>
-              <p className="text-sm text-muted-foreground">{category.count} items</p>
-            </div>
-          </TransitionLink>
-        ))}
-      </div>
-    </div>
-  )
-}
-
 export default function HomePageClient() {
   const { user, signOut } = useAuth()
   const router = useTransitionRouter()
@@ -196,7 +151,6 @@ export default function HomePageClient() {
       <HeroSection />
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <CategoryShowcase />
         
         <div className="py-12 md:py-20">
           <div className="text-center mb-10 md:mb-16">

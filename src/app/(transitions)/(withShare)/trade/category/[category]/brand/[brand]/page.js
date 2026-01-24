@@ -65,7 +65,7 @@ export default async function BrandSeriesPage({ params }) {
           </p>
         </div>
 
-        <Card>
+        <Card className="shadow-none border-none">
           <CardHeader>
             <CardTitle>Step 3: Pick Series</CardTitle>
             <CardDescription>
@@ -81,7 +81,7 @@ export default async function BrandSeriesPage({ params }) {
                     href={`/trade/category/${encodeURIComponent(category)}/brand/${encodeURIComponent(brand)}/series/${encodeURIComponent(seriesName)}`}
                     className="block"
                   >
-                    <Card className="hover:shadow-lg transition-all duration-300 cursor-pointer">
+                    <Card className="transition-all duration-300 cursor-pointer shadow-none">
                       <CardContent className="p-6 flex items-center justify-between">
                         <h3 className="font-semibold text-lg">{seriesName}</h3>
                         <ArrowRightIcon className="w-5 h-5 text-muted-foreground" />

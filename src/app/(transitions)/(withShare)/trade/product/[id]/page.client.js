@@ -586,8 +586,8 @@ export default function TradeProductPageClient({ product, questions, basePrice, 
   const isLastStep = currentStep === totalSteps - 1
 
   return (
-    <Card className="shadow-xl border-2">
-      <CardHeader className="bg-gradient-to-r from-primary/10 to-primary/5 border-b">
+    <Card className="shadow-none border-none">
+      <CardHeader className="border-b">
         <div className="flex items-center justify-between">
           <div>
             <CardTitle className="text-2xl">Get Your Quote</CardTitle>

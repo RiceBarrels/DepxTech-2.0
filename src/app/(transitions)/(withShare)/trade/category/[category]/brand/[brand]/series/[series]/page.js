@@ -69,7 +69,7 @@ export default async function SeriesProductsPage({ params }) {
           </p>
         </div>
 
-        <Card>
+        <Card className="shadow-none border-none">
           <CardHeader>
             <CardTitle>Step 4: Select Model</CardTitle>
             <CardDescription>

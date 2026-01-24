@@ -207,7 +207,7 @@ export default function Recommends({
         <div 
             className={`transition-all duration-500 ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'} ${className}`}
         >
-            <Card className="">
+            <Card className="border-none shadow-none">
                 <CardHeader className="flex flex-row items-center justify-between">
                     <div className={`transition-all duration-300 delay-100 ${mounted ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-4'}`}>
                         <CardTitle className="text-xl font-semibold flex items-center gap-2">
