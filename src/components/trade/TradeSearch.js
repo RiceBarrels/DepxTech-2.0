@@ -6,6 +6,7 @@ import { SearchIcon, LoaderIcon, XIcon, ImageIcon, ArrowRightIcon, Sparkles, Dol
 import { useTransitionRouter } from '@/components/ui/pageTransitions'
 import Image from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
+import { useTranslations } from 'next-intl'
 
 // Animated placeholder text
 const placeholderTexts = [
@@ -21,6 +22,7 @@ const placeholderTexts = [
 
 export default function TradeSearch({ variant = "default" }) {
     const router = useTransitionRouter()
+    const t = useTranslations('trade.search')
     const [searchTerm, setSearchTerm] = useState('')
     const [results, setResults] = useState([])
     const [loading, setLoading] = useState(false)
@@ -311,7 +313,7 @@ export default function TradeSearch({ variant = "default" }) {
                                 {/* Animated placeholder */}
                                 {!searchTerm && !isFocused && (
                                     <div className="absolute left-14 pointer-events-none flex items-center gap-2 text-muted-foreground">
-                                        <span>Search "</span>
+                                        <span>{t('prefix')}</span>
                                         <span className="text-primary font-medium">{displayPlaceholder}</span>
                                         <motion.span
                                             animate={{ opacity: [1, 0] }}
@@ -320,14 +322,14 @@ export default function TradeSearch({ variant = "default" }) {
                                         >
                                             |
                                         </motion.span>
-                                        <span>"</span>
+                                        <span>{t('suffix')}</span>
                                     </div>
                                 )}
 
                                 {/* Focused placeholder */}
                                 {!searchTerm && isFocused && (
                                     <div className="absolute left-14 pointer-events-none text-muted-foreground/50">
-                                        Type to search devices...
+                                        {t('placeholder')}
                                     </div>
                                 )}
 
@@ -377,11 +379,11 @@ export default function TradeSearch({ variant = "default" }) {
                                             <div className="flex items-center gap-2">
                                                 <Sparkles className="w-4 h-4 text-primary" />
                                                 <span className="text-sm font-medium">
-                                                    {results.length} device{results.length !== 1 ? 's' : ''} found
+                                                    {t('devicesFound', { count: results.length })}
                                                 </span>
                                             </div>
                                             <span className="text-xs text-muted-foreground">
-                                                Press Enter to select first
+                                                {t('pressEnter')}
                                             </span>
                                         </div>
                                     </div>
@@ -484,12 +486,12 @@ export default function TradeSearch({ variant = "default" }) {
                                         >
                                             <SearchIcon className="w-8 h-8 text-muted-foreground/50" />
                                         </motion.div>
-                                        <p className="text-lg font-medium text-foreground">No devices found</p>
+                                        <p className="text-lg font-medium text-foreground">{t('noDevicesFound')}</p>
                                         <p className="text-sm text-muted-foreground mt-1">
-                                            No results for "<span className="text-primary">{searchTerm}</span>"
+                                            {t('noResultsFor', { term: searchTerm })}
                                         </p>
                                         <p className="text-xs text-muted-foreground mt-3">
-                                            Try searching for a different device or{' '}
+                                            {t('trySearching')}{' '}
                                             <button
                                                 type="button"
                                                 onClick={() => {
@@ -499,7 +501,7 @@ export default function TradeSearch({ variant = "default" }) {
                                                 }}
                                                 className="text-primary hover:underline font-medium"
                                             >
-                                                browse all devices
+                                                {t('browseAllDevices')}
                                             </button>
                                         </p>
                                     </div>

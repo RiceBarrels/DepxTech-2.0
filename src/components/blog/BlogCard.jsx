@@ -2,9 +2,10 @@
 
 import { cn } from '@/lib/utils'
 import { AnimatePresence, motion } from 'framer-motion'
-import Link from 'next/link'
+import { Link } from '@/i18n/navigation'
 import Image from 'next/image'
 import { useState } from 'react'
+import { useTranslations } from 'next-intl'
 import { Calendar, ArrowRight, Sparkles } from 'lucide-react'
 
 function formatDate(dateString) {
@@ -17,6 +18,7 @@ function formatDate(dateString) {
 
 export function BlogCardGrid({ posts, className }) {
   const [hoveredIndex, setHoveredIndex] = useState(null)
+  const t = useTranslations('blog')
 
   return (
     <div className={cn("grid md:grid-cols-2 lg:grid-cols-3 gap-2", className)}>
@@ -52,7 +54,7 @@ export function BlogCardGrid({ posts, className }) {
                 <div className="absolute top-4 left-4 z-10">
                   <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-amber-500/90 text-white text-xs font-semibold backdrop-blur-sm">
                     <Sparkles className="size-3" />
-                    Featured
+                    {t('featured')}
                   </span>
                 </div>
               )}
@@ -97,6 +99,7 @@ export function BlogCardGrid({ posts, className }) {
 
 export function FeaturedBlogCard({ posts, className }) {
   const [hoveredIndex, setHoveredIndex] = useState(null)
+  const t = useTranslations('blog')
 
   return (
     <div className={cn("grid md:grid-cols-3 gap-2", className)}>
@@ -130,7 +133,7 @@ export function FeaturedBlogCard({ posts, className }) {
             <div className="aspect-[4/3] bg-gradient-to-br from-slate-100 to-slate-50 dark:from-slate-800 dark:to-slate-900 flex items-center justify-center p-8 relative overflow-hidden">
               <div className="absolute top-4 left-4 z-10">
                 <span className="px-2.5 py-1 rounded-full bg-amber-500/90 text-white text-xs font-semibold backdrop-blur-sm">
-                  Featured
+                  {t('featured')}
                 </span>
               </div>
               <Image

@@ -4,9 +4,11 @@ import Image from 'next/image'
 import { motion } from 'framer-motion'
 import { ArrowRight } from 'lucide-react'
 import { TransitionLink } from '@/components/ui/pageTransitions'
+import { useTranslations } from 'next-intl'
 
 // Product Card — used on browse page and landing page
 export function TradeProductCard({ product, href, index = 0 }) {
+  const t = useTranslations('trade.browse')
   const price = product.base_price || 0
 
   return (
@@ -53,7 +55,7 @@ export function TradeProductCard({ product, href, index = 0 }) {
 
             {/* Trade value */}
             <div className="flex items-center justify-between pt-2 sm:pt-3 border-t border-border">
-              <span className="text-xs sm:text-sm text-muted-foreground">Trade-in up to</span>
+              <span className="text-xs sm:text-sm text-muted-foreground">{t('tradeInUpTo')}</span>
               <span className="font-bold text-emerald-600 dark:text-emerald-400 text-sm sm:text-base">
                 ${price.toFixed(2)}
               </span>
@@ -61,7 +63,7 @@ export function TradeProductCard({ product, href, index = 0 }) {
 
             {/* CTA */}
             <div className="flex items-center justify-center gap-1.5 py-1.5 sm:py-2 text-xs sm:text-sm font-medium text-primary group-hover:text-primary/80">
-              <span>Get Quote</span>
+              <span>{t('getQuote')}</span>
               <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
             </div>
           </div>

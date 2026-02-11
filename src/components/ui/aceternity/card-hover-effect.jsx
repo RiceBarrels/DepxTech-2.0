@@ -2,7 +2,7 @@
 
 import { cn } from "@/lib/utils"
 import { AnimatePresence, motion } from "framer-motion"
-import Link from "next/link"
+import { Link } from "@/i18n/navigation"
 import { useState } from "react"
 
 export function HoverEffect({ items, className }) {

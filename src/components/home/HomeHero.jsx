@@ -11,8 +11,10 @@ import {
   DollarSign,
 } from 'lucide-react'
 import { FlipWords } from '../ui/flip-words'
+import { useTranslations } from 'next-intl'
 
 export function HomeHero() {
+  const t = useTranslations('home.hero')
   return (
     <section className="relative py-16 lg:py-24 overflow-hidden">
       {/* Spotlight Effect */}
@@ -38,18 +40,18 @@ export function HomeHero() {
               className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 text-xs font-bold uppercase tracking-wider w-fit"
             >
               <Leaf className="w-3.5 h-3.5" />
-              Eco-Friendly Buyback Program
+              {t('badge')}
             </motion.div>
 
             {/* Headline with TextGenerateEffect */}
             <div className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 dark:text-white leading-[1.1] tracking-tight">
               <TextGenerateEffect
-                words="The Smarter Way to"
+                words={t('headline1')}
                 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 dark:text-white leading-[1.1] tracking-tight"
                 filter={false}
                 duration={0.3}
               />
-              <FlipWords words={['Recycle', 'Sell', 'Trade']} className="text-primary" />Your Tech
+              <FlipWords words={t.raw('flipWords')} className="text-primary" />{t('headline2')}
             </div>
 
             {/* Subheadline */}
@@ -59,7 +61,7 @@ export function HomeHero() {
               transition={{ duration: 0.5, delay: 0.3 }}
               className="text-lg text-slate-600 dark:text-slate-400 max-w-lg leading-relaxed"
             >
-              Turn your old electronics into instant cash while helping the planet. Fast quotes, free shipping, and high payouts guaranteed.
+              {t('subheadline')}
             </motion.p>
 
             {/* Search Box */}
@@ -80,10 +82,10 @@ export function HomeHero() {
             >
               <span className="flex items-center gap-1.5 font-medium">
                 <BadgeCheck className="w-4 h-4 text-emerald-500" />
-                4.9/5 TrustScore
+                {t('trustScore')}
               </span>
               <span className="w-1 h-1 bg-slate-300 rounded-full"></span>
-              <span className="font-medium">50k+ Devices Recycled</span>
+              <span className="font-medium">{t('devicesRecycled')}</span>
             </motion.div>
           </motion.div>
 
@@ -99,7 +101,7 @@ export function HomeHero() {
               <div className="aspect-square w-full rounded-2xl bg-slate-50 dark:bg-slate-900 flex items-center justify-center overflow-hidden">
                 <Image
                   src="/stockImg/iphone_17_pro_max.png"
-                  alt="Trade in your device"
+                  alt={t('imageAlt')}
                   width={300}
                   height={300}
                   className="object-contain"
@@ -119,8 +121,8 @@ export function HomeHero() {
                     <DollarSign className="w-5 h-5" />
                   </div>
                   <div>
-                    <p className="text-xs text-slate-500 uppercase font-bold tracking-widest">Average Payout</p>
-                    <p className="text-xl font-bold text-slate-900 dark:text-white">$450.00</p>
+                    <p className="text-xs text-slate-500 uppercase font-bold tracking-widest">{t('averagePayoutLabel')}</p>
+                    <p className="text-xl font-bold text-slate-900 dark:text-white">{t('averagePayoutValue')}</p>
                   </div>
                 </div>
               </motion.div>

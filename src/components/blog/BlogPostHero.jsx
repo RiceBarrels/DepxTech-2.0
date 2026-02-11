@@ -1,6 +1,6 @@
 'use client'
 
-import Link from 'next/link'
+import { Link } from '@/i18n/navigation'
 import Image from 'next/image'
 import { Spotlight } from '@/components/ui/aceternity/spotlight'
 import { motion } from 'framer-motion'

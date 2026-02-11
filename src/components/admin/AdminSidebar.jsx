@@ -1,8 +1,9 @@
 'use client'
 
-import { usePathname } from 'next/navigation'
+import { usePathname } from '@/i18n/navigation'
 import { useTransitionRouter } from '@/components/ui/pageTransitions'
 import { useAuth } from '@/lib/auth'
+import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 import {
@@ -21,21 +22,24 @@ import {
   LogOutIcon,
   MenuIcon,
   XIcon,
+  ClipboardListIcon,
 } from 'lucide-react'
 import { useState } from 'react'
 
 const navItems = [
-  { href: '/admin', label: 'Dashboard', icon: LayoutDashboardIcon, exact: true },
-  { href: '/admin/products', label: 'Products', icon: PackageIcon },
-  { href: '/admin/orders', label: 'Orders', icon: ShoppingCartIcon },
-  { href: '/admin/tradein', label: 'Trade-in', icon: ArrowRightLeftIcon },
-  { href: '/admin/offers', label: 'Offers', icon: TicketPercentIcon },
-  { href: '/admin/users', label: 'Users', icon: UsersIcon },
+  { href: '/admin', labelKey: 'dashboard', icon: LayoutDashboardIcon, exact: true },
+  { href: '/admin/products', labelKey: 'products', icon: PackageIcon },
+  { href: '/admin/orders', labelKey: 'orders', icon: ShoppingCartIcon },
+  { href: '/admin/tradein', labelKey: 'tradeIn', icon: ArrowRightLeftIcon },
+  { href: '/admin/trade-quotes', labelKey: 'tradeInOrders', icon: ClipboardListIcon },
+  { href: '/admin/offers', labelKey: 'offers', icon: TicketPercentIcon },
+  { href: '/admin/users', labelKey: 'users', icon: UsersIcon },
 ]
 
 function NavLinks({ onNavigate }) {
   const pathname = usePathname()
   const router = useTransitionRouter()
+  const t = useTranslations('admin.sidebar')
 
   const isActive = (item) => {
     if (item.exact) return pathname === item.href
@@ -62,7 +66,7 @@ function NavLinks({ onNavigate }) {
             )}
           >
             <Icon className="h-4 w-4 shrink-0" />
-            {item.label}
+            {t(item.labelKey)}
           </button>
         )
       })}
@@ -72,12 +76,13 @@ function NavLinks({ onNavigate }) {
 
 export function AdminSidebar() {
   const { signOut } = useAuth()
+  const t = useTranslations('admin.sidebar')
 
   return (
     <aside className="hidden lg:flex fixed inset-y-0 left-0 z-40 w-64 flex-col border-r bg-background">
       <div className="flex h-14 items-center gap-2 border-b px-4">
         <PackageIcon className="h-5 w-5 text-primary" />
-        <span className="font-semibold text-lg">Admin</span>
+        <span className="font-semibold text-lg">{t('admin')}</span>
       </div>
 
       <div className="flex-1 overflow-y-auto p-3">
@@ -90,7 +95,7 @@ export function AdminSidebar() {
           className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
         >
           <LogOutIcon className="h-4 w-4 shrink-0" />
-          Sign Out
+          {t('signOut')}
         </button>
       </div>
     </aside>
@@ -100,6 +105,7 @@ export function AdminSidebar() {
 export function AdminMobileHeader() {
   const [open, setOpen] = useState(false)
   const { signOut } = useAuth()
+  const t = useTranslations('admin.sidebar')
 
   return (
     <>
@@ -112,7 +118,7 @@ export function AdminMobileHeader() {
         </button>
         <div className="flex items-center gap-2">
           <PackageIcon className="h-4 w-4 text-primary" />
-          <span className="font-semibold">Admin</span>
+          <span className="font-semibold">{t('admin')}</span>
         </div>
       </header>
 
@@ -121,7 +127,7 @@ export function AdminMobileHeader() {
           <div className="flex h-14 items-center justify-between border-b px-4">
             <div className="flex items-center gap-2">
               <PackageIcon className="h-5 w-5 text-primary" />
-              <span className="font-semibold text-lg">Admin</span>
+              <span className="font-semibold text-lg">{t('admin')}</span>
             </div>
             <DrawerClose asChild>
               <Button variant="ghost" size="icon" className="h-8 w-8">
@@ -143,7 +149,7 @@ export function AdminMobileHeader() {
               className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
             >
               <LogOutIcon className="h-4 w-4 shrink-0" />
-              Sign Out
+              {t('signOut')}
             </button>
           </div>
         </DrawerContent>

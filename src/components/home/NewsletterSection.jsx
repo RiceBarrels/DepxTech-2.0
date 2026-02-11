@@ -4,8 +4,11 @@ import { motion } from 'framer-motion'
 import { Leaf } from 'lucide-react'
 import { NewsletterForm } from '@/components/home/NewsletterForm'
 import { ScrollStagger, ScrollReveal, ScrollScale } from '@/components/ui/scroll-animation'
+import { useTranslations } from 'next-intl'
 
 export function NewsletterSection() {
+  const t = useTranslations('home.newsletter')
+
   return (
     <section className="py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
@@ -25,12 +28,12 @@ export function NewsletterSection() {
             <ScrollStagger staggerChildren={0.15} className="relative z-10">
               <ScrollReveal animation="top">
                 <h2 className="text-3xl lg:text-4xl font-black text-white mb-4">
-                  Stay updated on trade-in prices
+                  {t('heading')}
                 </h2>
               </ScrollReveal>
               <ScrollReveal animation="blur">
                 <p className="text-slate-400 text-lg mb-8 max-w-xl mx-auto">
-                  Sign up for our newsletter and get notified when payout prices for your specific devices peak.
+                  {t('description')}
                 </p>
               </ScrollReveal>
               <ScrollReveal animation="bottom">

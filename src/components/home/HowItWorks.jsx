@@ -3,30 +3,19 @@
 import { motion } from 'framer-motion'
 import { Tag, Truck, Banknote } from 'lucide-react'
 import { ScrollStagger, ScrollReveal } from '@/components/ui/scroll-animation'
+import { useTranslations } from 'next-intl'
 
-const steps = [
-  {
-    number: 1,
-    Icon: Tag,
-    title: 'Get an Instant Quote',
-    description: 'Search for your device, answer a few questions about its condition, and get an offer in seconds.',
-  },
-  {
-    number: 2,
-    Icon: Truck,
-    title: 'Ship for Free',
-    description: 'Print your pre-paid shipping label, pack your device, and drop it off at any authorized location.',
-  },
-  {
-    number: 3,
-    Icon: Banknote,
-    title: 'Get Paid Fast',
-    description: 'Receive funds via PayPal, Bank Transfer, or Gift Card within 24 hours of device inspection.',
-  },
-]
+const stepIcons = [Tag, Truck, Banknote]
 
 export function HowItWorks() {
+  const t = useTranslations('home.howItWorks')
   const animations = ['left', 'bottom', 'right']
+
+  const steps = [
+    { number: 1, Icon: stepIcons[0], title: t('step1Title'), description: t('step1Desc') },
+    { number: 2, Icon: stepIcons[1], title: t('step2Title'), description: t('step2Desc') },
+    { number: 3, Icon: stepIcons[2], title: t('step3Title'), description: t('step3Desc') },
+  ]
 
   return (
     <section className="py-20 bg-background">
@@ -35,12 +24,12 @@ export function HowItWorks() {
         <ScrollStagger staggerChildren={0.15} className="text-center max-w-3xl mx-auto mb-16">
           <ScrollReveal animation="top">
             <h2 className="text-3xl sm:text-4xl font-black text-slate-900 dark:text-white mb-4">
-              Three simple steps to cash
+              {t('heading')}
             </h2>
           </ScrollReveal>
           <ScrollReveal animation="blur">
             <p className="text-slate-500 text-lg">
-              Selling your old tech shouldn't be a headache. We've streamlined the process to be as fast as possible.
+              {t('subheading')}
             </p>
           </ScrollReveal>
         </ScrollStagger>

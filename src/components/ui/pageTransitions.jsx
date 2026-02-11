@@ -2,9 +2,9 @@
 
 import { cn } from "@/lib/utils";
 import { useTransitionRouter } from "next-view-transitions";
-import { usePathname } from "next/navigation";
+import { usePathname } from "@/i18n/navigation";
 import { useEffect } from "react";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { doubleHapticsImpact, lightHapticsImpact } from "@/lib/haptics";
 
 // Check if a route is in the transitions group (no nav)

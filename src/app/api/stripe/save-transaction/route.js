@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { saveTransaction } from '@/lib/serverAuth'
 import { createClient } from '@/utils/supabase/server'
+import { notifyAdmins, buildOrderEmail } from '@/lib/email'
 
 export async function POST(request) {
   try {
@@ -28,6 +29,16 @@ export async function POST(request) {
     )
 
     if (transactionResult.success) {
+      // Notify admins via email (fire-and-forget)
+      notifyAdmins({
+        subject: `New Order: $${(Number(amount) / 100).toFixed(2)}`,
+        html: buildOrderEmail({
+          amount,
+          customerEmail: user.email,
+          cartItems,
+        }),
+      })
+
       return NextResponse.json({
         success: true,
         transaction: transactionResult.transaction

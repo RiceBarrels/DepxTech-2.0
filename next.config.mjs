@@ -1,10 +1,15 @@
 import { dirname } from 'path';
 import { fileURLToPath } from 'url';
+import createNextIntlPlugin from 'next-intl/plugin';
 
+const withNextIntl = createNextIntlPlugin('./src/i18n/request.js');
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  experimental: {
+    optimizePackageImports: ['lucide-react'],
+  },
   turbopack: {
     root: __dirname,
   },
@@ -50,18 +55,18 @@ const nextConfig = {
   async redirects() {
     return [
       {
-        source: '/trade/category/:cat',
-        destination: '/trade/browse?category=:cat',
+        source: '/:locale(en|zh-CN|zh-TW)/trade/category/:cat',
+        destination: '/:locale/trade/browse?category=:cat',
         permanent: true,
       },
       {
-        source: '/trade/category/:cat/brand/:brand',
-        destination: '/trade/browse?category=:cat&brand=:brand',
+        source: '/:locale(en|zh-CN|zh-TW)/trade/category/:cat/brand/:brand',
+        destination: '/:locale/trade/browse?category=:cat&brand=:brand',
         permanent: true,
       },
       {
-        source: '/trade/category/:cat/brand/:brand/series/:series',
-        destination: '/trade/browse?category=:cat&brand=:brand&series=:series',
+        source: '/:locale(en|zh-CN|zh-TW)/trade/category/:cat/brand/:brand/series/:series',
+        destination: '/:locale/trade/browse?category=:cat&brand=:brand&series=:series',
         permanent: true,
       },
     ]
@@ -70,4 +75,4 @@ const nextConfig = {
   // output: 'export',
 };
 
-export default nextConfig;
+export default withNextIntl(nextConfig);

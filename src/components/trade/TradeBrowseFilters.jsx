@@ -1,6 +1,7 @@
 'use client'
 
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useRouter } from '@/i18n/navigation'
+import { useSearchParams } from 'next/navigation'
 import { useCallback, useTransition } from 'react'
 import {
   Select,
@@ -14,6 +15,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { X, SlidersHorizontal, Search } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { useTranslations } from 'next-intl'
 
 export default function TradeBrowseFilters({
   categories = [],
@@ -24,6 +26,7 @@ export default function TradeBrowseFilters({
   const router = useRouter()
   const searchParams = useSearchParams()
   const [isPending, startTransition] = useTransition()
+  const t = useTranslations('trade.browse')
 
   const activeCategory = searchParams.get('category') || ''
   const activeBrand = searchParams.get('brand') || ''
@@ -83,7 +86,7 @@ export default function TradeBrowseFilters({
         <div className="relative flex-1 max-w-sm">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <Input
-            placeholder="Search devices..."
+            placeholder={t('searchPlaceholder')}
             defaultValue={activeQuery}
             onKeyDown={handleSearch}
             onBlur={(e) => {
@@ -100,10 +103,10 @@ export default function TradeBrowseFilters({
           <Select value={activeCategory || 'all'} onValueChange={(v) => updateParam('category', v)}>
             <SelectTrigger className="h-10 w-[150px] text-sm">
               <SlidersHorizontal className="w-3.5 h-3.5 mr-1.5 text-muted-foreground" />
-              <SelectValue placeholder="Category" />
+              <SelectValue placeholder={t('allCategories')} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All Categories</SelectItem>
+              <SelectItem value="all">{t('allCategories')}</SelectItem>
               {categories.map((cat) => (
                 <SelectItem key={cat} value={cat}>{cat}</SelectItem>
               ))}
@@ -113,10 +116,10 @@ export default function TradeBrowseFilters({
           {brands.length > 0 && (
             <Select value={activeBrand || 'all'} onValueChange={(v) => updateParam('brand', v)}>
               <SelectTrigger className="h-10 w-[140px] text-sm">
-                <SelectValue placeholder="Brand" />
+                <SelectValue placeholder={t('allBrands')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All Brands</SelectItem>
+                <SelectItem value="all">{t('allBrands')}</SelectItem>
                 {brands.map((b) => (
                   <SelectItem key={b} value={b}>{b}</SelectItem>
                 ))}
@@ -127,10 +130,10 @@ export default function TradeBrowseFilters({
           {seriesList.length > 0 && (
             <Select value={activeSeries || 'all'} onValueChange={(v) => updateParam('series', v)}>
               <SelectTrigger className="h-10 w-[140px] text-sm">
-                <SelectValue placeholder="Series" />
+                <SelectValue placeholder={t('allSeries')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All Series</SelectItem>
+                <SelectItem value="all">{t('allSeries')}</SelectItem>
                 {seriesList.map((s) => (
                   <SelectItem key={s} value={s}>{s}</SelectItem>
                 ))}
@@ -165,16 +168,16 @@ export default function TradeBrowseFilters({
           </AnimatePresence>
           {activeFilters.length > 1 && (
             <Button variant="ghost" size="sm" className="h-6 text-xs px-2" onClick={clearAll}>
-              Clear all
+              {t('clearAll')}
             </Button>
           )}
         </div>
 
         <span className="text-sm text-muted-foreground shrink-0">
           {isPending ? (
-            <span className="animate-pulse">Loading...</span>
+            <span className="animate-pulse">{t('loading')}</span>
           ) : (
-            `${totalCount} device${totalCount !== 1 ? 's' : ''} found`
+            t('devicesFound', { count: totalCount })
           )}
         </span>
       </div>

@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { Capacitor } from '@capacitor/core'
 import { useAuth } from '@/lib/auth'
-import { usePathname } from 'next/navigation'
+import { usePathname } from '@/i18n/navigation'
 import MobileSetupScreen from './mobile-setup-screen'
 
 export default function MobileSetupGuard({ children }) {

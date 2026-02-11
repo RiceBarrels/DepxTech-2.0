@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
+import { notifyAdmins, buildTradeInEmail } from '@/lib/email'
 
 // Create Supabase client with service role for public operations
 function createServiceRoleClient() {
@@ -174,6 +175,19 @@ export async function POST(request) {
         .update({ trades: (product.trades || 0) + 1 })
         .eq('id', productId)
     }
+
+    // Notify admins via email (fire-and-forget)
+    notifyAdmins({
+      subject: `New Trade-in Quote: ${productTitle}`,
+      html: buildTradeInEmail({
+        productTitle,
+        customerName: name,
+        customerEmail: email,
+        customerPhone: phone,
+        estimatedValue,
+        notes,
+      }),
+    })
 
     return NextResponse.json({
       success: true,

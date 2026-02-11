@@ -1,5 +1,6 @@
 "use client"
 
+import { useTranslations } from 'next-intl'
 import { useState, useRef, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence, useScroll, useTransform, useSpring, useMotionValue } from 'framer-motion'
 import Image from 'next/image'
@@ -33,6 +34,7 @@ import {
 
 // Image Magnifier Component
 function ImageMagnifier({ src, alt, magnifierSize = 150, zoomLevel = 2.5 }) {
+  const t = useTranslations('productDetail')
   const [showMagnifier, setShowMagnifier] = useState(false)
   const [magnifierPos, setMagnifierPos] = useState({ x: 0, y: 0 })
   const [cursorPos, setCursorPos] = useState({ x: 0, y: 0 })
@@ -96,7 +98,7 @@ function ImageMagnifier({ src, alt, magnifierSize = 150, zoomLevel = 2.5 }) {
         animate={{ opacity: showMagnifier ? 0 : 1 }}
         className="absolute bottom-4 right-4 bg-black/60 backdrop-blur-sm text-white text-xs px-3 py-1.5 rounded-full"
       >
-        Hover to zoom
+        {t('hoverToZoom')}
       </motion.div>
     </div>
   )
@@ -271,24 +273,25 @@ function Accordion({ items }) {
 
 // Condition Badge with Animation
 function ConditionBadge({ condition = 'excellent' }) {
+  const t = useTranslations('productDetail')
   const conditionConfig = {
     excellent: {
-      label: 'Excellent',
-      description: 'Like new, minimal signs of use',
+      label: t('excellent'),
+      description: t('excellentDesc'),
       gradient: 'from-emerald-500 to-teal-500',
       bgGradient: 'from-emerald-500/20 to-teal-500/20',
       textColor: 'text-emerald-600 dark:text-emerald-400',
     },
     good: {
-      label: 'Good',
-      description: 'Light wear, fully functional',
+      label: t('good'),
+      description: t('goodDesc'),
       gradient: 'from-cyan-500 to-blue-500',
       bgGradient: 'from-cyan-500/20 to-blue-500/20',
       textColor: 'text-cyan-600 dark:text-cyan-400',
     },
     fair: {
-      label: 'Fair',
-      description: 'Visible wear, works perfectly',
+      label: t('fair'),
+      description: t('fairDesc'),
       gradient: 'from-amber-500 to-orange-500',
       bgGradient: 'from-amber-500/20 to-orange-500/20',
       textColor: 'text-amber-600 dark:text-amber-400',
@@ -318,11 +321,12 @@ function ConditionBadge({ condition = 'excellent' }) {
 
 // Trust Features Mini Bar
 function TrustFeatures() {
+  const t = useTranslations('productDetail')
   const features = [
-    { icon: ShieldCheckIcon, text: '12-Month Warranty', color: 'text-emerald-500' },
-    { icon: TruckIcon, text: 'Free Shipping', color: 'text-cyan-500' },
-    { icon: RefreshCwIcon, text: '30-Day Returns', color: 'text-violet-500' },
-    { icon: LeafIcon, text: 'Eco-Certified', color: 'text-green-500' },
+    { icon: ShieldCheckIcon, text: t('warranty12'), color: 'text-emerald-500' },
+    { icon: TruckIcon, text: t('freeShipping'), color: 'text-cyan-500' },
+    { icon: RefreshCwIcon, text: t('returns30'), color: 'text-violet-500' },
+    { icon: LeafIcon, text: t('ecoCertified'), color: 'text-green-500' },
   ]
 
   return (
@@ -345,6 +349,7 @@ function TrustFeatures() {
 
 // Environmental Impact Card
 function EnvironmentalImpact({ stats }) {
+  const t = useTranslations('productDetail')
   const defaultStats = stats || {
     co2Saved: 45,
     waterSaved: 1200,
@@ -360,21 +365,21 @@ function EnvironmentalImpact({ stats }) {
     >
       <div className="flex items-center gap-2 mb-4">
         <LeafIcon className="w-5 h-5 text-emerald-500" />
-        <span className="font-semibold">Your Environmental Impact</span>
+        <span className="font-semibold">{t('environmentalImpact')}</span>
       </div>
 
       <div className="grid grid-cols-3 gap-4 text-center">
         <div>
           <p className="text-2xl font-bold text-emerald-500">{defaultStats.co2Saved}kg</p>
-          <p className="text-xs text-muted-foreground">CO2 Saved</p>
+          <p className="text-xs text-muted-foreground">{t('co2Saved')}</p>
         </div>
         <div>
           <p className="text-2xl font-bold text-cyan-500">{defaultStats.waterSaved}L</p>
-          <p className="text-xs text-muted-foreground">Water Saved</p>
+          <p className="text-xs text-muted-foreground">{t('waterSaved')}</p>
         </div>
         <div>
           <p className="text-2xl font-bold text-green-500">{defaultStats.treesEquivalent}</p>
-          <p className="text-xs text-muted-foreground">Trees Planted</p>
+          <p className="text-xs text-muted-foreground">{t('treesPlanted')}</p>
         </div>
       </div>
     </motion.div>
@@ -383,6 +388,7 @@ function EnvironmentalImpact({ stats }) {
 
 // Animated Add to Cart Button
 function AddToCartButton({ onClick, disabled, stocks }) {
+  const t = useTranslations('productDetail')
   const [isAdding, setIsAdding] = useState(false)
   const [isAdded, setIsAdded] = useState(false)
 
@@ -453,7 +459,7 @@ function AddToCartButton({ onClick, disabled, stocks }) {
               className="flex items-center gap-2"
             >
               <CheckIcon className="w-5 h-5" />
-              Added to Cart!
+              {t('addedToCart')}
             </motion.div>
           ) : (
             <motion.div
@@ -464,7 +470,7 @@ function AddToCartButton({ onClick, disabled, stocks }) {
               className="flex items-center gap-2"
             >
               <ShoppingCartIcon className="w-5 h-5" />
-              {stocks === 0 ? 'Out of Stock' : 'Add to Cart'}
+              {stocks === 0 ? t('outOfStock') : t('addToCart')}
             </motion.div>
           )}
         </AnimatePresence>
@@ -475,9 +481,10 @@ function AddToCartButton({ onClick, disabled, stocks }) {
 
 // Quantity Selector
 function QuantitySelector({ value = 1, onChange, max = 10 }) {
+  const t = useTranslations('productDetail')
   return (
     <div className="flex items-center gap-3">
-      <span className="text-sm font-medium text-muted-foreground">Qty:</span>
+      <span className="text-sm font-medium text-muted-foreground">{t('qty')}</span>
       <div className="flex items-center border border-border rounded-xl overflow-hidden">
         <motion.button
           whileTap={{ scale: 0.9 }}
@@ -511,6 +518,7 @@ export default function ProductDetailEnhanced({
   onToggleFavorite,
   className = "",
 }) {
+  const t = useTranslations('productDetail')
   const [quantity, setQuantity] = useState(1)
   const [isFavorite, setIsFavorite] = useState(false)
   const containerRef = useRef(null)
@@ -543,30 +551,30 @@ export default function ProductDetailEnhanced({
   const accordionItems = [
     {
       icon: PackageIcon,
-      title: 'Product Details',
-      content: des || 'No description available.',
+      title: t('productDetails'),
+      content: des || t('noDescription'),
     },
     {
       icon: ShieldCheckIcon,
-      title: 'Warranty & Returns',
-      content: 'This product comes with a 12-month warranty and 30-day hassle-free returns. All refurbished devices are professionally tested and certified.',
+      title: t('warrantyReturns'),
+      content: t('warrantyReturnsDesc'),
     },
     {
       icon: TruckIcon,
-      title: 'Shipping Information',
-      content: 'Free standard shipping on all orders. Express shipping available at checkout. Most orders ship within 1-2 business days.',
+      title: t('shippingInfo'),
+      content: t('shippingInfoDesc'),
     },
     {
       icon: LeafIcon,
-      title: 'Environmental Impact',
-      content: 'By choosing renewed, you help reduce e-waste and carbon emissions. This device saves approximately 45kg of CO2 and 1,200L of water compared to buying new.',
+      title: t('environmentalImpactTitle'),
+      content: t('environmentalImpactDesc'),
     },
   ]
 
   if (!product) {
     return (
       <div className="flex items-center justify-center h-96">
-        <div className="text-muted-foreground">Product not found</div>
+        <div className="text-muted-foreground">{t('productNotFound')}</div>
       </div>
     )
   }
@@ -620,7 +628,7 @@ export default function ProductDetailEnhanced({
                     {formatPrice(original_price)}
                   </span>
                   <Badge className="bg-red-500/20 text-red-600 border-red-500/30">
-                    -{savingsPercent}% OFF
+                    {t('off', { percent: savingsPercent })}
                   </Badge>
                 </div>
               )}
@@ -630,11 +638,11 @@ export default function ProductDetailEnhanced({
             <div className="flex items-center gap-4 text-sm text-muted-foreground">
               <div className="flex items-center gap-1">
                 <PackageIcon className="w-4 h-4" />
-                <span>{stocks > 0 ? `${stocks} in stock` : 'Out of stock'}</span>
+                <span>{stocks > 0 ? t('stockCount', { count: stocks }) : t('outOfStock')}</span>
               </div>
               <div className="flex items-center gap-1">
                 <EyeIcon className="w-4 h-4" />
-                <span>{views} views</span>
+                <span>{t('views', { count: views })}</span>
               </div>
             </div>
           </motion.div>
@@ -734,10 +742,10 @@ export default function ProductDetailEnhanced({
               transition={{ delay: 0.5 }}
               className="pt-4 border-t border-dashed"
             >
-              <p className="text-xs text-muted-foreground mb-2">Admin Actions</p>
+              <p className="text-xs text-muted-foreground mb-2">{t('adminActions')}</p>
               <div className="flex gap-2">
                 <Button variant="outline" size="sm" onClick={onEdit}>
-                  Edit Product
+                  {t('editProduct')}
                 </Button>
                 <Button variant="destructive" size="sm" onClick={onDelete}>
                   Delete

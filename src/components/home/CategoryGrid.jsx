@@ -2,40 +2,29 @@
 
 import { useState } from 'react'
 import Image from 'next/image'
-import Link from 'next/link'
+import { Link } from '@/i18n/navigation'
 import { AnimatePresence, motion } from 'framer-motion'
 import { ArrowRight } from 'lucide-react'
 import { ScrollStagger, ScrollReveal } from '@/components/ui/scroll-animation'
+import { useTranslations } from 'next-intl'
 
-const categories = [
-  {
-    title: 'Smartphones',
-    description: 'Sell iPhone, Galaxy, Pixel',
-    image: '/stockImg/iphone_17_pro_max.png',
-    href: '/trade/category/Smartphones',
-  },
-  {
-    title: 'Laptops',
-    description: 'MacBooks and PC Laptops',
-    image: '/stockImg/macbook_pro.png',
-    href: '/trade/category/Laptops',
-  },
-  {
-    title: 'Tablets',
-    description: 'iPads and Surface Pro',
-    image: '/stockImg/ipad_pro.png',
-    href: '/trade/category/Tablets',
-  },
-  {
-    title: 'Wearables',
-    description: 'Headphones and Speakers',
-    image: '/stockImg/apple_watch.png',
-    href: '/trade/category/Wearables',
-  }
+const categoryData = [
+  { key: 'smartphones', image: '/stockImg/iphone_17_pro_max.png', href: '/trade/category/Smartphones' },
+  { key: 'laptops', image: '/stockImg/macbook_pro.png', href: '/trade/category/Laptops' },
+  { key: 'tablets', image: '/stockImg/ipad_pro.png', href: '/trade/category/Tablets' },
+  { key: 'wearables', image: '/stockImg/apple_watch.png', href: '/trade/category/Wearables' },
 ]
 
 export function CategoryGrid() {
   const [hoveredIndex, setHoveredIndex] = useState(null)
+  const t = useTranslations('home.categories')
+  const tCommon = useTranslations('common')
+
+  const categories = categoryData.map(c => ({
+    ...c,
+    title: t(c.key),
+    description: t(`${c.key}Desc`),
+  }))
 
   return (
     <section className="py-16 bg-white dark:bg-background/50">
@@ -44,8 +33,8 @@ export function CategoryGrid() {
         <ScrollStagger staggerChildren={0.1} className="flex items-center justify-between mb-10">
           <ScrollReveal animation="left">
             <div>
-              <h2 className="text-3xl font-bold text-slate-900 dark:text-white">Browse by Category</h2>
-              <p className="text-slate-500 mt-2">Select your device type to get started</p>
+              <h2 className="text-3xl font-bold text-slate-900 dark:text-white">{t('heading')}</h2>
+              <p className="text-slate-500 mt-2">{t('subheading')}</p>
             </div>
           </ScrollReveal>
           <ScrollReveal animation="right">
@@ -53,7 +42,7 @@ export function CategoryGrid() {
               href="/trade"
               className="text-primary font-semibold flex items-center gap-1 hover:underline"
             >
-              View all <ArrowRight className="w-4 h-4" />
+              {tCommon('viewAll')} <ArrowRight className="w-4 h-4" />
             </Link>
           </ScrollReveal>
         </ScrollStagger>
@@ -61,7 +50,7 @@ export function CategoryGrid() {
         {/* Categories Grid with Hover Effect */}
         <ScrollStagger staggerChildren={0.08} delayChildren={0.2} className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
           {categories.map((category, idx) => (
-            <ScrollReveal key={category.title} animation="z">
+            <ScrollReveal key={category.key} animation="z">
               <Link
                 href={category.href}
                 className="relative group block p-2 h-full w-full"

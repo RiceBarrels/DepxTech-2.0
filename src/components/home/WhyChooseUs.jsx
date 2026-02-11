@@ -1,6 +1,6 @@
 'use client'
 
-import Link from 'next/link'
+import { Link } from '@/i18n/navigation'
 import { motion } from 'framer-motion'
 import { cn } from '@/lib/utils'
 import {
@@ -11,40 +11,26 @@ import {
   Check,
 } from 'lucide-react'
 import { ScrollStagger, ScrollReveal, ScrollCounter } from '@/components/ui/scroll-animation'
+import { useTranslations } from 'next-intl'
 
-const features = [
-  {
-    Icon: Recycle,
-    title: 'Zero Waste',
-    description: 'Every device is either refurbished or responsibly recycled.',
-    bgColor: 'bg-emerald-100 dark:bg-emerald-900/30',
-    iconColor: 'text-emerald-500',
-  },
-  {
-    Icon: Zap,
-    title: 'Rapid Payment',
-    description: 'No waiting weeks. We pay as soon as we verify your tech.',
-    bgColor: 'bg-slate-100 dark:bg-slate-800',
-    iconColor: 'text-primary',
-  },
-  {
-    Icon: DollarSign,
-    title: 'Best Price',
-    description: 'Our real-time market tracking ensures you get top dollar.',
-    bgColor: 'bg-slate-100 dark:bg-slate-800',
-    iconColor: 'text-primary',
-  },
-  {
-    Icon: Shield,
-    title: 'Data Secure',
-    description: 'Military-grade data wiping for every device we receive.',
-    bgColor: 'bg-primary text-white',
-    iconColor: 'text-white',
-    isHighlighted: true,
-  },
+const featureIcons = [Recycle, Zap, DollarSign, Shield]
+const featureStyles = [
+  { bgColor: 'bg-emerald-100 dark:bg-emerald-900/30', iconColor: 'text-emerald-500' },
+  { bgColor: 'bg-slate-100 dark:bg-slate-800', iconColor: 'text-primary' },
+  { bgColor: 'bg-slate-100 dark:bg-slate-800', iconColor: 'text-primary' },
+  { bgColor: 'bg-primary text-white', iconColor: 'text-white', isHighlighted: true },
 ]
 
 export function WhyChooseUs() {
+  const t = useTranslations('home.whyChooseUs')
+
+  const features = [
+    { Icon: featureIcons[0], title: t('zeroWasteTitle'), description: t('zeroWasteDesc'), ...featureStyles[0] },
+    { Icon: featureIcons[1], title: t('rapidPaymentTitle'), description: t('rapidPaymentDesc'), ...featureStyles[1] },
+    { Icon: featureIcons[2], title: t('bestPriceTitle'), description: t('bestPriceDesc'), ...featureStyles[2] },
+    { Icon: featureIcons[3], title: t('dataSecureTitle'), description: t('dataSecureDesc'), ...featureStyles[3] },
+  ]
+
   return (
     <section className="py-20 overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -53,7 +39,7 @@ export function WhyChooseUs() {
           <div className="relative">
             <div className="grid grid-cols-2 gap-4">
               <ScrollStagger staggerChildren={0.15} className="flex flex-col gap-4">
-                {features.slice(0, 2).map((feature, idx) => (
+                {features.slice(0, 2).map((feature) => (
                   <ScrollReveal key={feature.title} animation="left">
                     <motion.div
                       whileHover={{ scale: 1.02, y: -4 }}
@@ -77,7 +63,7 @@ export function WhyChooseUs() {
                 ))}
               </ScrollStagger>
               <ScrollStagger staggerChildren={0.15} delayChildren={0.2} className="flex flex-col gap-4 mt-8">
-                {features.slice(2, 4).map((feature, idx) => (
+                {features.slice(2, 4).map((feature) => (
                   <ScrollReveal key={feature.title} animation="right">
                     <motion.div
                       whileHover={{ scale: 1.02, y: -4 }}
@@ -107,12 +93,12 @@ export function WhyChooseUs() {
           <ScrollStagger staggerChildren={0.12} className="flex flex-col gap-4 sm:gap-6 md:gap-8">
             <ScrollReveal animation="right">
               <h2 className="text-3xl sm:text-4xl font-black text-slate-900 dark:text-white">
-                Better for your wallet, better for the planet
+                {t('heading')}
               </h2>
             </ScrollReveal>
             <ScrollReveal animation="right">
               <p className="text-lg text-slate-600 dark:text-slate-400 leading-relaxed">
-                Every year, millions of electronics end up in landfills. At DepxTech, we believe in a circular economy. By selling your old gear, you're extending the life of tech and preventing hazardous waste.
+                {t('description')}
               </p>
             </ScrollReveal>
 
@@ -125,9 +111,9 @@ export function WhyChooseUs() {
                   </div>
                   <div>
                     <h5 className="font-bold text-slate-900 dark:text-white">
-                      Over <ScrollCounter value={1200000} suffix=" kg" className="text-emerald-500" /> of e-waste diverted
+                      Over <ScrollCounter value={1200000} suffix=" kg" className="text-emerald-500" /> {t('eWasteDiverted')}
                     </h5>
-                    <p className="text-slate-500">We work with certified partners to ensure 100% recycling efficiency.</p>
+                    <p className="text-slate-500">{t('eWasteDesc')}</p>
                   </div>
                 </div>
               </ScrollReveal>
@@ -137,8 +123,8 @@ export function WhyChooseUs() {
                     <Check className="w-5 h-5" />
                   </div>
                   <div>
-                    <h5 className="font-bold text-slate-900 dark:text-white">R2 Certified Facilities</h5>
-                    <p className="text-slate-500">Highest industry standards for electronics recycling and data security.</p>
+                    <h5 className="font-bold text-slate-900 dark:text-white">{t('r2Certified')}</h5>
+                    <p className="text-slate-500">{t('r2Desc')}</p>
                   </div>
                 </div>
               </ScrollReveal>
@@ -151,7 +137,7 @@ export function WhyChooseUs() {
                   href="/trade"
                   className="inline-flex items-center justify-center bg-primary hover:bg-primary/90 text-white font-bold py-4 px-10 rounded-xl transition-colors"
                 >
-                  Start Recycling Now
+                  {t('cta')}
                 </Link>
               </div>
             </ScrollReveal>

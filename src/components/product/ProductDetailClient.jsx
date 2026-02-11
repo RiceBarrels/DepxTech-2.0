@@ -1,5 +1,6 @@
 "use client"
 
+import { useTranslations } from 'next-intl'
 import { useAuth } from '@/lib/auth'
 import { toast } from 'sonner'
 import { useTransitionRouter } from '@/components/ui/pageTransitions'
@@ -8,12 +9,13 @@ import Recommends from '@/components/ui/recommends'
 import { motion } from 'framer-motion'
 
 export default function ProductDetailClient({ product, productId }) {
+  const t = useTranslations('productDetail')
   const { addToCart, user } = useAuth()
   const router = useTransitionRouter()
 
   const handleAddToCart = async (product, quantity = 1) => {
     if (!user) {
-      toast.error('Please login to add items to cart')
+      toast.error(t('pleaseLoginToCart'))
       router.push('/login')
       return
     }
@@ -21,25 +23,25 @@ export default function ProductDetailClient({ product, productId }) {
     try {
       const result = await addToCart(product.id, quantity)
       if (result.success) {
-        toast.success('Added to cart', {
-          description: `${product.title} x${quantity} has been added to your cart.`,
+        toast.success(t('addedToCartToast'), {
+          description: t('addedToCartDesc', { title: product.title, quantity }),
           action: {
-            label: 'View Cart',
+            label: t('viewCart'),
             onClick: () => router.push('/cart')
           }
         })
       } else {
-        toast.error('Failed to add item to cart: ' + result.error)
+        toast.error(t('failedAddToCart') + ': ' + result.error)
       }
     } catch (error) {
       console.error('Error adding to cart:', error)
-      toast.error('Failed to add item to cart')
+      toast.error(t('failedAddToCart'))
     }
   }
 
   const handleToggleFavorite = () => {
-    toast.success('Added to favorites', {
-      description: 'This product has been saved to your favorites.',
+    toast.success(t('addedToFavorites'), {
+      description: t('addedToFavoritesDesc'),
     })
   }
 
@@ -69,11 +71,11 @@ export default function ProductDetailClient({ product, productId }) {
           >
             <h2 className="text-3xl md:text-4xl font-bold mb-4">
               <span className="bg-gradient-to-r from-violet-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
-                You May Also Like
+                {t('youMayAlsoLike')}
               </span>
             </h2>
             <p className="text-muted-foreground text-lg">
-              Similar products you might be interested in
+              {t('similarProducts')}
             </p>
           </motion.div>
 

@@ -1,11 +1,14 @@
 'use client'
 
-import Link from 'next/link'
+import { Link } from '@/i18n/navigation'
 import { Spotlight } from '@/components/ui/aceternity/spotlight'
 import { motion } from 'framer-motion'
+import { useTranslations } from 'next-intl'
 import { ArrowLeft, FolderOpen, Sparkles } from 'lucide-react'
 
 export function CategoryHero({ category, postCount, categories }) {
+  const t = useTranslations('blog')
+
   return (
     <section className="relative py-16 lg:py-24 overflow-hidden">
       {/* Spotlight Effect */}
@@ -26,7 +29,7 @@ export function CategoryHero({ category, postCount, categories }) {
           className="inline-flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400 hover:text-primary transition-colors mb-8 group"
         >
           <ArrowLeft className="size-4 group-hover:-translate-x-1 transition-transform" />
-          Back to Blog
+          {t('backToBlog')}
         </Link>
 
         <motion.div
@@ -45,13 +48,13 @@ export function CategoryHero({ category, postCount, categories }) {
           </motion.div>
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-semibold mb-4">
             <Sparkles className="size-4" />
-            Category
+            {t('categoryLabel')}
           </div>
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-slate-900 dark:text-white leading-tight tracking-tight">
-            <span className="text-primary">{category}</span> Articles
+            <span className="text-primary">{category}</span> {t('allArticles')}
           </h1>
           <p className="mt-6 text-lg text-slate-600 dark:text-slate-400 leading-relaxed">
-            {postCount} article{postCount !== 1 ? 's' : ''} in this category
+            {t('articles', { count: postCount })}
           </p>
         </motion.div>
       </div>
@@ -60,6 +63,8 @@ export function CategoryHero({ category, postCount, categories }) {
 }
 
 export function CategoryNav({ categories, currentCategory }) {
+  const t = useTranslations('blog')
+
   return (
     <section className="pb-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -68,7 +73,7 @@ export function CategoryNav({ categories, currentCategory }) {
             href="/blog"
             className="px-5 py-2.5 rounded-full bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-sm font-medium border border-slate-200 dark:border-slate-700 hover:border-primary hover:text-primary transition-all"
           >
-            All Posts
+            {t('allPosts2')}
           </Link>
           {categories.map((cat) => (
             <Link

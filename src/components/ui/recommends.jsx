@@ -17,7 +17,7 @@ import {
 import { fetchRecommendationsServer } from "@/lib/fetch-recommends"
 import { useAuth } from '@/lib/auth'
 import { useTransitionRouter, isTransitionRoute } from '@/components/ui/pageTransitions'
-import { usePathname } from 'next/navigation'
+import { usePathname } from '@/i18n/navigation'
 
 // Server-side component for initial render (SEO-friendly)
 export default function Recommends({ 

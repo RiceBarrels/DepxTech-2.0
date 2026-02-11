@@ -1,8 +1,8 @@
 "use client"
 
-import { usePathname } from "next/navigation";
+import { usePathname } from "@/i18n/navigation";
 import { TransitionLink } from "@/components/ui/pageTransitions";
-import { HomeIcon, ArrowRightLeftIcon, PaletteIcon, UserIcon, ShoppingCartIcon, TicketPercentIcon, GlobeIcon, BookOpenIcon } from "lucide-react";
+import { HomeIcon, ArrowRightLeftIcon, PaletteIcon, UserIcon, ShoppingCartIcon, TicketPercentIcon, GlobeIcon, BookOpen } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { TextSearchIcon } from "lucide-react";
 import { SearchIcon } from "lucide-react";
@@ -15,10 +15,14 @@ import { BottomSafeArea, useSafeArea } from "../safe-area";
 import { useAuth } from "@/lib/auth";
 import { XIcon } from "lucide-react";
 import { useTransitionRouter } from "./pageTransitions";
+import { useTranslations } from 'next-intl';
+import { LanguageSwitcher } from './language-switcher';
 
 export default function Nav({}) {
     const router = useTransitionRouter();
     const pathname = usePathname();
+    const t = useTranslations('nav');
+    const tCommon = useTranslations('common');
     const [justOpenedPage, setJustOpenedPage] = useState();
     const [touchedLink, setTouchedLink] = useState();
     const [indicatorStyle, setIndicatorStyle] = useState({});
@@ -102,34 +106,34 @@ export default function Nav({}) {
                                 )}
                                 data-active={isActive("/trade")}
                             >
-                                Trade-in
+                                {t('tradeIn')}
                             </TransitionLink>
-                            <TransitionLink 
-                                href="/trade/process" 
+                            <TransitionLink
+                                href="/trade/process"
                                 className={cn(
                                     "text-sm font-medium hover:text-primary transition-colors",
                                     pathname.includes("process") && "text-primary"
                                 )}
                             >
-                                Process
+                                {t('process')}
                             </TransitionLink>
-                            <TransitionLink 
-                                href="/trade/sustainability" 
+                            <TransitionLink
+                                href="/trade/sustainability"
                                 className={cn(
                                     "text-sm font-medium hover:text-primary transition-colors",
                                     pathname.includes("sustainability") && "text-primary"
                                 )}
                             >
-                                Sustainability
+                                {t('sustainability')}
                             </TransitionLink>
-                            <TransitionLink 
-                                href="/trade/how-it-works" 
+                            <TransitionLink
+                                href="/trade/how-it-works"
                                 className={cn(
                                     "text-sm font-medium hover:text-primary transition-colors",
                                     pathname.includes("how-it-works") && "text-primary"
                                 )}
                             >
-                                How it Works
+                                {t('howItWorks')}
                             </TransitionLink>
                             <TransitionLink
                                 href="/trade/faq"
@@ -138,7 +142,7 @@ export default function Nav({}) {
                                     pathname.includes("faq") && "text-primary"
                                 )}
                             >
-                                FAQ
+                                {t('faq')}
                             </TransitionLink>
                             <TransitionLink
                                 href="/blog"
@@ -148,7 +152,7 @@ export default function Nav({}) {
                                 )}
                                 data-active={isActive("/blog")}
                             >
-                                Blog
+                                {t('blog')}
                             </TransitionLink>
                         </div>
 
@@ -172,7 +176,7 @@ export default function Nav({}) {
                                 <TransitionLink href="/login">
                                     <Button variant="ghost" size="sm" className="h-8 px-2.5 gap-1.5 text-sm">
                                         <UserIcon className="size-3.5" />
-                                        <span className="hidden xl:inline">Sign In</span>
+                                        <span className="hidden xl:inline">{tCommon('signIn')}</span>
                                     </Button>
                                 </TransitionLink>
                             ) : (
@@ -197,52 +201,52 @@ export default function Nav({}) {
                                 pathname.includes("smartphones") && "text-primary"
                             )}
                         >
-                            Smartphones
+                            {t('categories.smartphones')}
                         </TransitionLink>
-                        <TransitionLink 
-                            href="/trade?category=laptops" 
+                        <TransitionLink
+                            href="/trade?category=laptops"
                             className={cn(
                                 "text-xs font-medium hover:text-primary transition-colors whitespace-nowrap",
                                 pathname.includes("laptops") && "text-primary"
                             )}
                         >
-                            Laptops
+                            {t('categories.laptops')}
                         </TransitionLink>
-                        <TransitionLink 
-                            href="/trade?category=tablets" 
+                        <TransitionLink
+                            href="/trade?category=tablets"
                             className={cn(
                                 "text-xs font-medium hover:text-primary transition-colors whitespace-nowrap",
                                 pathname.includes("tablets") && "text-primary"
                             )}
                         >
-                            Tablets
+                            {t('categories.tablets')}
                         </TransitionLink>
-                        <TransitionLink 
-                            href="/trade?category=gaming" 
+                        <TransitionLink
+                            href="/trade?category=gaming"
                             className={cn(
                                 "text-xs font-medium hover:text-primary transition-colors whitespace-nowrap",
                                 pathname.includes("gaming") && "text-primary"
                             )}
                         >
-                            Gaming Consoles
+                            {t('categories.gamingConsoles')}
                         </TransitionLink>
-                        <TransitionLink 
-                            href="/trade?category=audio" 
+                        <TransitionLink
+                            href="/trade?category=audio"
                             className={cn(
                                 "text-xs font-medium hover:text-primary transition-colors whitespace-nowrap",
                                 pathname.includes("audio") && "text-primary"
                             )}
                         >
-                            Audio Devices
+                            {t('categories.audioDevices')}
                         </TransitionLink>
-                        <TransitionLink 
-                            href="/trade?category=wearables" 
+                        <TransitionLink
+                            href="/trade?category=wearables"
                             className={cn(
                                 "text-xs font-medium hover:text-primary transition-colors whitespace-nowrap",
                                 pathname.includes("wearables") && "text-primary"
                             )}
                         >
-                            Wearables
+                            {t('categories.wearables')}
                         </TransitionLink>
                     </div>
                 </div>
@@ -251,17 +255,16 @@ export default function Nav({}) {
                 <div className="w-full h-8 px-4 flex items-center bg-muted/30">
                     <div className="flex items-center gap-4 max-w-7xl mx-auto w-full text-xs text-muted-foreground">
                         <TransitionLink href="/warranty" className="hover:text-foreground transition-colors">
-                            Warranty
+                            {t('warranty')}
                         </TransitionLink>
                         <TransitionLink href="/shipping" className="hover:text-foreground transition-colors">
-                            Free Shipping
+                            {t('freeShipping')}
                         </TransitionLink>
                         <TransitionLink href="/returns" className="hover:text-foreground transition-colors">
-                            30-Day Returns
+                            {t('returns')}
                         </TransitionLink>
-                        <div className="ml-auto flex items-center gap-1.5">
-                            <GlobeIcon className="size-3" />
-                            <span>US</span>
+                        <div className="ml-auto">
+                            <LanguageSwitcher variant="compact" />
                         </div>
                     </div>
                 </div>
@@ -283,10 +286,10 @@ export default function Nav({}) {
                 }}
             >
                 {[
-                    { href: "/", icon: HomeIcon, label: "Home" },
-                    { href: "/trade", icon: ArrowRightLeftIcon, label: "Trade in" },
-                    { href: "/blog", icon: BookOpenIcon, label: "Blog" },
-                    { href: user ? "/account" : "/login", icon: UserIcon, label: user ? "Account" : "Sign In" },
+                    { href: "/", icon: HomeIcon, label: t('home') },
+                    { href: "/trade", icon: ArrowRightLeftIcon, label: t('tradeInMobile') },
+                    { href: "/blog", icon: BookOpen, label: t('blog') },
+                    { href: user ? "/account" : "/login", icon: UserIcon, label: user ? tCommon('account') : tCommon('signIn') },
                 ].map(({ href, icon: Icon, label }) => {
                     const active = isActive(href)
                     const pressed = justOpenedPage === href || touchedLink === href

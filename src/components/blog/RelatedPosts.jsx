@@ -2,9 +2,10 @@
 
 import { cn } from '@/lib/utils'
 import { AnimatePresence, motion } from 'framer-motion'
-import Link from 'next/link'
+import { Link } from '@/i18n/navigation'
 import Image from 'next/image'
 import { useState } from 'react'
+import { useTranslations } from 'next-intl'
 import { Calendar, BookOpen } from 'lucide-react'
 
 function formatDate(dateString) {
@@ -17,6 +18,7 @@ function formatDate(dateString) {
 
 export function RelatedPosts({ posts, className }) {
   const [hoveredIndex, setHoveredIndex] = useState(null)
+  const t = useTranslations('blog')
 
   if (posts.length === 0) return null
 
@@ -28,7 +30,7 @@ export function RelatedPosts({ posts, className }) {
             <BookOpen className="size-5 text-primary" />
           </div>
           <h2 className="text-2xl font-bold text-slate-900 dark:text-white">
-            Related Articles
+            {t('relatedArticles')}
           </h2>
         </div>
         <div className="grid md:grid-cols-3 gap-2">

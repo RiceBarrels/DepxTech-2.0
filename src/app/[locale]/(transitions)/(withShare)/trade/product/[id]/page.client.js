@@ -1,0 +1,777 @@
+"use client"
+
+import { useState, useMemo, useEffect, useRef, useCallback } from "react"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import {
+  CheckCircle,
+  Loader2,
+  ChevronRight,
+  ChevronLeft,
+  UserIcon,
+  MailIcon,
+  PhoneIcon,
+  MessageSquareIcon,
+} from 'lucide-react'
+import { toast } from 'sonner'
+import { useTranslations } from 'next-intl'
+import { useAuth } from '@/lib/auth'
+import { cn } from '@/lib/utils'
+import { motion, AnimatePresence } from 'framer-motion'
+
+// ── Helpers (unchanged) ──────────────────────────
+const parsePercentage = (value) => {
+  if (!value) return 0
+  const num = parseFloat(String(value).trim())
+  return isNaN(num) ? 0 : num
+}
+
+const parseFixed = (value) => {
+  if (!value) return 0
+  const num = parseFloat(String(value).trim())
+  return isNaN(num) ? 0 : num
+}
+
+const getImageUrl = (img) => {
+  if (!img) return null
+  if (typeof img === 'string') return img
+  if (typeof img === 'object' && img.url) return img.url
+  return null
+}
+
+// ── Step transition variants ─────────────────────
+const stepVariants = {
+  enter: (direction) => ({ x: direction > 0 ? 80 : -80, opacity: 0 }),
+  center: { x: 0, opacity: 1 },
+  exit: (direction) => ({ x: direction > 0 ? -80 : 80, opacity: 0 }),
+}
+
+export default function TradeProductPageClient({ product, questions, basePrice, minPrice, depreciation }) {
+  const { user } = useAuth()
+  const t = useTranslations('trade.product')
+
+  const [answers, setAnswers] = useState({})
+  const [currentStep, setCurrentStep] = useState(0)
+  const [direction, setDirection] = useState(1)
+  const [formData, setFormData] = useState({
+    name: user?.user_metadata?.full_name || '',
+    email: user?.email || '',
+    phone: '',
+    notes: ''
+  })
+  const [submitting, setSubmitting] = useState(false)
+  const [submitted, setSubmitted] = useState(false)
+  const [pricePulse, setPricePulse] = useState(false)
+  const autoAdvanceTimer = useRef(null)
+
+  const totalSteps = (questions?.length || 0) + 1
+
+  const formatCurrency = (amount) => {
+    return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(amount)
+  }
+
+  // ── Price calculation (ALL LOGIC UNCHANGED) ────
+  const calculatedQuote = useMemo(function calculateQuote() {
+    const questionsList = questions || []
+    let totalPercentageAdjustment = 0
+    let totalFixedAdjustment = 0
+
+    for (let qIndex = 0; qIndex < questionsList.length; qIndex++) {
+      const question = questionsList[qIndex]
+      const selectedAnswer = answers[qIndex]
+      const isMultiple = question.type === 'multiple'
+      const isOppositeMultiple = question.type === 'opposite_multiple'
+
+      if (isOppositeMultiple && question.ans) {
+        const selected = Array.isArray(selectedAnswer) ? selectedAnswer : []
+        for (let i = 0; i < question.ans.length; i++) {
+          if (!selected.includes(i)) {
+            const answer = question.ans[i]
+            totalPercentageAdjustment += parsePercentage(answer.persentage)
+            totalFixedAdjustment += parseFixed(answer.fixed)
+          }
+        }
+      } else if (isMultiple && Array.isArray(selectedAnswer)) {
+        for (let i = 0; i < selectedAnswer.length; i++) {
+          const answerIndex = selectedAnswer[i]
+          if (question.ans && question.ans[answerIndex]) {
+            const answer = question.ans[answerIndex]
+            totalPercentageAdjustment += parsePercentage(answer.persentage)
+            totalFixedAdjustment += parseFixed(answer.fixed)
+          }
+        }
+      } else if (selectedAnswer !== undefined && question.ans && question.ans[selectedAnswer]) {
+        const answer = question.ans[selectedAnswer]
+        totalPercentageAdjustment += parsePercentage(answer.persentage)
+        totalFixedAdjustment += parseFixed(answer.fixed)
+      }
+    }
+
+    const afterPercentage = basePrice * (1 + totalPercentageAdjustment / 100)
+    let finalValue = afterPercentage + totalFixedAdjustment
+    const appliedMinPrice = minPrice && finalValue < minPrice
+
+    if (minPrice && finalValue < minPrice) finalValue = minPrice
+    finalValue = Math.max(0, finalValue)
+
+    return {
+      value: finalValue,
+      percentageAdjustment: totalPercentageAdjustment,
+      fixedAdjustment: totalFixedAdjustment,
+      deduction: totalPercentageAdjustment < 0 ? Math.abs(totalPercentageAdjustment) : 0,
+      bonus: totalPercentageAdjustment > 0 ? totalPercentageAdjustment : 0,
+      isZeroValue: finalValue === 0,
+      appliedMinPrice,
+    }
+  }, [answers, questions, basePrice, minPrice])
+
+  // Pulse price when it changes
+  const prevValueRef = useRef(calculatedQuote.value)
+  useEffect(() => {
+    if (prevValueRef.current !== calculatedQuote.value) {
+      setPricePulse(true)
+      const t = setTimeout(() => setPricePulse(false), 500)
+      prevValueRef.current = calculatedQuote.value
+      return () => clearTimeout(t)
+    }
+  }, [calculatedQuote.value])
+
+  // ── Step completion (unchanged) ────────────────
+  const isStepComplete = (stepIndex) => {
+    const questionsList = questions || []
+    if (stepIndex < questionsList.length) {
+      const question = questionsList[stepIndex]
+      const answer = answers[stepIndex]
+      if (question.required === false) return true
+      if (question.type === 'multiple' || question.type === 'opposite_multiple') {
+        if (question.type === 'opposite_multiple') return true
+        return Array.isArray(answer) && answer.length > 0
+      }
+      return answer !== undefined
+    }
+    return formData.name && formData.email
+  }
+
+  const canProceed = isStepComplete(currentStep)
+
+  // ── Answer selection (unchanged logic) + auto-advance ──
+  const handleAnswerSelect = useCallback((questionIndex, answerIndex) => {
+    const question = questions?.[questionIndex]
+    const isMultiple = question?.type === 'multiple' || question?.type === 'opposite_multiple'
+
+    setAnswers(prev => {
+      if (isMultiple) {
+        const currentAnswers = Array.isArray(prev[questionIndex]) ? prev[questionIndex] : []
+        const isSelected = currentAnswers.includes(answerIndex)
+        return {
+          ...prev,
+          [questionIndex]: isSelected
+            ? currentAnswers.filter(idx => idx !== answerIndex)
+            : [...currentAnswers, answerIndex]
+        }
+      }
+      return { ...prev, [questionIndex]: answerIndex }
+    })
+
+    // Auto-advance for single-select after brief delay
+    if (!isMultiple) {
+      if (autoAdvanceTimer.current) clearTimeout(autoAdvanceTimer.current)
+      autoAdvanceTimer.current = setTimeout(() => {
+        setDirection(1)
+        setCurrentStep(prev => Math.min(prev + 1, totalSteps - 1))
+      }, 400)
+    }
+  }, [questions, totalSteps])
+
+  // Cleanup timer
+  useEffect(() => () => {
+    if (autoAdvanceTimer.current) clearTimeout(autoAdvanceTimer.current)
+  }, [])
+
+  const handleInputChange = (field, value) => {
+    setFormData(prev => ({ ...prev, [field]: value }))
+  }
+
+  const handleNext = () => {
+    if (currentStep < totalSteps - 1) {
+      setDirection(1)
+      setCurrentStep(prev => prev + 1)
+    }
+  }
+
+  const handleBack = () => {
+    if (currentStep > 0) {
+      if (autoAdvanceTimer.current) clearTimeout(autoAdvanceTimer.current)
+      setDirection(-1)
+      setCurrentStep(prev => prev - 1)
+    }
+  }
+
+  // ── Submit (unchanged) ─────────────────────────
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+
+    const unansweredQuestions = (questions || []).filter((q, idx) => {
+      if (q.required === false) return false
+      const answer = answers[idx]
+      if (q.type === 'multiple') return !Array.isArray(answer) || answer.length === 0
+      return answer === undefined
+    })
+    if (unansweredQuestions.length > 0) {
+      toast.error(t('errorAnswerRequired'))
+      return
+    }
+    if (!formData.name || !formData.email) {
+      toast.error(t('errorFieldsRequired'))
+      return
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      toast.error(t('errorInvalidEmail'))
+      return
+    }
+
+    setSubmitting(true)
+
+    try {
+      const answersSummary = (questions || []).map((q, qIndex) => {
+        const selectedAnswer = answers[qIndex]
+        const isMultiple = q.type === 'multiple' || q.type === 'opposite_multiple'
+
+        if (isMultiple) {
+          const selected = Array.isArray(selectedAnswer) ? selectedAnswer : []
+          if (q.type === 'opposite_multiple') {
+            const uncheckedAnswers = (q.ans || []).filter((_, i) => !selected.includes(i))
+            return {
+              questionIndex: qIndex, questionText: q.title, questionType: 'opposite_multiple',
+              answerIndices: selected, answerTexts: selected.map(i => q.ans?.[i]?.content || 'N/A'),
+              percentageAdjustment: uncheckedAnswers.reduce((sum, a) => sum + parsePercentage(a?.persentage), 0),
+              fixedAdjustment: uncheckedAnswers.reduce((sum, a) => sum + parseFixed(a?.fixed), 0)
+            }
+          }
+          const selectedAnswers = selected.map(ansIdx => q.ans && q.ans[ansIdx]).filter(Boolean)
+          return {
+            questionIndex: qIndex, questionText: q.title, questionType: 'multiple',
+            answerIndices: selected, answerTexts: selectedAnswers.map(a => a?.content || 'Not answered'),
+            percentageAdjustment: selectedAnswers.reduce((sum, a) => sum + parsePercentage(a?.persentage), 0),
+            fixedAdjustment: selectedAnswers.reduce((sum, a) => sum + parseFixed(a?.fixed), 0)
+          }
+        }
+        const answer = q.ans && q.ans[selectedAnswer]
+        return {
+          questionIndex: qIndex, questionText: q.title, questionType: 'single',
+          answerIndex: selectedAnswer, answerText: answer?.content || 'Not answered',
+          percentageAdjustment: parsePercentage(answer?.persentage),
+          fixedAdjustment: parseFixed(answer?.fixed)
+        }
+      })
+
+      const response = await fetch('/api/tradeins/quote', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          productId: product.id, productTitle: product.title,
+          answers: answersSummary, estimatedValue: calculatedQuote.value,
+          totalDeduction: calculatedQuote.deduction, totalBonus: calculatedQuote.bonus,
+          basePrice, depreciation, priceSource: 'database',
+          name: formData.name, email: formData.email,
+          phone: formData.phone || null, notes: formData.notes || null,
+          userId: user?.id || null
+        })
+      })
+
+      const data = await response.json()
+      if (!response.ok) throw new Error(data.error || 'Failed to submit quote request')
+      setSubmitted(true)
+      toast.success(t('successMessage'))
+    } catch (error) {
+      console.error('Error submitting quote:', error)
+      toast.error(error.message || t('errorSubmit'))
+    } finally {
+      setSubmitting(false)
+    }
+  }
+
+  // ── Success state ──────────────────────────────
+  if (submitted) {
+    return (
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.4, ease: 'easeOut' }}
+      >
+        <Card className="bg-card border border-border shadow-sm rounded-2xl overflow-hidden">
+          <CardContent className="p-6 md:p-8">
+            <div className="text-center">
+              <motion.div
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ type: 'spring', stiffness: 300, damping: 20, delay: 0.1 }}
+                className="w-16 h-16 mx-auto mb-5 bg-emerald-100 dark:bg-emerald-900/30 rounded-full flex items-center justify-center"
+              >
+                <CheckCircle className="w-8 h-8 text-emerald-600 dark:text-emerald-400" />
+              </motion.div>
+              <h3 className="text-xl font-bold text-foreground mb-2">{t('quoteSubmitted')}</h3>
+              <p className="text-sm text-muted-foreground mb-6">
+                {t('quoteSubmittedDesc')}
+              </p>
+
+              <div className="p-5 bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800 rounded-xl mb-6">
+                <p className="text-xs font-medium text-emerald-600 dark:text-emerald-400 mb-1">{t('estimatedValue')}</p>
+                <p className="text-3xl font-bold text-emerald-600 dark:text-emerald-400">
+                  {formatCurrency(calculatedQuote.value)}
+                </p>
+                <p className="text-xs text-emerald-600/70 dark:text-emerald-400/70 mt-1">
+                  {t('finalValueNote')}
+                </p>
+              </div>
+
+              <div className="text-left bg-muted/50 rounded-xl p-4">
+                <p className="text-sm font-semibold text-foreground mb-3">{t('whatsNext')}</p>
+                <div className="space-y-2.5">
+                  {[
+                    t('step1'),
+                    t('step2'),
+                    t('step3'),
+                    t('step4'),
+                  ].map((step, i) => (
+                    <motion.div
+                      key={i}
+                      initial={{ opacity: 0, x: -12 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.3 + i * 0.1 }}
+                      className="flex items-center gap-3 text-sm"
+                    >
+                      <span className="w-5 h-5 rounded-full bg-primary/10 text-primary text-xs font-bold flex items-center justify-center shrink-0">
+                        {i + 1}
+                      </span>
+                      <span className="text-muted-foreground">{step}</span>
+                    </motion.div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="flex items-center justify-center gap-4 mt-5 text-xs text-muted-foreground">
+                <span className="flex items-center gap-1">
+                  <CheckCircle className="w-3.5 h-3.5 text-emerald-500" /> {t('freeShipping')}
+                </span>
+                <span className="flex items-center gap-1">
+                  <CheckCircle className="w-3.5 h-3.5 text-emerald-500" /> {t('dataWiping')}
+                </span>
+                <span className="flex items-center gap-1">
+                  <CheckCircle className="w-3.5 h-3.5 text-emerald-500" /> {t('response24h')}
+                </span>
+              </div>
+
+              <Button
+                onClick={() => {
+                  setSubmitted(false)
+                  setCurrentStep(0)
+                  setAnswers({})
+                  setFormData({
+                    name: user?.user_metadata?.full_name || '',
+                    email: user?.email || '',
+                    phone: '', notes: ''
+                  })
+                }}
+                variant="outline"
+                className="mt-6 w-full"
+              >
+                {t('submitAnother')}
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      </motion.div>
+    )
+  }
+
+  // ── Render question step ───────────────────────
+  const renderQuestionStep = () => {
+    const questionsList = questions || []
+    if (currentStep >= questionsList.length) return null
+
+    const question = questionsList[currentStep]
+    const questionAnswers = question.ans || []
+    const isMultiple = question.type === 'multiple' || question.type === 'opposite_multiple'
+    const isOppositeMultiple = question.type === 'opposite_multiple'
+    const currentAnswers = answers[currentStep]
+
+    const isAnswerSelected = (ansIdx) => {
+      if (isMultiple) return Array.isArray(currentAnswers) && currentAnswers.includes(ansIdx)
+      return currentAnswers === ansIdx
+    }
+
+    return (
+      <div className="space-y-4">
+        <div className="space-y-2">
+          <div className="flex items-start justify-between gap-2">
+            <h3 className="text-base font-semibold text-foreground">{question.title}</h3>
+            <div className="flex items-center gap-1.5 shrink-0">
+              {question.required !== false ? (
+                <span className="text-xs text-red-500">{t('required')}</span>
+              ) : (
+                <span className="text-xs text-muted-foreground">{t('optional')}</span>
+              )}
+              {isMultiple && (
+                <span className="text-xs text-muted-foreground ml-1">
+                  · {isOppositeMultiple ? t('checkAllApply') : t('multiSelect')}
+                </span>
+              )}
+            </div>
+          </div>
+          {question.description && (
+            <p className="text-sm text-muted-foreground">{question.description}</p>
+          )}
+          {getImageUrl(question.img) && (
+            <img
+              src={getImageUrl(question.img)}
+              alt={question.title}
+              className="max-w-full h-auto max-h-40 rounded-lg border border-border object-contain"
+            />
+          )}
+        </div>
+
+        <div className="space-y-2">
+          {questionAnswers.map((answer, ansIdx) => {
+            const isSelected = isAnswerSelected(ansIdx)
+            const percentage = parsePercentage(answer.persentage)
+            const fixed = parseFixed(answer.fixed)
+            const isZeroValueAnswer = percentage <= -100
+
+            return (
+              <motion.div
+                key={ansIdx}
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: ansIdx * 0.04, duration: 0.2 }}
+              >
+                <div
+                  role="button"
+                  tabIndex={0}
+                  onClick={() => handleAnswerSelect(currentStep, ansIdx)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault()
+                      handleAnswerSelect(currentStep, ansIdx)
+                    }
+                  }}
+                  className={cn(
+                    "w-full text-left p-4 border rounded-xl transition-all cursor-pointer active:scale-[0.98]",
+                    isSelected
+                      ? "border-primary bg-primary/5 ring-1 ring-primary/20"
+                      : "border-border hover:border-primary/30 hover:bg-muted/30",
+                    isZeroValueAnswer && isSelected && "border-orange-400 bg-orange-50 dark:bg-orange-950/30 ring-orange-200"
+                  )}
+                >
+                  <div className="flex items-center gap-3">
+                    {/* Selection indicator */}
+                    <div className={cn(
+                      "shrink-0 w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all",
+                      isMultiple && "rounded-md",
+                      isSelected
+                        ? "bg-primary border-primary"
+                        : "border-muted-foreground/30"
+                    )}>
+                      {isSelected && <CheckCircle className="w-4 h-4 text-white" />}
+                    </div>
+
+                    {/* Answer image */}
+                    {getImageUrl(answer.img) && (
+                      <img
+                        src={getImageUrl(answer.img)}
+                        alt={answer.content}
+                        className="w-12 h-12 rounded-lg border border-border object-cover shrink-0"
+                      />
+                    )}
+
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between gap-2">
+                        <div className="flex-1">
+                          <span className={cn(
+                            "font-medium text-sm",
+                            isSelected ? "text-foreground" : "text-foreground/80"
+                          )}>{answer.content}</span>
+                          {isZeroValueAnswer && (
+                            <span className="ml-2 text-xs text-orange-600 dark:text-orange-400">{t('noValue')}</span>
+                          )}
+                          {answer.description && (
+                            <p className="text-xs text-muted-foreground mt-0.5">{answer.description}</p>
+                          )}
+                        </div>
+                        <div className="flex items-center gap-1.5 shrink-0">
+                          {percentage !== 0 && !isZeroValueAnswer && (
+                            <span className={cn(
+                              "text-xs font-medium px-1.5 py-0.5 rounded",
+                              percentage > 0
+                                ? "bg-emerald-100 dark:bg-emerald-900/50 text-emerald-600 dark:text-emerald-400"
+                                : "bg-muted text-muted-foreground"
+                            )}>
+                              {percentage > 0 ? '+' : ''}{percentage}%
+                            </span>
+                          )}
+                          {fixed !== 0 && !isZeroValueAnswer && (
+                            <span className={cn(
+                              "text-xs font-medium px-1.5 py-0.5 rounded",
+                              fixed > 0
+                                ? "bg-emerald-100 dark:bg-emerald-900/50 text-emerald-600 dark:text-emerald-400"
+                                : "bg-muted text-muted-foreground"
+                            )}>
+                              {fixed > 0 ? '+' : ''}{formatCurrency(fixed)}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            )
+          })}
+        </div>
+      </div>
+    )
+  }
+
+  // ── Render contact form ────────────────────────
+  const renderContactForm = () => (
+    <div className="space-y-4">
+      <div className="space-y-1">
+        <h3 className="text-base font-semibold text-foreground">{t('contactInfo')}</h3>
+        <p className="text-sm text-muted-foreground">
+          {t('contactDesc')}
+        </p>
+      </div>
+
+      <div className="space-y-3">
+        <div className="space-y-1.5">
+          <Label htmlFor="name" className="text-sm font-medium">
+            {t('fullName')} <span className="text-red-500">*</span>
+          </Label>
+          <div className="relative">
+            <UserIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+            <Input
+              id="name" type="text" value={formData.name}
+              onChange={(e) => handleInputChange('name', e.target.value)}
+              placeholder={t('namePlaceholder')} className="h-11 pl-9" required
+            />
+          </div>
+        </div>
+
+        <div className="space-y-1.5">
+          <Label htmlFor="email" className="text-sm font-medium">
+            {t('emailAddress')} <span className="text-red-500">*</span>
+          </Label>
+          <div className="relative">
+            <MailIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+            <Input
+              id="email" type="email" value={formData.email}
+              onChange={(e) => handleInputChange('email', e.target.value)}
+              placeholder={t('emailPlaceholder')} className="h-11 pl-9" required
+            />
+          </div>
+        </div>
+
+        <div className="space-y-1.5">
+          <Label htmlFor="phone" className="text-sm font-medium">
+            {t('phoneNumber')} <span className="text-xs text-muted-foreground">({t('optional')})</span>
+          </Label>
+          <div className="relative">
+            <PhoneIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+            <Input
+              id="phone" type="tel" value={formData.phone}
+              onChange={(e) => handleInputChange('phone', e.target.value)}
+              placeholder={t('phonePlaceholder')} className="h-11 pl-9"
+            />
+          </div>
+        </div>
+
+        <div className="space-y-1.5">
+          <Label htmlFor="notes" className="text-sm font-medium">
+            {t('additionalNotes')} <span className="text-xs text-muted-foreground">({t('optional')})</span>
+          </Label>
+          <div className="relative">
+            <MessageSquareIcon className="absolute left-3 top-3 w-4 h-4 text-muted-foreground" />
+            <textarea
+              id="notes"
+              className="w-full min-h-[80px] pl-9 px-3 py-2.5 border border-input rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-ring focus:border-ring bg-background text-sm"
+              value={formData.notes}
+              onChange={(e) => handleInputChange('notes', e.target.value)}
+              placeholder={t('notesPlaceholder')}
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+
+  const isLastStep = currentStep === totalSteps - 1
+  const questionsList = questions || []
+
+  return (
+    <Card className="bg-card border border-border shadow-sm rounded-2xl overflow-hidden">
+      <CardHeader className="bg-muted/30 border-b border-border pb-4">
+        <div className="flex items-center justify-between mb-4">
+          <div>
+            <CardTitle className="text-xl font-semibold text-foreground">{t('getYourQuote')}</CardTitle>
+            <CardDescription className="text-sm text-muted-foreground mt-1">
+              {t('answerQuestions')}
+            </CardDescription>
+          </div>
+          <div className="flex items-center gap-1 text-sm font-medium text-muted-foreground">
+            <span className="text-primary font-bold">{currentStep + 1}</span>
+            <span>/</span>
+            <span>{totalSteps}</span>
+          </div>
+        </div>
+
+        {/* Progress bar with spring animation */}
+        <div className="h-1.5 bg-muted rounded-full overflow-hidden">
+          <motion.div
+            className="h-full bg-primary rounded-full"
+            initial={false}
+            animate={{ width: `${((currentStep + 1) / totalSteps) * 100}%` }}
+            transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+          />
+        </div>
+
+        {/* Step dots */}
+        <div className="flex items-center justify-center gap-1.5 mt-3">
+          {Array.from({ length: totalSteps }).map((_, i) => (
+            <div
+              key={i}
+              className={cn(
+                "w-1.5 h-1.5 rounded-full transition-all duration-200",
+                i === currentStep ? "w-4 bg-primary" : i < currentStep ? "bg-primary/50" : "bg-muted-foreground/20"
+              )}
+            />
+          ))}
+        </div>
+      </CardHeader>
+
+      <CardContent className="p-5">
+        <form onSubmit={handleSubmit} className="space-y-5">
+          {/* Animated price display */}
+          <div className={cn(
+            "p-4 rounded-xl border transition-colors",
+            calculatedQuote.isZeroValue
+              ? "bg-orange-50 dark:bg-orange-950/30 border-orange-200 dark:border-orange-800"
+              : "bg-emerald-50 dark:bg-emerald-950/30 border-emerald-200 dark:border-emerald-800"
+          )}>
+            <div className="flex items-center justify-between">
+              <div>
+                <p className={cn(
+                  "text-xs font-medium",
+                  calculatedQuote.isZeroValue ? "text-orange-600 dark:text-orange-400" : "text-emerald-600 dark:text-emerald-400"
+                )}>
+                  {calculatedQuote.isZeroValue ? t('freeRecycling') : t('yourEstimate')}
+                </p>
+                <motion.p
+                  className={cn(
+                    "text-2xl font-bold mt-0.5",
+                    calculatedQuote.isZeroValue ? "text-orange-600 dark:text-orange-400" : "text-emerald-600 dark:text-emerald-400",
+                    pricePulse && "animate-pulse"
+                  )}
+                  key={calculatedQuote.value}
+                  initial={{ scale: 1.08 }}
+                  animate={{ scale: 1 }}
+                  transition={{ type: 'spring', stiffness: 400, damping: 20 }}
+                >
+                  {formatCurrency(calculatedQuote.value)}
+                </motion.p>
+              </div>
+              <div className="flex items-center gap-2">
+                {calculatedQuote.deduction > 0 && (
+                  <span className="text-xs px-2 py-1 rounded-full bg-muted text-muted-foreground">
+                    -{calculatedQuote.deduction}%
+                  </span>
+                )}
+                {calculatedQuote.bonus > 0 && (
+                  <span className="text-xs px-2 py-1 rounded-full bg-emerald-100 dark:bg-emerald-900/50 text-emerald-600 dark:text-emerald-400">
+                    +{calculatedQuote.bonus}%
+                  </span>
+                )}
+                {calculatedQuote.appliedMinPrice && (
+                  <span className="text-xs px-2 py-1 rounded-full bg-orange-100 dark:bg-orange-900/50 text-orange-600 dark:text-orange-400">
+                    {t('minPrice')}
+                  </span>
+                )}
+              </div>
+            </div>
+            {calculatedQuote.isZeroValue && (
+              <p className="text-xs text-orange-600/70 dark:text-orange-400/70 mt-2">
+                {t('freeRecyclingDesc')}
+              </p>
+            )}
+          </div>
+
+          {/* Animated step content */}
+          <div className="relative min-h-[200px]">
+            <AnimatePresence mode="wait" custom={direction}>
+              <motion.div
+                key={currentStep}
+                custom={direction}
+                variants={stepVariants}
+                initial="enter"
+                animate="center"
+                exit="exit"
+                transition={{ duration: 0.25, ease: 'easeInOut' }}
+              >
+                {currentStep < questionsList.length ? renderQuestionStep() : renderContactForm()}
+              </motion.div>
+            </AnimatePresence>
+          </div>
+
+          {/* Navigation buttons */}
+          <div className="flex items-center justify-between pt-4 border-t border-border">
+            <Button
+              type="button" variant="ghost" onClick={handleBack}
+              disabled={currentStep === 0}
+              className="gap-1.5"
+            >
+              <ChevronLeft className="w-4 h-4" />
+              {t('back')}
+            </Button>
+
+            {isLastStep ? (
+              <Button
+                type="submit"
+                disabled={submitting || !canProceed}
+                className="gap-2 px-6"
+              >
+                {submitting ? (
+                  <><Loader2 className="w-4 h-4 animate-spin" /> {t('submitting')}</>
+                ) : (
+                  <>{t('getMyQuote')} <ChevronRight className="w-4 h-4" /></>
+                )}
+              </Button>
+            ) : (
+              <Button
+                type="button" onClick={handleNext}
+                disabled={!canProceed} className="gap-1.5 px-5"
+              >
+                {t('continue')} <ChevronRight className="w-4 h-4" />
+              </Button>
+            )}
+          </div>
+
+          {/* Trust badges on last step */}
+          {isLastStep && (
+            <div className="flex items-center justify-center gap-4 pt-3 text-xs text-muted-foreground">
+              <span className="flex items-center gap-1">
+                <CheckCircle className="w-3.5 h-3.5 text-emerald-500" /> {t('freeShipping')}
+              </span>
+              <span className="flex items-center gap-1">
+                <CheckCircle className="w-3.5 h-3.5 text-emerald-500" /> {t('dataWiping')}
+              </span>
+              <span className="flex items-center gap-1">
+                <CheckCircle className="w-3.5 h-3.5 text-emerald-500" /> {t('response24h')}
+              </span>
+            </div>
+          )}
+        </form>
+      </CardContent>
+    </Card>
+  )
+}

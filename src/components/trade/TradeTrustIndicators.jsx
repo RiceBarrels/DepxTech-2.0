@@ -2,15 +2,18 @@
 
 import { DollarSign, Truck, Clock, Shield } from 'lucide-react'
 import { motion } from 'framer-motion'
-
-const indicators = [
-  { icon: DollarSign, label: 'Best Price', value: 'Guaranteed' },
-  { icon: Truck, label: 'Free Shipping', value: 'Included' },
-  { icon: Clock, label: 'Fast Payment', value: '24 Hours' },
-  { icon: Shield, label: 'Data Wiped', value: 'Certified' },
-]
+import { useTranslations } from 'next-intl'
 
 export function TradeTrustIndicators() {
+  const t = useTranslations('trade.trust')
+
+  const indicators = [
+    { icon: DollarSign, label: t('bestPrice'), value: t('guaranteed') },
+    { icon: Truck, label: t('freeShipping'), value: t('included') },
+    { icon: Clock, label: t('fastPayment'), value: t('24hours') },
+    { icon: Shield, label: t('dataWiped'), value: t('certified') },
+  ]
+
   return (
     <motion.div
       className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4"
@@ -45,6 +48,8 @@ export function TradeTrustIndicators() {
 }
 
 export function TradeValueProposition() {
+  const t = useTranslations('trade.valueProposition')
+
   return (
     <motion.div
       className="rounded-2xl bg-foreground/[0.03] border border-border p-6 md:p-8"
@@ -55,19 +60,19 @@ export function TradeValueProposition() {
     >
       <div className="flex flex-col md:flex-row items-center gap-6">
         <div className="flex-1 text-center md:text-left">
-          <h3 className="text-xl font-bold text-foreground mb-2">Why Trade With Us?</h3>
+          <h3 className="text-xl font-bold text-foreground mb-2">{t('title')}</h3>
           <p className="text-muted-foreground text-sm">
-            Join thousands of customers who&apos;ve traded devices for top dollar. Fast, secure, hassle-free.
+            {t('description')}
           </p>
         </div>
         <div className="flex gap-8">
           <div className="text-center">
             <div className="text-2xl font-bold text-emerald-500">50K+</div>
-            <div className="text-xs text-muted-foreground">Customers</div>
+            <div className="text-xs text-muted-foreground">{t('customers')}</div>
           </div>
           <div className="text-center">
             <div className="text-2xl font-bold text-emerald-500">4.9★</div>
-            <div className="text-xs text-muted-foreground">Rating</div>
+            <div className="text-xs text-muted-foreground">{t('rating')}</div>
           </div>
         </div>
       </div>
