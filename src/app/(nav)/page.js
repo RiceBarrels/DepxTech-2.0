@@ -1,34 +1,46 @@
-import { fetchRecommendationsServer } from '@/lib/fetch-recommends'
-import HomePageClient from './page.client'
+import { HomeHero } from '@/components/home/HomeHero'
+import { CategoryGrid } from '@/components/home/CategoryGrid'
+import { HowItWorks } from '@/components/home/HowItWorks'
+import { WhyChooseUs } from '@/components/home/WhyChooseUs'
+import { NewsletterSection } from '@/components/home/NewsletterSection'
 
-// Server component for SEO and initial data loading
-export default async function HomePage() {
-  // Fetch initial recommendations data on the server for SEO
-  const initialRecommendations = await fetchRecommendationsServer({
-    limit: 12,
-    categories: []
-  })
 
-  return (
-    <HomePageClient 
-      initialRecommendations={initialRecommendations.products} 
-    />
-  )
-}
-
+// Metadata for SEO
 export const metadata = {
-  title: 'DepxTech - Premium Electronics Store',
-  description: 'Latest tech, best prices, premium quality electronics. Discover smartphones, laptops, headphones, gaming gear, smart home devices and accessories.',
-  keywords: 'electronics, technology, smartphones, laptops, headphones, gaming, smart home, accessories, tech store',
+  title: 'DepxTech - Trade-in Your Electronics for Cash',
+  description: 'Turn your old electronics into instant cash. Fast quotes, free shipping, and high payouts guaranteed. The smarter way to recycle your tech.',
+  keywords: 'trade-in, electronics, recycle, sell phone, sell laptop, sell tablet, cash for electronics, tech buyback, eco-friendly',
   openGraph: {
-    title: 'DepxTech - Premium Electronics Store',
-    description: 'Latest tech, best prices, premium quality electronics',
+    title: 'DepxTech - Trade-in Your Electronics for Cash',
+    description: 'Turn your old electronics into instant cash. Fast quotes, free shipping, and high payouts guaranteed.',
     type: 'website',
     siteName: 'DepxTech'
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'DepxTech - Premium Electronics Store',
-    description: 'Latest tech, best prices, premium quality electronics'
+    title: 'DepxTech - Trade-in Your Electronics for Cash',
+    description: 'Turn your old electronics into instant cash. Fast quotes, free shipping, and high payouts guaranteed.'
   }
+}
+
+// Server component for the homepage
+export default function HomePage() {
+  return (
+    <main className="bg-background">
+      {/* Hero Section with Aceternity Spotlight */}
+      <HomeHero />
+
+      {/* Category Section with Hover Effects */}
+      <CategoryGrid />
+
+      {/* How it Works Section with Animations */}
+      <HowItWorks />
+
+      {/* Why Choose Us with Animated Cards */}
+      <WhyChooseUs />
+
+      {/* Newsletter CTA with Animations */}
+      <NewsletterSection />
+    </main>
+  )
 }

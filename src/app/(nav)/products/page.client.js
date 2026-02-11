@@ -290,9 +290,9 @@ export default function ProductsPageClient({
                                         layout
                                     >
                                         <TransitionLink href={`/products/${product.id}`}>
-                                            <Card className="cursor-pointer hover:shadow-lg transition-all duration-300 group p-0 gap-0 h-full">
+                                            <Card className="cursor-pointer bg-primary/5 group p-0 gap-0 h-full border-none shadow-none rounded-lg">
                                                 <CardHeader className="p-0">
-                                                    <div className="aspect-square relative overflow-hidden rounded-t-lg bg-muted">
+                                                    <div className="aspect-square relative overflow-hidden rounded-lg bg-muted">
                                                         {product.imgs && product.imgs.length > 0 ? (
                                                             <img 
                                                                 src={product.imgs[0]} 
@@ -306,7 +306,7 @@ export default function ProductsPageClient({
                                                             />
                                                         ) : null}
                                                         <div 
-                                                            className={`absolute inset-0 bg-muted flex items-center justify-center ${product.imgs && product.imgs.length > 0 ? 'hidden' : 'flex'}`}
+                                                            className={`absolute inset-0 bg-primary/10 flex items-center justify-center rounded-lg ${product.imgs && product.imgs.length > 0 ? 'hidden' : 'flex'}`}
                                                             style={{ display: product.imgs && product.imgs.length > 0 ? 'none' : 'flex' }}
                                                             aria-hidden="true"
                                                         >

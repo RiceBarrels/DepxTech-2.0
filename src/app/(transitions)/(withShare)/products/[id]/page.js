@@ -1,7 +1,6 @@
 "use server"
 
-import ProductDetails from '@/components/ui/productDetails'
-import Recommends from '@/components/ui/recommends'
+import ProductDetailClient from '@/components/product/ProductDetailClient'
 import { ProductStructuredData } from '@/components/seo/StructuredData'
 
 export async function generateMetadata({ params }) {
@@ -110,10 +109,7 @@ export default async function ProductPage({ params }) {
     return (
         <>
             <ProductStructuredData product={productDetails} />
-            <div className='p-4 flex flex-col items-center justify-center'>
-                <ProductDetails product={productDetails} />
-                <Recommends title="Recommended for You" limit={8} className="mt-8" excludeId={id} categories={productDetails.category}/>
-            </div>
+            <ProductDetailClient product={productDetails} productId={id} />
         </>
     )
 }

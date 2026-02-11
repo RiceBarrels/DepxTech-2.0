@@ -1,15 +1,14 @@
 import { supabaseAdmin } from '@/lib/supabase-admin'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { ArrowLeftIcon, ArrowRightIcon } from 'lucide-react'
-import Image from 'next/image'
-import { TransitionLink } from '@/components/ui/pageTransitions'
+import { TradeProgressStepper } from '@/components/trade/TradeProgressStepper'
+import { TradePageHeader } from '@/components/trade/TradePageHeader'
+import { TradeBrandCard } from '@/components/trade/TradeCards'
+import { TradeEmptyState } from '@/components/trade/TradeEmptyState'
 
 export async function generateMetadata({ params }) {
   const { category: categoryParam } = await params
   const category = decodeURIComponent(categoryParam)
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://depxtech.com'
-  
+
   return {
     title: `Trade In ${category} | DepxTech`,
     description: `Trade in your ${category} at DepxTech. Get instant quotes for your device. Choose from ${category} brands and get the best trade-in value.`,
@@ -29,7 +28,7 @@ export async function generateMetadata({ params }) {
 export default async function CategoryBrandPage({ params }) {
   const { category: categoryParam } = await params
   const category = decodeURIComponent(categoryParam)
-  
+
   // Fetch distinct brands for this category
   const { data: brands, error } = await supabaseAdmin
     .from('tradable_products')
@@ -50,92 +49,52 @@ export default async function CategoryBrandPage({ params }) {
   }, []) || []
 
   return (
-    <div className="min-h-screen py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-4xl mx-auto">
-
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold mb-4">Select Brand</h1>
-          <p className="text-xl text-muted-foreground">
-            Choose the brand of your {category}
-          </p>
+    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white dark:from-slate-900 dark:to-slate-950">
+      {/* Hero Section */}
+      <div className="relative overflow-hidden">
+        {/* Background decoration */}
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute top-0 left-1/4 w-96 h-96 bg-primary/5 rounded-full blur-3xl" />
+          <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-emerald-500/5 rounded-full blur-3xl" />
         </div>
 
-        <Card className="shadow-none border-none">
-          <CardHeader>
-            <CardTitle>Step 2: Choose Brand</CardTitle>
-            <CardDescription>
-              Select the manufacturer of your {category}
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
+        <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          {/* Progress Stepper */}
+          <div className="mb-12">
+            <TradeProgressStepper
+              currentStep={2}
+              completedData={{ category }}
+            />
+          </div>
+
+          {/* Page Header */}
+          <TradePageHeader
+            step={2}
+            icon="building"
+            title="Choose Your Brand"
+            subtitle={`Select the manufacturer of your ${category} to continue`}
+          />
+
+          {/* Brands Grid */}
+          <div className="mt-12">
             {uniqueBrands.length > 0 ? (
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-                {uniqueBrands.map((item) => (
-                  <TransitionLink 
-                    key={item.brand} 
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+                {uniqueBrands.map((item, index) => (
+                  <TradeBrandCard
+                    key={item.brand}
+                    brand={item.brand}
+                    brandImg={item.brand_img}
                     href={`/trade/category/${encodeURIComponent(category)}/brand/${encodeURIComponent(item.brand)}`}
-                    className="block"
-                  >
-                    <Card className="transition-all duration-300 cursor-pointer shadow-none">
-                      <CardContent className="p-6 flex flex-col items-center justify-center text-center">
-                        {item.brand_img ? (
-                          <div className="w-20 h-20 mb-4 relative">
-                            <Image
-                              src={item.brand_img}
-                              alt={item.brand}
-                              fill
-                              className="object-contain"
-                            />
-                          </div>
-                        ) : (
-                          <div className="w-20 h-20 mb-4 bg-muted rounded-lg flex items-center justify-center">
-                            <span className="text-2xl font-bold text-muted-foreground">
-                              {item.brand.charAt(0).toUpperCase()}
-                            </span>
-                          </div>
-                        )}
-                        <h3 className="font-semibold">{item.brand}</h3>
-                      </CardContent>
-                    </Card>
-                  </TransitionLink>
+                    index={index}
+                  />
                 ))}
               </div>
             ) : (
-              <div className="text-center py-8">
-                <p className="text-muted-foreground">No brands available for this category.</p>
-              </div>
+              <TradeEmptyState
+                icon="building"
+                message="No brands available for this category."
+              />
             )}
-          </CardContent>
-        </Card>
-
-        <div className="mt-12 grid grid-cols-1 md:grid-cols-4 gap-6">
-          <div className="text-center">
-            <div className="w-12 h-12 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
-              <span className="font-bold text-muted-foreground">✓</span>
-            </div>
-            <h3 className="font-semibold mb-2">Select Category</h3>
-            <p className="text-sm text-muted-foreground">{category}</p>
-          </div>
-          <div className="text-center">
-            <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-              <span className="font-bold text-primary">2</span>
-            </div>
-            <h3 className="font-semibold mb-2">Choose Brand</h3>
-            <p className="text-sm text-muted-foreground">Select the manufacturer</p>
-          </div>
-          <div className="text-center">
-            <div className="w-12 h-12 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
-              <span className="font-bold text-muted-foreground">3</span>
-            </div>
-            <h3 className="font-semibold mb-2">Pick Series</h3>
-            <p className="text-sm text-muted-foreground">Choose the product line</p>
-          </div>
-          <div className="text-center">
-            <div className="w-12 h-12 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
-              <span className="font-bold text-muted-foreground">4</span>
-            </div>
-            <h3 className="font-semibold mb-2">Select Model</h3>
-            <p className="text-sm text-muted-foreground">Pick your specific device</p>
           </div>
         </div>
       </div>

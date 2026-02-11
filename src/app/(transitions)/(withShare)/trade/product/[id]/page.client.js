@@ -313,46 +313,46 @@ export default function TradeProductPageClient({ product, questions, basePrice, 
   // Render success state
   if (submitted) {
     return (
-      <Card className="shadow-xl border-2 border-green-200 dark:border-green-800">
-        <CardContent className="pt-8 pb-6">
+      <Card className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm rounded-2xl overflow-hidden">
+        <CardContent className="p-6 md:p-8">
           <div className="text-center">
-            <div className="w-20 h-20 mx-auto mb-6 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center">
-              <CheckCircle className="w-12 h-12 text-green-600" />
+            <div className="w-16 h-16 mx-auto mb-5 bg-emerald-100 dark:bg-emerald-900/30 rounded-full flex items-center justify-center">
+              <CheckCircle className="w-8 h-8 text-emerald-600 dark:text-emerald-400" />
             </div>
-            <h3 className="text-2xl font-bold mb-2">Quote Request Submitted!</h3>
-            <p className="text-muted-foreground mb-6">
-              Thank you for your interest. We'll review your request and contact you within 24 hours.
+            <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2">Quote Request Submitted!</h3>
+            <p className="text-sm text-slate-500 dark:text-slate-400 mb-6">
+              We'll review your request and contact you within 24 hours.
             </p>
-            <div className="mt-6 p-6 bg-gradient-to-br from-green-50 to-green-100 dark:from-green-950/30 dark:to-green-900/30 border-2 border-green-200 dark:border-green-800 rounded-xl">
-              <p className="text-sm font-medium text-green-700 dark:text-green-400 mb-2">Your Estimated Value</p>
-              <p className="text-4xl font-bold text-green-600 dark:text-green-400 mb-2">
+
+            <div className="p-5 bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800 rounded-xl mb-6">
+              <p className="text-xs font-medium text-emerald-600 dark:text-emerald-400 mb-1">Your Estimated Value</p>
+              <p className="text-3xl font-bold text-emerald-600 dark:text-emerald-400">
                 {formatCurrency(calculatedQuote.value)}
               </p>
-              <p className="text-xs text-green-600/70 dark:text-green-400/70">
-                Final value will be confirmed after inspection
+              <p className="text-xs text-emerald-600/70 dark:text-emerald-400/70 mt-1">
+                Final value confirmed after inspection
               </p>
             </div>
-            <div className="mt-6 space-y-2">
-              <p className="text-sm font-semibold mb-3">What's next?</p>
-              <div className="text-left space-y-2 text-sm text-muted-foreground">
-                <div className="flex items-start gap-2">
-                  <span className="font-bold text-primary">1.</span>
-                  <span>Check your email for confirmation</span>
-                </div>
-                <div className="flex items-start gap-2">
-                  <span className="font-bold text-primary">2.</span>
-                  <span>We'll send you a prepaid shipping label</span>
-                </div>
-                <div className="flex items-start gap-2">
-                  <span className="font-bold text-primary">3.</span>
-                  <span>Ship your device (we cover the cost)</span>
-                </div>
-                <div className="flex items-start gap-2">
-                  <span className="font-bold text-primary">4.</span>
-                  <span>Get paid after verification</span>
-                </div>
+
+            <div className="text-left bg-slate-50 dark:bg-slate-700/30 rounded-xl p-4">
+              <p className="text-sm font-semibold text-slate-900 dark:text-white mb-3">What's next?</p>
+              <div className="space-y-2.5">
+                {[
+                  'Check your email for confirmation',
+                  'We\'ll send you a prepaid shipping label',
+                  'Ship your device (we cover the cost)',
+                  'Get paid after verification'
+                ].map((step, i) => (
+                  <div key={i} className="flex items-center gap-3 text-sm">
+                    <span className="w-5 h-5 rounded-full bg-primary/10 text-primary text-xs font-bold flex items-center justify-center flex-shrink-0">
+                      {i + 1}
+                    </span>
+                    <span className="text-slate-600 dark:text-slate-300">{step}</span>
+                  </div>
+                ))}
               </div>
             </div>
+
             <Button
               onClick={() => {
                 setSubmitted(false)
@@ -397,16 +397,18 @@ export default function TradeProductPageClient({ product, questions, basePrice, 
       return (
         <div className="space-y-4">
           <div className="space-y-2">
-            <div className="flex items-start gap-2">
-              <h3 className="text-lg font-semibold">{question.title}</h3>
-              {question.required !== false ? (
-                <Badge variant="destructive" className="text-xs">Required</Badge>
-              ) : (
-                <Badge variant="secondary" className="text-xs">Optional</Badge>
-              )}
-              {isMultiple && (
-                <Badge variant="outline" className="text-xs">Select multiple</Badge>
-              )}
+            <div className="flex items-start justify-between gap-2">
+              <h3 className="text-base font-semibold text-slate-900 dark:text-white">{question.title}</h3>
+              <div className="flex items-center gap-1.5 flex-shrink-0">
+                {question.required !== false ? (
+                  <span className="text-xs text-red-500">Required</span>
+                ) : (
+                  <span className="text-xs text-slate-400">Optional</span>
+                )}
+                {isMultiple && (
+                  <span className="text-xs text-slate-400 ml-1">• Multi-select</span>
+                )}
+              </div>
             </div>
             {/* Question image */}
             {getImageUrl(question.img) && (
@@ -414,7 +416,7 @@ export default function TradeProductPageClient({ product, questions, basePrice, 
                 <img
                   src={getImageUrl(question.img)}
                   alt={question.title}
-                  className="max-w-full h-auto max-h-48 rounded-lg border object-contain"
+                  className="max-w-full h-auto max-h-40 rounded-lg border border-slate-200 dark:border-slate-700 object-contain"
                 />
               </div>
             )}
@@ -440,63 +442,67 @@ export default function TradeProductPageClient({ product, questions, basePrice, 
                     }
                   }}
                   className={cn(
-                    "w-full text-left p-4 border-2 rounded-xl transition-all cursor-pointer",
+                    "w-full text-left p-3.5 border rounded-xl transition-all cursor-pointer",
                     isSelected
-                      ? "border-primary bg-primary/10 shadow-md"
-                      : "border-border hover:border-primary/50 hover:bg-muted/50",
-                    isZeroValueAnswer && isSelected && "border-orange-500 bg-orange-50 dark:bg-orange-950/30"
+                      ? "border-primary bg-primary/5 ring-1 ring-primary/20"
+                      : "border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700/30",
+                    isZeroValueAnswer && isSelected && "border-orange-400 bg-orange-50 dark:bg-orange-950/30 ring-orange-200"
                   )}
                 >
-                  <div className="flex items-start gap-3">
-                    {/* Checkbox indicator for multi-select */}
-                    {isMultiple && (
-                      <div className={cn(
-                        "flex-shrink-0 mt-0.5 w-4 h-4 rounded border-2 flex items-center justify-center",
-                        isSelected
-                          ? "bg-primary border-primary text-primary-foreground"
-                          : "border-input bg-background"
-                      )}>
-                        {isSelected && <CheckCircle className="w-3 h-3" />}
-                      </div>
-                    )}
+                  <div className="flex items-center gap-3">
+                    {/* Selection indicator */}
+                    <div className={cn(
+                      "flex-shrink-0 w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all",
+                      isSelected
+                        ? "bg-primary border-primary"
+                        : "border-slate-300 dark:border-slate-600"
+                    )}>
+                      {isSelected && <CheckCircle className="w-3.5 h-3.5 text-white" />}
+                    </div>
+
                     {/* Answer image */}
                     {getImageUrl(answer.img) && (
                       <img
                         src={getImageUrl(answer.img)}
                         alt={answer.content}
-                        className="w-16 h-16 rounded-lg border object-cover flex-shrink-0"
+                        className="w-12 h-12 rounded-lg border border-slate-200 dark:border-slate-600 object-cover flex-shrink-0"
                       />
                     )}
+
                     <div className="flex-1 min-w-0">
-                      <div className="flex items-start justify-between gap-2">
+                      <div className="flex items-center justify-between gap-2">
                         <div className="flex-1">
-                          <div className="flex items-center gap-2 flex-wrap">
-                            <span className="font-medium">{answer.content}</span>
-                            {isZeroValueAnswer && (
-                              <Badge variant="outline" className="text-xs text-orange-600 border-orange-300">
-                                <AlertCircle className="w-3 h-3 mr-1" />
-                                No Value
-                              </Badge>
-                            )}
-                          </div>
-                          {/* Answer description */}
+                          <span className={cn(
+                            "font-medium text-sm",
+                            isSelected ? "text-slate-900 dark:text-white" : "text-slate-700 dark:text-slate-300"
+                          )}>{answer.content}</span>
+                          {isZeroValueAnswer && (
+                            <span className="ml-2 text-xs text-orange-600 dark:text-orange-400">No value</span>
+                          )}
                           {answer.description && (
-                            <p className="text-sm text-muted-foreground mt-1">{answer.description}</p>
+                            <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{answer.description}</p>
                           )}
                         </div>
-                        <div className="flex items-center gap-2 flex-shrink-0">
+                        <div className="flex items-center gap-1.5 flex-shrink-0">
                           {percentage !== 0 && !isZeroValueAnswer && (
-                            <Badge variant={percentage > 0 ? "default" : "secondary"} className="text-xs">
+                            <span className={cn(
+                              "text-xs font-medium px-1.5 py-0.5 rounded",
+                              percentage > 0
+                                ? "bg-emerald-100 dark:bg-emerald-900/50 text-emerald-600 dark:text-emerald-400"
+                                : "bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-400"
+                            )}>
                               {percentage > 0 ? '+' : ''}{percentage}%
-                            </Badge>
+                            </span>
                           )}
                           {fixed !== 0 && !isZeroValueAnswer && (
-                            <Badge variant={fixed > 0 ? "default" : "secondary"} className="text-xs">
+                            <span className={cn(
+                              "text-xs font-medium px-1.5 py-0.5 rounded",
+                              fixed > 0
+                                ? "bg-emerald-100 dark:bg-emerald-900/50 text-emerald-600 dark:text-emerald-400"
+                                : "bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-400"
+                            )}>
                               {fixed > 0 ? '+' : ''}{formatCurrency(fixed)}
-                            </Badge>
-                          )}
-                          {isSelected && !isMultiple && (
-                            <CheckCircle className="w-5 h-5 text-primary flex-shrink-0" />
+                            </span>
                           )}
                         </div>
                       </div>
@@ -513,18 +519,17 @@ export default function TradeProductPageClient({ product, questions, basePrice, 
     // Contact form step
     return (
       <div className="space-y-4">
-        <div className="space-y-2">
-          <h3 className="text-lg font-semibold">Contact Information</h3>
-          <p className="text-sm text-muted-foreground">
-            Provide your details so we can send you the quote and shipping label
+        <div className="space-y-1">
+          <h3 className="text-base font-semibold text-slate-900 dark:text-white">Contact Information</h3>
+          <p className="text-sm text-slate-500 dark:text-slate-400">
+            We'll send your quote and shipping label to this email
           </p>
         </div>
 
-        <div className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="name">
-              <UserIcon className="w-4 h-4 inline mr-2" />
-              Full Name *
+        <div className="space-y-3">
+          <div className="space-y-1.5">
+            <Label htmlFor="name" className="text-sm font-medium text-slate-700 dark:text-slate-300">
+              Full Name <span className="text-red-500">*</span>
             </Label>
             <Input
               id="name"
@@ -532,14 +537,14 @@ export default function TradeProductPageClient({ product, questions, basePrice, 
               value={formData.name}
               onChange={(e) => handleInputChange('name', e.target.value)}
               placeholder="John Doe"
+              className="h-11"
               required
             />
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="email">
-              <MailIcon className="w-4 h-4 inline mr-2" />
-              Email Address *
+          <div className="space-y-1.5">
+            <Label htmlFor="email" className="text-sm font-medium text-slate-700 dark:text-slate-300">
+              Email Address <span className="text-red-500">*</span>
             </Label>
             <Input
               id="email"
@@ -547,14 +552,14 @@ export default function TradeProductPageClient({ product, questions, basePrice, 
               value={formData.email}
               onChange={(e) => handleInputChange('email', e.target.value)}
               placeholder="john@example.com"
+              className="h-11"
               required
             />
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="phone">
-              <PhoneIcon className="w-4 h-4 inline mr-2" />
-              Phone Number
+          <div className="space-y-1.5">
+            <Label htmlFor="phone" className="text-sm font-medium text-slate-700 dark:text-slate-300">
+              Phone Number <span className="text-slate-400 text-xs">(optional)</span>
             </Label>
             <Input
               id="phone"
@@ -562,17 +567,17 @@ export default function TradeProductPageClient({ product, questions, basePrice, 
               value={formData.phone}
               onChange={(e) => handleInputChange('phone', e.target.value)}
               placeholder="(555) 123-4567"
+              className="h-11"
             />
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="notes">
-              <MessageSquareIcon className="w-4 h-4 inline mr-2" />
-              Additional Notes
+          <div className="space-y-1.5">
+            <Label htmlFor="notes" className="text-sm font-medium text-slate-700 dark:text-slate-300">
+              Additional Notes <span className="text-slate-400 text-xs">(optional)</span>
             </Label>
             <textarea
               id="notes"
-              className="w-full min-h-[100px] px-3 py-2 border border-input rounded-md resize-none focus:outline-none focus:ring-2 focus:ring-ring bg-background"
+              className="w-full min-h-[80px] px-3 py-2.5 border border-slate-200 dark:border-slate-700 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary bg-white dark:bg-slate-800 text-sm"
               value={formData.notes}
               onChange={(e) => handleInputChange('notes', e.target.value)}
               placeholder="Any additional details about your device..."
@@ -586,85 +591,76 @@ export default function TradeProductPageClient({ product, questions, basePrice, 
   const isLastStep = currentStep === totalSteps - 1
 
   return (
-    <Card className="shadow-none border-none">
-      <CardHeader className="border-b">
-        <div className="flex items-center justify-between">
+    <Card className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm rounded-2xl overflow-hidden">
+      <CardHeader className="bg-slate-50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-700 pb-4">
+        <div className="flex items-center justify-between mb-4">
           <div>
-            <CardTitle className="text-2xl">Get Your Quote</CardTitle>
-            <CardDescription className="text-base">
-              Answer a few questions about your {product.title}
+            <CardTitle className="text-xl font-semibold text-slate-900 dark:text-white">Get Your Quote</CardTitle>
+            <CardDescription className="text-sm text-slate-500 dark:text-slate-400 mt-1">
+              Answer a few questions about your device
             </CardDescription>
           </div>
-          <div className="text-right">
-            <p className="text-sm text-muted-foreground">Step</p>
-            <p className="text-2xl font-bold">{currentStep + 1} / {totalSteps}</p>
+          <div className="flex items-center gap-1 text-sm font-medium text-slate-600 dark:text-slate-300">
+            <span className="text-primary font-bold">{currentStep + 1}</span>
+            <span className="text-slate-400">/</span>
+            <span>{totalSteps}</span>
           </div>
         </div>
 
         {/* Progress bar */}
-        <div className="mt-4">
-          <div className="h-2 bg-muted rounded-full overflow-hidden">
-            <div
-              className="h-full bg-primary transition-all duration-300 ease-out"
-              style={{ width: `${((currentStep + 1) / totalSteps) * 100}%` }}
-            />
-          </div>
+        <div className="h-1.5 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+          <div
+            className="h-full bg-primary rounded-full transition-all duration-300 ease-out"
+            style={{ width: `${((currentStep + 1) / totalSteps) * 100}%` }}
+          />
         </div>
       </CardHeader>
 
-      <CardContent className="p-6">
-        <form onSubmit={handleSubmit} className="space-y-6">
+      <CardContent className="p-5">
+        <form onSubmit={handleSubmit} className="space-y-5">
           {/* Current quote display */}
           <div className={cn(
-            "p-4 rounded-xl border-2 transition-all",
+            "p-4 rounded-xl border transition-all",
             calculatedQuote.isZeroValue
               ? "bg-orange-50 dark:bg-orange-950/30 border-orange-200 dark:border-orange-800"
-              : "bg-gradient-to-br from-green-50 to-green-100 dark:from-green-950/30 dark:to-green-900/30 border-green-200 dark:border-green-800"
+              : "bg-emerald-50 dark:bg-emerald-950/30 border-emerald-200 dark:border-emerald-800"
           )}>
             <div className="flex items-center justify-between">
               <div>
                 <p className={cn(
-                  "text-sm font-medium flex items-center gap-2",
-                  calculatedQuote.isZeroValue ? "text-orange-700 dark:text-orange-400" : "text-green-700 dark:text-green-400"
+                  "text-xs font-medium",
+                  calculatedQuote.isZeroValue ? "text-orange-600 dark:text-orange-400" : "text-emerald-600 dark:text-emerald-400"
                 )}>
-                  {calculatedQuote.isZeroValue ? "Free Recycling Available" : "Current Estimate"}
+                  {calculatedQuote.isZeroValue ? "Free Recycling Available" : "Your Estimate"}
                 </p>
                 <p className={cn(
-                  "text-3xl font-bold",
-                  calculatedQuote.isZeroValue ? "text-orange-600 dark:text-orange-400" : "text-green-600 dark:text-green-400"
+                  "text-2xl font-bold mt-0.5",
+                  calculatedQuote.isZeroValue ? "text-orange-600 dark:text-orange-400" : "text-emerald-600 dark:text-emerald-400"
                 )}>
                   {formatCurrency(calculatedQuote.value)}
                 </p>
               </div>
-              <div className="text-right text-xs space-y-1">
+              <div className="flex items-center gap-2">
                 {calculatedQuote.deduction > 0 && (
-                  <p className="text-muted-foreground">
-                    Deductions: -{calculatedQuote.deduction}%
-                  </p>
+                  <span className="text-xs px-2 py-1 rounded-full bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300">
+                    -{calculatedQuote.deduction}%
+                  </span>
                 )}
                 {calculatedQuote.bonus > 0 && (
-                  <p className="text-green-600 dark:text-green-400">
-                    Bonuses: +{calculatedQuote.bonus}%
-                  </p>
-                )}
-                {calculatedQuote.fixedAdjustment !== 0 && (
-                  <p className={calculatedQuote.fixedAdjustment > 0
-                    ? "text-green-600 dark:text-green-400"
-                    : "text-muted-foreground"
-                  }>
-                    Fixed: {calculatedQuote.fixedAdjustment > 0 ? '+' : ''}{formatCurrency(calculatedQuote.fixedAdjustment)}
-                  </p>
+                  <span className="text-xs px-2 py-1 rounded-full bg-emerald-100 dark:bg-emerald-900/50 text-emerald-600 dark:text-emerald-400">
+                    +{calculatedQuote.bonus}%
+                  </span>
                 )}
                 {calculatedQuote.appliedMinPrice && (
-                  <p className="text-orange-600 dark:text-orange-400 font-medium">
-                    Min. guaranteed price applied
-                  </p>
+                  <span className="text-xs px-2 py-1 rounded-full bg-orange-100 dark:bg-orange-900/50 text-orange-600 dark:text-orange-400">
+                    Min. price
+                  </span>
                 )}
               </div>
             </div>
             {calculatedQuote.isZeroValue && (
               <p className="text-xs text-orange-600/70 dark:text-orange-400/70 mt-2">
-                We can still accept your device for free recycling. Submit to proceed.
+                We can still accept your device for free recycling.
               </p>
             )}
           </div>
@@ -673,13 +669,13 @@ export default function TradeProductPageClient({ product, questions, basePrice, 
           {renderStepContent()}
 
           {/* Navigation buttons */}
-          <div className="flex items-center justify-between pt-4 border-t">
+          <div className="flex items-center justify-between pt-4 border-t border-slate-100 dark:border-slate-700">
             <Button
               type="button"
-              variant="outline"
+              variant="ghost"
               onClick={handleBack}
               disabled={currentStep === 0}
-              className="gap-2"
+              className="gap-1.5 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
             >
               <ChevronLeft className="w-4 h-4" />
               Back
@@ -689,7 +685,7 @@ export default function TradeProductPageClient({ product, questions, basePrice, 
               <Button
                 type="submit"
                 disabled={submitting || !canProceed}
-                className="gap-2"
+                className="gap-2 px-6"
               >
                 {submitting ? (
                   <>
@@ -699,7 +695,7 @@ export default function TradeProductPageClient({ product, questions, basePrice, 
                 ) : (
                   <>
                     Get My Quote
-                    <DollarSignIcon className="w-4 h-4" />
+                    <ChevronRight className="w-4 h-4" />
                   </>
                 )}
               </Button>
@@ -708,9 +704,9 @@ export default function TradeProductPageClient({ product, questions, basePrice, 
                 type="button"
                 onClick={handleNext}
                 disabled={!canProceed}
-                className="gap-2"
+                className="gap-1.5 px-5"
               >
-                Next
+                Continue
                 <ChevronRight className="w-4 h-4" />
               </Button>
             )}
@@ -718,19 +714,19 @@ export default function TradeProductPageClient({ product, questions, basePrice, 
 
           {/* Trust badges on last step */}
           {isLastStep && (
-            <div className="space-y-2 pt-2">
-              <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                <CheckCircle className="w-4 h-4 text-green-600" />
-                <span>Free shipping label included</span>
-              </div>
-              <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                <CheckCircle className="w-4 h-4 text-green-600" />
-                <span>Secure data wiping guaranteed</span>
-              </div>
-              <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                <CheckCircle className="w-4 h-4 text-green-600" />
-                <span>24-hour response time</span>
-              </div>
+            <div className="flex items-center justify-center gap-4 pt-3 text-xs text-slate-500 dark:text-slate-400">
+              <span className="flex items-center gap-1">
+                <CheckCircle className="w-3.5 h-3.5 text-emerald-500" />
+                Free shipping
+              </span>
+              <span className="flex items-center gap-1">
+                <CheckCircle className="w-3.5 h-3.5 text-emerald-500" />
+                Data wiping
+              </span>
+              <span className="flex items-center gap-1">
+                <CheckCircle className="w-3.5 h-3.5 text-emerald-500" />
+                24h response
+              </span>
             </div>
           )}
         </form>

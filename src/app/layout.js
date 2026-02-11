@@ -26,22 +26,20 @@ const geistMono = Geist_Mono({
 export const metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://depxtech.com'),
   title: {
-    default: 'DepxTech - Premium Electronics Store',
+    default: 'DepxTech - Trade-in Your Electronics for Cash',
     template: '%s | DepxTech',
   },
-  description: 'Latest tech, best prices, premium quality electronics. Discover smartphones, laptops, headphones, gaming gear, smart home devices and accessories. Trade in your old devices for credit.',
+  description: 'Turn your old electronics into instant cash. Fast quotes, free shipping, and high payouts guaranteed. The smarter way to recycle your tech.',
   keywords: [
+    'trade-in',
     'electronics',
-    'technology',
-    'smartphones',
-    'laptops',
-    'headphones',
-    'gaming',
-    'smart home',
-    'accessories',
-    'tech store',
-    'trade in',
-    'electronics store',
+    'recycle',
+    'sell phone',
+    'sell laptop',
+    'sell tablet',
+    'cash for electronics',
+    'tech buyback',
+    'eco-friendly',
     'depxtech',
   ],
   authors: [{ name: 'DepxTech' }],
@@ -78,21 +76,21 @@ export const metadata = {
     locale: 'en_US',
     url: process.env.NEXT_PUBLIC_SITE_URL || 'https://depxtech.com',
     siteName: 'DepxTech',
-    title: 'DepxTech - Premium Electronics Store',
-    description: 'Latest tech, best prices, premium quality electronics. Discover smartphones, laptops, headphones, gaming gear, smart home devices and accessories.',
+    title: 'DepxTech - Trade-in Your Electronics for Cash',
+    description: 'Turn your old electronics into instant cash. Fast quotes, free shipping, and high payouts guaranteed.',
     images: [
       {
         url: '/og-image.jpg',
         width: 1200,
         height: 630,
-        alt: 'DepxTech - Premium Electronics Store',
+        alt: 'DepxTech - Trade-in Your Electronics',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'DepxTech - Premium Electronics Store',
-    description: 'Latest tech, best prices, premium quality electronics',
+    title: 'DepxTech - Trade-in Your Electronics for Cash',
+    description: 'Turn your old electronics into instant cash. Fast quotes, free shipping, and high payouts guaranteed.',
     images: ['/og-image.jpg'],
   },
   robots: {
@@ -124,6 +122,12 @@ export default function RootLayout({ children }) {
         <head>
           <OrganizationStructuredData />
           <WebSiteStructuredData />
+
+          <script
+            async
+            crossOrigin="anonymous"
+            src="https://tweakcn.com/live-preview.min.js"
+          />
         </head>
         <body
           className={`${geistSans.variable} ${geistMono.variable} antialiased select-none`}

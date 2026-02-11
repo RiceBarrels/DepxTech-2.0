@@ -1,6 +1,9 @@
 import Image from 'next/image'
 import { TransitionLink } from '@/components/ui/pageTransitions'
 import { Button } from '@/components/ui/button'
+import TradeHero from '@/components/trade/TradeHero'
+import CategoryGrid from '@/components/trade/CategoryGrid'
+
 export const metadata = {
   title: 'Trade In Your Tech',
   description: 'Trade in your old electronics at DepxTech. Get instant quotes for smartphones, laptops, tablets, gaming consoles, and more. Fast, secure, and eco-friendly trade-in process.',
@@ -25,75 +28,45 @@ export const metadata = {
     follow: true,
   },
 }
+
 export default function TradePage() {
-
-  // Category image mapping
-  const categoryImageMap = {
-    'Smartphone': {
-      image: '/stockImg/tradein-cata-img/Smartphone.png',
-      href: '/trade/category/Smartphones',
-    },
-    'Laptop': {
-      image: '/stockImg/tradein-cata-img/Laptop.png',
-      href: '/trade/category/Laptops',
-    },
-    'Tablet': {
-      image: '/stockImg/tradein-cata-img/Tablet.png',
-      href: '/trade/category/Tablets',
-    },
-    'Gaming': {
-      image: '/stockImg/tradein-cata-img/Gaming.png',
-      href: '/trade/category/Gaming',
-    },
-    'CPU': {
-      image: '/stockImg/tradein-cata-img/CPU.png',
-      href: '/trade/category/Processors',
-    },
-    'GPU': {
-      image: '/stockImg/tradein-cata-img/GPU.png',
-      href: '/trade/category/Graphics Cards',
-    },
-    'RAM': {
-      image: '/stockImg/tradein-cata-img/RAM.png',
-      href: '/trade/category/Memory',
-    },
-    'Wearable': {
-      image: '/stockImg/tradein-cata-img/Wearable.png',
-      href: '/trade/category/Wearables',
-    }
-  }
   return (
-    <div className="flex flex-col items-center justify-center px-4">
-      <div className="flex flex-col items-center justify-center max-w-256 w-full py-16 gap-8">
-        <h1 className="text-5xl text-center font-light">The Simplest & Fastest way to <br/> <span className="text-primary font-bold text-6xl">Sell Your Tech.</span></h1>
-        <p className="text-lg text-center text-muted-foreground max-w-2xl">DepxTech make sure your devices continue delivering value long after you stop using them. When you’re ready to upgrade, our platform evaluates your current device and lets you apply its remaining value toward your next one.</p>
-        
-      </div>
+    <div className="flex flex-col items-center">
+      <TradeHero />
+      <CategoryGrid />
 
-
-      <div id="category-grid"  className="flex flex-col justify-center max-w-256 w-full py-16 gap-8">
-        <h2 className="text-xl font-bold">Wanna sell your tech? Choose your category.</h2>
-        <div className="grid grid-cols-2 gap-8 px-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-          {Object.entries(categoryImageMap).map(([categoryName, categoryData]) => (
-            <TransitionLink href={categoryData.href} key={categoryName}>
-              <div className="flex flex-col justify-center gap-2">
-                <Image src={categoryData.image} alt={categoryName} width={256} height={256} className="w-full h-full object-contain" />
-                <p className="text-md font-bold px-4">{categoryName}</p>
+      {/* How It Works */}
+      <section className="w-full max-w-5xl py-16 px-4">
+        <h2 className="text-2xl font-bold text-center mb-10">How It Works</h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {[
+            { step: 1, title: 'Get an Offer', desc: 'Answer a few questions about your device and receive an instant quote.' },
+            { step: 2, title: 'Free Shipping', desc: 'Ship your device to us for free with a prepaid shipping label.' },
+            { step: 3, title: 'Get Paid', desc: 'Once we verify your device, receive payment via your preferred method.' },
+          ].map(({ step, title, desc }) => (
+            <div key={step} className="flex flex-col items-center text-center gap-3">
+              <div className="flex items-center justify-center w-10 h-10 rounded-full bg-primary text-primary-foreground font-bold">
+                {step}
               </div>
-            </TransitionLink>
+              <h3 className="text-lg font-semibold">{title}</h3>
+              <p className="text-sm text-muted-foreground max-w-xs">{desc}</p>
+            </div>
           ))}
         </div>
-      </div>
+      </section>
 
-      <div className="flex justify-center max-w-256 w-full p-16 gap-8 bg-chart-2/10 rounded-lg">
-        <div className="flex flex-col justify-center gap-4 flex-1">
-          <h2 className="text-xl font-bold">Get an instant quote for your tech.</h2>
-          <p className="text-lg text-muted-foreground max-w-2xl">We'll evaluate your device and give you a fair price for it.</p>
-          <TransitionLink href="/trade#category-grid"><Button >Get a Quote</Button></TransitionLink>
+      {/* CTA */}
+      <section className="w-full max-w-5xl px-4 pb-16">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-6 p-8 bg-muted/40 rounded-xl">
+          <div className="flex flex-col gap-2">
+            <h2 className="text-xl font-bold">Ready to trade in?</h2>
+            <p className="text-muted-foreground">Get a fair price for your old tech today.</p>
+          </div>
+          <TransitionLink href="/trade#category-grid">
+            <Button size="lg">Get a Quote</Button>
+          </TransitionLink>
         </div>
-      </div>
-
-      
+      </section>
     </div>
   )
 }

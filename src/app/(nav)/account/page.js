@@ -138,7 +138,7 @@ export default function AccountPage() {
           </Button>
         </div>
       </div>
-      <animated.div style={recommendsSpring}>
+      {/* <animated.div style={recommendsSpring}>
         <Recommends 
           title="Trending Products"
           limit={12}
@@ -146,7 +146,7 @@ export default function AccountPage() {
           onProductClick={handleProductClick}
           initialProducts={[]}
         />
-      </animated.div>
+      </animated.div> */}
     </div>
   )
 }

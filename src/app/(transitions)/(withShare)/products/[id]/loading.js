@@ -1,124 +1,149 @@
 "use client"
-import { Skeleton } from "@/components/ui/skeleton"
-import { Card, CardContent, CardHeader } from "@/components/ui/card"
-import TopNav from "@/components/ui/topNav"
-// ProductDetails Skeleton
+
+import { motion } from 'framer-motion'
+
+// Enhanced Skeleton with shimmer effect
+function Skeleton({ className }) {
+  return (
+    <div className={`relative overflow-hidden bg-muted rounded-lg ${className}`}>
+      <motion.div
+        className="absolute inset-0 -translate-x-full"
+        animate={{ translateX: ['0%', '200%'] }}
+        transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
+        style={{
+          background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent)',
+        }}
+      />
+    </div>
+  )
+}
+
+// Enhanced Product Details Skeleton
 function ProductDetailsSkeleton() {
-    return (
-        <div className="w-full max-w-6xl mx-auto">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                {/* Image Gallery Skeleton */}
-                <div className="space-y-4">
-                    <Card className="p-0">
-                        <CardContent className="p-0">
-                            <Skeleton className="aspect-square w-full rounded-lg" />
-                        </CardContent>
-                    </Card>
-                    <div className="flex gap-2">
-                        {[...Array(4)].map((_, i) => (
-                            <Skeleton key={i} className="w-16 h-16 rounded" />
-                        ))}
-                    </div>
-                </div>
+  return (
+    <div className="w-full max-w-7xl mx-auto py-8 px-4">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
+        {/* Image Gallery Skeleton */}
+        <div className="lg:sticky lg:top-24 lg:h-fit space-y-4">
+          <Skeleton className="aspect-square w-full rounded-2xl" />
+          <div className="flex gap-2">
+            {[...Array(4)].map((_, i) => (
+              <Skeleton key={i} className="w-20 h-20 rounded-xl" />
+            ))}
+          </div>
+        </div>
 
-                {/* Product Information Skeleton */}
-                <div className="space-y-6">
-                    <div className="flex flex-col py-8">
-                        {/* Title */}
-                        <Skeleton className="h-8 w-3/4 mb-2" />
-                        
-                        {/* Price and Stock */}
-                        <div className="flex items-center gap-4 mb-4">
-                            <Skeleton className="h-8 w-32" />
-                            <Skeleton className="h-6 w-20" />
-                            <Skeleton className="h-4 w-24" />
-                        </div>
+        {/* Product Information Skeleton */}
+        <div className="space-y-6">
+          {/* Condition badge */}
+          <Skeleton className="h-10 w-28 rounded-full" />
 
-                        {/* Categories */}
-                        <div className="flex items-center gap-2 mb-4">
-                            <Skeleton className="w-4 h-4" />
-                            <div className="flex flex-wrap gap-1">
-                                {[...Array(3)].map((_, i) => (
-                                    <Skeleton key={i} className="h-6 w-16" />
-                                ))}
-                            </div>
-                        </div>
+          {/* Title */}
+          <Skeleton className="h-10 w-3/4 rounded-lg" />
 
-                        {/* Views */}
-                        <div className="flex items-center gap-1 mb-4">
-                            <Skeleton className="w-4 h-4" />
-                            <Skeleton className="h-4 w-16" />
-                        </div>
-                    </div>
+          {/* Categories */}
+          <div className="flex gap-2">
+            {[...Array(3)].map((_, i) => (
+              <Skeleton key={i} className="h-6 w-16 rounded-full" />
+            ))}
+          </div>
 
-                    {/* Separator */}
-                    <div className="h-px bg-gray-200" />
+          {/* Price */}
+          <Skeleton className="h-12 w-40 rounded-lg" />
 
-                    {/* Description */}
-                    <div>
-                        <Skeleton className="h-6 w-32 mb-2" />
-                        <div className="space-y-2">
-                            <Skeleton className="h-4 w-full" />
-                            <Skeleton className="h-4 w-5/6" />
-                            <Skeleton className="h-4 w-4/6" />
-                        </div>
-                    </div>
+          {/* Stock info */}
+          <div className="flex gap-4">
+            <Skeleton className="h-5 w-24 rounded" />
+            <Skeleton className="h-5 w-20 rounded" />
+          </div>
 
-                    {/* Separator */}
-                    <div className="h-px bg-gray-200" />
+          {/* Separator */}
+          <div className="h-px bg-border" />
 
-                    {/* Action Buttons */}
-                    <div className="flex gap-3">
-                        <Skeleton className="h-10 flex-1" />
-                        <Skeleton className="h-10 w-10" />
-                        <Skeleton className="h-10 w-10" />
-                    </div>
-                </div>
+          {/* Quantity and buttons */}
+          <div className="flex items-center justify-between">
+            <Skeleton className="h-10 w-32 rounded-xl" />
+            <div className="flex gap-2">
+              <Skeleton className="h-12 w-12 rounded-xl" />
+              <Skeleton className="h-12 w-12 rounded-xl" />
             </div>
+          </div>
+
+          {/* Add to cart button */}
+          <Skeleton className="h-14 w-full rounded-2xl" />
+
+          {/* Separator */}
+          <div className="h-px bg-border" />
+
+          {/* Trust features grid */}
+          <div className="grid grid-cols-2 gap-3">
+            {[...Array(4)].map((_, i) => (
+              <Skeleton key={i} className="h-16 rounded-xl" />
+            ))}
+          </div>
+
+          {/* Environmental impact card */}
+          <Skeleton className="h-32 rounded-2xl" />
+
+          {/* Separator */}
+          <div className="h-px bg-border" />
+
+          {/* Accordion items */}
+          <div className="space-y-2">
+            {[...Array(4)].map((_, i) => (
+              <Skeleton key={i} className="h-14 rounded-xl" />
+            ))}
+          </div>
         </div>
-    )
+      </div>
+    </div>
+  )
 }
 
-// Recommends Skeleton
+// Recommendations Skeleton
 function RecommendsSkeleton() {
-    return (
-        <div className="mt-8">
-            <Card>
-                <CardHeader>
-                    <div className="flex items-center justify-between">
-                        <Skeleton className="h-6 w-48" />
-                        <Skeleton className="h-8 w-20" />
-                    </div>
-                </CardHeader>
-                <CardContent>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                        {[...Array(8)].map((_, index) => (
-                            <Card key={index} className="overflow-hidden">
-                                <Skeleton className="aspect-square w-full" />
-                                <div className="p-4 space-y-3">
-                                    <Skeleton className="h-4 w-3/4" />
-                                    <Skeleton className="h-4 w-1/2" />
-                                    <div className="flex gap-2">
-                                        <Skeleton className="h-5 w-16" />
-                                        <Skeleton className="h-5 w-16" />
-                                    </div>
-                                    <Skeleton className="h-8 w-full" />
-                                </div>
-                            </Card>
-                        ))}
-                    </div>
-                </CardContent>
-            </Card>
+  return (
+    <div className="py-16 px-4 bg-gradient-to-b from-muted/30 to-background">
+      <div className="max-w-7xl mx-auto">
+        {/* Section header */}
+        <div className="text-center mb-12">
+          <Skeleton className="h-10 w-64 mx-auto rounded-lg" />
+          <Skeleton className="h-6 w-80 mx-auto mt-4 rounded" />
         </div>
-    )
+
+        {/* Product cards grid */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+          {[...Array(8)].map((_, index) => (
+            <motion.div
+              key={index}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.05 }}
+              className="rounded-2xl border border-border overflow-hidden bg-card"
+            >
+              <Skeleton className="aspect-square w-full" />
+              <div className="p-4 space-y-3">
+                <Skeleton className="h-5 w-3/4 rounded" />
+                <Skeleton className="h-6 w-1/2 rounded" />
+                <div className="flex gap-2">
+                  <Skeleton className="h-5 w-14 rounded-full" />
+                  <Skeleton className="h-5 w-14 rounded-full" />
+                </div>
+                <Skeleton className="h-10 w-full rounded-xl" />
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    </div>
+  )
 }
 
-export default function LoadingPage(){
-    return (
-        <div className='p-4 flex flex-col items-center justify-center'>
-            <TopNav />
-            <ProductDetailsSkeleton />
-            <RecommendsSkeleton />
-        </div>
-    )
+export default function LoadingPage() {
+  return (
+    <div className="min-h-screen bg-background">
+      <ProductDetailsSkeleton />
+      <RecommendsSkeleton />
+    </div>
+  )
 }

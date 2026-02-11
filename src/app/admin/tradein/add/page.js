@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
 import { Label } from '@/components/ui/label'
-import { ArrowLeftIcon, SaveIcon, LoaderIcon, XIcon, PlusIcon, ArrowRightLeftIcon, CalendarIcon, StarIcon, TrashIcon, HelpCircleIcon, CopyIcon, ImageIcon } from 'lucide-react'
+import { ArrowLeftIcon, SaveIcon, LoaderIcon, XIcon, PlusIcon, ArrowRightLeftIcon, CalendarIcon, StarIcon, TrashIcon, HelpCircleIcon, CopyIcon, ImageIcon, FileTextIcon } from 'lucide-react'
 import {
     Select,
     SelectContent,
@@ -47,6 +47,45 @@ export default function AddTradeinProductPage({defaultData={
     const [otherProducts, setOtherProducts] = useState([])
     const [loadingProducts, setLoadingProducts] = useState(false)
     const [showCopySelect, setShowCopySelect] = useState(false)
+
+    // Templates state
+    const [templates, setTemplates] = useState([])
+    const [loadingTemplates, setLoadingTemplates] = useState(false)
+    const [showTemplateSelect, setShowTemplateSelect] = useState(false)
+
+    // Fetch templates
+    const fetchTemplates = async () => {
+        if (templates.length > 0) {
+            setShowTemplateSelect(true)
+            return
+        }
+        setLoadingTemplates(true)
+        try {
+            const response = await fetch('/api/admin/tradein/templates')
+            const data = await response.json()
+            if (data.templates) {
+                const templatesWithQuestions = data.templates.filter(
+                    t => t.questions && t.questions.length > 0
+                )
+                setTemplates(templatesWithQuestions)
+                setShowTemplateSelect(true)
+            }
+        } catch (error) {
+            toast.error('Failed to fetch templates')
+        } finally {
+            setLoadingTemplates(false)
+        }
+    }
+
+    const applyTemplate = (templateId) => {
+        const template = templates.find(t => t.id === templateId)
+        if (template && template.questions) {
+            const copiedQuestions = JSON.parse(JSON.stringify(template.questions))
+            handleInputChange('questions', copiedQuestions)
+            toast.success(`Applied "${template.name}" template (${copiedQuestions.length} questions)`)
+            setShowTemplateSelect(false)
+        }
+    }
 
     // Fetch other products with questions
     const fetchOtherProducts = async () => {
@@ -435,9 +474,38 @@ export default function AddTradeinProductPage({defaultData={
                                     <HelpCircleIcon className="w-5 h-5 text-blue-600" />
                                     Product Questions
                                 </h3>
-                                <div className="flex items-center gap-2">
-                                    {/* Copy from another product */}
-                                    {showCopySelect ? (
+                                <div className="flex items-center gap-2 flex-wrap">
+                                    {/* Apply Template */}
+                                    {showTemplateSelect ? (
+                                        <div className="flex items-center gap-2">
+                                            <Select onValueChange={applyTemplate}>
+                                                <SelectTrigger className="w-[200px] h-8 text-sm">
+                                                    <SelectValue placeholder="Select template..." />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    {templates.length === 0 ? (
+                                                        <SelectItem value="none" disabled>
+                                                            No templates found
+                                                        </SelectItem>
+                                                    ) : (
+                                                        templates.map((t) => (
+                                                            <SelectItem key={t.id} value={t.id}>
+                                                                {t.name} ({t.questions.length} Q)
+                                                            </SelectItem>
+                                                        ))
+                                                    )}
+                                                </SelectContent>
+                                            </Select>
+                                            <Button
+                                                type="button"
+                                                variant="ghost"
+                                                size="sm"
+                                                onClick={() => setShowTemplateSelect(false)}
+                                            >
+                                                Cancel
+                                            </Button>
+                                        </div>
+                                    ) : showCopySelect ? (
                                         <div className="flex items-center gap-2">
                                             <Select onValueChange={copyQuestionsFromProduct}>
                                                 <SelectTrigger className="w-[220px] h-8 text-sm">
@@ -467,20 +535,36 @@ export default function AddTradeinProductPage({defaultData={
                                             </Button>
                                         </div>
                                     ) : (
-                                        <Button
-                                            type="button"
-                                            variant="outline"
-                                            size="sm"
-                                            onClick={fetchOtherProducts}
-                                            disabled={loadingProducts}
-                                        >
-                                            {loadingProducts ? (
-                                                <LoaderIcon className="w-4 h-4 mr-1 animate-spin" />
-                                            ) : (
-                                                <CopyIcon className="w-4 h-4 mr-1" />
-                                            )}
-                                            Copy from Product
-                                        </Button>
+                                        <>
+                                            <Button
+                                                type="button"
+                                                variant="outline"
+                                                size="sm"
+                                                onClick={fetchTemplates}
+                                                disabled={loadingTemplates}
+                                            >
+                                                {loadingTemplates ? (
+                                                    <LoaderIcon className="w-4 h-4 mr-1 animate-spin" />
+                                                ) : (
+                                                    <FileTextIcon className="w-4 h-4 mr-1" />
+                                                )}
+                                                Apply Template
+                                            </Button>
+                                            <Button
+                                                type="button"
+                                                variant="outline"
+                                                size="sm"
+                                                onClick={fetchOtherProducts}
+                                                disabled={loadingProducts}
+                                            >
+                                                {loadingProducts ? (
+                                                    <LoaderIcon className="w-4 h-4 mr-1 animate-spin" />
+                                                ) : (
+                                                    <CopyIcon className="w-4 h-4 mr-1" />
+                                                )}
+                                                Copy from Product
+                                            </Button>
+                                        </>
                                     )}
                                     <Button
                                         type="button"

@@ -108,6 +108,11 @@ export default function TradeinManagePage() {
     const [loadingProducts, setLoadingProducts] = useState(false)
     const [showCopySelect, setShowCopySelect] = useState(false)
 
+    // Templates state
+    const [templates, setTemplates] = useState([])
+    const [loadingTemplates, setLoadingTemplates] = useState(false)
+    const [showTemplateSelect, setShowTemplateSelect] = useState(false)
+
     // Fetch tradable products
     useEffect(() => {
         async function fetchProducts() {
@@ -244,12 +249,14 @@ export default function TradeinManagePage() {
             questions: normalizeQuestions(product.questions)
         })
         setShowCopySelect(false)
+        setShowTemplateSelect(false)
     }
 
     const closeEditPanel = () => {
         setEditingProduct(null)
         setEditFormData(null)
         setShowCopySelect(false)
+        setShowTemplateSelect(false)
     }
 
     const handleEditInputChange = (field, value) => {
@@ -290,6 +297,42 @@ export default function TradeinManagePage() {
             handleEditInputChange('questions', copiedQuestions)
             toast.success(`Copied ${copiedQuestions.length} questions from "${sourceProduct.title}"`)
             setShowCopySelect(false)
+        }
+    }
+
+    // Fetch templates for applying
+    const fetchTemplates = async () => {
+        if (templates.length > 0) {
+            setShowTemplateSelect(true)
+            setShowCopySelect(false)
+            return
+        }
+        setLoadingTemplates(true)
+        try {
+            const response = await fetch('/api/admin/tradein/templates')
+            const data = await response.json()
+            if (data.templates) {
+                const templatesWithQuestions = data.templates.filter(
+                    t => t.questions && t.questions.length > 0
+                )
+                setTemplates(templatesWithQuestions)
+                setShowTemplateSelect(true)
+                setShowCopySelect(false)
+            }
+        } catch (error) {
+            toast.error('Failed to fetch templates')
+        } finally {
+            setLoadingTemplates(false)
+        }
+    }
+
+    const applyTemplate = (templateId) => {
+        const template = templates.find(t => t.id === templateId)
+        if (template && template.questions) {
+            const copiedQuestions = JSON.parse(JSON.stringify(template.questions))
+            handleEditInputChange('questions', copiedQuestions)
+            toast.success(`Applied "${template.name}" template (${copiedQuestions.length} questions)`)
+            setShowTemplateSelect(false)
         }
     }
 
@@ -1131,7 +1174,27 @@ export default function TradeinManagePage() {
                                             Questions ({editFormData.questions?.length || 0})
                                         </h4>
                                         <div className="flex items-center gap-1">
-                                            {showCopySelect ? (
+                                            {showTemplateSelect ? (
+                                                <div className="flex items-center gap-1">
+                                                    <Select onValueChange={applyTemplate}>
+                                                        <SelectTrigger className="w-[160px] h-7 text-xs">
+                                                            <SelectValue placeholder="Select template..." />
+                                                        </SelectTrigger>
+                                                        <SelectContent>
+                                                            {templates.length === 0 ? (
+                                                                <SelectItem value="none" disabled>No templates found</SelectItem>
+                                                            ) : (
+                                                                templates.map((t) => (
+                                                                    <SelectItem key={t.id} value={t.id}>{t.name} ({t.questions.length})</SelectItem>
+                                                                ))
+                                                            )}
+                                                        </SelectContent>
+                                                    </Select>
+                                                    <Button type="button" variant="ghost" size="sm" className="h-7 px-2" onClick={() => setShowTemplateSelect(false)}>
+                                                        <XIcon className="w-3 h-3" />
+                                                    </Button>
+                                                </div>
+                                            ) : showCopySelect ? (
                                                 <div className="flex items-center gap-1">
                                                     <Select onValueChange={copyQuestionsFromProduct}>
                                                         <SelectTrigger className="w-[160px] h-7 text-xs">
@@ -1152,10 +1215,16 @@ export default function TradeinManagePage() {
                                                     </Button>
                                                 </div>
                                             ) : (
-                                                <Button type="button" variant="ghost" size="sm" className="h-7 text-xs" onClick={fetchOtherProducts} disabled={loadingProducts}>
-                                                    {loadingProducts ? <LoaderIcon className="w-3 h-3 animate-spin" /> : <CopyIcon className="w-3 h-3 mr-1" />}
-                                                    Copy
-                                                </Button>
+                                                <>
+                                                    <Button type="button" variant="ghost" size="sm" className="h-7 text-xs" onClick={fetchTemplates} disabled={loadingTemplates}>
+                                                        {loadingTemplates ? <LoaderIcon className="w-3 h-3 animate-spin" /> : <FileTextIcon className="w-3 h-3 mr-1" />}
+                                                        Template
+                                                    </Button>
+                                                    <Button type="button" variant="ghost" size="sm" className="h-7 text-xs" onClick={fetchOtherProducts} disabled={loadingProducts}>
+                                                        {loadingProducts ? <LoaderIcon className="w-3 h-3 animate-spin" /> : <CopyIcon className="w-3 h-3 mr-1" />}
+                                                        Copy
+                                                    </Button>
+                                                </>
                                             )}
                                             <Button
                                                 type="button"

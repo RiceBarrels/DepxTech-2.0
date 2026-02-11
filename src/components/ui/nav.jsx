@@ -2,7 +2,7 @@
 
 import { usePathname } from "next/navigation";
 import { TransitionLink } from "@/components/ui/pageTransitions";
-import { HomeIcon, ArrowRightLeftIcon, PaletteIcon, UserIcon, ShoppingCartIcon, TicketPercentIcon, LogInIcon } from "lucide-react";
+import { HomeIcon, ArrowRightLeftIcon, PaletteIcon, UserIcon, ShoppingCartIcon, TicketPercentIcon, LogInIcon, GlobeIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { TextSearchIcon } from "lucide-react";
 import { SearchIcon } from "lucide-react";
@@ -13,8 +13,11 @@ import { Separator } from "./separator";
 import { ModeToggle } from "./modeToggle";
 import { BottomSafeArea, useSafeArea } from "../safe-area";
 import { useAuth } from "@/lib/auth";
+import { XIcon } from "lucide-react";
+import { useTransitionRouter } from "./pageTransitions";
 
 export default function Nav({}) {
+    const router = useTransitionRouter();
     const pathname = usePathname();
     const [justOpenedPage, setJustOpenedPage] = useState();
     const [touchedLink, setTouchedLink] = useState();
@@ -74,241 +77,205 @@ export default function Nav({}) {
     return (
         <>
             <nav 
-                ref={navRef}
-                className="w-full overflow-hidden px-6 fixed top-0 bg-background/50 backdrop-blur-lg rounded-b-3xl border-b border-gray-500/10 hidden sm:flex gap-4 z-10"
+                className="hidden sm:flex flex-col fixed top-0 left-0 w-full bg-background/95 backdrop-blur-md border-b border-border z-10"
                 style={{ 
                     viewTransitionName: 'nav-bar',
-                    height: `${64 + safeArea.top}px`,
                     paddingTop: `${safeArea.top}px`
                 }}
+                ref={navRef}
             >
-                {/* Animated indicator for desktop nav */}
-                <div 
-                    className="absolute bottom-0 h-0.5 bg-primary rounded-full pointer-events-none z-10"
-                    style={{ 
-                        ...indicatorStyle, 
-                        transition: 'all 0.4s cubic-bezier(0.22, 0.61, 0.36, 1)'
-                    }}
-                />
-                
-                <div className="flex items-center flex-1 justify-start gap-4 lg:gap-8">
-                    <TransitionLink href="/" className="flex items-center justify-center" hapticsOnPressRelease={true}>
-                        <Image src="/lightLogo.svg" alt="Logo" width={36} height={36} className="hidden light:block"/>
-                        <Image src="/darkLogo.svg" alt="Logo" width={36} height={36} className="hidden dark:block"/>
-                    </TransitionLink>
-                    <TransitionLink 
-                        href="/" 
-                        className="flex items-center justify-center relative"
-                        data-active={isActive("/")}
-                        hapticsOnPressRelease={true}
-                    >
-                        <Button 
-                            variant="ghost" 
-                            className={cn(
-                                "font-light",
-                                isActive("/") && "text-primary"
-                            )}
-                            style={{ 
-                                transition: 'all 0.4s cubic-bezier(0.22, 0.61, 0.36, 1)',
-                                transform: isActive("/") ? 'scale(1.05)' : 'scale(1)'
-                            }}
-                        >
-                            <HomeIcon 
-                                strokeWidth={isActive("/") ? 2.2 : 1.2} 
-                                className="size-4"
-                                style={{ 
-                                    transition: 'all 0.4s cubic-bezier(0.22, 0.61, 0.36, 1)',
-                                    transform: isActive("/") ? 'scale(1.1)' : 'scale(1)'
-                                }}
-                            />
-                            Shop
-                        </Button>
-                    </TransitionLink>
-                    <TransitionLink 
-                        href="/trade" 
-                        className="flex items-center justify-center relative"
-                        data-active={isActive("/trade")}
-                        hapticsOnPressRelease={true}
-                    >
-                        <Button 
-                            variant="ghost" 
-                            className={cn(
-                                "font-light",
-                                isActive("/trade") && "text-primary"
-                            )}
-                            style={{ 
-                                transition: 'all 0.4s cubic-bezier(0.22, 0.61, 0.36, 1)',
-                                transform: isActive("/trade") ? 'scale(1.05)' : 'scale(1)'
-                            }}
-                        >
-                            <ArrowRightLeftIcon 
-                                strokeWidth={isActive("/trade") ? 2.2 : 1.2} 
-                                className="size-4"
-                                style={{ 
-                                    transition: 'all 0.4s cubic-bezier(0.22, 0.61, 0.36, 1)',
-                                    transform: isActive("/trade") ? 'scale(1.1)' : 'scale(1)'
-                                }}
-                            />
-                            Trade
-                        </Button>
-                    </TransitionLink>
-                    <TransitionLink 
-                        href="/offers" 
-                        className="flex items-center justify-center relative"
-                        data-active={isActive("/offers")}
-                        hapticsOnPressRelease={true}
-                    >
-                        <Button 
-                            variant="ghost" 
-                            className={cn(
-                                "font-light",
-                                isActive("/offers") && "text-primary"
-                            )}
-                            style={{ 
-                                transition: 'all 0.4s cubic-bezier(0.22, 0.61, 0.36, 1)',
-                                transform: isActive("/offers") ? 'scale(1.05)' : 'scale(1)'
-                            }}
-                        >
-                            <TicketPercentIcon 
-                                strokeWidth={isActive("/offers") ? 2.2 : 1.2} 
-                                className="size-4"
-                                style={{ 
-                                    transition: 'all 0.4s cubic-bezier(0.22, 0.61, 0.36, 1)',
-                                    transform: isActive("/offers") ? 'scale(1.1)' : 'scale(1)'
-                                }}
-                            />
-                            Offers
-                        </Button>
-                    </TransitionLink>
-                </div>
-                <div className="flex items-center justify-around gap-2">
-                    <TransitionLink 
-                        href="/products" 
-                        className="flex items-center justify-center relative"
-                        data-active={isActive("/products")}
-                        hapticsOnPressRelease={true}
-                    >
-                        <Button 
-                            variant="ghost" 
-                            className={cn(
-                                "font-light",
-                                isActive("/products") && "text-primary"
-                            )}
-                            size="icon"
-                            style={{ 
-                                transition: 'all 0.4s cubic-bezier(0.22, 0.61, 0.36, 1)',
-                                transform: isActive("/products") ? 'scale(1.1)' : 'scale(1)'
-                            }}
-                        >
-                            <SearchIcon 
-                                strokeWidth={isActive("/products") ? 2.2 : 1.2} 
-                                className="size-4"
-                                style={{ 
-                                    transition: 'all 0.4s cubic-bezier(0.22, 0.61, 0.36, 1)',
-                                    transform: isActive("/products") ? 'scale(1.1)' : 'scale(1)'
-                                }}
-                            />
-                        </Button>
-                    </TransitionLink>
-                    <TransitionLink 
-                        href="/cart" 
-                        className="flex items-center justify-center relative"
-                        data-active={isActive("/cart")}
-                        hapticsOnPressRelease={true}
-                    >
-                        <Button 
-                            variant="ghost" 
-                            className={cn(
-                                "font-light",
-                                isActive("/cart") && "text-primary"
-                            )}
-                            size="icon"
-                            style={{ 
-                                transition: 'all 0.4s cubic-bezier(0.22, 0.61, 0.36, 1)',
-                                transform: isActive("/cart") ? 'scale(1.1)' : 'scale(1)'
-                            }}
-                        >
-                            <ShoppingCartIcon 
-                                strokeWidth={isActive("/cart") ? 2.2 : 1.2} 
-                                className="size-4"
-                                style={{ 
-                                    transition: 'all 0.4s cubic-bezier(0.22, 0.61, 0.36, 1)',
-                                    transform: isActive("/cart") ? 'scale(1.1)' : 'scale(1)'
-                                }}
-                            />
-                        </Button>
-                    </TransitionLink>
-                    
-                    <div className="h-8">
-                        <Separator orientation="vertical" className="h-4"/>
-                    </div>
-
-                    <ModeToggle />
-                    
-                    <div className="h-8 ml-1 mx-4">
-                        <Separator orientation="vertical" className="h-4"/>
-                    </div>
-
-                    {/* Profile / Sign In */}
-                    {!loading && user ? (
-                        <TransitionLink
-                            href="/account"
-                            className="flex items-center justify-center relative"
-                            data-active={isActive("/account")}
-                            hapticsOnPressRelease={true}
-                        >
-                            {profileData?.avatar && profileData?.avatar !== "default" ? (
-                                <img
-                                    src={profileData.avatar}
-                                    alt="Profile"
-                                    className={cn(
-                                        "size-9 rounded-full object-cover border-2 border-transparent",
-                                        isActive("/account") && "border-primary"
-                                    )}
-                                    style={{
-                                        transition: 'all 0.4s cubic-bezier(0.22, 0.61, 0.36, 1)',
-                                        transform: isActive("/account") ? 'scale(1.1)' : 'scale(1)'
-                                    }}
-                                />
-                            ) : (
-                                <div
-                                    className={cn(
-                                        "size-9 rounded-full bg-primary flex items-center justify-center border-2 border-transparent",
-                                        isActive("/account") && "border-primary"
-                                    )}
-                                    style={{
-                                        transition: 'all 0.4s cubic-bezier(0.22, 0.61, 0.36, 1)',
-                                        transform: isActive("/account") ? 'scale(1.1)' : 'scale(1)'
-                                    }}
-                                >
-                                    <UserIcon
-                                        strokeWidth={1.5}
-                                        className="size-5 text-primary-foreground"
-                                    />
-                                </div>
-                            )}
+                {/* Top Layer - Main Navigation */}
+                <div className="w-full h-12 px-4 flex items-center justify-between border-b border-border/50">
+                    <div className="flex items-center gap-6 flex-1 max-w-7xl mx-auto w-full">
+                        {/* Logo */}
+                        <TransitionLink href="/" className="flex items-center flex-shrink-0">
+                            <h1 className="font-bold text-lg tracking-tight">DepxTech</h1>
                         </TransitionLink>
-                    ) : !loading ? (
-                        <TransitionLink
-                            href="/login"
-                            className="flex items-center justify-center"
-                            hapticsOnPressRelease={true}
-                        >
-                            <Button
-                                className="font-medium rounded-xl gap-2"
-                                size="sm"
+
+                        {/* Center Navigation - Trade-in Focus */}
+                        <div className="flex items-center gap-5 flex-1 justify-center">
+                            <TransitionLink 
+                                href="/trade" 
+                                className={cn(
+                                    "text-sm font-medium hover:text-primary transition-colors",
+                                    isActive("/trade") && "text-primary"
+                                )}
+                                data-active={isActive("/trade")}
                             >
-                                <LogInIcon className="size-4" />
-                                Sign In
-                            </Button>
-                        </TransitionLink>
-                    ) : (
-                        <div className="size-9 rounded-full bg-muted animate-pulse" />
-                    )}
+                                Trade-in
+                            </TransitionLink>
+                            <TransitionLink 
+                                href="/trade/process" 
+                                className={cn(
+                                    "text-sm font-medium hover:text-primary transition-colors",
+                                    pathname.includes("process") && "text-primary"
+                                )}
+                            >
+                                Process
+                            </TransitionLink>
+                            <TransitionLink 
+                                href="/trade/sustainability" 
+                                className={cn(
+                                    "text-sm font-medium hover:text-primary transition-colors",
+                                    pathname.includes("sustainability") && "text-primary"
+                                )}
+                            >
+                                Sustainability
+                            </TransitionLink>
+                            <TransitionLink 
+                                href="/trade/how-it-works" 
+                                className={cn(
+                                    "text-sm font-medium hover:text-primary transition-colors",
+                                    pathname.includes("how-it-works") && "text-primary"
+                                )}
+                            >
+                                How it Works
+                            </TransitionLink>
+                            <TransitionLink
+                                href="/trade/faq"
+                                className={cn(
+                                    "text-sm font-medium hover:text-primary transition-colors",
+                                    pathname.includes("faq") && "text-primary"
+                                )}
+                            >
+                                FAQ
+                            </TransitionLink>
+                            <TransitionLink
+                                href="/blog"
+                                className={cn(
+                                    "text-sm font-medium hover:text-primary transition-colors",
+                                    isActive("/blog") && "text-primary"
+                                )}
+                                data-active={isActive("/blog")}
+                            >
+                                Blog
+                            </TransitionLink>
+                        </div>
+
+                        {/* Right Actions */}
+                        <div className="flex items-center gap-2 flex-shrink-0">
+                            {!loading && user ? (
+                                <TransitionLink href="/account" className="flex items-center justify-center">
+                                    {profileData?.avatar && profileData?.avatar !== "default" ? (
+                                        <img
+                                            src={profileData.avatar}
+                                            alt="Profile"
+                                            className="size-7 rounded-full object-cover border border-border hover:border-primary transition-colors"
+                                        />
+                                    ) : (
+                                        <div className="size-7 rounded-full bg-muted flex items-center justify-center border border-border hover:border-primary transition-colors">
+                                            <UserIcon className="size-3.5 text-muted-foreground" />
+                                        </div>
+                                    )}
+                                </TransitionLink>
+                            ) : !loading ? (
+                                <TransitionLink href="/login">
+                                    <Button variant="ghost" size="sm" className="h-8 px-2.5 gap-1.5 text-sm">
+                                        <UserIcon className="size-3.5" />
+                                        <span className="hidden xl:inline">Sign In</span>
+                                    </Button>
+                                </TransitionLink>
+                            ) : (
+                                <div className="size-7 rounded-full bg-muted animate-pulse" />
+                            )}
+{/* Cart hidden - currently trade-in only
+                            <TransitionLink href="/cart" className="relative p-1.5 hover:text-primary transition-colors">
+                                <ShoppingCartIcon className="size-4.5" />
+                            </TransitionLink>
+*/}
+                        </div>
+                    </div>
                 </div>
+
+                {/* Second Layer - Trade-in Categories */}
+                <div className="w-full h-10 px-4 flex items-center border-b border-border/50">
+                    <div className="flex items-center gap-5 max-w-7xl mx-auto w-full overflow-x-auto">
+                        <TransitionLink 
+                            href="/trade?category=smartphones" 
+                            className={cn(
+                                "text-xs font-medium hover:text-primary transition-colors whitespace-nowrap",
+                                pathname.includes("smartphones") && "text-primary"
+                            )}
+                        >
+                            Smartphones
+                        </TransitionLink>
+                        <TransitionLink 
+                            href="/trade?category=laptops" 
+                            className={cn(
+                                "text-xs font-medium hover:text-primary transition-colors whitespace-nowrap",
+                                pathname.includes("laptops") && "text-primary"
+                            )}
+                        >
+                            Laptops
+                        </TransitionLink>
+                        <TransitionLink 
+                            href="/trade?category=tablets" 
+                            className={cn(
+                                "text-xs font-medium hover:text-primary transition-colors whitespace-nowrap",
+                                pathname.includes("tablets") && "text-primary"
+                            )}
+                        >
+                            Tablets
+                        </TransitionLink>
+                        <TransitionLink 
+                            href="/trade?category=gaming" 
+                            className={cn(
+                                "text-xs font-medium hover:text-primary transition-colors whitespace-nowrap",
+                                pathname.includes("gaming") && "text-primary"
+                            )}
+                        >
+                            Gaming Consoles
+                        </TransitionLink>
+                        <TransitionLink 
+                            href="/trade?category=audio" 
+                            className={cn(
+                                "text-xs font-medium hover:text-primary transition-colors whitespace-nowrap",
+                                pathname.includes("audio") && "text-primary"
+                            )}
+                        >
+                            Audio Devices
+                        </TransitionLink>
+                        <TransitionLink 
+                            href="/trade?category=wearables" 
+                            className={cn(
+                                "text-xs font-medium hover:text-primary transition-colors whitespace-nowrap",
+                                pathname.includes("wearables") && "text-primary"
+                            )}
+                        >
+                            Wearables
+                        </TransitionLink>
+                    </div>
+                </div>
+
+                {/* Third Layer - Secondary Links */}
+                <div className="w-full h-8 px-4 flex items-center bg-muted/30">
+                    <div className="flex items-center gap-4 max-w-7xl mx-auto w-full text-xs text-muted-foreground">
+                        <TransitionLink href="/warranty" className="hover:text-foreground transition-colors">
+                            Warranty
+                        </TransitionLink>
+                        <TransitionLink href="/shipping" className="hover:text-foreground transition-colors">
+                            Free Shipping
+                        </TransitionLink>
+                        <TransitionLink href="/returns" className="hover:text-foreground transition-colors">
+                            30-Day Returns
+                        </TransitionLink>
+                        <div className="ml-auto flex items-center gap-1.5">
+                            <GlobeIcon className="size-3" />
+                            <span>US</span>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Active Link Indicator */}
+                {Object.keys(indicatorStyle).length > 0 && (
+                    <div 
+                        className="absolute bottom-0 h-0.5 bg-primary transition-all duration-300"
+                        style={indicatorStyle}
+                    />
+                )}
             </nav>
             <nav 
-                className="w-full justify-around overflow-hidden px-6 fixed bottom-0 bg-background/50 backdrop-blur-lg rounded-t-3xl border-t border-gray-500/10 flex sm:hidden z-10"
+                className={cn("w-full justify-around overflow-hidden px-6 fixed bottom-0 bg-background/50 backdrop-blur-lg rounded-t-3xl border-t border-gray-500/10 flex sm:hidden z-10", isActive("/account") && "hidden")}
                 onTouchEnd={() => setTouchedLink(null)}
                 style={{ 
                     viewTransitionName: 'nav-bar-mobile',
@@ -363,53 +330,7 @@ export default function Nav({}) {
                         Home
                     </span>
                 </TransitionLink>
-                <TransitionLink 
-                    href="/products" 
-                    className={cn(
-                        'size-16 flex flex-col items-center justify-center md:gap-1 hover:text-primary relative',
-                        isActive("/products") && "text-primary"
-                    )}
-                    style={{ 
-                        transition: 'all 0.4s cubic-bezier(0.22, 0.61, 0.36, 1)'
-                    }}
-                    hapticsOnPressRelease={true}
-                    onClick={() => setJustOpenedPage("/products")}
-                    onTouchStart={() => setTouchedLink("/products")}
-                    onTouchMove={() => setTouchedLink("/products")}
-                >
-                    {isActive("/products") && (
-                        <div 
-                            className="absolute top-0 left-1/2 -translate-x-1/2 w-12 h-0.5 bg-primary rounded-full"
-                            style={{ 
-                                animation: 'fade-and-scale-in 0.4s cubic-bezier(0.22, 0.61, 0.36, 1)'
-                            }}
-                        />
-                    )}
-                    <div className="size-6">
-                        <SearchIcon 
-                            strokeWidth={pathname === "/products" || justOpenedPage === "/products" || touchedLink === "/products" ? 2.2 : 1.2} 
-                            className={cn(
-                                "size-5.5 md:size-6", 
-                                (pathname === "/products" || justOpenedPage === "/products" || touchedLink === "/products") && "text-primary"
-                            )}
-                            style={{ 
-                                transition: 'all 0.4s cubic-bezier(0.22, 0.61, 0.36, 1)',
-                                transform: (pathname === "/products" || justOpenedPage === "/products" || touchedLink === "/products") ? 'scale(1.1)' : 'scale(1)'
-                            }}
-                        />
-                    </div>
-                    <span 
-                        className={cn(
-                            "text-[0.60rem] md:text-xs", 
-                            (pathname === "/products" || justOpenedPage === "/products" || touchedLink === "/products") && "text-[0px] md:text-[0rem]"
-                        )}
-                        style={{ 
-                            transition: 'all 0.4s cubic-bezier(0.22, 0.61, 0.36, 1)'
-                        }}
-                    >
-                        Search
-                    </span>
-                </TransitionLink>
+{/* Products/Search hidden - currently trade-in only */}
                 <TransitionLink 
                     href="/trade" 
                     className={cn(
@@ -457,54 +378,8 @@ export default function Nav({}) {
                         Trade in
                     </span>
                 </TransitionLink>
-                <TransitionLink 
-                    href="/cart" 
-                    className={cn(
-                        'size-16 flex flex-col items-center justify-center md:gap-1 hover:text-primary relative',
-                        isActive("/cart") && "text-primary"
-                    )}
-                    style={{ 
-                        transition: 'all 0.4s cubic-bezier(0.22, 0.61, 0.36, 1)'
-                    }}
-                    hapticsOnPressRelease={true}
-                    onClick={() => setJustOpenedPage("/cart")}
-                    onTouchStart={() => setTouchedLink("/cart")}
-                    onTouchMove={() => setTouchedLink("/cart")}
-                >
-                    {isActive("/cart") && (
-                        <div 
-                            className="absolute top-0 left-1/2 -translate-x-1/2 w-12 h-0.5 bg-primary rounded-full"
-                            style={{ 
-                                animation: 'fade-and-scale-in 0.4s cubic-bezier(0.22, 0.61, 0.36, 1)'
-                            }}
-                        />
-                    )}
-                    <div className="size-6">
-                        <ShoppingCartIcon 
-                            strokeWidth={pathname === "/cart" || justOpenedPage === "/cart" || touchedLink === "/cart" ? 2.2 : 1.2} 
-                            className={cn(
-                                "size-5.5 md:size-6", 
-                                (pathname === "/cart" || justOpenedPage === "/cart" || touchedLink === "/cart") && "text-primary"
-                            )}
-                            style={{ 
-                                transition: 'all 0.4s cubic-bezier(0.22, 0.61, 0.36, 1)',
-                                transform: (pathname === "/cart" || justOpenedPage === "/cart" || touchedLink === "/cart") ? 'scale(1.1)' : 'scale(1)'
-                            }}
-                        />
-                    </div>
-                    <span 
-                        className={cn(
-                            "text-[0.60rem] md:text-xs", 
-                            (pathname === "/cart" || justOpenedPage === "/cart" || touchedLink === "/cart") && "text-[0px] md:text-[0rem]"
-                        )}
-                        style={{ 
-                            transition: 'all 0.4s cubic-bezier(0.22, 0.61, 0.36, 1)'
-                        }}
-                    >
-                        Cart
-                    </span>
-                </TransitionLink>
-
+{/* Cart hidden - currently trade-in only */}
+{/* 
                 <TransitionLink 
                     href="/account" 
                     className={cn(
@@ -551,8 +426,76 @@ export default function Nav({}) {
                     >
                         Account
                     </span>
-                </TransitionLink>
+                </TransitionLink> */}
             </nav>
+            <div className={cn("fixed top-4 right-4 sm:hidden", isActive("/account") && "hidden")}>
+                {/* Profile / Sign In */}
+                {!loading && user ? (
+                        <TransitionLink
+                            href="/account"
+                            className="flex items-center justify-center relative"
+                            data-active={isActive("/account")}
+                            hapticsOnPressRelease={true}
+                        >
+                            {profileData?.avatar && profileData?.avatar !== "default" ? (
+                                <img
+                                    src={profileData.avatar}
+                                    alt="Profile"
+                                    className={cn(
+                                        "size-10 rounded-full object-cover border-2 border-transparent",
+                                        isActive("/account") && "border-primary"
+                                    )}
+                                    style={{
+                                        transition: 'all 0.4s cubic-bezier(0.22, 0.61, 0.36, 1)',
+                                        transform: isActive("/account") ? 'scale(1.1)' : 'scale(1)'
+                                    }}
+                                />
+                            ) : (
+                                <div
+                                    className={cn(
+                                        "size-9 rounded-full bg-primary flex items-center justify-center border-2 border-transparent",
+                                        isActive("/account") && "border-primary"
+                                    )}
+                                    style={{
+                                        transition: 'all 0.4s cubic-bezier(0.22, 0.61, 0.36, 1)',
+                                        transform: isActive("/account") ? 'scale(1.1)' : 'scale(1)'
+                                    }}
+                                >
+                                    <UserIcon
+                                        strokeWidth={1.5}
+                                        className="size-5 text-primary-foreground"
+                                    />
+                                </div>
+                            )}
+                        </TransitionLink>
+                    ) : !loading ? (
+                        <TransitionLink
+                            href="/login"
+                            className="flex items-center justify-center"
+                            hapticsOnPressRelease={true}
+                        >
+                            <Button
+                                className="font-medium rounded-xl gap-2"
+                                size="sm"
+                            >
+                                <LogInIcon className="size-4" />
+                                Sign In
+                            </Button>
+                        </TransitionLink>
+                    ) : (
+                        <div className="size-9 rounded-full bg-muted animate-pulse" />
+                    )}
+            </div>
+            <div className={cn("fixed top-0 left-0 w-full bg-background hidden sm:hidden justify-end items-center p-4", isActive("/account") && "flex")}>
+                <Button 
+                variant="ghost" 
+                size="icon" 
+                
+                onClick={() => router.back()}
+                >
+                    <XIcon className="size-6" strokeWidth={0.75} />
+                </Button>
+            </div>
             <BottomSafeArea/>
         </>
     )

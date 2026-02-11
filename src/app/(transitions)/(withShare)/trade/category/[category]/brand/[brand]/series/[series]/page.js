@@ -1,10 +1,9 @@
 import { supabaseAdmin } from '@/lib/supabase-admin'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import { ArrowLeftIcon, ArrowRightIcon, DollarSignIcon } from 'lucide-react'
-import Image from 'next/image'
-import { TransitionLink } from '@/components/ui/pageTransitions'
+import { TradeProgressStepper } from '@/components/trade/TradeProgressStepper'
+import { TradePageHeader } from '@/components/trade/TradePageHeader'
+import { TradeProductCard } from '@/components/trade/TradeCards'
+import { TradeEmptyState } from '@/components/trade/TradeEmptyState'
+import { TradeTrustIndicators, TradeValueProposition } from '@/components/trade/TradeTrustIndicators'
 
 export async function generateMetadata({ params }) {
   const { category: categoryParam, brand: brandParam, series: seriesParam } = await params
@@ -12,7 +11,7 @@ export async function generateMetadata({ params }) {
   const brand = decodeURIComponent(brandParam)
   const series = decodeURIComponent(seriesParam)
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://depxtech.com'
-  
+
   return {
     title: `Trade In ${brand} ${series} ${category} | DepxTech`,
     description: `Trade in your ${brand} ${series} ${category} at DepxTech. Get instant quotes for your device. Select your specific model and get the best trade-in value.`,
@@ -34,7 +33,7 @@ export default async function SeriesProductsPage({ params }) {
   const category = decodeURIComponent(categoryParam)
   const brand = decodeURIComponent(brandParam)
   const series = decodeURIComponent(seriesParam)
-  
+
   // Fetch products for this category, brand, and series
   const { data: products, error } = await supabaseAdmin
     .from('tradable_products')
@@ -42,129 +41,69 @@ export default async function SeriesProductsPage({ params }) {
     .eq('category', category)
     .eq('brand', brand)
     .eq('series', series)
-    .order('title', { ascending: true })
+    .order('base_price', { ascending: false })
 
   if (error) {
     console.error('Error fetching products:', error)
   }
 
-  // Check how many series this brand has (to determine back button behavior)
-  const { data: allSeries } = await supabaseAdmin
-    .from('tradable_products')
-    .select('series')
-    .eq('category', category)
-    .eq('brand', brand)
-
-  const uniqueSeriesCount = new Set(allSeries?.map(item => item.series) || []).size
-  const hasMultipleSeries = uniqueSeriesCount > 1
+  const productCount = products?.length || 0
 
   return (
-    <div className="min-h-screen py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-6xl mx-auto">
-
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold mb-4">Select Your Device</h1>
-          <p className="text-xl text-muted-foreground">
-            Choose your {brand} {series} model
-          </p>
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-900">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        {/* Progress Stepper */}
+        <div className="mb-12">
+          <TradeProgressStepper
+            currentStep={4}
+            completedData={{ category, brand, series }}
+          />
         </div>
 
-        <Card className="shadow-none border-none">
-          <CardHeader>
-            <CardTitle>Step 4: Select Model</CardTitle>
-            <CardDescription>
-              Pick your specific {brand} {series} device
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            {products && products.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {products.map((product) => (
-                  <TransitionLink 
-                    key={product.id} 
-                    href={`/trade/product/${product.id}`}
-                    className="block"
-                  >
-                    <Card className="hover:shadow-lg transition-all duration-300 cursor-pointer h-full">
-                      <CardContent className="p-6">
-                        {product.imgs && product.imgs.length > 0 && (
-                          <div className="w-full h-48 mb-4 relative">
-                            <Image
-                              src={product.imgs[0]}
-                              alt={product.title}
-                              fill
-                              className="object-contain"
-                            />
-                          </div>
-                        )}
-                        <h3 className="font-semibold text-lg mb-2">{product.title}</h3>
-                        {product.des && (
-                          <p className="text-sm text-muted-foreground mb-4 line-clamp-2">
-                            {product.des}
-                          </p>
-                        )}
-                        <div className="space-y-2">
-                          <div className="flex items-center justify-between">
-                            <span className="text-sm text-muted-foreground">Trade-in value up to:</span>
-                          </div>
-                          <div className="flex items-center justify-between">
-                            <Badge variant="default" className="bg-green-600">
-                              Est. Value
-                            </Badge>
-                            <span className="font-semibold flex items-center text-green-600">
-                              <DollarSignIcon className="w-4 h-4" />
-                              {product.base_price?.toFixed(2) || '0.00'}
-                            </span>
-                          </div>
-                        </div>
-                        <div className="mt-4 flex items-center justify-end">
-                          <span className="text-sm text-primary flex items-center">
-                            Get Quote
-                            <ArrowRightIcon className="w-4 h-4 ml-1" />
-                          </span>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  </TransitionLink>
-                ))}
-              </div>
-            ) : (
-              <div className="text-center py-8">
-                <p className="text-muted-foreground">No products available for this series.</p>
-              </div>
-            )}
-          </CardContent>
-        </Card>
+        {/* Page Header */}
+        <TradePageHeader
+          step={4}
+          icon="smartphone"
+          title="Select Your Device"
+          subtitle={`Choose your ${brand} ${series} model to get an instant quote`}
+        />
 
-        <div className="mt-12 grid grid-cols-1 md:grid-cols-4 gap-6">
-          <div className="text-center">
-            <div className="w-12 h-12 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
-              <span className="font-bold text-muted-foreground">✓</span>
+        {/* Products count */}
+        {productCount > 0 && (
+          <p className="text-center text-slate-500 mt-4 mb-8">
+            {productCount} model{productCount > 1 ? 's' : ''} available
+          </p>
+        )}
+
+        {/* Products Grid */}
+        <div className="mt-8">
+          {products && products.length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+              {products.map((product, index) => (
+                <TradeProductCard
+                  key={product.id}
+                  product={product}
+                  href={`/trade/product/${product.id}`}
+                  index={index}
+                />
+              ))}
             </div>
-            <h3 className="font-semibold mb-2">Select Category</h3>
-            <p className="text-sm text-muted-foreground">{category}</p>
-          </div>
-          <div className="text-center">
-            <div className="w-12 h-12 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
-              <span className="font-bold text-muted-foreground">✓</span>
-            </div>
-            <h3 className="font-semibold mb-2">Choose Brand</h3>
-            <p className="text-sm text-muted-foreground">{brand}</p>
-          </div>
-          <div className="text-center">
-            <div className="w-12 h-12 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
-              <span className="font-bold text-muted-foreground">✓</span>
-            </div>
-            <h3 className="font-semibold mb-2">Pick Series</h3>
-            <p className="text-sm text-muted-foreground">{series}</p>
-          </div>
-          <div className="text-center">
-            <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-              <span className="font-bold text-primary">4</span>
-            </div>
-            <h3 className="font-semibold mb-2">Select Model</h3>
-            <p className="text-sm text-muted-foreground">Pick your specific device</p>
-          </div>
+          ) : (
+            <TradeEmptyState
+              icon="smartphone"
+              message="No products available for this series."
+            />
+          )}
+        </div>
+
+        {/* Trust Indicators */}
+        <div className="mt-16">
+          <TradeTrustIndicators />
+        </div>
+
+        {/* Value Proposition */}
+        <div className="mt-8">
+          <TradeValueProposition />
         </div>
       </div>
     </div>
