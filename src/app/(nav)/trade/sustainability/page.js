@@ -93,7 +93,7 @@ export default function SustainabilityPage() {
   return (
     <main className="bg-background">
       {/* Hero */}
-      <section className="py-16 lg:py-24 bg-gradient-to-b from-emerald-50 dark:from-emerald-900/20 to-background">
+      <section className="py-16 lg:py-24 bg-emerald-50 dark:bg-emerald-900/20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-3xl mx-auto">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 text-sm font-bold mb-6">
@@ -261,7 +261,7 @@ export default function SustainabilityPage() {
       {/* CTA */}
       <section className="py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="bg-gradient-to-r from-emerald-500 to-teal-500 rounded-3xl p-6 sm:p-8 lg:p-12 text-center">
+          <div className="bg-emerald-600 rounded-3xl p-6 sm:p-8 lg:p-12 text-center">
             <Leaf className="size-12 text-white mx-auto mb-4" />
             <h2 className="text-3xl lg:text-4xl font-bold text-white mb-4">
               Join the Movement

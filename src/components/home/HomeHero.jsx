@@ -94,18 +94,15 @@ export function HomeHero() {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="relative hidden lg:block"
           >
-            {/* Blur Background */}
-            <div className="absolute -inset-4 bg-primary/10 rounded-full blur-3xl"></div>
-
             {/* Main Card */}
-            <div className="relative bg-gradient-to-br from-slate-100 to-white dark:from-slate-800 dark:to-slate-900 rounded-[2rem] p-4 sm:p-6 md:p-8 border border-slate-200 dark:border-slate-700 shadow-2xl">
-              <div className="aspect-square w-full rounded-2xl bg-slate-50 dark:bg-slate-800 flex items-center justify-center overflow-hidden">
+            <div className="relative bg-slate-100 dark:bg-slate-800 rounded-[2rem] p-4 sm:p-6 md:p-8 border border-slate-200 dark:border-slate-700">
+              <div className="aspect-square w-full rounded-2xl bg-slate-50 dark:bg-slate-900 flex items-center justify-center overflow-hidden">
                 <Image
                   src="/stockImg/iphone_17_pro_max.png"
                   alt="Trade in your device"
                   width={300}
                   height={300}
-                  className="object-contain drop-shadow-2xl"
+                  className="object-contain"
                   priority
                 />
               </div>
@@ -115,7 +112,7 @@ export function HomeHero() {
                 initial={{ opacity: 0, x: -20, y: 20 }}
                 animate={{ opacity: 1, x: 0, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.6 }}
-                className="absolute -bottom-6 -left-6 bg-white dark:bg-slate-800 p-4 rounded-xl shadow-xl border border-slate-100 dark:border-slate-700"
+                className="absolute -bottom-6 -left-6 bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700"
               >
                 <div className="flex items-center gap-3">
                   <div className="size-10 bg-emerald-500 rounded-lg flex items-center justify-center text-white">

@@ -2,7 +2,7 @@
 
 import { usePathname } from "next/navigation";
 import { TransitionLink } from "@/components/ui/pageTransitions";
-import { HomeIcon, ArrowRightLeftIcon, PaletteIcon, UserIcon, ShoppingCartIcon, TicketPercentIcon, LogInIcon, GlobeIcon } from "lucide-react";
+import { HomeIcon, ArrowRightLeftIcon, PaletteIcon, UserIcon, ShoppingCartIcon, TicketPercentIcon, GlobeIcon, BookOpenIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { TextSearchIcon } from "lucide-react";
 import { SearchIcon } from "lucide-react";
@@ -274,228 +274,70 @@ export default function Nav({}) {
                     />
                 )}
             </nav>
-            <nav 
-                className={cn("w-full justify-around overflow-hidden px-6 fixed bottom-0 bg-background/50 backdrop-blur-lg rounded-t-3xl border-t border-gray-500/10 flex sm:hidden z-10", isActive("/account") && "hidden")}
+            <nav
+                className="fixed bottom-0 left-0 right-0 bg-background border-t border-border flex sm:hidden z-10"
                 onTouchEnd={() => setTouchedLink(null)}
-                style={{ 
+                style={{
                     viewTransitionName: 'nav-bar-mobile',
-                    height: `${64 + safeArea.bottom}px`,
                     paddingBottom: `${safeArea.bottom}px`
                 }}
             >
-                <TransitionLink 
-                    href="/" 
-                    className={cn(
-                        'size-16 flex flex-col items-center justify-center md:gap-1 hover:text-primary relative',
-                        isActive("/") && "text-primary"
-                    )}
-                    style={{ 
-                        transition: 'all 0.4s cubic-bezier(0.22, 0.61, 0.36, 1)'
-                    }}
-                    hapticsOnPressRelease={true}
-                    onClick={() => setJustOpenedPage("/")}
-                    onTouchStart={() => setTouchedLink("/")}
-                    onTouchMove={() => setTouchedLink("/")}
-                >
-                    {isActive("/") && (
-                        <div 
-                            className="absolute top-0 left-1/2 -translate-x-1/2 w-12 h-0.5 bg-primary rounded-full"
-                            style={{ 
-                                animation: 'fade-and-scale-in 0.4s cubic-bezier(0.22, 0.61, 0.36, 1)'
-                            }}
-                        />
-                    )}
-                    <div className="size-6">
-                            <HomeIcon 
-                                strokeWidth={pathname === "/" || justOpenedPage === "/" || touchedLink === "/" ? 2.2 : 1.2} 
-                                className={cn(
-                                    "size-5.5 md:size-6", 
-                                    (pathname === "/" || justOpenedPage === "/"|| touchedLink === "/") && "text-primary"
-                                )}
-                                style={{ 
-                                    transition: 'all 0.4s cubic-bezier(0.22, 0.61, 0.36, 1)',
-                                    transform: (pathname === "/" || justOpenedPage === "/"|| touchedLink === "/") ? 'scale(1.1)' : 'scale(1)'
-                                }}
-                            />
-                    </div>
-                    <span 
-                        className={cn(
-                            "text-[0.60rem] md:text-xs",
-                            (pathname === "/" || justOpenedPage === "/"|| touchedLink === "/") && "text-[0px] md:text-[0rem]"
-                        )}
-                        style={{ 
-                            transition: 'all 0.4s cubic-bezier(0.22, 0.61, 0.36, 1)'
-                        }}
-                    >
-                        Home
-                    </span>
-                </TransitionLink>
-{/* Products/Search hidden - currently trade-in only */}
-                <TransitionLink 
-                    href="/trade" 
-                    className={cn(
-                        'size-16 flex flex-col items-center justify-center md:gap-1 hover:text-primary relative',
-                        isActive("/trade") && "text-primary"
-                    )}
-                    style={{ 
-                        transition: 'all 0.4s cubic-bezier(0.22, 0.61, 0.36, 1)'
-                    }}
-                    hapticsOnPressRelease={true}
-                    onClick={() => setJustOpenedPage("/trade")}
-                    onTouchStart={() => setTouchedLink("/trade")}
-                    onTouchMove={() => setTouchedLink("/trade")}
-                >
-                    {isActive("/trade") && (
-                        <div 
-                            className="absolute top-0 left-1/2 -translate-x-1/2 w-12 h-0.5 bg-primary rounded-full"
-                            style={{ 
-                                animation: 'fade-and-scale-in 0.4s cubic-bezier(0.22, 0.61, 0.36, 1)'
-                            }}
-                        />
-                    )}
-                    <div className="size-6">
-                        <ArrowRightLeftIcon 
-                            strokeWidth={pathname === "/trade" || justOpenedPage === "/trade" || touchedLink === "/trade" ? 2.2 : 1.2} 
-                            className={cn(
-                                "size-5.5 md:size-6", 
-                                (pathname === "/trade" || justOpenedPage === "/trade" || touchedLink === "/trade") && "text-primary"
-                            )}
-                            style={{ 
-                                transition: 'all 0.4s cubic-bezier(0.22, 0.61, 0.36, 1)',
-                                transform: (pathname === "/trade" || justOpenedPage === "/trade" || touchedLink === "/trade") ? 'scale(1.1)' : 'scale(1)'
-                            }}
-                        />
-                    </div>
-                    <span 
-                        className={cn(
-                            "text-[0.60rem] md:text-xs", 
-                            (pathname === "/trade" || justOpenedPage === "/trade" || touchedLink === "/trade") && "text-[0px] md:text-[0rem]"
-                        )}
-                        style={{ 
-                            transition: 'all 0.4s cubic-bezier(0.22, 0.61, 0.36, 1)'
-                        }}
-                    >
-                        Trade in
-                    </span>
-                </TransitionLink>
-{/* Cart hidden - currently trade-in only */}
-{/* 
-                <TransitionLink 
-                    href="/account" 
-                    className={cn(
-                        'size-16 flex flex-col items-center justify-center md:gap-1 hover:text-primary relative',
-                        isActive("/account") && "text-primary"
-                    )}
-                    style={{ 
-                        transition: 'all 0.4s cubic-bezier(0.22, 0.61, 0.36, 1)'
-                    }}
-                    hapticsOnPressRelease={true}
-                    onClick={() => setJustOpenedPage("/account")}
-                    onTouchStart={() => setTouchedLink("/account")}
-                    onTouchMove={() => setTouchedLink("/account")}
-                >
-                    {isActive("/account") && (
-                        <div 
-                            className="absolute top-0 left-1/2 -translate-x-1/2 w-12 h-0.5 bg-primary rounded-full"
-                            style={{ 
-                                animation: 'fade-and-scale-in 0.4s cubic-bezier(0.22, 0.61, 0.36, 1)'
-                            }}
-                        />
-                    )}
-                    <div className="size-6">
-                        <UserIcon 
-                            strokeWidth={pathname === "/account" || justOpenedPage === "/account" || touchedLink === "/account" ? 2.2 : 1.2} 
-                            className={cn(
-                                "size-5.5 md:size-6", 
-                                (pathname === "/account" || justOpenedPage === "/account" || touchedLink === "/account") && "text-primary"
-                            )}
-                            style={{ 
-                                transition: 'all 0.4s cubic-bezier(0.22, 0.61, 0.36, 1)',
-                                transform: (pathname === "/account" || justOpenedPage === "/account" || touchedLink === "/account") ? 'scale(1.1)' : 'scale(1)'
-                            }}
-                        />
-                    </div>
-                    <span 
-                        className={cn(
-                            "text-[0.60rem] md:text-xs", 
-                            (pathname === "/account" || justOpenedPage === "/account" || touchedLink === "/account") && "text-[0px] md:text-[0rem]"
-                        )}
-                        style={{ 
-                            transition: 'all 0.4s cubic-bezier(0.22, 0.61, 0.36, 1)'
-                        }}
-                    >
-                        Account
-                    </span>
-                </TransitionLink> */}
-            </nav>
-            <div className={cn("fixed top-4 right-4 sm:hidden", isActive("/account") && "hidden")}>
-                {/* Profile / Sign In */}
-                {!loading && user ? (
+                {[
+                    { href: "/", icon: HomeIcon, label: "Home" },
+                    { href: "/trade", icon: ArrowRightLeftIcon, label: "Trade in" },
+                    { href: "/blog", icon: BookOpenIcon, label: "Blog" },
+                    { href: user ? "/account" : "/login", icon: UserIcon, label: user ? "Account" : "Sign In" },
+                ].map(({ href, icon: Icon, label }) => {
+                    const active = isActive(href)
+                    const pressed = justOpenedPage === href || touchedLink === href
+                    return (
                         <TransitionLink
-                            href="/account"
-                            className="flex items-center justify-center relative"
-                            data-active={isActive("/account")}
+                            key={href}
+                            href={href}
+                            className={cn(
+                                'flex-1 flex flex-col items-center justify-center gap-0.5 py-2 relative',
+                                active ? "text-primary" : "text-muted-foreground"
+                            )}
                             hapticsOnPressRelease={true}
+                            onClick={() => setJustOpenedPage(href)}
+                            onTouchStart={() => setTouchedLink(href)}
+                            onTouchMove={() => setTouchedLink(href)}
                         >
-                            {profileData?.avatar && profileData?.avatar !== "default" ? (
+                            {active && (
+                                <div
+                                    className="absolute top-0 left-1/2 -translate-x-1/2 w-12 h-0.5 bg-primary rounded-full"
+                                    style={{ animation: 'fade-and-scale-in 0.3s ease-out' }}
+                                />
+                            )}
+                            {href === (user ? "/account" : "/login") && !loading && user && profileData?.avatar && profileData?.avatar !== "default" ? (
                                 <img
                                     src={profileData.avatar}
                                     alt="Profile"
                                     className={cn(
-                                        "size-10 rounded-full object-cover border-2 border-transparent",
-                                        isActive("/account") && "border-primary"
+                                        "size-6 rounded-full object-cover",
+                                        active && "ring-1.5 ring-primary ring-offset-1 ring-offset-background"
                                     )}
-                                    style={{
-                                        transition: 'all 0.4s cubic-bezier(0.22, 0.61, 0.36, 1)',
-                                        transform: isActive("/account") ? 'scale(1.1)' : 'scale(1)'
-                                    }}
                                 />
                             ) : (
-                                <div
-                                    className={cn(
-                                        "size-9 rounded-full bg-primary flex items-center justify-center border-2 border-transparent",
-                                        isActive("/account") && "border-primary"
-                                    )}
+                                <Icon
+                                    strokeWidth={active || pressed ? 2 : 1.5}
+                                    className="size-5"
                                     style={{
-                                        transition: 'all 0.4s cubic-bezier(0.22, 0.61, 0.36, 1)',
-                                        transform: isActive("/account") ? 'scale(1.1)' : 'scale(1)'
+                                        transition: 'all 0.3s ease-out',
+                                        transform: pressed ? 'scale(1.1)' : 'scale(1)'
                                     }}
-                                >
-                                    <UserIcon
-                                        strokeWidth={1.5}
-                                        className="size-5 text-primary-foreground"
-                                    />
-                                </div>
+                                />
                             )}
+                            <span className={cn(
+                                "text-[0.625rem] leading-tight",
+                                active ? "font-semibold" : "font-medium"
+                            )}>
+                                {label}
+                            </span>
                         </TransitionLink>
-                    ) : !loading ? (
-                        <TransitionLink
-                            href="/login"
-                            className="flex items-center justify-center"
-                            hapticsOnPressRelease={true}
-                        >
-                            <Button
-                                className="font-medium rounded-xl gap-2"
-                                size="sm"
-                            >
-                                <LogInIcon className="size-4" />
-                                Sign In
-                            </Button>
-                        </TransitionLink>
-                    ) : (
-                        <div className="size-9 rounded-full bg-muted animate-pulse" />
-                    )}
-            </div>
-            <div className={cn("fixed top-0 left-0 w-full bg-background hidden sm:hidden justify-end items-center p-4", isActive("/account") && "flex")}>
-                <Button 
-                variant="ghost" 
-                size="icon" 
-                
-                onClick={() => router.back()}
-                >
-                    <XIcon className="size-6" strokeWidth={0.75} />
-                </Button>
-            </div>
+                    )
+                })}
+            </nav>
             <BottomSafeArea/>
         </>
     )

@@ -15,7 +15,6 @@ export default function NavLayout({ children }) {
       >
         <TopSafeArea/>
         <div className="h-30 hidden sm:block"/>
-        <div className="h-6 sm:hidden"/>
         <div className="min-h-screen">
           {children}
         </div>

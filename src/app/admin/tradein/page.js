@@ -1,7 +1,8 @@
 "use client"
 
 import { useTransitionRouter } from "@/components/ui/pageTransitions"
-import { useState, useEffect, useRef, Fragment } from "react"
+import { useSearchParams, useRouter as useNextRouter } from "next/navigation"
+import { useState, useEffect, useRef, Fragment, useCallback } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -81,10 +82,11 @@ const normalizeQuestions = (questions) => {
 
 export default function TradeinManagePage() {
     const router = useTransitionRouter()
+    const nextRouter = useNextRouter()
+    const searchParams = useSearchParams()
     const [products, setProducts] = useState([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState(null)
-    const [searchTerm, setSearchTerm] = useState('')
     const [filteredProducts, setFilteredProducts] = useState([])
     const [deleting, setDeleting] = useState(null)
     const [exporting, setExporting] = useState(false)
@@ -92,13 +94,32 @@ export default function TradeinManagePage() {
     const [fetchingPrices, setFetchingPrices] = useState(false)
     const fileInputRef = useRef(null)
 
-    // View and filter state
-    const [viewMode, setViewMode] = useState('table')
-    const [categoryFilter, setCategoryFilter] = useState('all')
-    const [brandFilter, setBrandFilter] = useState('all')
-    const [sortBy, setSortBy] = useState('created_desc')
-    const [groupBy, setGroupBy] = useState('none')
+    // View, filter, and search state from URL params
+    const searchTerm = searchParams.get('q') || ''
+    const viewMode = searchParams.get('view') || 'table'
+    const categoryFilter = searchParams.get('category') || 'all'
+    const brandFilter = searchParams.get('brand') || 'all'
+    const sortBy = searchParams.get('sort') || 'created_desc'
+    const groupBy = searchParams.get('group') || 'none'
     const [expandedGroups, setExpandedGroups] = useState({})
+
+    const setParam = useCallback((key, value, defaultValue) => {
+        const params = new URLSearchParams(searchParams.toString())
+        if (value === defaultValue) {
+            params.delete(key)
+        } else {
+            params.set(key, value)
+        }
+        const qs = params.toString()
+        nextRouter.replace(qs ? `?${qs}` : window.location.pathname, { scroll: false })
+    }, [searchParams, nextRouter])
+
+    const setSearchTerm = (v) => setParam('q', v, '')
+    const setViewMode = (v) => setParam('view', v, 'table')
+    const setCategoryFilter = (v) => setParam('category', v, 'all')
+    const setBrandFilter = (v) => setParam('brand', v, 'all')
+    const setSortBy = (v) => setParam('sort', v, 'created_desc')
+    const setGroupBy = (v) => setParam('group', v, 'none')
 
     // Selection state
     const [selectedIds, setSelectedIds] = useState(new Set())
@@ -643,11 +664,7 @@ export default function TradeinManagePage() {
     }
 
     const clearFilters = () => {
-        setSearchTerm('')
-        setCategoryFilter('all')
-        setBrandFilter('all')
-        setSortBy('created_desc')
-        setGroupBy('none')
+        nextRouter.replace(window.location.pathname, { scroll: false })
     }
 
     const hasActiveFilters = searchTerm || categoryFilter !== 'all' || brandFilter !== 'all'

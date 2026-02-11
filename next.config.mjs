@@ -34,6 +34,12 @@ const nextConfig = {
         port: '',
         pathname: '/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'images.samsung.com',
+        port: '',
+        pathname: '/**',
+      }
     ],
   },
   // Allow cross-origin requests from Capacitor dev server

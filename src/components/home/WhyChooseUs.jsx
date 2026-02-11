@@ -57,7 +57,7 @@ export function WhyChooseUs() {
                   <ScrollReveal key={feature.title} animation="left">
                     <motion.div
                       whileHover={{ scale: 1.02, y: -4 }}
-                      className={cn('p-4 sm:p-6 md:p-8 rounded-3xl transition-shadow hover:shadow-xl', feature.bgColor)}
+                      className={cn('p-4 sm:p-6 md:p-8 rounded-3xl', feature.bgColor)}
                     >
                       <feature.Icon className={cn('w-10 h-10 mb-4', feature.iconColor)} />
                       <h4 className={cn(
@@ -81,7 +81,7 @@ export function WhyChooseUs() {
                   <ScrollReveal key={feature.title} animation="right">
                     <motion.div
                       whileHover={{ scale: 1.02, y: -4 }}
-                      className={cn('p-4 sm:p-6 md:p-8 rounded-3xl transition-shadow hover:shadow-xl', feature.bgColor)}
+                      className={cn('p-4 sm:p-6 md:p-8 rounded-3xl', feature.bgColor)}
                     >
                       <feature.Icon className={cn('w-10 h-10 mb-4', feature.iconColor)} />
                       <h4 className={cn(
@@ -149,7 +149,7 @@ export function WhyChooseUs() {
               <div className="pt-4">
                 <Link
                   href="/trade"
-                  className="inline-flex items-center justify-center bg-primary hover:bg-primary/90 text-white font-bold py-4 px-10 rounded-xl transition-all shadow-lg hover:shadow-primary/30"
+                  className="inline-flex items-center justify-center bg-primary hover:bg-primary/90 text-white font-bold py-4 px-10 rounded-xl transition-colors"
                 >
                   Start Recycling Now
                 </Link>

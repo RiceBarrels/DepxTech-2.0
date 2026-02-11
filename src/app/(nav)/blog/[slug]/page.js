@@ -103,14 +103,8 @@ export default async function BlogPostPage({ params }) {
       {/* CTA */}
       <section className="py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="relative bg-gradient-to-br from-primary via-primary to-primary/80 rounded-[2rem] p-6 sm:p-10 lg:p-16 text-center overflow-hidden">
-            {/* Background pattern */}
-            <div className="absolute inset-0 opacity-10">
-              <div className="absolute top-0 left-0 w-40 h-40 bg-white rounded-full blur-3xl" />
-              <div className="absolute bottom-0 right-0 w-60 h-60 bg-white rounded-full blur-3xl" />
-            </div>
-
-            <div className="relative">
+          <div className="bg-primary rounded-[2rem] p-6 sm:p-10 lg:p-16 text-center">
+            <div>
               <div className="inline-flex items-center justify-center size-16 bg-white/20 rounded-2xl mb-6">
                 <BookOpen className="size-8 text-white" />
               </div>
@@ -123,7 +117,7 @@ export default async function BlogPostPage({ params }) {
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Link
                   href="/trade"
-                  className="inline-flex items-center justify-center gap-2 bg-white text-primary font-bold py-4 px-10 rounded-xl hover:bg-slate-100 hover:shadow-lg transition-all"
+                  className="inline-flex items-center justify-center gap-2 bg-white text-primary font-bold py-4 px-10 rounded-xl hover:bg-slate-100 transition-colors"
                 >
                   Get Your Quote <ArrowRight className="size-5" />
                 </Link>

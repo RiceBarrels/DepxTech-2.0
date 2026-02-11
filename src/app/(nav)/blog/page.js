@@ -43,7 +43,7 @@ export default function BlogPage() {
           <div className="flex flex-wrap gap-3 justify-center">
             <Link
               href="/blog"
-              className="px-5 py-2.5 rounded-full bg-primary text-white text-sm font-semibold shadow-lg shadow-primary/25 hover:shadow-primary/40 transition-all"
+              className="px-5 py-2.5 rounded-full bg-primary text-white text-sm font-semibold transition-colors"
             >
               All Posts
             </Link>
@@ -66,7 +66,7 @@ export default function BlogPage() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <Link
               href={`/blog/${latestPost.slug}`}
-              className="group block relative bg-gradient-to-br from-slate-900 to-slate-800 rounded-3xl overflow-hidden"
+              className="group block relative bg-slate-900 dark:bg-slate-800 rounded-3xl overflow-hidden"
             >
               <div className="grid lg:grid-cols-2 gap-6 sm:gap-8 p-5 sm:p-8 lg:p-12">
                 {/* Content */}
@@ -104,8 +104,7 @@ export default function BlogPage() {
 
                 {/* Image */}
                 <div className="relative flex items-center justify-center">
-                  <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-transparent rounded-2xl" />
-                  <div className="relative bg-white/5 backdrop-blur-sm rounded-2xl p-6 sm:p-12 border border-white/10">
+                  <div className="relative bg-white/5 rounded-2xl p-6 sm:p-12 border border-white/10">
                     <Image
                       src={latestPost.image}
                       alt={latestPost.title}
@@ -149,14 +148,8 @@ export default function BlogPage() {
       {/* CTA */}
       <section className="py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="relative bg-gradient-to-br from-primary via-primary to-primary/80 rounded-[2rem] p-6 sm:p-10 lg:p-16 text-center overflow-hidden">
-            {/* Background pattern */}
-            <div className="absolute inset-0 opacity-10">
-              <div className="absolute top-0 left-0 w-40 h-40 bg-white rounded-full blur-3xl" />
-              <div className="absolute bottom-0 right-0 w-60 h-60 bg-white rounded-full blur-3xl" />
-            </div>
-
-            <div className="relative">
+          <div className="bg-primary rounded-[2rem] p-6 sm:p-10 lg:p-16 text-center">
+            <div>
               <BookOpen className="size-14 text-white/90 mx-auto mb-6" />
               <h2 className="text-3xl lg:text-4xl font-bold text-white mb-4">
                 Ready to Trade In Your Device?
@@ -166,7 +159,7 @@ export default function BlogPage() {
               </p>
               <Link
                 href="/trade"
-                className="inline-flex items-center gap-2 bg-white text-primary font-bold py-4 px-10 rounded-xl hover:bg-slate-100 hover:shadow-lg transition-all"
+                className="inline-flex items-center gap-2 bg-white text-primary font-bold py-4 px-10 rounded-xl hover:bg-slate-100 transition-colors"
               >
                 Get Your Quote <ArrowRight className="size-5" />
               </Link>
