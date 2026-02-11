@@ -83,7 +83,7 @@ export default function ReturnsPage() {
               <RotateCcw className="size-4" />
               Hassle-Free Returns
             </div>
-            <h1 className="text-4xl sm:text-5xl font-black text-slate-900 dark:text-white leading-tight">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-slate-900 dark:text-white leading-tight">
               30-Day <span className="text-primary">Return Policy</span>
             </h1>
             <p className="mt-6 text-lg text-slate-600 dark:text-slate-400 leading-relaxed">
@@ -96,22 +96,22 @@ export default function ReturnsPage() {
       {/* Key Points */}
       <section className="py-16 bg-white dark:bg-background/50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid md:grid-cols-3 gap-8">
-            <div className="text-center p-6">
+          <div className="grid md:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
+            <div className="text-center p-4 sm:p-6">
               <div className="size-14 bg-primary/10 rounded-xl flex items-center justify-center mx-auto mb-4">
                 <Clock className="size-7 text-primary" />
               </div>
               <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">30-Day Window</h3>
               <p className="text-slate-600 dark:text-slate-400">Request a return within 30 days of sending your device</p>
             </div>
-            <div className="text-center p-6">
+            <div className="text-center p-4 sm:p-6">
               <div className="size-14 bg-primary/10 rounded-xl flex items-center justify-center mx-auto mb-4">
                 <Shield className="size-7 text-primary" />
               </div>
               <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">Free Returns</h3>
               <p className="text-slate-600 dark:text-slate-400">We cover all return shipping costs—no fees</p>
             </div>
-            <div className="text-center p-6">
+            <div className="text-center p-4 sm:p-6">
               <div className="size-14 bg-primary/10 rounded-xl flex items-center justify-center mx-auto mb-4">
                 <CheckCircle2 className="size-7 text-primary" />
               </div>

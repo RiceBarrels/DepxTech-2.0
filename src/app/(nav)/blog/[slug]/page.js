@@ -103,7 +103,7 @@ export default async function BlogPostPage({ params }) {
       {/* CTA */}
       <section className="py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="relative bg-gradient-to-br from-primary via-primary to-primary/80 rounded-[2rem] p-10 lg:p-16 text-center overflow-hidden">
+          <div className="relative bg-gradient-to-br from-primary via-primary to-primary/80 rounded-[2rem] p-6 sm:p-10 lg:p-16 text-center overflow-hidden">
             {/* Background pattern */}
             <div className="absolute inset-0 opacity-10">
               <div className="absolute top-0 left-0 w-40 h-40 bg-white rounded-full blur-3xl" />

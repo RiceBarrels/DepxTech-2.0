@@ -68,7 +68,7 @@ export default function BlogPage() {
               href={`/blog/${latestPost.slug}`}
               className="group block relative bg-gradient-to-br from-slate-900 to-slate-800 rounded-3xl overflow-hidden"
             >
-              <div className="grid lg:grid-cols-2 gap-8 p-8 lg:p-12">
+              <div className="grid lg:grid-cols-2 gap-6 sm:gap-8 p-5 sm:p-8 lg:p-12">
                 {/* Content */}
                 <div className="flex flex-col justify-center">
                   <div className="flex items-center gap-3 mb-6">
@@ -105,7 +105,7 @@ export default function BlogPage() {
                 {/* Image */}
                 <div className="relative flex items-center justify-center">
                   <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-transparent rounded-2xl" />
-                  <div className="relative bg-white/5 backdrop-blur-sm rounded-2xl p-12 border border-white/10">
+                  <div className="relative bg-white/5 backdrop-blur-sm rounded-2xl p-6 sm:p-12 border border-white/10">
                     <Image
                       src={latestPost.image}
                       alt={latestPost.title}
@@ -149,7 +149,7 @@ export default function BlogPage() {
       {/* CTA */}
       <section className="py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="relative bg-gradient-to-br from-primary via-primary to-primary/80 rounded-[2rem] p-10 lg:p-16 text-center overflow-hidden">
+          <div className="relative bg-gradient-to-br from-primary via-primary to-primary/80 rounded-[2rem] p-6 sm:p-10 lg:p-16 text-center overflow-hidden">
             {/* Background pattern */}
             <div className="absolute inset-0 opacity-10">
               <div className="absolute top-0 left-0 w-40 h-40 bg-white rounded-full blur-3xl" />

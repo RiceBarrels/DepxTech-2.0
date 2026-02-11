@@ -22,13 +22,13 @@ export function HomeHero() {
       />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
+        <div className="grid lg:grid-cols-2 gap-6 md:gap-12 items-center">
           {/* Left Content */}
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5 }}
-            className="flex flex-col gap-8"
+            className="flex flex-col gap-4 sm:gap-6 md:gap-8"
           >
             {/* Eco Badge */}
             <motion.div
@@ -42,10 +42,10 @@ export function HomeHero() {
             </motion.div>
 
             {/* Headline with TextGenerateEffect */}
-            <div className="text-4xl sm:text-5xl lg:text-6xl font-black text-slate-900 dark:text-white leading-[1.1] tracking-tight">
+            <div className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 dark:text-white leading-[1.1] tracking-tight">
               <TextGenerateEffect
                 words="The Smarter Way to"
-                className="text-4xl sm:text-5xl lg:text-6xl font-black text-slate-900 dark:text-white leading-[1.1] tracking-tight"
+                className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 dark:text-white leading-[1.1] tracking-tight"
                 filter={false}
                 duration={0.3}
               />
@@ -98,7 +98,7 @@ export function HomeHero() {
             <div className="absolute -inset-4 bg-primary/10 rounded-full blur-3xl"></div>
 
             {/* Main Card */}
-            <div className="relative bg-gradient-to-br from-slate-100 to-white dark:from-slate-800 dark:to-slate-900 rounded-[2rem] p-8 border border-slate-200 dark:border-slate-700 shadow-2xl">
+            <div className="relative bg-gradient-to-br from-slate-100 to-white dark:from-slate-800 dark:to-slate-900 rounded-[2rem] p-4 sm:p-6 md:p-8 border border-slate-200 dark:border-slate-700 shadow-2xl">
               <div className="aspect-square w-full rounded-2xl bg-slate-50 dark:bg-slate-800 flex items-center justify-center overflow-hidden">
                 <Image
                   src="/stockImg/iphone_17_pro_max.png"

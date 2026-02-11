@@ -34,7 +34,7 @@ export function HowItWorks() {
         {/* Header */}
         <ScrollStagger staggerChildren={0.15} className="text-center max-w-3xl mx-auto mb-16">
           <ScrollReveal animation="top">
-            <h2 className="text-4xl font-black text-slate-900 dark:text-white mb-4">
+            <h2 className="text-3xl sm:text-4xl font-black text-slate-900 dark:text-white mb-4">
               Three simple steps to cash
             </h2>
           </ScrollReveal>
@@ -46,7 +46,7 @@ export function HowItWorks() {
         </ScrollStagger>
 
         {/* Steps */}
-        <ScrollStagger staggerChildren={0.2} delayChildren={0.1} className="grid md:grid-cols-3 gap-12 relative">
+        <ScrollStagger staggerChildren={0.2} delayChildren={0.1} className="grid md:grid-cols-3 gap-6 md:gap-12 relative">
           {steps.map((step, idx) => (
             <ScrollReveal
               key={step.number}

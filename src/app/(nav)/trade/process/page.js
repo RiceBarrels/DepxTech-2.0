@@ -120,7 +120,7 @@ export default function ProcessPage() {
       <section className="py-16 lg:py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-3xl mx-auto">
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-slate-900 dark:text-white leading-tight">
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 dark:text-white leading-tight">
               Trade-In <span className="text-primary">Process</span>
             </h1>
             <p className="mt-6 text-lg text-slate-600 dark:text-slate-400 leading-relaxed">
@@ -144,8 +144,8 @@ export default function ProcessPage() {
                 <div className="flex gap-6">
                   {/* Step Number */}
                   <div className="flex-shrink-0">
-                    <div className="size-16 bg-primary rounded-2xl flex items-center justify-center text-white relative z-10">
-                      <item.Icon className="size-8" />
+                    <div className="size-12 sm:size-16 bg-primary rounded-2xl flex items-center justify-center text-white relative z-10">
+                      <item.Icon className="size-6 sm:size-8" />
                     </div>
                   </div>
 
@@ -194,9 +194,9 @@ export default function ProcessPage() {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
             {conditionGuide.map((item) => (
-              <div key={item.condition} className="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-slate-200 dark:border-slate-700">
+              <div key={item.condition} className="bg-white dark:bg-slate-800 rounded-2xl p-4 sm:p-6 border border-slate-200 dark:border-slate-700">
                 <div className={`size-3 ${item.color} rounded-full mb-4`} />
                 <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">
                   {item.condition}

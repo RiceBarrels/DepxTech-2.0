@@ -42,7 +42,8 @@ import {
     HelpCircleIcon,
     CalendarIcon,
     CheckIcon,
-    MinusIcon
+    MinusIcon,
+    DollarSignIcon
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { toast } from 'sonner'
@@ -55,6 +56,7 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { ImageUpload, uploadFiles, deleteFileFromBucket } from "@/components/admin/ImageUpload"
+import { CategorySelect } from "@/components/admin/CategorySelect"
 
 // Helper to normalize image URL
 const normalizeImageUrl = (img) => {
@@ -87,6 +89,7 @@ export default function TradeinManagePage() {
     const [deleting, setDeleting] = useState(null)
     const [exporting, setExporting] = useState(false)
     const [importing, setImporting] = useState(false)
+    const [fetchingPrices, setFetchingPrices] = useState(false)
     const fileInputRef = useRef(null)
 
     // View and filter state
@@ -544,6 +547,47 @@ export default function TradeinManagePage() {
         toast.success(`Deleted ${deleted} products${failed > 0 ? `, ${failed} failed` : ''}`)
     }
 
+    const handleFetchEbayPrices = async () => {
+        if (selectedIds.size === 0) return
+
+        setFetchingPrices(true)
+        try {
+            const response = await fetch('/api/admin/tradein/ebay-price', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ ids: Array.from(selectedIds) })
+            })
+
+            const data = await response.json()
+
+            if (!response.ok) {
+                throw new Error(data.error || 'Failed to fetch eBay prices')
+            }
+
+            // Update local product state with new prices
+            setProducts(prev => prev.map(p => {
+                const result = data.results?.find(r => r.id === p.id && r.success)
+                if (result) {
+                    return { ...p, base_price: result.ebay_price, base_date: new Date().toISOString().split('T')[0] }
+                }
+                return p
+            }))
+
+            const details = data.results?.map(r =>
+                r.success ? `${r.title}: $${r.ebay_price}` : `${r.title}: ${r.reason}`
+            ).join('\n')
+
+            toast.success(`Updated ${data.updated} of ${data.updated + data.failed} products`, {
+                description: details,
+                duration: 8000
+            })
+        } catch (err) {
+            toast.error('Error: ' + err.message)
+        } finally {
+            setFetchingPrices(false)
+        }
+    }
+
     const handleDuplicate = async (product) => {
         try {
             const response = await fetch('/api/admin/tradein', {
@@ -688,6 +732,10 @@ export default function TradeinManagePage() {
                 <div className="flex items-center gap-3 p-3 bg-primary/10 border border-primary/20 rounded-lg">
                     <span className="font-medium">{selectedIds.size} selected</span>
                     <div className="flex-1" />
+                    <Button variant="outline" size="sm" onClick={handleFetchEbayPrices} disabled={fetchingPrices}>
+                        {fetchingPrices ? <LoaderIcon className="w-4 h-4 mr-1.5 animate-spin" /> : <DollarSignIcon className="w-4 h-4 mr-1.5" />}
+                        {fetchingPrices ? 'Fetching...' : 'Fetch eBay Prices'}
+                    </Button>
                     <Button variant="outline" size="sm" onClick={() => {
                         const firstSelected = products.find(p => selectedIds.has(p.id))
                         if (firstSelected) openEditPanel(firstSelected)
@@ -1078,7 +1126,7 @@ export default function TradeinManagePage() {
                                 <div className="grid grid-cols-3 gap-2">
                                     <div className="space-y-1.5">
                                         <Label htmlFor="edit-category">Category *</Label>
-                                        <Input id="edit-category" value={editFormData.category} onChange={(e) => handleEditInputChange('category', e.target.value)} className="h-9" />
+                                        <CategorySelect value={editFormData.category} onChange={(val) => handleEditInputChange('category', val)} className="h-9" />
                                     </div>
                                     <div className="space-y-1.5">
                                         <Label htmlFor="edit-brand">Brand *</Label>

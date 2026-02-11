@@ -44,25 +44,25 @@ export default function LoginPage() {
     <div className="flex flex-col py-4 px-4 gap-2 w-full justify-between items-center">
 
       <div className='flex-1 flex flex-col justify-center items-center max-w-256 w-full'>
-        <div className="flex flex-col md:flex-row w-full md:h-100 items-center m-8 border rounded-4xl">
-          <div className="w-full flex flex-col md:h-100 p-12 pb-8 md:p-12 gap-5">
-            <h1 className="text-2xl font-black">DepxTech</h1>
-            <h2 className="text-4xl font-bold flex items-center gap-4">
-              <LogInIcon className="size-8" />
+        <div className="flex flex-col md:flex-row w-full md:h-100 items-center m-4 md:m-8 border rounded-2xl md:rounded-4xl">
+          <div className="w-full flex flex-col md:h-100 p-6 pb-4 md:p-12 gap-3 md:gap-5">
+            <h1 className="text-xl md:text-2xl font-black">DepxTech</h1>
+            <h2 className="text-2xl md:text-4xl font-bold flex items-center gap-3 md:gap-4">
+              <LogInIcon className="size-6 md:size-8" />
               Login
             </h2>
-            <p className="text-md">
+            <p className="text-sm md:text-md">
               Get access to your Orders, Wishlist and Recommendations
             </p>
           </div>
           <div className="h-72 hidden md:block">
             <Separator orientation="vertical" className="h-72"/>
           </div>
-          <div className="w-72 block md:hidden">
-            <Separator orientation="horizontal" className="w-72"/>
+          <div className="w-full px-6 block md:hidden">
+            <Separator orientation="horizontal"/>
           </div>
-          <div className="w-full flex flex-col p-8 pt-6 md:p-12">
-            <form onSubmit={handleLogin} className="space-y-4 w-full p-4">
+          <div className="w-full flex flex-col p-4 pt-2 md:p-12">
+            <form onSubmit={handleLogin} className="space-y-4 w-full p-2 md:p-4">
               {error && (
                 <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-md text-sm">
                   {error}

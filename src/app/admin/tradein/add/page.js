@@ -20,6 +20,7 @@ import { PictureInPictureIcon } from "lucide-react"
 import { openWindow } from "@/components/ui/windows"
 import { ImageUpload, uploadFiles, deleteFileFromBucket } from "@/components/admin/ImageUpload"
 import { Checkbox } from '@/components/ui/checkbox'
+import { CategorySelect } from '@/components/admin/CategorySelect'
 import { toast } from 'sonner'
 
 export default function AddTradeinProductPage({defaultData={
@@ -324,13 +325,7 @@ export default function AddTradeinProductPage({defaultData={
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                             <div className="space-y-2">
                                 <Label htmlFor="category">Category *</Label>
-                                <Input
-                                    id="category"
-                                    value={formData.category}
-                                    onChange={(e) => handleInputChange('category', e.target.value)}
-                                    placeholder="e.g., Smartphones"
-                                    required
-                                />
+                                <CategorySelect value={formData.category} onChange={(val) => handleInputChange('category', val)} />
                             </div>
                             <div className="space-y-2">
                                 <Label htmlFor="brand">Brand *</Label>

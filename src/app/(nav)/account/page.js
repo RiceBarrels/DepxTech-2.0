@@ -58,17 +58,17 @@ export default function AccountPage() {
   }
 
   return (
-    <div className="min-h-screen py-12 px-4 sm:px-6 lg:px-8">
-      <div className="flex justify-between items-center mb-12">
+    <div className="min-h-screen py-6 sm:py-12 px-4 sm:px-6 lg:px-8">
+      <div className="flex justify-between items-center mb-6 sm:mb-12">
         <div>
-          <h1 className="text-3xl font-bold text-foreground">My Account</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold text-foreground">My Account</h1>
           <p className="text-muted-foreground">
             Welcome back, {profileData?.full_name || user?.email || 'User'}
           </p>
         </div>
       </div>
 
-      <div className="max-w-6xl mx-auto flex flex-col gap-8">
+      <div className="max-w-6xl mx-auto flex flex-col gap-4 sm:gap-8">
         <div className="flex flex-col gap-6 items-center">
           {/* user avatar */}
           { profileData?.avatar !== "default" && profileData?.avatar !== null && !loading ? 
@@ -118,13 +118,13 @@ export default function AccountPage() {
           </Button>
         </div>
         <div className='flex flex-col justify-center items-center bg-accent/25 light:bg-accent rounded-4xl overflow-hidden border-1'>
-          <Button variant="ghost" className='w-full p-8 px-8 justify-start gap-4 rounded-none' onClick={() => navigateWithTransition('/account/inbox')}>
+          <Button variant="ghost" className='w-full py-4 px-6 sm:p-8 sm:px-8 justify-start gap-4 rounded-none' onClick={() => navigateWithTransition('/account/inbox')}>
             <div><InboxIcon strokeWidth={1.1} className='size-5'/></div>
             <span className='font-normal text-base flex-1 flex justify-start items-center'>Inbox</span>
             <div><ChevronRightIcon className='size-4 text-muted-foreground'/></div>
           </Button>
           <div className='w-full px-6'><Separator orientation="horizontal"/></div>
-          <Button variant="ghost" className='w-full p-8 px-8 justify-start gap-4 rounded-none items-center' onClick={() => navigateWithTransition('/account/membership/about')}>
+          <Button variant="ghost" className='w-full py-4 px-6 sm:p-8 sm:px-8 justify-start gap-4 rounded-none items-center' onClick={() => navigateWithTransition('/account/membership/about')}>
             <div><BadgeDollarSignIcon strokeWidth={1.1} className='size-5'/></div>
             <span className='font-normal text-base flex-1 flex justify-start items-center'>Premium Membership</span>
             <div><ChevronRightIcon className='size-4 text-muted-foreground'/></div>
@@ -132,7 +132,7 @@ export default function AccountPage() {
         </div>
 
         <div className='flex flex-col justify-center items-center bg-accent/25 light:bg-accent rounded-4xl overflow-hidden border-1'>
-          <Button variant="ghost" className='w-full p-8 px-8 justify-start gap-4 rounded-none items-center text-destructive hover:text-destructive-foreground' onClick={signOut}>
+          <Button variant="ghost" className='w-full py-4 px-6 sm:p-8 sm:px-8 justify-start gap-4 rounded-none items-center text-destructive hover:text-destructive-foreground' onClick={signOut}>
             <div><LogOutIcon strokeWidth={1.1} className='size-5'/></div>
             <span className='font-normal text-base flex-1 flex justify-start items-center'>Sign out</span>
           </Button>

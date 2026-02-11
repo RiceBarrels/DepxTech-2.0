@@ -48,7 +48,7 @@ export function WhyChooseUs() {
   return (
     <section className="py-20 overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid lg:grid-cols-2 gap-16 items-center">
+        <div className="grid lg:grid-cols-2 gap-8 md:gap-16 items-center">
           {/* Feature Grid */}
           <div className="relative">
             <div className="grid grid-cols-2 gap-4">
@@ -57,7 +57,7 @@ export function WhyChooseUs() {
                   <ScrollReveal key={feature.title} animation="left">
                     <motion.div
                       whileHover={{ scale: 1.02, y: -4 }}
-                      className={cn('p-8 rounded-3xl transition-shadow hover:shadow-xl', feature.bgColor)}
+                      className={cn('p-4 sm:p-6 md:p-8 rounded-3xl transition-shadow hover:shadow-xl', feature.bgColor)}
                     >
                       <feature.Icon className={cn('w-10 h-10 mb-4', feature.iconColor)} />
                       <h4 className={cn(
@@ -81,7 +81,7 @@ export function WhyChooseUs() {
                   <ScrollReveal key={feature.title} animation="right">
                     <motion.div
                       whileHover={{ scale: 1.02, y: -4 }}
-                      className={cn('p-8 rounded-3xl transition-shadow hover:shadow-xl', feature.bgColor)}
+                      className={cn('p-4 sm:p-6 md:p-8 rounded-3xl transition-shadow hover:shadow-xl', feature.bgColor)}
                     >
                       <feature.Icon className={cn('w-10 h-10 mb-4', feature.iconColor)} />
                       <h4 className={cn(
@@ -104,9 +104,9 @@ export function WhyChooseUs() {
           </div>
 
           {/* Content */}
-          <ScrollStagger staggerChildren={0.12} className="flex flex-col gap-8">
+          <ScrollStagger staggerChildren={0.12} className="flex flex-col gap-4 sm:gap-6 md:gap-8">
             <ScrollReveal animation="right">
-              <h2 className="text-4xl font-black text-slate-900 dark:text-white">
+              <h2 className="text-3xl sm:text-4xl font-black text-slate-900 dark:text-white">
                 Better for your wallet, better for the planet
               </h2>
             </ScrollReveal>

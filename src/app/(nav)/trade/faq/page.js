@@ -127,7 +127,7 @@ export default function FAQPage() {
             <div className="size-16 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-6">
               <HelpCircle className="size-8 text-primary" />
             </div>
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-slate-900 dark:text-white leading-tight">
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 dark:text-white leading-tight">
               Frequently Asked <span className="text-primary">Questions</span>
             </h1>
             <p className="mt-6 text-lg text-slate-600 dark:text-slate-400 leading-relaxed">
@@ -140,7 +140,7 @@ export default function FAQPage() {
       {/* FAQ Sections */}
       <section className="py-16">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="space-y-12">
+          <div className="space-y-8 md:space-y-12">
             {faqCategories.map((category) => (
               <div key={category.category}>
                 <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-6">
@@ -152,13 +152,13 @@ export default function FAQPage() {
                       key={index}
                       className="group bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden"
                     >
-                      <summary className="flex items-center justify-between p-6 cursor-pointer list-none">
+                      <summary className="flex items-center justify-between p-4 sm:p-6 cursor-pointer list-none">
                         <span className="font-medium text-slate-900 dark:text-white pr-4">
                           {faq.q}
                         </span>
                         <ChevronDown className="size-5 text-slate-400 transition-transform group-open:rotate-180 flex-shrink-0" />
                       </summary>
-                      <div className="px-6 pb-6 text-slate-600 dark:text-slate-400">
+                      <div className="px-4 pb-4 sm:px-6 sm:pb-6 text-slate-600 dark:text-slate-400">
                         {faq.a}
                       </div>
                     </details>
@@ -185,7 +185,7 @@ export default function FAQPage() {
           <div className="grid md:grid-cols-2 gap-6 max-w-2xl mx-auto">
             <a
               href="mailto:support@depxtech.com"
-              className="flex items-center gap-4 p-6 bg-slate-50 dark:bg-slate-800 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
+              className="flex items-center gap-3 sm:gap-4 p-4 sm:p-6 bg-slate-50 dark:bg-slate-800 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
             >
               <div className="size-12 bg-primary/10 rounded-xl flex items-center justify-center">
                 <Mail className="size-6 text-primary" />
@@ -198,7 +198,7 @@ export default function FAQPage() {
 
             <a
               href="#"
-              className="flex items-center gap-4 p-6 bg-slate-50 dark:bg-slate-800 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
+              className="flex items-center gap-3 sm:gap-4 p-4 sm:p-6 bg-slate-50 dark:bg-slate-800 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
             >
               <div className="size-12 bg-primary/10 rounded-xl flex items-center justify-center">
                 <MessageCircle className="size-6 text-primary" />

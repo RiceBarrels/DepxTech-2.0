@@ -6,13 +6,14 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { TransitionLink, useTransitionRouter } from '@/components/ui/pageTransitions'
 import { Separator } from '@/components/ui/separator'
-import { ArrowLeftIcon, MailIcon, KeyIcon, LockIcon, CheckCircleIcon, Loader2Icon } from 'lucide-react'
+import { ArrowLeftIcon, MailIcon, KeyIcon, LockIcon, CheckCircleIcon, Loader2Icon, EyeIcon, EyeOffIcon } from 'lucide-react'
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('')
   const [verificationCode, setVerificationCode] = useState('')
   const [newPassword, setNewPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [message, setMessage] = useState('')
@@ -115,8 +116,32 @@ export default function ForgotPasswordPage() {
       return
     }
 
-    if (newPassword.length < 6) {
-      setError('Password must be at least 6 characters long')
+    if (newPassword.length < 8) {
+      setError('Password must be at least 8 characters long')
+      setLoading(false)
+      return
+    }
+
+    if (!/[a-z]/.test(newPassword)) {
+      setError('Password must contain at least one lowercase letter')
+      setLoading(false)
+      return
+    }
+
+    if (!/[A-Z]/.test(newPassword)) {
+      setError('Password must contain at least one uppercase letter')
+      setLoading(false)
+      return
+    }
+
+    if (!/[0-9]/.test(newPassword)) {
+      setError('Password must contain at least one number')
+      setLoading(false)
+      return
+    }
+
+    if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|<>?,./`~]/.test(newPassword)) {
+      setError('Password must contain at least one special character')
       setLoading(false)
       return
     }
@@ -190,7 +215,7 @@ export default function ForgotPasswordPage() {
     switch (step) {
       case 1:
         return (
-          <form onSubmit={handleSendCode} className="space-y-4 w-full p-4">
+          <form onSubmit={handleSendCode} className="space-y-4 w-full p-2 md:p-4">
             {error && (
               <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-md text-sm">
                 {error}
@@ -253,7 +278,7 @@ export default function ForgotPasswordPage() {
 
       case 2:
         return (
-          <form onSubmit={handleVerifyCode} className="space-y-4 w-full p-4">
+          <form onSubmit={handleVerifyCode} className="space-y-4 w-full p-2 md:p-4">
             {error && (
               <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-md text-sm">
                 {error}
@@ -341,7 +366,7 @@ export default function ForgotPasswordPage() {
 
       case 3:
         return (
-          <form onSubmit={handleResetPassword} className="space-y-4 w-full p-4">
+          <form onSubmit={handleResetPassword} className="space-y-4 w-full p-2 md:p-4">
             {error && (
               <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-md text-sm">
                 {error}
@@ -368,34 +393,54 @@ export default function ForgotPasswordPage() {
               <label htmlFor="newPassword" className="block font-medium mb-1">
                 New Password
               </label>
-              <Input
-                id="newPassword"
-                type="password"
-                name="newPassword"
-                autoComplete="new-password"
-                value={newPassword}
-                onChange={(e) => setNewPassword(e.target.value)}
-                required
-                placeholder="Enter new password"
-                className="w-full"
-              />
+              <div className="relative">
+                <Input
+                  id="newPassword"
+                  type={showPassword ? "text" : "password"}
+                  name="newPassword"
+                  autoComplete="new-password"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  required
+                  placeholder="Enter new password"
+                  className="w-full pr-10"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                  tabIndex={-1}
+                >
+                  {showPassword ? <EyeOffIcon className="size-4" /> : <EyeIcon className="size-4" />}
+                </button>
+              </div>
             </div>
 
             <div>
               <label htmlFor="confirmPassword" className="block font-medium mb-1">
                 Confirm New Password
               </label>
-              <Input
-                id="confirmPassword"
-                type="password"
-                name="confirmPassword"
-                autoComplete="new-password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                required
-                placeholder="Confirm new password"
-                className="w-full"
-              />
+              <div className="relative">
+                <Input
+                  id="confirmPassword"
+                  type={showPassword ? "text" : "password"}
+                  name="confirmPassword"
+                  autoComplete="new-password"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  required
+                  placeholder="Confirm new password"
+                  className="w-full pr-10"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                  tabIndex={-1}
+                >
+                  {showPassword ? <EyeOffIcon className="size-4" /> : <EyeIcon className="size-4" />}
+                </button>
+              </div>
             </div>
 
             <Button
@@ -457,25 +502,25 @@ export default function ForgotPasswordPage() {
   const getStepIcon = () => {
     switch (step) {
       case 1:
-        return <MailIcon className="size-8" />
+        return <MailIcon className="size-6 md:size-8" />
       case 2:
-        return <KeyIcon className="size-8" />
+        return <KeyIcon className="size-6 md:size-8" />
       case 3:
-        return <LockIcon className="size-8" />
+        return <LockIcon className="size-6 md:size-8" />
     }
   }
 
   return (
     <div className="flex flex-col py-4 px-4 gap-2 w-full justify-between items-center">
       <div className='flex-1 flex flex-col justify-center items-center max-w-256 w-full'>
-        <div className="flex flex-col md:flex-row w-full md:h-auto items-center m-8 border rounded-4xl">
-          <div className="w-full flex flex-col p-12 pb-8 md:p-12 gap-5">
-            <h1 className="text-2xl font-black">DepxTech</h1>
-            <h2 className="text-4xl font-bold flex items-center gap-4">
+        <div className="flex flex-col md:flex-row w-full md:h-auto items-center m-4 md:m-8 border rounded-2xl md:rounded-4xl">
+          <div className="w-full flex flex-col p-6 pb-4 md:p-12 gap-3 md:gap-5">
+            <h1 className="text-xl md:text-2xl font-black">DepxTech</h1>
+            <h2 className="text-2xl md:text-4xl font-bold flex items-center gap-3 md:gap-4">
               {getStepIcon()}
               {getStepTitle()}
             </h2>
-            <p className="text-md">
+            <p className="text-sm md:text-md">
               {getStepDescription()}
             </p>
             {/* Step indicator */}
@@ -493,10 +538,10 @@ export default function ForgotPasswordPage() {
           <div className="h-auto hidden md:block">
             <Separator orientation="vertical" className="h-full min-h-72"/>
           </div>
-          <div className="w-72 block md:hidden">
-            <Separator orientation="horizontal" className="w-72"/>
+          <div className="w-full px-6 block md:hidden">
+            <Separator orientation="horizontal"/>
           </div>
-          <div className="w-full flex flex-col p-8 pt-6 md:p-12">
+          <div className="w-full flex flex-col p-4 pt-2 md:p-12">
             {renderStepContent()}
           </div>
         </div>

@@ -68,7 +68,7 @@ export default function HowItWorksPage() {
       <section className="py-16 lg:py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-3xl mx-auto">
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-slate-900 dark:text-white leading-tight">
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 dark:text-white leading-tight">
               How It <span className="text-primary">Works</span>
             </h1>
             <p className="mt-6 text-lg text-slate-600 dark:text-slate-400 leading-relaxed">
@@ -81,21 +81,21 @@ export default function HowItWorksPage() {
       {/* Main Steps */}
       <section className="py-16 bg-white dark:bg-background/50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="space-y-16">
+          <div className="space-y-8 md:space-y-16">
             {mainSteps.map((step, index) => (
               <div
                 key={step.number}
-                className={`flex flex-col lg:flex-row gap-8 lg:gap-16 items-center ${
+                className={`flex flex-col lg:flex-row gap-6 sm:gap-8 lg:gap-16 items-center ${
                   index % 2 === 1 ? 'lg:flex-row-reverse' : ''
                 }`}
               >
                 {/* Icon & Number */}
                 <div className="flex-shrink-0">
                   <div className="relative">
-                    <div className="size-32 bg-primary/10 rounded-3xl flex items-center justify-center">
-                      <step.Icon className="size-16 text-primary" />
+                    <div className="size-24 sm:size-32 bg-primary/10 rounded-3xl flex items-center justify-center">
+                      <step.Icon className="size-10 sm:size-16 text-primary" />
                     </div>
-                    <div className="absolute -top-4 -right-4 size-12 bg-primary text-white font-bold text-xl rounded-full flex items-center justify-center border-4 border-background">
+                    <div className="absolute -top-4 -right-4 size-10 sm:size-12 bg-primary text-white font-bold text-xl rounded-full flex items-center justify-center border-4 border-background">
                       {step.number}
                     </div>
                   </div>
@@ -140,7 +140,7 @@ export default function HowItWorksPage() {
             {/* Connection Line */}
             <div className="hidden md:block absolute top-1/2 left-0 right-0 h-1 bg-primary/20 -translate-y-1/2" />
 
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
               {timeline.map((item, index) => (
                 <div key={index} className="relative flex flex-col items-center">
                   <div className="size-16 bg-primary rounded-2xl flex items-center justify-center text-white mb-4 relative z-10">
@@ -158,18 +158,18 @@ export default function HowItWorksPage() {
       {/* Trust Badges */}
       <section className="py-16 bg-white dark:bg-background/50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid md:grid-cols-3 gap-8">
-            <div className="text-center p-6">
+          <div className="grid md:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
+            <div className="text-center p-4 sm:p-6">
               <Clock className="size-12 text-primary mx-auto mb-4" />
               <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">14-Day Price Lock</h3>
               <p className="text-slate-600 dark:text-slate-400">Your quote is guaranteed for 14 days from the date you receive it.</p>
             </div>
-            <div className="text-center p-6">
+            <div className="text-center p-4 sm:p-6">
               <Shield className="size-12 text-primary mx-auto mb-4" />
               <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">Data Security</h3>
               <p className="text-slate-600 dark:text-slate-400">All devices undergo military-grade data wiping before resale or recycling.</p>
             </div>
-            <div className="text-center p-6">
+            <div className="text-center p-4 sm:p-6">
               <Truck className="size-12 text-primary mx-auto mb-4" />
               <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">Free Shipping</h3>
               <p className="text-slate-600 dark:text-slate-400">We cover all shipping costs with our prepaid labels.</p>
@@ -181,7 +181,7 @@ export default function HowItWorksPage() {
       {/* CTA */}
       <section className="py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="bg-primary rounded-3xl p-8 lg:p-12 text-center">
+          <div className="bg-primary rounded-3xl p-6 sm:p-8 lg:p-12 text-center">
             <h2 className="text-3xl lg:text-4xl font-bold text-white mb-4">
               Ready to Get Started?
             </h2>

@@ -100,7 +100,7 @@ export default function SustainabilityPage() {
               <Leaf className="size-4" />
               Our Commitment to the Planet
             </div>
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-slate-900 dark:text-white leading-tight">
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 dark:text-white leading-tight">
               Sustainability at <span className="text-emerald-500">DepxTech</span>
             </h1>
             <p className="mt-6 text-lg text-slate-600 dark:text-slate-400 leading-relaxed">
@@ -122,9 +122,9 @@ export default function SustainabilityPage() {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
             {impactStats.map((stat) => (
-              <div key={stat.label} className="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-slate-200 dark:border-slate-700 text-center">
+              <div key={stat.label} className="bg-white dark:bg-slate-800 rounded-2xl p-4 sm:p-6 border border-slate-200 dark:border-slate-700 text-center">
                 <div className="size-14 bg-emerald-100 dark:bg-emerald-900/30 rounded-xl flex items-center justify-center mx-auto mb-4">
                   <stat.Icon className="size-7 text-emerald-500" />
                 </div>
@@ -140,7 +140,7 @@ export default function SustainabilityPage() {
       {/* The Problem */}
       <section className="py-16 bg-slate-900 text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
+          <div className="grid lg:grid-cols-2 gap-6 md:gap-12 items-center">
             <div>
               <h2 className="text-3xl lg:text-4xl font-bold mb-6">
                 The E-Waste Problem
@@ -170,7 +170,7 @@ export default function SustainabilityPage() {
                 {deviceImpact.map((item) => (
                   <div key={item.device} className="bg-slate-700/50 rounded-xl p-4">
                     <p className="font-bold text-white mb-2">{item.device}</p>
-                    <div className="grid grid-cols-3 gap-4 text-sm">
+                    <div className="grid grid-cols-3 gap-2 sm:gap-4 text-sm">
                       <div>
                         <p className="text-slate-400">CO2</p>
                         <p className="text-emerald-400 font-medium">{item.co2}</p>
@@ -204,9 +204,9 @@ export default function SustainabilityPage() {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-8">
+          <div className="grid md:grid-cols-2 gap-4 sm:gap-6 md:gap-8">
             {principles.map((principle) => (
-              <div key={principle.title} className="flex gap-4 p-6 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700">
+              <div key={principle.title} className="flex gap-3 sm:gap-4 p-4 sm:p-6 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700">
                 <div className="flex-shrink-0">
                   <div className="size-12 bg-emerald-100 dark:bg-emerald-900/30 rounded-xl flex items-center justify-center">
                     <principle.Icon className="size-6 text-emerald-500" />
@@ -238,18 +238,18 @@ export default function SustainabilityPage() {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-6">
-            <div className="text-center p-6 bg-slate-50 dark:bg-slate-800 rounded-2xl">
+          <div className="grid grid-cols-3 gap-3 sm:gap-6">
+            <div className="text-center p-3 sm:p-6 bg-slate-50 dark:bg-slate-800 rounded-2xl">
               <div className="text-4xl font-bold text-primary mb-2">R2</div>
               <p className="text-sm font-medium text-slate-900 dark:text-white mb-1">R2 Certified</p>
               <p className="text-xs text-slate-500">Responsible Recycling Standard</p>
             </div>
-            <div className="text-center p-6 bg-slate-50 dark:bg-slate-800 rounded-2xl">
+            <div className="text-center p-3 sm:p-6 bg-slate-50 dark:bg-slate-800 rounded-2xl">
               <div className="text-4xl font-bold text-primary mb-2">ISO</div>
               <p className="text-sm font-medium text-slate-900 dark:text-white mb-1">ISO 14001</p>
               <p className="text-xs text-slate-500">Environmental Management</p>
             </div>
-            <div className="text-center p-6 bg-slate-50 dark:bg-slate-800 rounded-2xl">
+            <div className="text-center p-3 sm:p-6 bg-slate-50 dark:bg-slate-800 rounded-2xl">
               <div className="text-4xl font-bold text-primary mb-2">NIST</div>
               <p className="text-sm font-medium text-slate-900 dark:text-white mb-1">NIST 800-88</p>
               <p className="text-xs text-slate-500">Data Sanitization</p>
@@ -261,7 +261,7 @@ export default function SustainabilityPage() {
       {/* CTA */}
       <section className="py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="bg-gradient-to-r from-emerald-500 to-teal-500 rounded-3xl p-8 lg:p-12 text-center">
+          <div className="bg-gradient-to-r from-emerald-500 to-teal-500 rounded-3xl p-6 sm:p-8 lg:p-12 text-center">
             <Leaf className="size-12 text-white mx-auto mb-4" />
             <h2 className="text-3xl lg:text-4xl font-bold text-white mb-4">
               Join the Movement
