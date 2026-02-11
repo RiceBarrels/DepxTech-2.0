@@ -1,4 +1,7 @@
+'use client'
+
 import Link from 'next/link'
+import { motion } from 'framer-motion'
 import {
   Leaf,
   Recycle,
@@ -10,13 +13,7 @@ import {
   Factory,
   ArrowRight,
   CheckCircle2,
-  TrendingUp
 } from 'lucide-react'
-
-export const metadata = {
-  title: 'Sustainability - Our Environmental Commitment',
-  description: 'Learn about our commitment to sustainability and how trading in your electronics helps reduce e-waste and protect the environment.',
-}
 
 const impactStats = [
   {
@@ -89,179 +86,269 @@ const deviceImpact = [
   },
 ]
 
+const sectionVariants = {
+  hidden: { opacity: 0, y: 24 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: 'easeOut' } }
+}
+
+const staggerContainer = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.1 } }
+}
+
+const staggerItem = {
+  hidden: { opacity: 0, y: 16 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.4, ease: 'easeOut' } }
+}
+
 export default function SustainabilityPage() {
   return (
     <main className="bg-background">
       {/* Hero */}
-      <section className="py-16 lg:py-24 bg-emerald-50 dark:bg-emerald-900/20">
+      <section className="py-16 lg:py-24 bg-emerald-50 dark:bg-emerald-900/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-3xl mx-auto">
+          <motion.div
+            className="text-center max-w-3xl mx-auto"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 text-sm font-bold mb-6">
               <Leaf className="size-4" />
               Our Commitment to the Planet
             </div>
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 dark:text-white leading-tight">
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-foreground leading-tight">
               Sustainability at <span className="text-emerald-500">DepxTech</span>
             </h1>
-            <p className="mt-6 text-lg text-slate-600 dark:text-slate-400 leading-relaxed">
+            <p className="mt-6 text-lg text-muted-foreground leading-relaxed">
               Every device you trade in makes a difference. We're committed to reducing e-waste and building a more sustainable future for electronics.
             </p>
-          </div>
+          </motion.div>
         </div>
       </section>
 
       {/* Impact Stats */}
       <section className="py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-4">
+          <motion.div
+            className="text-center mb-12"
+            variants={sectionVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+          >
+            <h2 className="text-3xl font-bold text-foreground mb-4">
               Our Collective Impact
             </h2>
-            <p className="text-slate-600 dark:text-slate-400">
+            <p className="text-muted-foreground">
               Together with our community, here's the environmental impact we've made
             </p>
-          </div>
+          </motion.div>
 
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+          <motion.div
+            className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6"
+            variants={staggerContainer}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+          >
             {impactStats.map((stat) => (
-              <div key={stat.label} className="bg-white dark:bg-slate-800 rounded-2xl p-4 sm:p-6 border border-slate-200 dark:border-slate-700 text-center">
+              <motion.div
+                key={stat.label}
+                className="bg-card rounded-2xl p-4 sm:p-6 border border-border text-center"
+                variants={staggerItem}
+                whileHover={{ y: -4 }}
+                transition={{ type: 'spring', stiffness: 300 }}
+              >
                 <div className="size-14 bg-emerald-100 dark:bg-emerald-900/30 rounded-xl flex items-center justify-center mx-auto mb-4">
                   <stat.Icon className="size-7 text-emerald-500" />
                 </div>
-                <p className="text-3xl font-bold text-slate-900 dark:text-white mb-1">{stat.value}</p>
+                <p className="text-3xl font-bold text-foreground mb-1">{stat.value}</p>
                 <p className="text-sm font-medium text-emerald-600 dark:text-emerald-400 mb-2">{stat.label}</p>
-                <p className="text-xs text-slate-500">{stat.description}</p>
-              </div>
+                <p className="text-xs text-muted-foreground">{stat.description}</p>
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         </div>
       </section>
 
       {/* The Problem */}
-      <section className="py-16 bg-slate-900 text-white">
+      <section className="py-16 bg-foreground text-background">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-2 gap-6 md:gap-12 items-center">
+          <motion.div
+            className="grid lg:grid-cols-2 gap-6 md:gap-12 items-center"
+            variants={sectionVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: '-60px' }}
+          >
             <div>
               <h2 className="text-3xl lg:text-4xl font-bold mb-6">
                 The E-Waste Problem
               </h2>
-              <p className="text-slate-300 text-lg mb-6">
+              <p className="text-background/70 text-lg mb-6">
                 Electronic waste is the world's fastest-growing waste stream. Every year, millions of devices end up in landfills, releasing toxic materials into our environment.
               </p>
-              <ul className="space-y-4">
-                <li className="flex items-start gap-3">
-                  <CheckCircle2 className="size-5 text-emerald-400 flex-shrink-0 mt-1" />
-                  <span className="text-slate-300">50+ million tons of e-waste generated globally each year</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <CheckCircle2 className="size-5 text-emerald-400 flex-shrink-0 mt-1" />
-                  <span className="text-slate-300">Only 17% of e-waste is properly recycled</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <CheckCircle2 className="size-5 text-emerald-400 flex-shrink-0 mt-1" />
-                  <span className="text-slate-300">E-waste contains toxic materials like lead, mercury, and cadmium</span>
-                </li>
-              </ul>
+              <motion.ul
+                className="space-y-4"
+                variants={staggerContainer}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true }}
+              >
+                {[
+                  '50+ million tons of e-waste generated globally each year',
+                  'Only 17% of e-waste is properly recycled',
+                  'E-waste contains toxic materials like lead, mercury, and cadmium',
+                ].map((text, i) => (
+                  <motion.li key={i} className="flex items-start gap-3" variants={staggerItem}>
+                    <CheckCircle2 className="size-5 text-emerald-400 flex-shrink-0 mt-1" />
+                    <span className="text-background/70">{text}</span>
+                  </motion.li>
+                ))}
+              </motion.ul>
             </div>
 
-            <div className="bg-slate-800 rounded-2xl p-6">
+            <motion.div
+              className="bg-background/10 rounded-2xl p-6"
+              variants={sectionVariants}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+            >
               <h3 className="text-lg font-bold mb-4">Manufacturing Impact Per Device</h3>
               <div className="space-y-4">
                 {deviceImpact.map((item) => (
-                  <div key={item.device} className="bg-slate-700/50 rounded-xl p-4">
-                    <p className="font-bold text-white mb-2">{item.device}</p>
+                  <div key={item.device} className="bg-background/10 rounded-xl p-4">
+                    <p className="font-bold mb-2">{item.device}</p>
                     <div className="grid grid-cols-3 gap-2 sm:gap-4 text-sm">
                       <div>
-                        <p className="text-slate-400">CO2</p>
+                        <p className="text-background/50">CO2</p>
                         <p className="text-emerald-400 font-medium">{item.co2}</p>
                       </div>
                       <div>
-                        <p className="text-slate-400">Water</p>
+                        <p className="text-background/50">Water</p>
                         <p className="text-emerald-400 font-medium">{item.water}</p>
                       </div>
                       <div>
-                        <p className="text-slate-400">Minerals</p>
+                        <p className="text-background/50">Minerals</p>
                         <p className="text-emerald-400 font-medium">{item.minerals}</p>
                       </div>
                     </div>
                   </div>
                 ))}
               </div>
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
         </div>
       </section>
 
       {/* Our Principles */}
       <section className="py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-4">
+          <motion.div
+            className="text-center mb-12"
+            variants={sectionVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+          >
+            <h2 className="text-3xl font-bold text-foreground mb-4">
               Our Sustainability Principles
             </h2>
-            <p className="text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
+            <p className="text-muted-foreground max-w-2xl mx-auto">
               We're guided by a commitment to environmental responsibility at every step of our process.
             </p>
-          </div>
+          </motion.div>
 
-          <div className="grid md:grid-cols-2 gap-4 sm:gap-6 md:gap-8">
+          <motion.div
+            className="grid md:grid-cols-2 gap-4 sm:gap-6 md:gap-8"
+            variants={staggerContainer}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+          >
             {principles.map((principle) => (
-              <div key={principle.title} className="flex gap-3 sm:gap-4 p-4 sm:p-6 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700">
+              <motion.div
+                key={principle.title}
+                className="flex gap-3 sm:gap-4 p-4 sm:p-6 bg-card rounded-2xl border border-border"
+                variants={staggerItem}
+                whileHover={{ y: -2 }}
+              >
                 <div className="flex-shrink-0">
                   <div className="size-12 bg-emerald-100 dark:bg-emerald-900/30 rounded-xl flex items-center justify-center">
                     <principle.Icon className="size-6 text-emerald-500" />
                   </div>
                 </div>
                 <div>
-                  <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">
+                  <h3 className="text-lg font-bold text-foreground mb-2">
                     {principle.title}
                   </h3>
-                  <p className="text-slate-600 dark:text-slate-400">
+                  <p className="text-muted-foreground">
                     {principle.description}
                   </p>
                 </div>
-              </div>
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         </div>
       </section>
 
       {/* Certifications */}
-      <section className="py-16 bg-white dark:bg-background/50">
+      <section className="py-16 bg-card/50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-4">
+          <motion.div
+            className="text-center mb-12"
+            variants={sectionVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+          >
+            <h2 className="text-3xl font-bold text-foreground mb-4">
               Certified & Compliant
             </h2>
-            <p className="text-slate-600 dark:text-slate-400">
+            <p className="text-muted-foreground">
               Our recycling partners meet the highest industry standards
             </p>
-          </div>
+          </motion.div>
 
-          <div className="grid grid-cols-3 gap-3 sm:gap-6">
-            <div className="text-center p-3 sm:p-6 bg-slate-50 dark:bg-slate-800 rounded-2xl">
-              <div className="text-4xl font-bold text-primary mb-2">R2</div>
-              <p className="text-sm font-medium text-slate-900 dark:text-white mb-1">R2 Certified</p>
-              <p className="text-xs text-slate-500">Responsible Recycling Standard</p>
-            </div>
-            <div className="text-center p-3 sm:p-6 bg-slate-50 dark:bg-slate-800 rounded-2xl">
-              <div className="text-4xl font-bold text-primary mb-2">ISO</div>
-              <p className="text-sm font-medium text-slate-900 dark:text-white mb-1">ISO 14001</p>
-              <p className="text-xs text-slate-500">Environmental Management</p>
-            </div>
-            <div className="text-center p-3 sm:p-6 bg-slate-50 dark:bg-slate-800 rounded-2xl">
-              <div className="text-4xl font-bold text-primary mb-2">NIST</div>
-              <p className="text-sm font-medium text-slate-900 dark:text-white mb-1">NIST 800-88</p>
-              <p className="text-xs text-slate-500">Data Sanitization</p>
-            </div>
-          </div>
+          <motion.div
+            className="grid grid-cols-3 gap-3 sm:gap-6"
+            variants={staggerContainer}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+          >
+            {[
+              { code: 'R2', name: 'R2 Certified', desc: 'Responsible Recycling Standard' },
+              { code: 'ISO', name: 'ISO 14001', desc: 'Environmental Management' },
+              { code: 'NIST', name: 'NIST 800-88', desc: 'Data Sanitization' },
+            ].map((cert) => (
+              <motion.div
+                key={cert.code}
+                className="text-center p-3 sm:p-6 bg-muted/50 rounded-2xl"
+                variants={staggerItem}
+                whileHover={{ scale: 1.03 }}
+              >
+                <div className="text-4xl font-bold text-primary mb-2">{cert.code}</div>
+                <p className="text-sm font-medium text-foreground mb-1">{cert.name}</p>
+                <p className="text-xs text-muted-foreground">{cert.desc}</p>
+              </motion.div>
+            ))}
+          </motion.div>
         </div>
       </section>
 
       {/* CTA */}
       <section className="py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="bg-emerald-600 rounded-3xl p-6 sm:p-8 lg:p-12 text-center">
+          <motion.div
+            className="bg-emerald-600 rounded-3xl p-6 sm:p-8 lg:p-12 text-center"
+            variants={sectionVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+          >
             <Leaf className="size-12 text-white mx-auto mb-4" />
             <h2 className="text-3xl lg:text-4xl font-bold text-white mb-4">
               Join the Movement
@@ -271,11 +358,11 @@ export default function SustainabilityPage() {
             </p>
             <Link
               href="/trade"
-              className="inline-flex items-center gap-2 bg-white text-emerald-600 font-bold py-4 px-8 rounded-xl hover:bg-slate-100 transition-colors"
+              className="inline-flex items-center gap-2 bg-white text-emerald-600 font-bold py-4 px-8 rounded-xl hover:bg-white/90 transition-colors"
             >
               Start Trading In <ArrowRight className="size-5" />
             </Link>
-          </div>
+          </motion.div>
         </div>
       </section>
     </main>

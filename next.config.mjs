@@ -47,6 +47,25 @@ const nextConfig = {
     'http://192.168.1.108:3000',
     'http://localhost:3000',
   ],
+  async redirects() {
+    return [
+      {
+        source: '/trade/category/:cat',
+        destination: '/trade/browse?category=:cat',
+        permanent: true,
+      },
+      {
+        source: '/trade/category/:cat/brand/:brand',
+        destination: '/trade/browse?category=:cat&brand=:brand',
+        permanent: true,
+      },
+      {
+        source: '/trade/category/:cat/brand/:brand/series/:series',
+        destination: '/trade/browse?category=:cat&brand=:brand&series=:series',
+        permanent: true,
+      },
+    ]
+  },
   // reactStrictMode: true,
   // output: 'export',
 };

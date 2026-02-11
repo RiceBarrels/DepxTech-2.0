@@ -4,7 +4,7 @@ import Image from 'next/image'
 import { Spotlight } from '@/components/ui/aceternity/spotlight'
 import { TextGenerateEffect } from '@/components/ui/aceternity/text-generate-effect'
 import { motion } from 'framer-motion'
-import { HeroSearch } from '@/components/home/HeroSearch'
+import TradeSearch from '@/components/trade/TradeSearch'
 import {
   Leaf,
   BadgeCheck,
@@ -68,7 +68,7 @@ export function HomeHero() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.4 }}
             >
-              <HeroSearch />
+              <TradeSearch variant="hero" />
             </motion.div>
 
             {/* Trust Indicators */}

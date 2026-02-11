@@ -489,7 +489,18 @@ export default function TradeSearch({ variant = "default" }) {
                                             No results for "<span className="text-primary">{searchTerm}</span>"
                                         </p>
                                         <p className="text-xs text-muted-foreground mt-3">
-                                            Try searching for a different device or browse categories
+                                            Try searching for a different device or{' '}
+                                            <button
+                                                type="button"
+                                                onClick={() => {
+                                                    closeSearch()
+                                                    setSearchTerm('')
+                                                    router.push('/trade/browse')
+                                                }}
+                                                className="text-primary hover:underline font-medium"
+                                            >
+                                                browse all devices
+                                            </button>
                                         </p>
                                     </div>
                                 </Card>

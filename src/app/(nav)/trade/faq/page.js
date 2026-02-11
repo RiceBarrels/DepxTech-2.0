@@ -1,16 +1,19 @@
+'use client'
+
 import Link from 'next/link'
+import { motion } from 'framer-motion'
 import {
   HelpCircle,
-  ChevronDown,
   MessageCircle,
   Mail,
   ArrowRight
 } from 'lucide-react'
-
-export const metadata = {
-  title: 'FAQ - Frequently Asked Questions',
-  description: 'Find answers to common questions about our trade-in process, shipping, payments, and more.',
-}
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@/components/ui/accordion'
 
 const faqCategories = [
   {
@@ -117,23 +120,33 @@ const faqCategories = [
   },
 ]
 
+const sectionVariants = {
+  hidden: { opacity: 0, y: 24 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: 'easeOut' } }
+}
+
 export default function FAQPage() {
   return (
     <main className="bg-background">
       {/* Hero */}
       <section className="py-16 lg:py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-3xl mx-auto">
+          <motion.div
+            className="text-center max-w-3xl mx-auto"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
             <div className="size-16 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-6">
               <HelpCircle className="size-8 text-primary" />
             </div>
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 dark:text-white leading-tight">
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-foreground leading-tight">
               Frequently Asked <span className="text-primary">Questions</span>
             </h1>
-            <p className="mt-6 text-lg text-slate-600 dark:text-slate-400 leading-relaxed">
+            <p className="mt-6 text-lg text-muted-foreground leading-relaxed">
               Find answers to the most common questions about our trade-in process. Can't find what you're looking for? Contact our support team.
             </p>
-          </div>
+          </motion.div>
         </div>
       </section>
 
@@ -141,94 +154,116 @@ export default function FAQPage() {
       <section className="py-16">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="space-y-8 md:space-y-12">
-            {faqCategories.map((category) => (
-              <div key={category.category}>
-                <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-6">
+            {faqCategories.map((category, catIndex) => (
+              <motion.div
+                key={category.category}
+                variants={sectionVariants}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, margin: '-40px' }}
+              >
+                <h2 className="text-2xl font-bold text-foreground mb-6">
                   {category.category}
                 </h2>
-                <div className="space-y-4">
+                <Accordion type="single" collapsible className="space-y-3">
                   {category.questions.map((faq, index) => (
-                    <details
+                    <AccordionItem
                       key={index}
-                      className="group bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden"
+                      value={`${catIndex}-${index}`}
+                      className="border border-border bg-card rounded-xl overflow-hidden"
                     >
-                      <summary className="flex items-center justify-between p-4 sm:p-6 cursor-pointer list-none">
-                        <span className="font-medium text-slate-900 dark:text-white pr-4">
-                          {faq.q}
-                        </span>
-                        <ChevronDown className="size-5 text-slate-400 transition-transform group-open:rotate-180 flex-shrink-0" />
-                      </summary>
-                      <div className="px-4 pb-4 sm:px-6 sm:pb-6 text-slate-600 dark:text-slate-400">
+                      <AccordionTrigger className="text-left font-medium text-foreground">
+                        {faq.q}
+                      </AccordionTrigger>
+                      <AccordionContent className="text-muted-foreground px-4">
                         {faq.a}
-                      </div>
-                    </details>
+                      </AccordionContent>
+                    </AccordionItem>
                   ))}
-                </div>
-              </div>
+                </Accordion>
+              </motion.div>
             ))}
           </div>
         </div>
       </section>
 
       {/* Contact Section */}
-      <section className="py-16 bg-white dark:bg-background/50">
+      <section className="py-16 bg-card/50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-4">
+          <motion.div
+            className="text-center mb-12"
+            variants={sectionVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+          >
+            <h2 className="text-3xl font-bold text-foreground mb-4">
               Still Have Questions?
             </h2>
-            <p className="text-slate-600 dark:text-slate-400">
+            <p className="text-muted-foreground">
               Our support team is here to help
             </p>
-          </div>
+          </motion.div>
 
-          <div className="grid md:grid-cols-2 gap-6 max-w-2xl mx-auto">
+          <motion.div
+            className="grid md:grid-cols-2 gap-6 max-w-2xl mx-auto"
+            variants={sectionVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+          >
             <a
               href="mailto:support@depxtech.com"
-              className="flex items-center gap-3 sm:gap-4 p-4 sm:p-6 bg-slate-50 dark:bg-slate-800 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
+              className="flex items-center gap-3 sm:gap-4 p-4 sm:p-6 bg-muted/50 rounded-2xl hover:bg-muted transition-colors"
             >
               <div className="size-12 bg-primary/10 rounded-xl flex items-center justify-center">
                 <Mail className="size-6 text-primary" />
               </div>
               <div>
-                <p className="font-medium text-slate-900 dark:text-white">Email Us</p>
-                <p className="text-sm text-slate-500">support@depxtech.com</p>
+                <p className="font-medium text-foreground">Email Us</p>
+                <p className="text-sm text-muted-foreground">support@depxtech.com</p>
               </div>
             </a>
 
             <a
               href="#"
-              className="flex items-center gap-3 sm:gap-4 p-4 sm:p-6 bg-slate-50 dark:bg-slate-800 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
+              className="flex items-center gap-3 sm:gap-4 p-4 sm:p-6 bg-muted/50 rounded-2xl hover:bg-muted transition-colors"
             >
               <div className="size-12 bg-primary/10 rounded-xl flex items-center justify-center">
                 <MessageCircle className="size-6 text-primary" />
               </div>
               <div>
-                <p className="font-medium text-slate-900 dark:text-white">Live Chat</p>
-                <p className="text-sm text-slate-500">Available 9am-5pm EST</p>
+                <p className="font-medium text-foreground">Live Chat</p>
+                <p className="text-sm text-muted-foreground">Available 9am-5pm EST</p>
               </div>
             </a>
-          </div>
+          </motion.div>
         </div>
       </section>
 
       {/* CTA */}
       <section className="py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-4">
+          <motion.div
+            className="text-center"
+            variants={sectionVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+          >
+            <h2 className="text-3xl font-bold text-foreground mb-4">
               Ready to Trade In?
             </h2>
-            <p className="text-slate-600 dark:text-slate-400 mb-8 max-w-xl mx-auto">
+            <p className="text-muted-foreground mb-8 max-w-xl mx-auto">
               Get an instant quote for your device in just a few clicks.
             </p>
             <Link
               href="/trade"
-              className="inline-flex items-center gap-2 bg-primary text-white font-bold py-4 px-8 rounded-xl hover:bg-primary/90 transition-colors"
+              className="inline-flex items-center gap-2 bg-primary text-primary-foreground font-bold py-4 px-8 rounded-xl hover:bg-primary/90 transition-colors"
             >
               Get Your Quote <ArrowRight className="size-5" />
             </Link>
-          </div>
+          </motion.div>
         </div>
       </section>
     </main>

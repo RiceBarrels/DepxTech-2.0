@@ -618,6 +618,7 @@ export default function EditTradeinProductPage() {
                                                             <SelectContent>
                                                                 <SelectItem value="single">Single Select</SelectItem>
                                                                 <SelectItem value="multiple">Multiple Select</SelectItem>
+                                                                <SelectItem value="opposite_multiple">Opposite Multi-Select</SelectItem>
                                                             </SelectContent>
                                                         </Select>
                                                         <div className="flex items-center gap-1">

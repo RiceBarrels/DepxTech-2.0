@@ -1342,12 +1342,13 @@ export default function TradeinManagePage() {
                                                                 handleEditInputChange('questions', newQuestions)
                                                             }}
                                                         >
-                                                            <SelectTrigger className="h-8 w-[90px] text-xs">
+                                                            <SelectTrigger className="h-8 w-[110px] text-xs">
                                                                 <SelectValue />
                                                             </SelectTrigger>
                                                             <SelectContent>
                                                                 <SelectItem value="single">Single</SelectItem>
                                                                 <SelectItem value="multiple">Multi</SelectItem>
+                                                                <SelectItem value="opposite_multiple">Opp. Multi</SelectItem>
                                                             </SelectContent>
                                                         </Select>
                                                         <Button
