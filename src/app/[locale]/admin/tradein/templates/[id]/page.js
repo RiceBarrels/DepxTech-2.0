@@ -2,7 +2,7 @@
 
 import { useParams } from "next/navigation"
 import { useTransitionRouter } from "@/components/ui/pageTransitions"
-import { useState, useEffect, useCallback, useMemo } from "react"
+import { useState, useEffect, useMemo } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -27,16 +27,35 @@ import {
     ChevronDownIcon,
     ChevronRightIcon,
     CopyIcon,
-    ArrowUpIcon,
-    ArrowDownIcon,
     EyeIcon,
     EyeOffIcon,
     UndoIcon,
     AlertCircleIcon,
+    GripVerticalIcon,
 } from 'lucide-react'
 import { toast } from 'sonner'
 import { ImageUpload, uploadFiles, deleteFileFromBucket } from "@/components/admin/ImageUpload"
 import { cn } from '@/lib/utils'
+import { DndContext, closestCenter, PointerSensor, useSensor, useSensors } from '@dnd-kit/core'
+import { SortableContext, verticalListSortingStrategy, useSortable, arrayMove } from '@dnd-kit/sortable'
+import { CSS } from '@dnd-kit/utilities'
+
+const genId = () => Math.random().toString(36).slice(2, 10)
+
+function SortableItem({ id, children }) {
+    const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id })
+    const style = {
+        transform: CSS.Transform.toString(transform),
+        transition,
+        opacity: isDragging ? 0.5 : 1,
+        zIndex: isDragging ? 10 : 'auto',
+    }
+    return (
+        <div ref={setNodeRef} style={style} {...attributes}>
+            {children({ listeners, isDragging })}
+        </div>
+    )
+}
 
 export default function EditTemplatePage() {
     const { id } = useParams()
@@ -50,6 +69,47 @@ export default function EditTemplatePage() {
     const [originalQuestions, setOriginalQuestions] = useState([])
     const [expandedQuestions, setExpandedQuestions] = useState(new Set())
     const [showPreview, setShowPreview] = useState(false)
+
+    // DnD sensors
+    const sensors = useSensors(
+        useSensor(PointerSensor, { activationConstraint: { distance: 8 } })
+    )
+
+    const handleQuestionDragEnd = (event) => {
+        const { active, over } = event
+        if (!over || active.id === over.id) return
+        const oldIndex = questions.findIndex(q => q._dndId === active.id)
+        const newIndex = questions.findIndex(q => q._dndId === over.id)
+        if (oldIndex === -1 || newIndex === -1) return
+        const reordered = arrayMove(questions, oldIndex, newIndex)
+        setQuestions(reordered)
+        setExpandedQuestions(prev => {
+            const next = new Set()
+            prev.forEach(idx => {
+                const dndId = questions[idx]?._dndId
+                if (dndId) {
+                    const newIdx = reordered.findIndex(q => q._dndId === dndId)
+                    if (newIdx !== -1) next.add(newIdx)
+                }
+            })
+            return next
+        })
+    }
+
+    const handleAnswerDragEnd = (qIndex) => (event) => {
+        const { active, over } = event
+        if (!over || active.id === over.id) return
+        setQuestions(prev => {
+            const updated = [...prev]
+            const q = { ...updated[qIndex] }
+            const oldIdx = q.ans.findIndex(a => a._dndId === active.id)
+            const newIdx = q.ans.findIndex(a => a._dndId === over.id)
+            if (oldIdx === -1 || newIdx === -1) return prev
+            q.ans = arrayMove(q.ans, oldIdx, newIdx)
+            updated[qIndex] = q
+            return updated
+        })
+    }
 
     // Track unsaved changes
     const hasChanges = useMemo(() => {
@@ -89,7 +149,11 @@ export default function EditTemplatePage() {
                 setName(foundTemplate.name || '')
                 setOriginalName(foundTemplate.name || '')
 
-                const q = foundTemplate.questions || []
+                const q = (foundTemplate.questions || []).map(q => ({
+                    ...q,
+                    _dndId: genId(),
+                    ans: (q.ans || []).map(a => ({ ...a, _dndId: genId() }))
+                }))
                 setQuestions(q)
                 setOriginalQuestions(JSON.parse(JSON.stringify(q)))
 
@@ -124,13 +188,13 @@ export default function EditTemplatePage() {
         setSaving(true)
         try {
             const processedQuestions = await Promise.all(
-                questions.map(async (question) => {
+                questions.map(async ({ _dndId, ...question }) => {
                     const questionImg = question.img instanceof File
                         ? (await uploadFiles(question.img, 'tradein/templates'))[0]
                         : question.img || null
 
                     const processedAnswers = await Promise.all(
-                        (question.ans || []).map(async (answer) => {
+                        (question.ans || []).map(async ({ _dndId: _aid, ...answer }) => {
                             const answerImg = answer.img instanceof File
                                 ? (await uploadFiles(answer.img, 'tradein/templates'))[0]
                                 : answer.img || null
@@ -178,6 +242,7 @@ export default function EditTemplatePage() {
     const addQuestion = () => {
         const newIndex = questions.length
         setQuestions(prev => [...prev, {
+            _dndId: genId(),
             title: '',
             description: '',
             type: 'single',
@@ -203,6 +268,8 @@ export default function EditTemplatePage() {
     const duplicateQuestion = (index) => {
         const copy = JSON.parse(JSON.stringify(questions[index]))
         copy.title = copy.title + ' (Copy)'
+        copy._dndId = genId()
+        copy.ans = (copy.ans || []).map(a => ({ ...a, _dndId: genId() }))
         const newQuestions = [...questions]
         newQuestions.splice(index + 1, 0, copy)
         setQuestions(newQuestions)
@@ -213,23 +280,6 @@ export default function EditTemplatePage() {
                 else next.add(i + 1)
             })
             next.add(index + 1)
-            return next
-        })
-    }
-
-    const moveQuestion = (index, direction) => {
-        const target = index + direction
-        if (target < 0 || target >= questions.length) return
-        const newQuestions = [...questions]
-        ;[newQuestions[index], newQuestions[target]] = [newQuestions[target], newQuestions[index]]
-        setQuestions(newQuestions)
-        setExpandedQuestions(prev => {
-            const next = new Set()
-            prev.forEach(i => {
-                if (i === index) next.add(target)
-                else if (i === target) next.add(index)
-                else next.add(i)
-            })
             return next
         })
     }
@@ -260,6 +310,7 @@ export default function EditTemplatePage() {
             const updated = [...prev]
             const q = { ...updated[qIndex] }
             q.ans = [...(q.ans || []), {
+                _dndId: genId(),
                 content: '',
                 description: '',
                 img: '',
@@ -287,19 +338,6 @@ export default function EditTemplatePage() {
             const q = { ...updated[qIndex] }
             q.ans = [...q.ans]
             q.ans[aIndex] = { ...q.ans[aIndex], [field]: value }
-            updated[qIndex] = q
-            return updated
-        })
-    }
-
-    const moveAnswer = (qIndex, aIndex, direction) => {
-        const target = aIndex + direction
-        setQuestions(prev => {
-            const updated = [...prev]
-            const q = { ...updated[qIndex] }
-            q.ans = [...q.ans]
-            if (target < 0 || target >= q.ans.length) return prev
-            ;[q.ans[aIndex], q.ans[target]] = [q.ans[target], q.ans[aIndex]]
             updated[qIndex] = q
             return updated
         })
@@ -461,19 +499,31 @@ export default function EditTemplatePage() {
                             </CardContent>
                         </Card>
                     ) : (
+                        <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleQuestionDragEnd}>
+                        <SortableContext items={questions.map(q => q._dndId)} strategy={verticalListSortingStrategy}>
                         <div className="flex flex-col gap-2">
                             {questions.map((question, qIndex) => {
                                 const isExpanded = expandedQuestions.has(qIndex)
                                 return (
-                                    <Card key={qIndex} className={cn(
+                                    <SortableItem key={question._dndId} id={question._dndId}>
+                                    {({ listeners, isDragging }) => (
+                                    <Card className={cn(
                                         "transition-colors",
-                                        isExpanded ? "border-primary/30" : "hover:border-muted-foreground/30"
+                                        isExpanded ? "border-primary/30" : "hover:border-muted-foreground/30",
+                                        isDragging && "shadow-lg"
                                     )}>
                                         {/* Collapsed header */}
                                         <div
                                             className="flex items-center gap-2 px-4 py-3 cursor-pointer select-none"
                                             onClick={() => toggleQuestion(qIndex)}
                                         >
+                                            <button
+                                                {...listeners}
+                                                className="cursor-grab active:cursor-grabbing shrink-0 p-0.5 -ml-1 text-muted-foreground hover:text-foreground touch-none"
+                                                onClick={(e) => e.stopPropagation()}
+                                            >
+                                                <GripVerticalIcon className="w-4 h-4" />
+                                            </button>
                                             {isExpanded
                                                 ? <ChevronDownIcon className="w-4 h-4 text-muted-foreground shrink-0" />
                                                 : <ChevronRightIcon className="w-4 h-4 text-muted-foreground shrink-0" />
@@ -502,20 +552,6 @@ export default function EditTemplatePage() {
                                             </div>
                                             {/* Action buttons on collapsed row */}
                                             <div className="flex items-center gap-0.5 shrink-0 ml-1" onClick={(e) => e.stopPropagation()}>
-                                                <Button variant="ghost" size="sm" className="h-7 w-7 p-0"
-                                                    disabled={qIndex === 0}
-                                                    onClick={() => moveQuestion(qIndex, -1)}
-                                                    title="Move up"
-                                                >
-                                                    <ArrowUpIcon className="w-3.5 h-3.5" />
-                                                </Button>
-                                                <Button variant="ghost" size="sm" className="h-7 w-7 p-0"
-                                                    disabled={qIndex === questions.length - 1}
-                                                    onClick={() => moveQuestion(qIndex, 1)}
-                                                    title="Move down"
-                                                >
-                                                    <ArrowDownIcon className="w-3.5 h-3.5" />
-                                                </Button>
                                                 <Button variant="ghost" size="sm" className="h-7 w-7 p-0"
                                                     onClick={() => duplicateQuestion(qIndex)}
                                                     title="Duplicate"
@@ -601,25 +637,29 @@ export default function EditTemplatePage() {
 
                                                 {/* Answers */}
                                                 <div className="space-y-2">
-                                                    <div className="flex items-center justify-between">
-                                                        <Label className="text-xs font-medium text-muted-foreground">
-                                                            Answers ({question.ans?.length || 0})
-                                                        </Label>
-                                                        <Button variant="ghost" size="sm" className="h-7 text-xs" onClick={() => addAnswer(qIndex)}>
-                                                            <PlusIcon className="w-3 h-3 mr-1" />
-                                                            Add Answer
-                                                        </Button>
-                                                    </div>
+                                                    <Label className="text-xs font-medium text-muted-foreground">
+                                                        Answers ({question.ans?.length || 0})
+                                                    </Label>
 
                                                     {(!question.ans || question.ans.length === 0) ? (
                                                         <div className="border border-dashed rounded-lg py-6 text-center text-muted-foreground text-xs">
-                                                            No answers yet. Click "Add Answer" above.
+                                                            No answers yet.
                                                         </div>
                                                     ) : (
+                                                        <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleAnswerDragEnd(qIndex)}>
+                                                        <SortableContext items={(question.ans || []).map(a => a._dndId)} strategy={verticalListSortingStrategy}>
                                                         <div className="space-y-2">
                                                             {question.ans.map((answer, aIndex) => (
-                                                                <div key={aIndex} className="bg-muted/40 rounded-lg p-3 space-y-2 border border-transparent hover:border-muted-foreground/20 transition-colors">
+                                                                <SortableItem key={answer._dndId} id={answer._dndId}>
+                                                                {({ listeners: ansListeners, isDragging: ansIsDragging }) => (
+                                                                <div className={cn("bg-muted/40 rounded-lg p-3 space-y-2 border border-transparent hover:border-muted-foreground/20 transition-colors", ansIsDragging && "shadow-md border-primary/20")}>
                                                                     <div className="flex items-center gap-2">
+                                                                        <button
+                                                                            {...ansListeners}
+                                                                            className="cursor-grab active:cursor-grabbing shrink-0 p-0.5 text-muted-foreground hover:text-foreground touch-none"
+                                                                        >
+                                                                            <GripVerticalIcon className="w-3.5 h-3.5" />
+                                                                        </button>
                                                                         <span className="text-xs font-bold text-muted-foreground w-4 shrink-0">
                                                                             {String.fromCharCode(65 + aIndex)}
                                                                         </span>
@@ -651,25 +691,11 @@ export default function EditTemplatePage() {
                                                                                 className="w-16 h-8 text-xs text-center"
                                                                             />
                                                                         </div>
-                                                                        <div className="flex items-center gap-0.5 shrink-0">
-                                                                            <Button variant="ghost" size="sm" className="h-7 w-7 p-0"
-                                                                                disabled={aIndex === 0}
-                                                                                onClick={() => moveAnswer(qIndex, aIndex, -1)}
-                                                                            >
-                                                                                <ArrowUpIcon className="w-3 h-3" />
-                                                                            </Button>
-                                                                            <Button variant="ghost" size="sm" className="h-7 w-7 p-0"
-                                                                                disabled={aIndex === question.ans.length - 1}
-                                                                                onClick={() => moveAnswer(qIndex, aIndex, 1)}
-                                                                            >
-                                                                                <ArrowDownIcon className="w-3 h-3" />
-                                                                            </Button>
-                                                                            <Button variant="ghost" size="sm" className="h-7 w-7 p-0 text-red-500 hover:text-red-700"
-                                                                                onClick={() => removeAnswer(qIndex, aIndex)}
-                                                                            >
-                                                                                <TrashIcon className="w-3 h-3" />
-                                                                            </Button>
-                                                                        </div>
+                                                                        <Button variant="ghost" size="sm" className="h-7 w-7 p-0 shrink-0 text-red-500 hover:text-red-700"
+                                                                            onClick={() => removeAnswer(qIndex, aIndex)}
+                                                                        >
+                                                                            <TrashIcon className="w-3 h-3" />
+                                                                        </Button>
                                                                     </div>
                                                                     <div className="pl-6">
                                                                         <Input
@@ -692,16 +718,28 @@ export default function EditTemplatePage() {
                                                                         />
                                                                     </div>
                                                                 </div>
+                                                                )}
+                                                                </SortableItem>
                                                             ))}
                                                         </div>
+                                                        </SortableContext>
+                                                        </DndContext>
                                                     )}
+                                                    <Button variant="ghost" size="sm" className="h-7 text-xs w-full border border-dashed" onClick={() => addAnswer(qIndex)}>
+                                                        <PlusIcon className="w-3 h-3 mr-1" />
+                                                        Add Answer
+                                                    </Button>
                                                 </div>
                                             </CardContent>
                                         )}
                                     </Card>
+                                    )}
+                                    </SortableItem>
                                 )
                             })}
                         </div>
+                        </SortableContext>
+                        </DndContext>
                     )}
 
                     {/* Bottom add button */}

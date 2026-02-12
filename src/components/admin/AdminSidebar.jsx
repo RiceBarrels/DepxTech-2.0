@@ -76,6 +76,7 @@ function NavLinks({ onNavigate }) {
 
 export function AdminSidebar() {
   const { signOut } = useAuth()
+  const router = useTransitionRouter()
   const t = useTranslations('admin.sidebar')
 
   return (
@@ -91,11 +92,11 @@ export function AdminSidebar() {
 
       <div className="border-t p-3">
         <button
-          onClick={signOut}
+          onClick={()=>router.push('/')}
           className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
         >
           <LogOutIcon className="h-4 w-4 shrink-0" />
-          {t('signOut')}
+          {useTranslations('home')}
         </button>
       </div>
     </aside>
@@ -142,14 +143,10 @@ export function AdminMobileHeader() {
 
           <div className="border-t p-3">
             <button
-              onClick={() => {
-                setOpen(false)
-                signOut()
-              }}
               className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
             >
               <LogOutIcon className="h-4 w-4 shrink-0" />
-              {t('signOut')}
+              {t('home')}
             </button>
           </div>
         </DrawerContent>

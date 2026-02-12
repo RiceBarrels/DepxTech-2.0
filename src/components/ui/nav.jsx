@@ -2,10 +2,8 @@
 
 import { usePathname } from "@/i18n/navigation";
 import { TransitionLink } from "@/components/ui/pageTransitions";
-import { HomeIcon, ArrowRightLeftIcon, PaletteIcon, UserIcon, ShoppingCartIcon, TicketPercentIcon, GlobeIcon, BookOpen } from "lucide-react";
+import { HomeIcon, ArrowRightLeftIcon, PaletteIcon, UserIcon, ShoppingCartIcon, TicketPercentIcon, GlobeIcon, BookOpen, ListOrderedIcon, LeafIcon, CircleHelpIcon, MessageCircleQuestionIcon, SmartphoneIcon, LaptopIcon, TabletIcon, GamepadIcon, HeadphonesIcon, WatchIcon, ShieldCheckIcon, TruckIcon, RotateCcwIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { TextSearchIcon } from "lucide-react";
-import { SearchIcon } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import { Button } from "./button";
@@ -25,7 +23,6 @@ export default function Nav({}) {
     const tCommon = useTranslations('common');
     const [justOpenedPage, setJustOpenedPage] = useState();
     const [touchedLink, setTouchedLink] = useState();
-    const [indicatorStyle, setIndicatorStyle] = useState({});
     const navRef = useRef(null);
     const safeArea = useSafeArea();
     const { user, profileData, loading } = useAuth();
@@ -37,34 +34,6 @@ export default function Nav({}) {
         }
         return pathname.startsWith(path);
     };
-
-    // Update indicator position for desktop nav
-    useEffect(() => {
-        const updateIndicator = () => {
-            if (navRef.current) {
-                const activeLink = navRef.current.querySelector('a[data-active="true"]');
-                if (activeLink) {
-                    const navRect = navRef.current.getBoundingClientRect();
-                    const linkRect = activeLink.getBoundingClientRect();
-                    setIndicatorStyle({
-                        left: `${linkRect.left - navRect.left}px`,
-                        width: `${linkRect.width}px`,
-                        opacity: 1,
-                    });
-                } else {
-                    // Hide indicator if no active link
-                    setIndicatorStyle({
-                        opacity: 0,
-                    });
-                }
-            }
-        };
-        
-        updateIndicator();
-        // Update on window resize
-        window.addEventListener('resize', updateIndicator);
-        return () => window.removeEventListener('resize', updateIndicator);
-    }, [pathname]);
 
     useEffect(() => {
         if (justOpenedPage === pathname) {
@@ -98,60 +67,66 @@ export default function Nav({}) {
 
                         {/* Center Navigation - Trade-in Focus */}
                         <div className="flex items-center gap-5 flex-1 justify-center">
-                            <TransitionLink 
-                                href="/trade" 
+                            <TransitionLink
+                                href="/trade"
                                 className={cn(
-                                    "text-sm font-medium hover:text-primary transition-colors",
-                                    isActive("/trade") && "text-primary"
+                                    "text-sm font-medium hover:text-primary transition-colors flex items-center gap-1.5",
+                                    isActive("/trade") ? "text-primary" : "text-muted-foreground"
                                 )}
                                 data-active={isActive("/trade")}
                             >
+                                <ArrowRightLeftIcon className="size-3.5" />
                                 {t('tradeIn')}
                             </TransitionLink>
                             <TransitionLink
                                 href="/trade/process"
                                 className={cn(
-                                    "text-sm font-medium hover:text-primary transition-colors",
-                                    pathname.includes("process") && "text-primary"
+                                    "text-sm font-medium hover:text-primary transition-colors flex items-center gap-1.5",
+                                    pathname.includes("process") ? "text-primary" : "text-muted-foreground"
                                 )}
                             >
+                                <ListOrderedIcon className="size-3.5" />
                                 {t('process')}
                             </TransitionLink>
                             <TransitionLink
                                 href="/trade/sustainability"
                                 className={cn(
-                                    "text-sm font-medium hover:text-primary transition-colors",
-                                    pathname.includes("sustainability") && "text-primary"
+                                    "text-sm font-medium hover:text-primary transition-colors flex items-center gap-1.5",
+                                    pathname.includes("sustainability") ? "text-emerald-500" : "text-muted-foreground"
                                 )}
                             >
+                                <LeafIcon className="size-3.5" />
                                 {t('sustainability')}
                             </TransitionLink>
                             <TransitionLink
                                 href="/trade/how-it-works"
                                 className={cn(
-                                    "text-sm font-medium hover:text-primary transition-colors",
-                                    pathname.includes("how-it-works") && "text-primary"
+                                    "text-sm font-medium hover:text-primary transition-colors flex items-center gap-1.5",
+                                    pathname.includes("how-it-works") ? "text-primary" : "text-muted-foreground"
                                 )}
                             >
+                                <CircleHelpIcon className="size-3.5" />
                                 {t('howItWorks')}
                             </TransitionLink>
                             <TransitionLink
                                 href="/trade/faq"
                                 className={cn(
-                                    "text-sm font-medium hover:text-primary transition-colors",
-                                    pathname.includes("faq") && "text-primary"
+                                    "text-sm font-medium hover:text-primary transition-colors flex items-center gap-1.5",
+                                    pathname.includes("faq") ? "text-primary" : "text-muted-foreground"
                                 )}
                             >
+                                <MessageCircleQuestionIcon className="size-3.5" />
                                 {t('faq')}
                             </TransitionLink>
                             <TransitionLink
                                 href="/blog"
                                 className={cn(
-                                    "text-sm font-medium hover:text-primary transition-colors",
-                                    isActive("/blog") && "text-primary"
+                                    "text-sm font-medium hover:text-primary transition-colors flex items-center gap-1.5",
+                                    isActive("/blog") ? "text-primary" : "text-muted-foreground"
                                 )}
                                 data-active={isActive("/blog")}
                             >
+                                <BookOpen className="size-3.5" />
                                 {t('blog')}
                             </TransitionLink>
                         </div>
@@ -194,58 +169,64 @@ export default function Nav({}) {
                 {/* Second Layer - Trade-in Categories */}
                 <div className="w-full h-10 px-4 flex items-center border-b border-border/50">
                     <div className="flex items-center gap-5 max-w-7xl mx-auto w-full overflow-x-auto">
-                        <TransitionLink 
-                            href="/trade?category=smartphones" 
+                        <TransitionLink
+                            href="/trade?category=smartphones"
                             className={cn(
-                                "text-xs font-medium hover:text-primary transition-colors whitespace-nowrap",
-                                pathname.includes("smartphones") && "text-primary"
+                                "text-xs font-medium hover:text-primary transition-colors whitespace-nowrap flex items-center gap-1",
+                                pathname.includes("smartphones") ? "text-primary" : "text-muted-foreground"
                             )}
                         >
+                            <SmartphoneIcon className="size-3" />
                             {t('categories.smartphones')}
                         </TransitionLink>
                         <TransitionLink
                             href="/trade?category=laptops"
                             className={cn(
-                                "text-xs font-medium hover:text-primary transition-colors whitespace-nowrap",
-                                pathname.includes("laptops") && "text-primary"
+                                "text-xs font-medium hover:text-primary transition-colors whitespace-nowrap flex items-center gap-1",
+                                pathname.includes("laptops") ? "text-primary" : "text-muted-foreground"
                             )}
                         >
+                            <LaptopIcon className="size-3" />
                             {t('categories.laptops')}
                         </TransitionLink>
                         <TransitionLink
                             href="/trade?category=tablets"
                             className={cn(
-                                "text-xs font-medium hover:text-primary transition-colors whitespace-nowrap",
-                                pathname.includes("tablets") && "text-primary"
+                                "text-xs font-medium hover:text-primary transition-colors whitespace-nowrap flex items-center gap-1",
+                                pathname.includes("tablets") ? "text-primary" : "text-muted-foreground"
                             )}
                         >
+                            <TabletIcon className="size-3" />
                             {t('categories.tablets')}
                         </TransitionLink>
                         <TransitionLink
                             href="/trade?category=gaming"
                             className={cn(
-                                "text-xs font-medium hover:text-primary transition-colors whitespace-nowrap",
-                                pathname.includes("gaming") && "text-primary"
+                                "text-xs font-medium hover:text-primary transition-colors whitespace-nowrap flex items-center gap-1",
+                                pathname.includes("gaming") ? "text-primary" : "text-muted-foreground"
                             )}
                         >
+                            <GamepadIcon className="size-3" />
                             {t('categories.gamingConsoles')}
                         </TransitionLink>
                         <TransitionLink
                             href="/trade?category=audio"
                             className={cn(
-                                "text-xs font-medium hover:text-primary transition-colors whitespace-nowrap",
-                                pathname.includes("audio") && "text-primary"
+                                "text-xs font-medium hover:text-primary transition-colors whitespace-nowrap flex items-center gap-1",
+                                pathname.includes("audio") ? "text-primary" : "text-muted-foreground"
                             )}
                         >
+                            <HeadphonesIcon className="size-3" />
                             {t('categories.audioDevices')}
                         </TransitionLink>
                         <TransitionLink
                             href="/trade?category=wearables"
                             className={cn(
-                                "text-xs font-medium hover:text-primary transition-colors whitespace-nowrap",
-                                pathname.includes("wearables") && "text-primary"
+                                "text-xs font-medium hover:text-primary transition-colors whitespace-nowrap flex items-center gap-1",
+                                pathname.includes("wearables") ? "text-primary" : "text-muted-foreground"
                             )}
                         >
+                            <WatchIcon className="size-3" />
                             {t('categories.wearables')}
                         </TransitionLink>
                     </div>
@@ -254,13 +235,16 @@ export default function Nav({}) {
                 {/* Third Layer - Secondary Links */}
                 <div className="w-full h-8 px-4 flex items-center bg-muted/30">
                     <div className="flex items-center gap-4 max-w-7xl mx-auto w-full text-xs text-muted-foreground">
-                        <TransitionLink href="/warranty" className="hover:text-foreground transition-colors">
+                        <TransitionLink href="/warranty" className="hover:text-foreground transition-colors flex items-center gap-1">
+                            <ShieldCheckIcon className="size-3" />
                             {t('warranty')}
                         </TransitionLink>
-                        <TransitionLink href="/shipping" className="hover:text-foreground transition-colors">
+                        <TransitionLink href="/shipping" className="hover:text-foreground transition-colors flex items-center gap-1">
+                            <TruckIcon className="size-3" />
                             {t('freeShipping')}
                         </TransitionLink>
-                        <TransitionLink href="/returns" className="hover:text-foreground transition-colors">
+                        <TransitionLink href="/returns" className="hover:text-foreground transition-colors flex items-center gap-1">
+                            <RotateCcwIcon className="size-3" />
                             {t('returns')}
                         </TransitionLink>
                         <div className="ml-auto">
@@ -268,14 +252,6 @@ export default function Nav({}) {
                         </div>
                     </div>
                 </div>
-
-                {/* Active Link Indicator */}
-                {Object.keys(indicatorStyle).length > 0 && (
-                    <div 
-                        className="absolute bottom-0 h-0.5 bg-primary transition-all duration-300"
-                        style={indicatorStyle}
-                    />
-                )}
             </nav>
             <nav
                 className="fixed bottom-0 left-0 right-0 bg-background border-t border-border flex sm:hidden z-10"
