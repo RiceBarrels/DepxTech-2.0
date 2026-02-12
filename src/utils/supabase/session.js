@@ -37,17 +37,15 @@ export async function updateSession(request) {
     data: { user },
   } = await supabase.auth.getUser()
 
-  if (
-    !user &&
-    !request.nextUrl.pathname.startsWith('/login') &&
-    !request.nextUrl.pathname.startsWith('/signup') &&
-    !request.nextUrl.pathname.startsWith('/auth') &&
-    !request.nextUrl.pathname.startsWith('/forgot-password') &&
-    !request.nextUrl.pathname.startsWith('/reset-password') &&
-    request.nextUrl.pathname !== '/'
-  ) {
-    // no user, potentially respond by redirecting the user to the login page
-    // Allow "/" to be accessible for native mobile setup screen
+  // Strip locale prefix to get the actual path (e.g. /en/admin -> /admin)
+  const segments = request.nextUrl.pathname.split('/')
+  const pathWithoutLocale = '/' + segments.slice(2).join('/')
+
+  // Only redirect to login for protected routes
+  const protectedPrefixes = ['/admin', '/account']
+  const isProtectedRoute = protectedPrefixes.some(prefix => pathWithoutLocale.startsWith(prefix))
+
+  if (!user && isProtectedRoute) {
     const url = request.nextUrl.clone()
     url.pathname = '/login'
     return NextResponse.redirect(url)
