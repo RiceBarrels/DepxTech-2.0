@@ -1,14 +1,15 @@
-// DepxTech Service Worker v2
-const CACHE_VERSION = 'v2';
+// DepxTech Service Worker v3
+const CACHE_VERSION = 'v3';
 const STATIC_CACHE = `depxtech-static-${CACHE_VERSION}`;
 const DYNAMIC_CACHE = `depxtech-dynamic-${CACHE_VERSION}`;
 const IMAGE_CACHE = `depxtech-images-${CACHE_VERSION}`;
-const OFFLINE_URL = '/offline';
+const DEFAULT_LOCALE = 'en';
+const OFFLINE_URL = `/${DEFAULT_LOCALE}/offline`;
 
 // Assets to cache immediately on install
 const PRECACHE_ASSETS = [
-  '/',
-  '/offline',
+  `/${DEFAULT_LOCALE}`,
+  `/${DEFAULT_LOCALE}/offline`,
   '/manifest.webmanifest',
   '/favicon.ico',
   '/lightLogo.svg',
@@ -170,10 +171,10 @@ self.addEventListener('fetch', (event) => {
 // Handle navigation requests (HTML pages)
 async function handleNavigationRequest(request) {
   try {
-    // Try network first
+    // Try network first (follow redirects automatically)
     const networkResponse = await fetch(request);
     if (isValidResponse(networkResponse)) {
-      // Cache successful responses
+      // Cache the final response using the final URL (after redirects)
       const cache = await caches.open(DYNAMIC_CACHE);
       cache.put(request, networkResponse.clone());
       return networkResponse;
@@ -185,7 +186,12 @@ async function handleNavigationRequest(request) {
     if (cachedResponse) {
       return cachedResponse;
     }
-    // Return offline page
+    // Try offline page for current locale, then fall back to default
+    const url = new URL(request.url);
+    const segments = url.pathname.split('/');
+    const locale = segments[1] || DEFAULT_LOCALE;
+    const localeOffline = await caches.match(`/${locale}/offline`);
+    if (localeOffline) return localeOffline;
     return caches.match(OFFLINE_URL);
   }
 }
