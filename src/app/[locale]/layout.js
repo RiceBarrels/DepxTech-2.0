@@ -31,7 +31,9 @@ export function generateStaticParams() {
 
 const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://depxtech.com'
 
-const ogLocaleMap = { en: 'en_US', 'zh-CN': 'zh_CN', 'zh-TW': 'zh_TW' }
+const rtlLocales = ['ar']
+
+const ogLocaleMap = { en: 'en_US', 'zh-CN': 'zh_CN', 'zh-TW': 'zh_TW', ar: 'ar_AR', nl: 'nl_NL', fr: 'fr_FR', de: 'de_DE', it: 'it_IT', ja: 'ja_JP', ko: 'ko_KR', pl: 'pl_PL', pt: 'pt_BR', ru: 'ru_RU', es: 'es_ES', sv: 'sv_SE' }
 
 export async function generateMetadata({ params }) {
   const { locale } = await params
@@ -87,7 +89,7 @@ export async function generateMetadata({ params }) {
     },
     alternates: {
       canonical: baseUrl,
-      languages: { en: '/en', 'zh-CN': '/zh-CN', 'zh-TW': '/zh-TW' },
+      languages: Object.fromEntries(routing.locales.map(l => [l, `/${l}`])),
     },
   }
 }
@@ -99,7 +101,7 @@ export default async function LocaleLayout({ children, params }) {
 
   return (
     <ViewTransitions>
-      <html lang={locale} suppressHydrationWarning>
+      <html lang={locale} dir={rtlLocales.includes(locale) ? 'rtl' : 'ltr'} suppressHydrationWarning>
         <head>
           <OrganizationStructuredData />
           <WebSiteStructuredData />
