@@ -338,7 +338,7 @@ function WindowComponent({ window, windows, onAction }) {
       <CardHeader
         ref={dragRef}
         className={cn(
-          "flex flex-row items-center justify-between p-2 bg-muted/50 cursor-move select-none"
+          "flex flex-row items-center justify-between p-2 bg-muted/50 cursor-move"
         )}
         onMouseDown={handleMouseDown}
       >

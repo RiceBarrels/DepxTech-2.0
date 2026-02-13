@@ -1375,6 +1375,22 @@
     "goHome": "Ir al inicio",
     "offlineNote": "Algunas páginas que has visitado anteriormente pueden seguir disponibles sin conexión."
   },
+  "notFound": {
+    "title": "404",
+    "heading": "Página no encontrada",
+    "description": "¡Ups! La página que buscas no existe o ha sido movida.",
+    "whatCanYouDo": "¿Qué puedes hacer?",
+    "helpfulOptions": "Aquí tienes algunas opciones útiles para volver al camino correcto",
+    "goHome": "Ir al inicio",
+    "browseProducts": "Ver productos",
+    "tradeInCenter": "Centro de intercambio",
+    "homepageTitle": "Página de inicio",
+    "homepageDesc": "Volver a nuestra página principal",
+    "productsTitle": "Productos",
+    "productsDesc": "Explorar nuestro catálogo de productos",
+    "tradeInTitle": "Intercambio",
+    "tradeInDesc": "Intercambia tus dispositivos antiguos"
+  },
   "metadata": {
     "defaultTitle": "DepxTech - Intercambia tus electrónicos por dinero",
     "defaultDescription": "Convierte tus electrónicos viejos en dinero al instante. Cotizaciones rápidas, envío gratuito y pagos altos garantizados. La forma más inteligente de reciclar tu tecnología.",
@@ -1495,6 +1511,7 @@
       "devicesFound": "{count} {count, plural, one {dispositivo encontrado} other {dispositivos encontrados}}",
       "noDevicesFound": "No se encontraron dispositivos",
       "noDevicesHint": "Intenta ajustar tus filtros o busca un dispositivo diferente.",
+      "startsAt": "Desde",
       "tradeInUpTo": "Intercambio hasta",
       "getQuote": "Cotizar",
       "tradeIn": "Intercambiar",

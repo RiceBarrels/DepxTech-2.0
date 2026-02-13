@@ -1495,6 +1495,7 @@
       "devicesFound": "{count} {count, plural, one {enhet} other {enheter}} hittade",
       "noDevicesFound": "Inga enheter hittades",
       "noDevicesHint": "Prova att justera dina filter eller sök efter en annan enhet.",
+      "startsAt": "Från",
       "tradeInUpTo": "Inbytesvärde upp till",
       "getQuote": "Få offert",
       "tradeIn": "Byt in",

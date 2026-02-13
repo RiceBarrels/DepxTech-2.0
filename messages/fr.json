@@ -1375,6 +1375,22 @@
     "goHome": "Retour à l'accueil",
     "offlineNote": "Certaines pages que vous avez déjà visitées peuvent encore être disponibles hors ligne."
   },
+  "notFound": {
+    "title": "404",
+    "heading": "Page introuvable",
+    "description": "Oups ! La page que vous recherchez n'existe pas ou a été déplacée.",
+    "whatCanYouDo": "Que pouvez-vous faire ?",
+    "helpfulOptions": "Voici quelques options utiles pour vous remettre sur la bonne voie",
+    "goHome": "Retour à l'accueil",
+    "browseProducts": "Parcourir les produits",
+    "tradeInCenter": "Centre de reprise",
+    "homepageTitle": "Page d'accueil",
+    "homepageDesc": "Retour à notre page principale",
+    "productsTitle": "Produits",
+    "productsDesc": "Explorer notre catalogue de produits",
+    "tradeInTitle": "Reprise",
+    "tradeInDesc": "Échangez vos anciens appareils"
+  },
   "metadata": {
     "defaultTitle": "DepxTech - Reprise de vos appareils électroniques contre de l'argent",
     "defaultDescription": "Transformez vos anciens appareils électroniques en argent comptant. Devis rapides, livraison gratuite et paiements élevés garantis. La manière intelligente de recycler vos appareils.",
@@ -1495,6 +1511,7 @@
       "devicesFound": "{count} appareil{count, plural, one {} other {s}} trouvé{count, plural, one {} other {s}}",
       "noDevicesFound": "Aucun appareil trouvé",
       "noDevicesHint": "Essayez d'ajuster vos filtres ou recherchez un autre appareil.",
+      "startsAt": "À partir de",
       "tradeInUpTo": "Reprise jusqu'à",
       "getQuote": "Obtenir un devis",
       "tradeIn": "Reprise",

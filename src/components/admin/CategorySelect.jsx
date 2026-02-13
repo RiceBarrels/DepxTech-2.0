@@ -125,7 +125,7 @@ export function CategorySelect({ value, onChange, className = "h-9" }) {
                 ))}
                 <button
                     type="button"
-                    className="relative flex w-full cursor-pointer select-none items-center rounded-sm py-1.5 px-2 text-sm outline-none hover:bg-accent text-primary"
+                    className="relative flex w-full cursor-pointer items-center rounded-sm py-1.5 px-2 text-sm outline-none hover:bg-accent text-primary"
                     onClick={(e) => {
                         e.stopPropagation()
                         setAdding(true)

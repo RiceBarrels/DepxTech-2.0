@@ -1495,6 +1495,7 @@
       "devicesFound": "{count, plural, one {# устройство найдено} other {# устройств найдено}}",
       "noDevicesFound": "Устройства не найдены",
       "noDevicesHint": "Попробуйте изменить фильтры или поискать другое устройство.",
+      "startsAt": "Начиная с",
       "tradeInUpTo": "Обмен до",
       "getQuote": "Получить оценку",
       "tradeIn": "Обменять",

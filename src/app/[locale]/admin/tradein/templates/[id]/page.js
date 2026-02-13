@@ -514,7 +514,7 @@ export default function EditTemplatePage() {
                                     )}>
                                         {/* Collapsed header */}
                                         <div
-                                            className="flex items-center gap-2 px-4 py-3 cursor-pointer select-none"
+                                            className="flex items-center gap-2 px-4 py-3 cursor-pointer"
                                             onClick={() => toggleQuestion(qIndex)}
                                         >
                                             <button

@@ -1495,6 +1495,7 @@
       "devicesFound": "{count, plural, one {# 台} other {# 台}}のデバイスが見つかりました",
       "noDevicesFound": "デバイスが見つかりません",
       "noDevicesHint": "フィルターを調整するか、別のデバイスで検索してみてください。",
+      "startsAt": "最低価格",
       "tradeInUpTo": "買取価格最大",
       "getQuote": "見積もりを取得",
       "tradeIn": "買取に出す",

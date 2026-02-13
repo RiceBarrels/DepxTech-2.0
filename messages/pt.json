@@ -1495,6 +1495,7 @@
       "devicesFound": "{count} dispositivo{count, plural, one {} other {s}} encontrado{count, plural, one {} other {s}}",
       "noDevicesFound": "Nenhum dispositivo encontrado",
       "noDevicesHint": "Tente ajustar seus filtros ou pesquise um dispositivo diferente.",
+      "startsAt": "A partir de",
       "tradeInUpTo": "Trade-in de até",
       "getQuote": "Obter Cotação",
       "tradeIn": "Negociar",

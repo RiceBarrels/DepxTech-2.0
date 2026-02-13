@@ -1375,6 +1375,22 @@
     "goHome": "Go Home",
     "offlineNote": "Some pages you've visited before may still be available offline."
   },
+  "notFound": {
+    "title": "404",
+    "heading": "Page Not Found",
+    "description": "Oops! The page you're looking for doesn't exist or has been moved.",
+    "whatCanYouDo": "What can you do?",
+    "helpfulOptions": "Here are some helpful options to get you back on track",
+    "goHome": "Go Home",
+    "browseProducts": "Browse Products",
+    "tradeInCenter": "Trade-In Center",
+    "homepageTitle": "Homepage",
+    "homepageDesc": "Return to our main page",
+    "productsTitle": "Products",
+    "productsDesc": "Explore our product catalog",
+    "tradeInTitle": "Trade-In",
+    "tradeInDesc": "Trade your old devices"
+  },
   "metadata": {
     "defaultTitle": "DepxTech - Trade-in Your Electronics for Cash",
     "defaultDescription": "Turn your old electronics into instant cash. Fast quotes, free shipping, and high payouts guaranteed. The smarter way to recycle your tech.",

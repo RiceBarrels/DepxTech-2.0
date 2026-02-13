@@ -1495,6 +1495,7 @@
       "devicesFound": "{count} {count, plural, one {apparaat} other {apparaten}} gevonden",
       "noDevicesFound": "Geen apparaten gevonden",
       "noDevicesHint": "Probeer uw filters aan te passen of zoek naar een ander apparaat.",
+      "startsAt": "Vanaf",
       "tradeInUpTo": "Inruilen tot",
       "getQuote": "Offerte ontvangen",
       "tradeIn": "Inruilen",

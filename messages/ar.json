@@ -1361,6 +1361,7 @@
       "devicesFound": "تم العثور على {count, plural, one {جهاز واحد} other {# جهاز}}",
       "noDevicesFound": "لم يتم العثور على أجهزة",
       "noDevicesHint": "حاول تعديل الفلاتر أو البحث عن جهاز مختلف.",
+      "startsAt": "يبدأ من",
       "tradeInUpTo": "استبدال حتى",
       "getQuote": "احصل على عرض",
       "tradeIn": "استبدال",

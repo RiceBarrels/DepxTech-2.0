@@ -113,7 +113,7 @@ export default async function LocaleLayout({ children, params }) {
           />
         </head>
         <body
-          className={`${geistSans.variable} ${geistMono.variable} antialiased select-none`}
+          className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         >
           <PasswordWall>
             <AuthProvider>

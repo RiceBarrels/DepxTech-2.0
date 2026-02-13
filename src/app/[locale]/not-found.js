@@ -4,8 +4,11 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { LineShadowText } from '@/components/magicui/line-shadow-text'
 import { TransitionLink } from '@/components/ui/pageTransitions'
+import { useTranslations } from 'next-intl'
 
 export default function NotFound() {
+  const t = useTranslations('notFound')
+
   return (
     <div className="w-screen h-[100dvh] flex flex-col">
         <div className="flex-1 overflow-y-auto w-full">
@@ -18,38 +21,38 @@ export default function NotFound() {
                     className="text-8xl sm:text-9xl font-bold text-primary mb-4"
                     shadowColor="hsl(var(--muted-foreground))"
                   >
-                    404
+                    {t('title')}
                   </LineShadowText>
                   <h2 className="text-2xl sm:text-3xl font-semibold mb-2">
-                    Page Not Found
+                    {t('heading')}
                   </h2>
                   <p className="text-lg text-muted-foreground mb-8">
-                    Oops! The page you're looking for doesn't exist or has been moved.
+                    {t('description')}
                   </p>
                 </div>
 
                 <Card className="mb-8">
                   <CardHeader>
-                    <CardTitle>What can you do?</CardTitle>
+                    <CardTitle>{t('whatCanYouDo')}</CardTitle>
                     <CardDescription>
-                      Here are some helpful options to get you back on track
+                      {t('helpfulOptions')}
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
                     <div className="flex flex-col sm:flex-row gap-4 justify-center">
                       <TransitionLink href="/">
                         <Button className="w-full sm:w-auto">
-                          Go Home
+                          {t('goHome')}
                         </Button>
                       </TransitionLink>
                       <TransitionLink href="/products">
                         <Button variant="outline" className="w-full sm:w-auto">
-                          Browse Products
+                          {t('browseProducts')}
                         </Button>
                       </TransitionLink>
                       <TransitionLink href="/trade">
                         <Button variant="outline" className="w-full sm:w-auto">
-                          Trade-In Center
+                          {t('tradeInCenter')}
                         </Button>
                       </TransitionLink>
                     </div>
@@ -59,27 +62,27 @@ export default function NotFound() {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
                   <Card>
                     <CardContent className="pt-6">
-                      <h3 className="font-semibold mb-1">Homepage</h3>
+                      <h3 className="font-semibold mb-1">{t('homepageTitle')}</h3>
                       <p className="text-sm text-muted-foreground">
-                        Return to our main page
+                        {t('homepageDesc')}
                       </p>
                     </CardContent>
                   </Card>
 
                   <Card>
                     <CardContent className="pt-6">
-                      <h3 className="font-semibold mb-1">Products</h3>
+                      <h3 className="font-semibold mb-1">{t('productsTitle')}</h3>
                       <p className="text-sm text-muted-foreground">
-                        Explore our product catalog
+                        {t('productsDesc')}
                       </p>
                     </CardContent>
                   </Card>
 
                   <Card>
                     <CardContent className="pt-6">
-                      <h3 className="font-semibold mb-1">Trade-In</h3>
+                      <h3 className="font-semibold mb-1">{t('tradeInTitle')}</h3>
                       <p className="text-sm text-muted-foreground">
-                        Trade your old devices
+                        {t('tradeInDesc')}
                       </p>
                     </CardContent>
                   </Card>

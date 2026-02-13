@@ -1375,6 +1375,22 @@
     "goHome": "返回首页",
     "offlineNote": "部分之前访问过的页面可能仍可离线使用。"
   },
+  "notFound": {
+    "title": "404",
+    "heading": "页面未找到",
+    "description": "抱歉！您要查找的页面不存在或已被移动。",
+    "whatCanYouDo": "您可以做什么？",
+    "helpfulOptions": "这里有一些有用的选项帮助您回到正轨",
+    "goHome": "返回首页",
+    "browseProducts": "浏览产品",
+    "tradeInCenter": "以旧换新中心",
+    "homepageTitle": "首页",
+    "homepageDesc": "返回主页",
+    "productsTitle": "产品",
+    "productsDesc": "浏览产品目录",
+    "tradeInTitle": "以旧换新",
+    "tradeInDesc": "回收您的旧设备"
+  },
   "metadata": {
     "defaultTitle": "DepxTech - 回收变现，电子设备变现",
     "defaultDescription": "将旧电子设备变现。快速报价、免费配送、高额回收，品质保证。更智能的科技回收方式。",
@@ -1495,6 +1511,7 @@
       "devicesFound": "找到 {count} 台设备",
       "noDevicesFound": "未找到设备",
       "noDevicesHint": "请尝试调整筛选条件或搜索其他设备。",
+      "startsAt": "起价",
       "tradeInUpTo": "回收价最高",
       "getQuote": "获取报价",
       "tradeIn": "回收变现",

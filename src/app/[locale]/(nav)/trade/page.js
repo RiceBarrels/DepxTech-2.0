@@ -51,7 +51,7 @@ export default async function TradePage() {
               <Button variant="ghost" size="sm">{t('featured.viewAll')}</Button>
             </TransitionLink>
           </div>
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
             {featuredProducts.map((product, i) => (
               <TradeProductCard
                 key={product.id}

@@ -1495,6 +1495,7 @@
       "devicesFound": "找到 {count} 台裝置",
       "noDevicesFound": "未找到裝置",
       "noDevicesHint": "請嘗試調整篩選條件或搜尋其他裝置。",
+      "startsAt": "起價",
       "tradeInUpTo": "回收價最高",
       "getQuote": "取得報價",
       "tradeIn": "回收變現",

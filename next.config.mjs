@@ -44,6 +44,12 @@ const nextConfig = {
         hostname: 'images.samsung.com',
         port: '',
         pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'store.storeimages.cdn-apple.com',
+        port: '',
+        pathname: '/**',
       }
     ],
   },

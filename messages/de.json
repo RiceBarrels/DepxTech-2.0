@@ -1495,6 +1495,7 @@
       "devicesFound": "{count} {count, plural, one {Gerät} other {Geräte}} gefunden",
       "noDevicesFound": "Keine Geräte gefunden",
       "noDevicesHint": "Versuchen Sie, Ihre Filter anzupassen oder nach einem anderen Gerät zu suchen.",
+      "startsAt": "Ab",
       "tradeInUpTo": "Eintausch bis zu",
       "getQuote": "Angebot erhalten",
       "tradeIn": "Eintauschen",

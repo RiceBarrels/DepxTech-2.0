@@ -1495,6 +1495,7 @@
       "devicesFound": "{count} {count, plural, one {dispositivo trovato} other {dispositivi trovati}}",
       "noDevicesFound": "Nessun dispositivo trovato",
       "noDevicesHint": "Prova a modificare i filtri o cerca un dispositivo diverso.",
+      "startsAt": "A partire da",
       "tradeInUpTo": "Permuta fino a",
       "getQuote": "Ottieni preventivo",
       "tradeIn": "Permuta",
