@@ -1,5 +1,5 @@
-// DepxTech Service Worker v3
-const CACHE_VERSION = 'v3';
+// DepxTech Service Worker v4
+const CACHE_VERSION = 'v4';
 const STATIC_CACHE = `depxtech-static-${CACHE_VERSION}`;
 const DYNAMIC_CACHE = `depxtech-dynamic-${CACHE_VERSION}`;
 const IMAGE_CACHE = `depxtech-images-${CACHE_VERSION}`;
@@ -80,6 +80,11 @@ async function trimCache(cacheName, maxItems) {
 // Helper: Check if response is valid
 function isValidResponse(response) {
   return response && response.status === 200 && response.type !== 'error';
+}
+
+// Helper: Check if response is a redirect
+function isRedirect(response) {
+  return response && response.status >= 300 && response.status < 400;
 }
 
 // Helper: Cache with timestamp
@@ -170,9 +175,22 @@ self.addEventListener('fetch', (event) => {
 
 // Handle navigation requests (HTML pages)
 async function handleNavigationRequest(request) {
+  const url = new URL(request.url);
+
+  // Don't cache the root path as it always redirects based on locale/OAuth
+  if (url.pathname === '/' || url.pathname === '') {
+    return fetch(request);
+  }
+
   try {
     // Try network first (follow redirects automatically)
     const networkResponse = await fetch(request);
+
+    // Don't cache redirect responses - let them pass through
+    if (isRedirect(networkResponse)) {
+      return networkResponse;
+    }
+
     if (isValidResponse(networkResponse)) {
       // Cache the final response using the final URL (after redirects)
       const cache = await caches.open(DYNAMIC_CACHE);
@@ -187,7 +205,6 @@ async function handleNavigationRequest(request) {
       return cachedResponse;
     }
     // Try offline page for current locale, then fall back to default
-    const url = new URL(request.url);
     const segments = url.pathname.split('/');
     const locale = segments[1] || DEFAULT_LOCALE;
     const localeOffline = await caches.match(`/${locale}/offline`);
