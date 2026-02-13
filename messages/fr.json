@@ -600,7 +600,8 @@
       "button": "Se connecter",
       "buttonLoading": "Connexion en cours...",
       "createAccount": "Créer un compte",
-      "forgotPassword": "Mot de passe oublié ?"
+      "forgotPassword": "Mot de passe oublié ?",
+      "noAccount": "Vous n'avez pas de compte ?"
     },
     "signup": {
       "heading": "Inscription",
@@ -619,6 +620,7 @@
       "button": "Créer un compte",
       "buttonLoading": "Création en cours...",
       "signIn": "Se connecter",
+      "haveAccount": "Vous avez déjà un compte ?",
       "verificationCodeLabel": "Code de vérification",
       "verificationCodePlaceholder": "Entrez le code à 6 chiffres",
       "verifyButton": "Vérifier l'e-mail",

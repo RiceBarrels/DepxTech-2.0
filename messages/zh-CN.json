@@ -600,7 +600,8 @@
       "button": "登录",
       "buttonLoading": "登录中...",
       "createAccount": "创建账户",
-      "forgotPassword": "忘记密码？"
+      "forgotPassword": "忘记密码？",
+      "noAccount": "还没有账户？"
     },
     "signup": {
       "heading": "注册",
@@ -619,6 +620,7 @@
       "button": "创建账户",
       "buttonLoading": "创建中...",
       "signIn": "登录",
+      "haveAccount": "已有账户？",
       "verificationCodeLabel": "验证码",
       "verificationCodePlaceholder": "输入 6 位验证码",
       "verifyButton": "验证邮箱",

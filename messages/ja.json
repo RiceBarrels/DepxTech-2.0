@@ -600,7 +600,8 @@
       "button": "ログイン",
       "buttonLoading": "ログイン中...",
       "createAccount": "アカウントを作成",
-      "forgotPassword": "パスワードをお忘れですか？"
+      "forgotPassword": "パスワードをお忘れですか？",
+      "noAccount": "アカウントをお持ちでないですか？"
     },
     "signup": {
       "heading": "新規登録",
@@ -619,6 +620,7 @@
       "button": "アカウントを作成",
       "buttonLoading": "作成中...",
       "signIn": "ログイン",
+      "haveAccount": "アカウントをお持ちですか？",
       "verificationCodeLabel": "認証コード",
       "verificationCodePlaceholder": "6桁のコードを入力",
       "verifyButton": "メールを認証",

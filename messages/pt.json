@@ -600,7 +600,8 @@
       "button": "Entrar",
       "buttonLoading": "Entrando...",
       "createAccount": "Criar Conta",
-      "forgotPassword": "Esqueceu sua senha?"
+      "forgotPassword": "Esqueceu sua senha?",
+      "noAccount": "Não tem uma conta?"
     },
     "signup": {
       "heading": "Cadastrar-se",
@@ -619,6 +620,7 @@
       "button": "Criar Conta",
       "buttonLoading": "Criando...",
       "signIn": "Entrar",
+      "haveAccount": "Já tem uma conta?",
       "verificationCodeLabel": "Código de Verificação",
       "verificationCodePlaceholder": "Digite o código de 6 dígitos",
       "verifyButton": "Verificar E-mail",

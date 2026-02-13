@@ -600,7 +600,8 @@
       "button": "Inloggen",
       "buttonLoading": "Bezig met inloggen...",
       "createAccount": "Account aanmaken",
-      "forgotPassword": "Wachtwoord vergeten?"
+      "forgotPassword": "Wachtwoord vergeten?",
+      "noAccount": "Heeft u geen account?"
     },
     "signup": {
       "heading": "Registreren",
@@ -619,6 +620,7 @@
       "button": "Account aanmaken",
       "buttonLoading": "Bezig met aanmaken...",
       "signIn": "Inloggen",
+      "haveAccount": "Heeft u al een account?",
       "verificationCodeLabel": "Verificatiecode",
       "verificationCodePlaceholder": "Voer 6-cijferige code in",
       "verifyButton": "E-mail verifiëren",

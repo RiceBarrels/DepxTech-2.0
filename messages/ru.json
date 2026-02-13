@@ -600,7 +600,8 @@
       "button": "Войти",
       "buttonLoading": "Вход...",
       "createAccount": "Создать аккаунт",
-      "forgotPassword": "Забыли пароль?"
+      "forgotPassword": "Забыли пароль?",
+      "noAccount": "У вас нет аккаунта?"
     },
     "signup": {
       "heading": "Регистрация",
@@ -619,6 +620,7 @@
       "button": "Создать аккаунт",
       "buttonLoading": "Создание...",
       "signIn": "Войти",
+      "haveAccount": "У вас уже есть аккаунт?",
       "verificationCodeLabel": "Код подтверждения",
       "verificationCodePlaceholder": "Введите 6-значный код",
       "verifyButton": "Подтвердить email",

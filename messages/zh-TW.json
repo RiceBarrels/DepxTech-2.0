@@ -600,7 +600,8 @@
       "button": "登入",
       "buttonLoading": "登入中...",
       "createAccount": "建立帳戶",
-      "forgotPassword": "忘記密碼？"
+      "forgotPassword": "忘記密碼？",
+      "noAccount": "還沒有帳戶？"
     },
     "signup": {
       "heading": "註冊",
@@ -619,6 +620,7 @@
       "button": "建立帳戶",
       "buttonLoading": "建立中...",
       "signIn": "登入",
+      "haveAccount": "已有帳戶？",
       "verificationCodeLabel": "驗證碼",
       "verificationCodePlaceholder": "輸入6位數驗證碼",
       "verifyButton": "驗證電子郵件",

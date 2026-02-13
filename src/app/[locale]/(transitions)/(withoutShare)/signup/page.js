@@ -267,8 +267,8 @@ export default function SignupPage() {
                 : `We sent a verification code to ${email}`}
             </p>
           </div>
-          <div className="h-72 hidden md:block">
-            <Separator orientation="vertical" className="h-72"/>
+          <div className="h-156 hidden md:block">
+            <Separator orientation="vertical" className="h-156"/>
           </div>
           <div className="w-full px-6 block md:hidden">
             <Separator orientation="horizontal"/>

@@ -600,7 +600,8 @@
       "button": "Zaloguj się",
       "buttonLoading": "Logowanie...",
       "createAccount": "Utwórz konto",
-      "forgotPassword": "Zapomniałeś hasła?"
+      "forgotPassword": "Zapomniałeś hasła?",
+      "noAccount": "Nie masz konta?"
     },
     "signup": {
       "heading": "Rejestracja",
@@ -619,6 +620,7 @@
       "button": "Utwórz konto",
       "buttonLoading": "Tworzenie...",
       "signIn": "Zaloguj się",
+      "haveAccount": "Masz już konto?",
       "verificationCodeLabel": "Kod weryfikacyjny",
       "verificationCodePlaceholder": "Wpisz 6-cyfrowy kod",
       "verifyButton": "Zweryfikuj e-mail",

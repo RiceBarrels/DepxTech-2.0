@@ -600,7 +600,8 @@
       "button": "로그인",
       "buttonLoading": "로그인 중...",
       "createAccount": "계정 만들기",
-      "forgotPassword": "비밀번호를 잊으셨나요?"
+      "forgotPassword": "비밀번호를 잊으셨나요?",
+      "noAccount": "계정이 없으신가요?"
     },
     "signup": {
       "heading": "회원가입",
@@ -619,6 +620,7 @@
       "button": "계정 만들기",
       "buttonLoading": "생성 중...",
       "signIn": "로그인",
+      "haveAccount": "이미 계정이 있으신가요?",
       "verificationCodeLabel": "인증 코드",
       "verificationCodePlaceholder": "6자리 코드 입력",
       "verifyButton": "이메일 인증",

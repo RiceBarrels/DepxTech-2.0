@@ -600,7 +600,8 @@
       "button": "Logga in",
       "buttonLoading": "Loggar in...",
       "createAccount": "Skapa konto",
-      "forgotPassword": "Glömt ditt lösenord?"
+      "forgotPassword": "Glömt ditt lösenord?",
+      "noAccount": "Har du inget konto?"
     },
     "signup": {
       "heading": "Registrera dig",
@@ -619,6 +620,7 @@
       "button": "Skapa konto",
       "buttonLoading": "Skapar...",
       "signIn": "Logga in",
+      "haveAccount": "Har du redan ett konto?",
       "verificationCodeLabel": "Verifieringskod",
       "verificationCodePlaceholder": "Ange 6-siffrig kod",
       "verifyButton": "Verifiera e-post",

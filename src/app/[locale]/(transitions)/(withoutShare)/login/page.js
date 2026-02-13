@@ -75,8 +75,8 @@ export default function LoginPage() {
               {t('subheading')}
             </p>
           </div>
-          <div className="h-128 hidden md:block">
-            <Separator orientation="vertical" className="h-128"/>
+          <div className="h-124 hidden md:block">
+            <Separator orientation="vertical" className="h-124"/>
           </div>
           <div className="w-full px-6 block md:hidden">
             <Separator orientation="horizontal"/>
