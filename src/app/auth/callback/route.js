@@ -3,10 +3,27 @@ import { NextResponse } from 'next/server'
 
 export async function GET(request) {
   const requestUrl = new URL(request.url)
+  const code = requestUrl.searchParams.get('code')
   const token_hash = requestUrl.searchParams.get('token_hash')
   const type = requestUrl.searchParams.get('type')
   const next = requestUrl.searchParams.get('next') ?? '/'
 
+  // Handle OAuth callback
+  if (code) {
+    const supabase = await createClient()
+    const { error } = await supabase.auth.exchangeCodeForSession(code)
+
+    if (!error) {
+      const redirectUrl = new URL(next, requestUrl.origin)
+      return NextResponse.redirect(redirectUrl)
+    } else {
+      const loginUrl = new URL('/login', requestUrl.origin)
+      loginUrl.searchParams.set('error', 'OAuth authentication failed')
+      return NextResponse.redirect(loginUrl)
+    }
+  }
+
+  // Handle OTP verification (password reset, etc.)
   if (token_hash && type) {
     const supabase = await createClient()
 
