@@ -1,10 +1,11 @@
 import * as React from "react"
-
+import { heavyHapticsImpact } from "@/lib/haptics";
 import { cn } from "@/lib/utils"
 
 function Input({
   className,
   type,
+  onFocus,
   ...props
 }) {
   return (
@@ -17,6 +18,7 @@ function Input({
         "aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive",
         className
       )}
+      onFocus={() => {heavyHapticsImpact(); onFocus()}}
       {...props} />
   );
 }

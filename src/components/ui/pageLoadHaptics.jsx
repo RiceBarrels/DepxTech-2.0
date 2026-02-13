@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { usePathname } from "@/i18n/navigation";
-import { heavyHapticsImpact } from "@/lib/haptics";
+import { mediumHapticsImpact } from "@/lib/haptics";
 
 export function PageLoadHaptics() {
   const pathname = usePathname();
@@ -10,8 +10,8 @@ export function PageLoadHaptics() {
   useEffect(() => {
     // Trigger haptic feedback when page loads/changes
     const timer = setTimeout(() => {
-      heavyHapticsImpact();
-    }, 550); // Small delay to ensure page is loaded
+      mediumHapticsImpact();
+    }, 250); // Small delay to ensure page is loaded
 
     return () => clearTimeout(timer);
   }, [pathname]);

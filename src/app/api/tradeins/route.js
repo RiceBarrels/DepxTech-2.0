@@ -14,23 +14,20 @@ export async function GET(request) {
       .from('tradable_products')
       .select('*', { count: 'exact' })
 
-    // If ID is provided, fetch specific tradable product by ID
     if (id) {
       query = query.eq('id', id)
-    } else {
-      // Otherwise, use search functionality
+    } else if (search) {
       query = query.ilike('title', `%${search}%`)
     }
 
-    // Handle JSONB category filtering (can be combined with search or ID)
     if (category) {
-      query = query.contains('category', [category])
+      query = query.eq('category', category)
     }
 
     const { data: tradableProducts, error, count } = await query
       .order('created_at', { ascending: false })
       .range((page - 1) * limit, page * limit - 1)
-    
+
     if (error) {
       console.error('Error fetching tradable products:', error)
       return NextResponse.json(
@@ -41,8 +38,8 @@ export async function GET(request) {
 
     const totalPages = Math.ceil(count / limit)
 
-    return NextResponse.json({ 
-      tradableProducts, 
+    return NextResponse.json({
+      tradableProducts,
       pagination: {
         currentPage: page,
         totalPages,
@@ -64,29 +61,26 @@ export async function GET(request) {
 export async function POST(request) {
   try {
     const body = await request.json()
-    
+
     const {
       title,
       des,
-      new_price,
-      good_price,
-      okay_price,
-      bad_price,
-      broken_price,
-      category = [],
-      new_def,
-      good_def,
-      okay_def,
-      bad_def,
-      broken_def,
-      imgs = []
+      base_price,
+      category,
+      brand,
+      series,
+      brand_img,
+      imgs = [],
+      is_featured = false,
+      display_order = 0,
+      base_date,
+      questions = [],
+      depreciation_rate = 0,
     } = body
 
-    // Validate required fields
-    if (!title || !new_price || !good_price || !okay_price || !bad_price || !broken_price ||
-        !new_def || !good_def || !okay_def || !bad_def || !broken_def) {
+    if (!title || !base_price || !category || !brand || !series) {
       return NextResponse.json(
-        { error: 'Missing required fields' },
+        { error: 'Missing required fields: title, base_price, category, brand, series' },
         { status: 400 }
       )
     }
@@ -96,18 +90,17 @@ export async function POST(request) {
       .insert([{
         title,
         des,
-        new_price: parseFloat(new_price),
-        good_price: parseFloat(good_price),
-        okay_price: parseFloat(okay_price),
-        bad_price: parseFloat(bad_price),
-        broken_price: parseFloat(broken_price),
+        base_price: parseFloat(base_price),
         category,
-        new_def,
-        good_def,
-        okay_def,
-        bad_def,
-        broken_def,
-        imgs
+        brand,
+        series,
+        brand_img,
+        imgs,
+        is_featured,
+        display_order,
+        base_date,
+        questions,
+        depreciation_rate: parseFloat(depreciation_rate),
       }])
       .select()
 
@@ -144,12 +137,9 @@ export async function PUT(request) {
       )
     }
 
-    // Convert numeric fields to proper types
-    if (updateData.new_price) updateData.new_price = parseFloat(updateData.new_price)
-    if (updateData.good_price) updateData.good_price = parseFloat(updateData.good_price)
-    if (updateData.okay_price) updateData.okay_price = parseFloat(updateData.okay_price)
-    if (updateData.bad_price) updateData.bad_price = parseFloat(updateData.bad_price)
-    if (updateData.broken_price) updateData.broken_price = parseFloat(updateData.broken_price)
+    // Convert numeric fields
+    if (updateData.base_price) updateData.base_price = parseFloat(updateData.base_price)
+    if (updateData.depreciation_rate) updateData.depreciation_rate = parseFloat(updateData.depreciation_rate)
 
     const { data: tradableProduct, error } = await supabase
       .from('tradable_products')
@@ -223,7 +213,6 @@ export async function DELETE(request) {
   }
 }
 
-// Helper function to increment views
 export async function PATCH(request) {
   try {
     const body = await request.json()
@@ -236,28 +225,37 @@ export async function PATCH(request) {
       )
     }
 
-    let updateField = {}
-    
-    switch (action) {
-      case 'increment_views':
-        updateField = { views: supabase.raw('views + 1') }
-        break
-      case 'increment_likes':
-        updateField = { likes: supabase.raw('likes + 1') }
-        break
-      case 'increment_trades':
-        updateField = { trades: supabase.raw('trades + 1') }
-        break
-      default:
-        return NextResponse.json(
-          { error: 'Invalid action' },
-          { status: 400 }
-        )
+    const columnMap = {
+      increment_views: 'views',
+      increment_likes: 'likes',
+      increment_trades: 'trades',
+    }
+
+    const column = columnMap[action]
+    if (!column) {
+      return NextResponse.json(
+        { error: 'Invalid action' },
+        { status: 400 }
+      )
+    }
+
+    // Read current value then increment
+    const { data: current, error: readError } = await supabase
+      .from('tradable_products')
+      .select(column)
+      .eq('id', id)
+      .single()
+
+    if (readError || !current) {
+      return NextResponse.json(
+        { error: 'Product not found' },
+        { status: 404 }
+      )
     }
 
     const { data: tradableProduct, error } = await supabase
       .from('tradable_products')
-      .update(updateField)
+      .update({ [column]: (current[column] || 0) + 1 })
       .eq('id', id)
       .select()
 

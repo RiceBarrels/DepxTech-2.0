@@ -68,7 +68,7 @@ export default function ProductDetails({
     const stockStatus = getStockStatus(stocks)
 
     return (
-        <div className={`w-full max-w-6xl mx-auto ${className}`}>
+        <div className={`w-full max-w-7xl mx-auto ${className}`}>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 {/* Image Gallery */}
                 <ImageGallery images={imgs} title={title} />
@@ -168,7 +168,7 @@ export default function ProductDetails({
 // Loading component
 export function ProductDetailsLoading({ className = "" }) {
     return (
-        <div className={`w-full max-w-6xl mx-auto ${className}`}>
+        <div className={`w-full max-w-7xl mx-auto ${className}`}>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 {/* Image Skeleton */}
                 <div className="space-y-4">

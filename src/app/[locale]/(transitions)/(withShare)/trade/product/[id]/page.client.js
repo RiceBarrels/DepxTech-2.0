@@ -20,6 +20,7 @@ import { useTranslations } from 'next-intl'
 import { useAuth } from '@/lib/auth'
 import { cn } from '@/lib/utils'
 import { motion, AnimatePresence } from 'framer-motion'
+import { heavyHapticsImpact } from '@/lib/haptics'
 
 // ── Helpers (unchanged) ──────────────────────────
 const parsePercentage = (value) => {
@@ -451,6 +452,9 @@ export default function TradeProductPageClient({ product, questions, basePrice, 
                   role="button"
                   tabIndex={0}
                   onClick={() => handleAnswerSelect(currentStep, ansIdx)}
+                  onTouchEnd={() => {
+                    heavyHapticsImpact(); 
+                  }}
                   onKeyDown={(e) => {
                     if (e.key === 'Enter' || e.key === ' ') {
                       e.preventDefault()

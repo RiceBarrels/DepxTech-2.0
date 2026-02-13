@@ -96,7 +96,7 @@ export function AdminSidebar() {
           className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
         >
           <LogOutIcon className="h-4 w-4 shrink-0" />
-          {useTranslations('home')}
+          {t('goBackHome')}
         </button>
       </div>
     </aside>
@@ -143,10 +143,11 @@ export function AdminMobileHeader() {
 
           <div className="border-t p-3">
             <button
+              onClick={() => { setOpen(false); window.location.href = '/' }}
               className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
             >
               <LogOutIcon className="h-4 w-4 shrink-0" />
-              {t('home')}
+              {t('goBackHome')}
             </button>
           </div>
         </DrawerContent>

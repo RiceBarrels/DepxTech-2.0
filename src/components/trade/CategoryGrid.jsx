@@ -32,7 +32,7 @@ export default function CategoryGrid() {
   const t = useTranslations('trade.categories')
 
   return (
-    <section id="category-grid" className="py-12 px-4 w-full max-w-5xl mx-auto">
+    <section id="category-grid" className="py-12 px-4 w-full max-w-7xl mx-auto">
       <h2 className="text-2xl font-bold text-center text-foreground mb-8">
         {t('title')}
       </h2>

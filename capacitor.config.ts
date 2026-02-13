@@ -5,7 +5,7 @@ const config: CapacitorConfig = {
   appName: 'DepxTech',
   webDir: 'out',
   server: {
-    url: 'http://192.168.1.108:3000',
+    url: 'https://cbt.depxtech.com',
     cleartext: true,
   },
 };

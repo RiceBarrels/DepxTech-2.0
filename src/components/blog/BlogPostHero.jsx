@@ -120,7 +120,7 @@ export function BlogPostHero({ post }) {
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.5, delay: 0.4 }}
-          className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12"
+          className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12"
         >
           <div className="relative bg-gradient-to-br from-slate-100 to-slate-50 dark:from-slate-800 dark:to-slate-900 rounded-3xl p-12 flex items-center justify-center overflow-hidden border border-slate-200/50 dark:border-slate-700/50">
             <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent" />

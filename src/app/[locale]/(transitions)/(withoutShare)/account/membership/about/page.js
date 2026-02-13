@@ -89,7 +89,7 @@ export default async function AboutPage() {
             <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-muted/5 rounded-full blur-3xl animate-pulse [animation-delay:0.5s]"></div>
           </div>
 
-          <div className="relative container mx-auto py-16 px-4 max-w-6xl">
+          <div className="relative container mx-auto py-16 px-4 max-w-7xl">
             <div className="text-center mb-16">
               <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 rounded-full text-primary font-medium mb-6 animate-fade-in">
                 <Sparkles className="h-4 w-4" />

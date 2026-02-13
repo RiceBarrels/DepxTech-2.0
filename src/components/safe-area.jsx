@@ -40,9 +40,9 @@ export function useSafeArea() {
     return safeArea;
 }
 
-export function TopSafeArea(){
+export function TopSafeArea({extraPX = 16}){
     const area = useSafeArea().top
-    const height = area === 0 ? 0 : area + 16
+    const height = area === 0 ? 0 : area + extraPX
 
     return (
         <div 

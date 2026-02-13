@@ -15,6 +15,7 @@ import { XIcon } from "lucide-react";
 import { useTransitionRouter } from "./pageTransitions";
 import { useTranslations } from 'next-intl';
 import { LanguageSwitcher } from './language-switcher';
+import { heavyHapticsImpact } from "@/lib/haptics";
 
 export default function Nav({}) {
     const router = useTransitionRouter();
@@ -58,11 +59,11 @@ export default function Nav({}) {
                 ref={navRef}
             >
                 {/* Top Layer - Main Navigation */}
-                <div className="w-full h-12 px-4 flex items-center justify-between border-b border-border/50">
+                <div className="w-full h-16 px-4 flex items-center justify-between border-b border-border/50">
                     <div className="flex items-center gap-6 flex-1 max-w-7xl mx-auto w-full">
                         {/* Logo */}
                         <TransitionLink href="/" className="flex items-center flex-shrink-0">
-                            <h1 className="font-bold text-lg tracking-tight">DepxTech</h1>
+                            <h1 className="font-black text-3xl tracking-tight">DepxTech</h1>
                         </TransitionLink>
 
                         {/* Center Navigation - Trade-in Focus */}
@@ -277,10 +278,10 @@ export default function Nav({}) {
                                 'flex-1 flex flex-col items-center justify-center gap-0.5 py-2 relative',
                                 active ? "text-primary" : "text-muted-foreground"
                             )}
-                            hapticsOnPressRelease={true}
                             onClick={() => setJustOpenedPage(href)}
                             onTouchStart={() => setTouchedLink(href)}
                             onTouchMove={() => setTouchedLink(href)}
+                            onTouchEnd={() => heavyHapticsImpact()}
                         >
                             {active && (
                                 <div

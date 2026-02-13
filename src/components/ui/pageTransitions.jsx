@@ -5,7 +5,6 @@ import { useTransitionRouter } from "next-view-transitions";
 import { usePathname } from "@/i18n/navigation";
 import { useEffect } from "react";
 import { Link } from "@/i18n/navigation";
-import { doubleHapticsImpact, lightHapticsImpact } from "@/lib/haptics";
 
 // Check if a route is in the transitions group (no nav)
 export function isTransitionRoute(pathname) {
@@ -56,9 +55,7 @@ function isExternalUrl(url) {
 // - Proper semantic HTML with anchor tags
 export function TransitionLink({ 
   href = "", 
-  children, 
-  haptics = true, 
-  hapticsOnPressRelease = false, // New prop: if true, haptics only on press/release, not on click
+  children,
   disabled = false, 
   prefetch = true, // SEO: Enable prefetching by default for better performance
   className, 
@@ -93,18 +90,6 @@ export function TransitionLink({
     );
   }
 
-  const handlePress = () => {
-    if (haptics && hapticsOnPressRelease && !disabled) {
-      lightHapticsImpact();
-    }
-  };
-
-  const handleRelease = () => {
-    if (haptics && hapticsOnPressRelease && !disabled) {
-      lightHapticsImpact();
-    }
-  };
-
   const handleClick = async (e) => {
     // Prevent default to use custom transition navigation
     // The href is still in the DOM for SEO crawlers to follow
@@ -114,11 +99,6 @@ export function TransitionLink({
       // Call custom onClick handler if provided (for mobile nav state updates, etc.)
       if (props.onClick) {
         props.onClick(e);
-      }
-      
-      // Only trigger haptics on click if NOT using press/release mode
-      if (haptics && !hapticsOnPressRelease) {
-        doubleHapticsImpact();
       }
       
       // Set transition type before navigation
@@ -140,7 +120,7 @@ export function TransitionLink({
   };
 
   // Extract onClick, onMouseDown, onMouseUp, onTouchStart, onTouchEnd from props to avoid conflicts
-  const { onClick, onMouseDown, onMouseUp, onTouchStart, onTouchEnd, ...restProps } = props;
+  const { onClick, ...restProps } = props;
 
   return (
     <Link 
@@ -148,22 +128,6 @@ export function TransitionLink({
       prefetch={prefetch}
       disabled={disabled}
       onClick={handleClick}
-      onMouseDown={(e) => {
-        handlePress();
-        onMouseDown?.(e);
-      }}
-      onMouseUp={(e) => {
-        handleRelease();
-        onMouseUp?.(e);
-      }}
-      onTouchStart={(e) => {
-        handlePress();
-        onTouchStart?.(e);
-      }}
-      onTouchEnd={(e) => {
-        handleRelease();
-        onTouchEnd?.(e);
-      }}
       onContextMenu={(e) => e.preventDefault()}
       onDragStart={(e) => e.preventDefault()}
       onDrag={(e) => e.preventDefault()}

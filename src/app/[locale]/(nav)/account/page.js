@@ -70,7 +70,7 @@ export default function AccountPage() {
         </div>
       </div>
 
-      <div className="max-w-6xl mx-auto flex flex-col gap-4 sm:gap-8">
+      <div className="max-w-7xl mx-auto flex flex-col gap-4 sm:gap-8">
         <div className="flex flex-col gap-6 items-center">
           {/* user avatar */}
           { profileData?.avatar !== "default" && profileData?.avatar !== null && !loading ? 

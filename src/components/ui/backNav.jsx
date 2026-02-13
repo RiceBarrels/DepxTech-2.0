@@ -24,27 +24,29 @@ export default function BackNav({ isShareButton = false }) {
 
     return (
         <>
-            <TopSafeArea />
-            {/* placeholder */}
-            <div className="flex items-center justify-between fixed top-0 left-0 right-0 z-50 p-5">
-                <Button 
-                    className="bg-background/50 backdrop-blur-sm" 
-                    variant="outline" 
-                    size="icon"
-                    onClick={handleBack}
-                >
-                    <ChevronLeftIcon className="size-4.5" alt="Back" />
-                </Button>
-                {isShareButton && (
+            <TopSafeArea extraPX={48} />
+            <div className="flex flex-col fixed top-0 left-0 right-0 z-50 px-4">
+                <TopSafeArea extraPX={0} />
+                <div className="flex items-center justify-between">
                     <Button 
                         className="bg-background/50 backdrop-blur-sm" 
                         variant="outline" 
-                        size="icon" 
-                        onClick={handleShare}
+                        size="icon"
+                        onClick={handleBack}
                     >
-                        <ShareIcon className="size-4.5" alt="Share" />
+                        <ChevronLeftIcon className="size-4.5" alt="Back" />
                     </Button>
-                )}
+                    {isShareButton && (
+                        <Button 
+                            className="bg-background/50 backdrop-blur-sm" 
+                            variant="outline" 
+                            size="icon" 
+                            onClick={handleShare}
+                        >
+                            <ShareIcon className="size-4.5" alt="Share" />
+                        </Button>
+                    )}
+                </div>
             </div>
         </>
     )

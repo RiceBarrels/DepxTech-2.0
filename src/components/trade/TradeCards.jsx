@@ -5,7 +5,8 @@ import { motion } from 'framer-motion'
 import { ArrowRight } from 'lucide-react'
 import { TransitionLink } from '@/components/ui/pageTransitions'
 import { useTranslations } from 'next-intl'
-
+import { Button } from '@/components/ui/button'
+import { Eye } from 'lucide-react'
 // Product Card — used on browse page and landing page
 export function TradeProductCard({ product, href, index = 0 }) {
   const t = useTranslations('trade.browse')
@@ -18,10 +19,10 @@ export function TradeProductCard({ product, href, index = 0 }) {
       transition={{ delay: Math.min(index * 0.04, 0.4), duration: 0.3 }}
     >
       <TransitionLink href={href} className="block group h-full">
-        <div className="relative overflow-hidden rounded-2xl bg-card border border-border h-full hover:border-primary/50 hover:shadow-lg transition-all duration-200">
+        <div className="relative overflow-hidden bg-muted rounded-2xl bg-card border border-border h-full hover:border-primary/50 hover:shadow-lg transition-all duration-200">
           {/* Product Image */}
-          <div className="relative p-3 sm:p-4">
-            <div className="relative w-full aspect-square rounded-xl bg-muted overflow-hidden">
+          <div className="relative p-0 sm:p-0">
+            <div className="relative w-full aspect-square border-b p-4">
               {product.imgs && product.imgs.length > 0 && (
                 <div className="relative w-full h-full p-3 sm:p-4 group-hover:scale-105 transition-transform duration-200">
                   <Image
@@ -34,37 +35,35 @@ export function TradeProductCard({ product, href, index = 0 }) {
               )}
 
               {/* Price badge */}
-              <div className="absolute top-2 right-2 bg-emerald-500 text-white px-2 py-0.5 rounded-lg text-xs sm:text-sm font-bold shadow-sm">
+              <div className="absolute top-4 right-4 bg-emerald-500 text-white px-2 py-0.5 rounded-lg text-xs sm:text-sm font-bold shadow-sm">
                 ${price.toFixed(0)}
               </div>
             </div>
           </div>
 
           {/* Product Info */}
-          <div className="px-3 sm:px-4 pb-3 sm:pb-4 space-y-2 sm:space-y-3">
-            <div>
-              <h3 className="font-semibold text-sm sm:text-base text-foreground group-hover:text-primary transition-colors line-clamp-2">
+          <div className="px-3 sm:px-4 sm:pb-2 space-y-2 sm:space-y-3 bg-background">
+            <div className="pt-4">
+              <h3 className="font-semibold text-sm sm:text-base text-foreground group-hover:text-primary transition-colors line-clamp-1">
                 {product.title}
               </h3>
-              {product.des && (
-                <p className="text-xs sm:text-sm text-muted-foreground mt-0.5 line-clamp-1">
-                  {product.des}
-                </p>
-              )}
             </div>
 
             {/* Trade value */}
-            <div className="flex items-center justify-between pt-2 sm:pt-3 border-t border-border">
-              <span className="text-xs sm:text-sm text-muted-foreground">{t('tradeInUpTo')}</span>
-              <span className="font-bold text-emerald-600 dark:text-emerald-400 text-sm sm:text-base">
-                ${price.toFixed(2)}
+            <div className="flex items-center pb-4">
+              <span className="text-xs text-muted-foreground pr-2">
+                {t('startsAt')}
               </span>
-            </div>
-
-            {/* CTA */}
-            <div className="flex items-center justify-center gap-1.5 py-1.5 sm:py-2 text-xs sm:text-sm font-medium text-primary group-hover:text-primary/80">
-              <span>{t('getQuote')}</span>
-              <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+              <span className="font-bold text-emerald-600 dark:text-emerald-400 text-md">
+                ${price.toFixed(2).split('.')[0]}
+              </span>
+              <span className="font-bold text-emerald-600 dark:text-emerald-400 text-sm">
+                .{price.toFixed(2).split('.')[1]}
+              </span>
+              <div className='flex-1'/>
+              <div className="text-sm text-muted-foreground flex items-center gap-0.5 pl-2">
+                <Eye className="h-3 w-3" />{product.views}
+              </div>
             </div>
           </div>
         </div>

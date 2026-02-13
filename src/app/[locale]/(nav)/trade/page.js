@@ -44,7 +44,7 @@ export default async function TradePage() {
 
       {/* Featured Devices */}
       {featuredProducts.length > 0 && (
-        <section className="w-full max-w-6xl py-12 sm:py-16 px-4">
+        <section className="w-full max-w-7xl py-12 sm:py-16 px-4">
           <div className="flex items-center justify-between mb-8">
             <h2 className="text-2xl font-bold text-foreground">{t('featured.title')}</h2>
             <TransitionLink href="/trade/browse">
@@ -65,7 +65,7 @@ export default async function TradePage() {
       )}
 
       {/* How It Works */}
-      <section className="w-full max-w-5xl py-12 sm:py-16 px-4">
+      <section className="w-full max-w-7xl py-12 sm:py-16 px-4">
         <h2 className="text-2xl font-bold text-center text-foreground mb-10">{t('howItWorks.title')}</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
           {steps.map(({ icon: Icon, step, title, desc }) => (
@@ -84,17 +84,17 @@ export default async function TradePage() {
       </section>
 
       {/* Trust Indicators */}
-      <section className="w-full max-w-5xl px-4 pb-6">
+      <section className="w-full max-w-7xl px-4 pb-6">
         <TradeTrustIndicators />
       </section>
 
       {/* Value Proposition */}
-      <section className="w-full max-w-5xl px-4 pb-6">
+      <section className="w-full max-w-7xl px-4 pb-6">
         <TradeValueProposition />
       </section>
 
       {/* CTA */}
-      <section className="w-full max-w-5xl px-4 pb-16">
+      <section className="w-full max-w-7xl px-4 pb-16">
         <div className="flex flex-col sm:flex-row items-center justify-between gap-6 p-6 sm:p-8 bg-muted/40 rounded-xl">
           <div className="flex flex-col gap-1.5 text-center sm:text-left">
             <h2 className="text-xl font-bold text-foreground">{t('cta.title')}</h2>
