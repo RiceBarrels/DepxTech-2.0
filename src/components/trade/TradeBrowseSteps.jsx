@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import { useRouter } from '@/i18n/navigation'
 import { useSearchParams } from 'next/navigation'
 import { useCallback, useTransition, useEffect } from 'react'
@@ -19,6 +20,17 @@ import { TransitionLink } from '@/components/ui/pageTransitions'
 import TradeBrandCard from './TradeBrandCard'
 import { TradeProductCard } from './TradeCards'
 import { heavyHapticsImpact, mediumHapticsImpact } from '@/lib/haptics'
+
+const categoryImages = {
+  'Smartphones': '/stockImg/tradein-cata-img/Smartphone.png',
+  'Laptops': '/stockImg/tradein-cata-img/Laptop.png',
+  'Tablets': '/stockImg/tradein-cata-img/Tablet.png',
+  'Gaming': '/stockImg/tradein-cata-img/Gaming.png',
+  'Wearables': '/stockImg/tradein-cata-img/Wearable.png',
+  'Processors': '/stockImg/tradein-cata-img/CPU.png',
+  'Graphics Cards': '/stockImg/tradein-cata-img/GPU.png',
+  'Memory': '/stockImg/tradein-cata-img/RAM.png',
+}
 
 const sectionVariants = {
   hidden: { opacity: 0, y: 16 },
@@ -88,9 +100,53 @@ export default function TradeBrowseSteps({
 
   const seriesSkipped = autoSkip.seriesSkipped || seriesList.length === 0
   const showProducts = category && brand && (seriesSkipped || series)
+  const tc = useTranslations('trade.categories')
+
+  // Map category DB name to i18n key
+  const categoryI18nKey = {
+    'Smartphones': 'smartphone',
+    'Laptops': 'laptop',
+    'Tablets': 'tablet',
+    'Gaming': 'gaming',
+    'Wearables': 'wearable',
+    'Processors': 'cpu',
+    'Graphics Cards': 'gpu',
+    'Memory': 'ram',
+  }
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
+      {/* Banner */}
+      {category && (
+        <motion.div
+          initial={{ opacity: 0, y: -8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.35 }}
+          className="relative overflow-hidden rounded-2xl bg-muted/60 border border-border"
+        >
+          <div className="flex items-center gap-4 sm:gap-6 px-5 sm:px-8 py-4 sm:py-5">
+            {categoryImages[category] && (
+              <div className="relative w-14 h-14 sm:w-20 sm:h-20 shrink-0">
+                <Image
+                  src={categoryImages[category]}
+                  alt={category}
+                  fill
+                  className="object-contain"
+                />
+              </div>
+            )}
+            <div className="min-w-0">
+              <h1 className="text-lg sm:text-2xl font-bold tracking-tight text-foreground truncate">
+                {tc(categoryI18nKey[category] || 'smartphone')}
+              </h1>
+              <p className="text-xs sm:text-sm text-muted-foreground mt-0.5 line-clamp-1">
+                {tc(`${categoryI18nKey[category] || 'smartphone'}Desc`)}
+              </p>
+            </div>
+          </div>
+        </motion.div>
+      )}
+
       {/* Breadcrumb */}
       <div className="flex items-center gap-2 flex-wrap">
         {category && (
