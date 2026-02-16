@@ -1,10 +1,11 @@
 import { Link } from '@/i18n/navigation'
 import { notFound } from 'next/navigation'
-import { getPostBySlug, getRelatedPosts, getAllPosts } from '@/data/blog-posts'
+import { getPostBySlug, getRelatedPosts, getAllPostSlugs } from '@/lib/blog'
 import { MarkdownContent } from '@/components/blog/MarkdownContent'
 import { BlogPostHero } from '@/components/blog/BlogPostHero'
 import { RelatedPosts } from '@/components/blog/RelatedPosts'
 import { getTranslations } from 'next-intl/server'
+import { ArticleStructuredData } from '@/components/seo/StructuredData'
 import {
   ArrowRight,
   Tag,
@@ -14,16 +15,14 @@ import {
 
 // Generate static params for all blog posts
 export async function generateStaticParams() {
-  const posts = getAllPosts()
-  return posts.map((post) => ({
-    slug: post.slug,
-  }))
+  const slugs = await getAllPostSlugs()
+  return slugs.map((slug) => ({ slug }))
 }
 
 // Generate metadata for each post
 export async function generateMetadata({ params }) {
-  const { slug } = await params
-  const post = getPostBySlug(slug)
+  const { slug, locale } = await params
+  const post = await getPostBySlug(slug, locale)
   const t = await getTranslations('blog')
 
   if (!post) {
@@ -43,29 +42,32 @@ export async function generateMetadata({ params }) {
       publishedTime: post.date,
       authors: [post.author],
       tags: [post.category],
+      images: post.image ? [{ url: post.image, alt: post.title }] : [],
     },
     twitter: {
       card: 'summary_large_image',
       title: post.title,
       description: post.excerpt,
+      images: post.image ? [post.image] : [],
     },
   }
 }
 
 
 export default async function BlogPostPage({ params }) {
-  const { slug } = await params
-  const post = getPostBySlug(slug)
+  const { slug, locale } = await params
+  const post = await getPostBySlug(slug, locale)
   const t = await getTranslations('blog')
 
   if (!post) {
     notFound()
   }
 
-  const relatedPosts = getRelatedPosts(slug, 3)
+  const relatedPosts = await getRelatedPosts(slug, 3, locale)
 
   return (
     <main className="bg-background min-h-screen">
+      <ArticleStructuredData article={post} />
       {/* Hero Section with Aceternity Spotlight */}
       <BlogPostHero post={post} />
 

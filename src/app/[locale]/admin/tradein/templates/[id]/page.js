@@ -69,6 +69,7 @@ export default function EditTemplatePage() {
     const [originalQuestions, setOriginalQuestions] = useState([])
     const [expandedQuestions, setExpandedQuestions] = useState(new Set())
     const [showPreview, setShowPreview] = useState(false)
+    const [linkedProductCount, setLinkedProductCount] = useState(0)
 
     // DnD sensors
     const sensors = useSensors(
@@ -133,7 +134,7 @@ export default function EditTemplatePage() {
         async function fetchTemplate() {
             try {
                 setLoading(true)
-                const response = await fetch(`/api/admin/tradein/templates?id=${id}`)
+                const response = await fetch(`/api/admin/tradein/templates?id=${id}&withCounts=true`)
                 const data = await response.json()
 
                 if (!response.ok) {
@@ -148,6 +149,7 @@ export default function EditTemplatePage() {
                 setTemplate(foundTemplate)
                 setName(foundTemplate.name || '')
                 setOriginalName(foundTemplate.name || '')
+                setLinkedProductCount(foundTemplate.linked_product_count || 0)
 
                 const q = (foundTemplate.questions || []).map(q => ({
                     ...q,
@@ -224,7 +226,12 @@ export default function EditTemplatePage() {
             setOriginalName(name)
             setOriginalQuestions(JSON.parse(JSON.stringify(processedQuestions)))
             setQuestions(processedQuestions)
-            toast.success('Template saved successfully')
+            if (data.updatedProductCount > 0) {
+                setLinkedProductCount(data.updatedProductCount)
+                toast.success(`Template saved! ${data.updatedProductCount} linked product${data.updatedProductCount !== 1 ? 's' : ''} updated.`)
+            } else {
+                toast.success('Template saved successfully')
+            }
         } catch (error) {
             toast.error(error.message)
         } finally {
@@ -390,7 +397,14 @@ export default function EditTemplatePage() {
                             Back
                         </Button>
                         <div className="min-w-0">
-                            <h1 className="text-lg font-bold truncate">Edit Template</h1>
+                            <div className="flex items-center gap-2">
+                                <h1 className="text-lg font-bold truncate">Edit Template</h1>
+                                {linkedProductCount > 0 && (
+                                    <Badge variant="secondary" className="text-xs shrink-0">
+                                        {linkedProductCount} product{linkedProductCount !== 1 ? 's' : ''} linked
+                                    </Badge>
+                                )}
+                            </div>
                             {template && (
                                 <p className="text-xs text-muted-foreground truncate">
                                     ID: {template.id.slice(0, 8)}...

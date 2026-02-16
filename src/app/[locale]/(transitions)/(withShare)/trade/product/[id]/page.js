@@ -5,6 +5,8 @@ import { Badge } from '@/components/ui/badge'
 import { Shield, Truck, Clock, DollarSign } from 'lucide-react'
 import Image from 'next/image'
 import { getTranslations } from 'next-intl/server'
+import { TradeProductStructuredData, BreadcrumbStructuredData } from '@/components/seo/StructuredData'
+import { resolveTradeProduct } from '@/lib/i18n-db'
 
 export async function generateMetadata({ params }) {
   const { id, locale } = await params
@@ -21,15 +23,16 @@ export async function generateMetadata({ params }) {
       return { title: t('notFound') }
     }
 
+    const resolved = resolveTradeProduct(product, locale)
     const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://depxtech.com'
 
     return {
-      title: t('metaTitle', { title: product.title }),
-      description: t('metaDesc', { title: product.title }),
-      keywords: [`trade in ${product.title}`, product.brand, product.series, product.category, 'depxtech', 'trade in'],
+      title: t('metaTitle', { title: resolved.title }),
+      description: t('metaDesc', { title: resolved.title }),
+      keywords: [`trade in ${resolved.title}`, product.brand, product.series, product.category, 'depxtech', 'trade in'],
       openGraph: {
-        title: t('metaTitle', { title: product.title }),
-        description: t('metaDesc', { title: product.title }),
+        title: t('metaTitle', { title: resolved.title }),
+        description: t('metaDesc', { title: resolved.title }),
         type: 'website',
         url: `${baseUrl}/trade/product/${id}`,
         images: product.imgs && product.imgs.length > 0 ? [product.imgs[0]] : [],
@@ -58,19 +61,22 @@ function calculateDepreciation(depreciationRate, t) {
 }
 
 export default async function TradeProductPage({ params }) {
-  const { id } = await params
+  const { id, locale } = await params
   const t = await getTranslations('trade.product')
 
   // Fetch product data
-  const { data: product, error } = await supabaseAdmin
+  const { data: rawProduct, error } = await supabaseAdmin
     .from('tradable_products')
     .select('*')
     .eq('id', id)
     .single()
 
-  if (error || !product) {
+  if (error || !rawProduct) {
     notFound()
   }
+
+  // Resolve i18n fields based on locale
+  const product = resolveTradeProduct(rawProduct, locale)
 
   // Use product-specific questions from the questions column
   const productQuestions = product.questions || []
@@ -86,8 +92,17 @@ export default async function TradeProductPage({ params }) {
   const depreciation = calculateDepreciation(product.depreciation_rate, t)
   const depreciatedPrice = basePrice * (depreciation.multiplier / 100)
 
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://depxtech.com'
+
   return (
     <div className="min-h-screen">
+      <TradeProductStructuredData product={product} depreciatedPrice={depreciatedPrice} />
+      <BreadcrumbStructuredData items={[
+        { name: 'Trade-In', url: `${baseUrl}/trade` },
+        { name: product.category, url: `${baseUrl}/trade/browse?category=${encodeURIComponent(product.category)}` },
+        { name: product.brand, url: `${baseUrl}/trade/browse?category=${encodeURIComponent(product.category)}&brand=${encodeURIComponent(product.brand)}` },
+        { name: product.title, url: `${baseUrl}/trade/product/${product.id}` },
+      ]} />
       {/* Hero Section */}
       <div className="border-b border-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">

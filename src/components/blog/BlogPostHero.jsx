@@ -74,7 +74,7 @@ export function BlogPostHero({ post }) {
             </span>
             <span className="flex items-center gap-1.5 text-sm text-slate-500 dark:text-slate-400">
               <Clock className="size-4" />
-              {post.readTime}
+              {post.read_time || post.readTime}
             </span>
           </div>
 

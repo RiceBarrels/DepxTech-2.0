@@ -1,6 +1,6 @@
 import { Link } from '@/i18n/navigation'
 import { notFound } from 'next/navigation'
-import { getPostsByCategory, getAllCategories } from '@/data/blog-posts'
+import { getPostsByCategory, getAllCategories } from '@/lib/blog'
 import { CategoryHero, CategoryNav } from '@/components/blog/CategoryHero'
 import { BlogCardGrid } from '@/components/blog/BlogCard'
 import { getTranslations } from 'next-intl/server'
@@ -12,7 +12,7 @@ import {
 
 // Generate static params for all categories
 export async function generateStaticParams() {
-  const categories = getAllCategories()
+  const categories = await getAllCategories()
   return categories.map((category) => ({
     category: category.toLowerCase(),
   }))
@@ -31,8 +31,8 @@ export async function generateMetadata({ params }) {
 }
 
 export default async function CategoryPage({ params }) {
-  const { category } = await params
-  const categories = getAllCategories()
+  const { category, locale } = await params
+  const categories = await getAllCategories()
   const t = await getTranslations('blog')
 
   // Find the matching category (case-insensitive)
@@ -44,7 +44,7 @@ export default async function CategoryPage({ params }) {
     notFound()
   }
 
-  const posts = getPostsByCategory(matchedCategory)
+  const posts = await getPostsByCategory(matchedCategory, locale)
 
   return (
     <main className="bg-background min-h-screen">

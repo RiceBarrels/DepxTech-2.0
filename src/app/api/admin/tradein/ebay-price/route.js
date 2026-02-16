@@ -115,38 +115,57 @@ export async function POST(request) {
     }
 
     const today = new Date().toISOString().split('T')[0]
-    const results = []
+    const encoder = new TextEncoder()
 
-    // Process sequentially to respect SerpAPI rate limits
-    for (const product of products) {
-      try {
-        const ebayPrice = await fetchMedianEbayPrice(product.title)
+    // Stream results as NDJSON — each product result sent immediately when done
+    const stream = new ReadableStream({
+      async start(controller) {
+        let updated = 0
+        let failed = 0
 
-        if (ebayPrice === null) {
-          results.push({ id: product.id, title: product.title, ebay_price: null, success: false, reason: 'No listings found' })
-          continue
+        for (const product of products) {
+          let result
+          try {
+            const ebayPrice = await fetchMedianEbayPrice(product.title)
+
+            if (ebayPrice === null) {
+              result = { id: product.id, title: product.title, ebay_price: null, success: false, reason: 'No listings found' }
+              failed++
+            } else {
+              const { error: updateError } = await supabase
+                .from('tradable_products')
+                .update({ base_price: ebayPrice, base_date: today })
+                .eq('id', product.id)
+
+              if (updateError) {
+                result = { id: product.id, title: product.title, ebay_price: ebayPrice, success: false, reason: 'DB update failed' }
+                failed++
+              } else {
+                result = { id: product.id, title: product.title, ebay_price: ebayPrice, success: true }
+                updated++
+              }
+            }
+          } catch (err) {
+            result = { id: product.id, title: product.title, ebay_price: null, success: false, reason: err.message }
+            failed++
+          }
+
+          // Send this result immediately
+          controller.enqueue(encoder.encode(JSON.stringify(result) + '\n'))
         }
 
-        // Update base_price and base_date
-        const { error: updateError } = await supabase
-          .from('tradable_products')
-          .update({ base_price: ebayPrice, base_date: today })
-          .eq('id', product.id)
+        // Send final summary line
+        controller.enqueue(encoder.encode(JSON.stringify({ done: true, updated, failed }) + '\n'))
+        controller.close()
+      },
+    })
 
-        if (updateError) {
-          results.push({ id: product.id, title: product.title, ebay_price: ebayPrice, success: false, reason: 'DB update failed' })
-        } else {
-          results.push({ id: product.id, title: product.title, ebay_price: ebayPrice, success: true })
-        }
-      } catch (err) {
-        results.push({ id: product.id, title: product.title, ebay_price: null, success: false, reason: err.message })
-      }
-    }
-
-    const updated = results.filter(r => r.success).length
-    const failed = results.filter(r => !r.success).length
-
-    return NextResponse.json({ success: true, results, updated, failed })
+    return new Response(stream, {
+      headers: {
+        'Content-Type': 'application/x-ndjson',
+        'Cache-Control': 'no-cache',
+      },
+    })
   } catch (error) {
     console.error('Error in ebay-price route:', error)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })

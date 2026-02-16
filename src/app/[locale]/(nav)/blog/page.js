@@ -1,6 +1,6 @@
 import { Link } from '@/i18n/navigation'
 import Image from 'next/image'
-import { getAllPosts, getFeaturedPosts, getAllCategories } from '@/data/blog-posts'
+import { getAllPosts, getFeaturedPosts, getAllCategories } from '@/lib/blog'
 import { BlogHero } from '@/components/blog/BlogHero'
 import { BlogCardGrid, FeaturedBlogCard } from '@/components/blog/BlogCard'
 import {
@@ -27,10 +27,11 @@ function formatDate(dateString) {
   })
 }
 
-export default function BlogPage() {
-  const allPosts = getAllPosts()
-  const featuredPosts = getFeaturedPosts().slice(0, 3)
-  const categories = getAllCategories()
+export default async function BlogPage({ params }) {
+  const { locale } = await params
+  const allPosts = await getAllPosts(locale)
+  const featuredPosts = (await getFeaturedPosts(locale)).slice(0, 3)
+  const categories = await getAllCategories()
   const latestPost = allPosts[0]
   const remainingPosts = allPosts.slice(1)
 
@@ -94,7 +95,7 @@ export default function BlogPage() {
                     </span>
                     <span className="flex items-center gap-1.5">
                       <Clock className="size-4" />
-                      {latestPost.readTime}
+                      {latestPost.read_time || latestPost.readTime}
                     </span>
                   </div>
                   <div className="mt-8">
@@ -105,17 +106,18 @@ export default function BlogPage() {
                 </div>
 
                 {/* Image */}
-                <div className="relative flex items-center justify-center">
-                  <div className="relative bg-white/5 rounded-2xl p-6 sm:p-12 border border-white/10">
-                    <Image
-                      src={latestPost.image}
-                      alt={latestPost.title}
-                      width={200}
-                      height={200}
-                      className="object-contain group-hover:scale-110 transition-transform duration-500"
-                    />
+                {latestPost.image && (
+                  <div className="relative flex items-center justify-center">
+                    <div className="relative bg-white/5 rounded-2xl p-6 sm:p-12 border border-white/10 w-full aspect-square max-w-sm">
+                      <Image
+                        src={latestPost.image}
+                        alt={latestPost.title}
+                        fill
+                        className="object-contain group-hover:scale-110 transition-transform duration-500 p-4"
+                      />
+                    </div>
                   </div>
-                </div>
+                )}
               </div>
             </Link>
           </div>

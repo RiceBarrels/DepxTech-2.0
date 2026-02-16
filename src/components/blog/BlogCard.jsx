@@ -86,7 +86,7 @@ export function BlogCardGrid({ posts, className }) {
                   {formatDate(post.date)}
                 </span>
                 <span>·</span>
-                <span>{post.readTime}</span>
+                <span>{post.read_time || post.readTime}</span>
               </div>
               <ArrowRight className="size-4 text-slate-400 group-hover:text-primary group-hover:translate-x-1 transition-all" />
             </div>
@@ -159,7 +159,7 @@ export function FeaturedBlogCard({ posts, className }) {
               <div className="mt-4 flex items-center gap-3 text-xs text-slate-500">
                 <span>{formatDate(post.date)}</span>
                 <span>·</span>
-                <span>{post.readTime}</span>
+                <span>{post.read_time || post.readTime}</span>
               </div>
             </div>
           </div>

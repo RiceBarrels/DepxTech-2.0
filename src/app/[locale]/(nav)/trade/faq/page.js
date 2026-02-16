@@ -14,6 +14,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion'
+import { FAQPageStructuredData } from '@/components/seo/StructuredData'
 import { useTranslations } from 'next-intl'
 
 const sectionVariants = {
@@ -75,8 +76,11 @@ export default function FAQPage() {
     },
   ]
 
+  const allQuestions = faqCategories.flatMap(cat => cat.questions)
+
   return (
     <main className="bg-background">
+      <FAQPageStructuredData questions={allQuestions} />
       {/* Hero */}
       <section className="py-16 lg:py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

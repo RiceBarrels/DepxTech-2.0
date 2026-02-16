@@ -23,6 +23,7 @@ import {
   MenuIcon,
   XIcon,
   ClipboardListIcon,
+  FileTextIcon,
 } from 'lucide-react'
 import { useState } from 'react'
 
@@ -32,6 +33,7 @@ const navItems = [
   { href: '/admin/orders', labelKey: 'orders', icon: ShoppingCartIcon },
   { href: '/admin/tradein', labelKey: 'tradeIn', icon: ArrowRightLeftIcon },
   { href: '/admin/trade-quotes', labelKey: 'tradeInOrders', icon: ClipboardListIcon },
+  { href: '/admin/blog', labelKey: 'blog', icon: FileTextIcon },
   { href: '/admin/offers', labelKey: 'offers', icon: TicketPercentIcon },
   { href: '/admin/users', labelKey: 'users', icon: UsersIcon },
 ]

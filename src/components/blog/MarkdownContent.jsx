@@ -26,8 +26,17 @@ function parseMarkdown(content) {
   // Inline code
   html = html.replace(/`([^`]+)`/g, '<code>$1</code>')
 
+  // Images (must be before links since ![alt](url) contains [alt](url))
+  html = html.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, '<img src="$2" alt="$1" class="blog-image" loading="lazy" />')
+
   // Links
   html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>')
+
+  // Horizontal rules
+  html = html.replace(/^---$/gm, '<hr />')
+
+  // Blockquotes
+  html = html.replace(/^&gt; (.+)$/gm, '<blockquote>$1</blockquote>')
 
   // Checkmarks list items
   html = html.replace(/^- ✓ (.+)$/gm, '<li class="check-item"><span class="check-icon">✓</span><span>$1</span></li>')
@@ -90,7 +99,7 @@ function parseMarkdown(content) {
     }
 
     // Check if line is a block element
-    const isBlockElement = /^<(h[1-6]|ul|ol|li|table|div|blockquote|pre)/.test(trimmedLine)
+    const isBlockElement = /^<(h[1-6]|ul|ol|li|table|div|blockquote|pre|img|hr)/.test(trimmedLine)
 
     if (isBlockElement) {
       if (paragraphContent.length > 0) {

@@ -157,7 +157,8 @@ export async function POST(request) {
       base_date,
       depreciation_rate,
       is_featured,
-      questions
+      questions,
+      question_template_id
     } = body
 
     // Create service role client for admin operations
@@ -177,6 +178,10 @@ export async function POST(request) {
       depreciation_rate: parseFloat(depreciation_rate) || 0,
       is_featured: is_featured || false,
       questions: questions || [],
+      question_template_id: question_template_id || null,
+      title_i18n: body.title_i18n || {},
+      des_i18n: body.des_i18n || {},
+      questions_i18n: body.questions_i18n || {},
       trades: 0,
       views: 0,
       likes: 0
@@ -259,7 +264,8 @@ export async function PUT(request) {
       base_date,
       depreciation_rate,
       is_featured,
-      questions
+      questions,
+      question_template_id
     } = body
 
     // Create service role client for admin operations
@@ -278,7 +284,15 @@ export async function PUT(request) {
       base_date: base_date || null,
       depreciation_rate: parseFloat(depreciation_rate) || 0,
       is_featured: is_featured || false,
-      questions: questions || []
+      questions: questions || [],
+      title_i18n: body.title_i18n || {},
+      des_i18n: body.des_i18n || {},
+      questions_i18n: body.questions_i18n || {},
+    }
+
+    // Only update question_template_id if explicitly provided
+    if (body.question_template_id !== undefined) {
+      updateData.question_template_id = body.question_template_id
     }
 
     // Update the tradable product in the database

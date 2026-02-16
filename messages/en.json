@@ -881,7 +881,8 @@
       "tradeInOrders": "Trade-in Orders",
       "offers": "Offers",
       "users": "Users",
-      "signOut": "Sign Out"
+      "signOut": "Sign Out",
+      "blog": "Blog"
     },
     "dashboard": {
       "title": "Dashboard",
@@ -1042,7 +1043,26 @@
       "cancel": "Cancel",
       "prev": "Prev",
       "save": "Save",
-      "saving": "Saving..."
+      "saving": "Saving...",
+      "applyTemplate": "Apply Template",
+      "applyingTemplate": "Applying...",
+      "linkedToTemplate": "Linked to template",
+      "unlinkTemplate": "Unlink",
+      "productsLinked": "{count} product(s) linked",
+      "templateUnlinked": "Template unlinked (questions kept)",
+      "bulkApplySuccess": "Template applied to {count} product(s)",
+      "deleteTemplateWarning": "This template is linked to products. Deleting it will unlink them.",
+      "aiCommand": {
+        "aiCommand": "AI Command",
+        "placeholder": "e.g. 'Add all Surface series' or '删除所有pixel产品'",
+        "proposedActions": "{count} proposed actions",
+        "approveAll": "Approve All",
+        "executeApproved": "Execute Approved",
+        "noActions": "No actions generated. Try a different command.",
+        "allComplete": "All approved actions completed",
+        "summary": "AI: {summary}",
+        "analyzing": "Analyzing command..."
+      }
     },
     "users": {
       "title": "Users",
@@ -1103,6 +1123,44 @@
       "created": "Created:",
       "loading": "Loading offers...",
       "noDescription": "No description provided"
+    },
+    "blog": {
+      "title": "Blog Posts",
+      "addPost": "Add Post",
+      "editPost": "Edit Post",
+      "postTitle": "Title",
+      "slug": "Slug",
+      "excerpt": "Excerpt",
+      "category": "Category",
+      "author": "Author",
+      "readTime": "Read Time",
+      "coverImage": "Cover Image",
+      "content": "Content",
+      "published": "Published",
+      "draft": "Draft",
+      "featured": "Featured",
+      "save": "Save",
+      "saving": "Saving...",
+      "loading": "Loading...",
+      "deleteConfirm": "Are you sure you want to delete this post?",
+      "noPostsFound": "No blog posts found",
+      "searchPlaceholder": "Search posts...",
+      "totalPosts": "Total Posts",
+      "publishedPosts": "Published",
+      "translations": "Translations"
+    },
+    "ai": {
+      "translate": "AI Translate",
+      "translateAll": "Translate to All Languages",
+      "translating": "Translating...",
+      "translateSuccess": "Translated to {count} languages",
+      "translateQuestions": "Translate Questions",
+      "generate": "AI Generate",
+      "generating": "Generating...",
+      "generateContent": "Generate Content",
+      "generateExcerpt": "Generate Excerpt",
+      "generateSuccess": "Content generated",
+      "error": "AI request failed"
     }
   },
   "blog": {

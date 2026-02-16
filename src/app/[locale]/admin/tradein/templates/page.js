@@ -58,7 +58,7 @@ export default function TemplatesPage() {
     async function fetchTemplates() {
         try {
             setLoading(true)
-            const response = await fetch('/api/admin/tradein/templates')
+            const response = await fetch('/api/admin/tradein/templates?withCounts=true')
             const data = await response.json()
 
             if (!response.ok) {
@@ -119,7 +119,12 @@ export default function TemplatesPage() {
 
     // Delete template
     const handleDelete = async (templateId) => {
-        if (!confirm('Delete this template? This cannot be undone.')) return
+        const tmpl = templates.find(t => t.id === templateId)
+        const linkedCount = tmpl?.linked_product_count || 0
+        const msg = linkedCount > 0
+            ? `This template is linked to ${linkedCount} product${linkedCount !== 1 ? 's' : ''}. Deleting it will unlink them (their questions will be kept). Continue?`
+            : 'Delete this template? This cannot be undone.'
+        if (!confirm(msg)) return
 
         setDeleting(templateId)
         try {
@@ -293,11 +298,16 @@ export default function TemplatesPage() {
                                                 <h3 className="font-semibold truncate group-hover:text-primary transition-colors">
                                                     {template.name}
                                                 </h3>
-                                                <div className="flex items-center gap-2 mt-1">
+                                                <div className="flex items-center gap-2 mt-1 flex-wrap">
                                                     <Badge variant="secondary" className="text-xs">
                                                         <HelpCircleIcon className="w-3 h-3 mr-1" />
                                                         {questionCount} question{questionCount !== 1 ? 's' : ''}
                                                     </Badge>
+                                                    {(template.linked_product_count || 0) > 0 && (
+                                                        <Badge variant="outline" className="text-xs text-blue-600 border-blue-200 dark:text-blue-400 dark:border-blue-800">
+                                                            {template.linked_product_count} product{template.linked_product_count !== 1 ? 's' : ''} linked
+                                                        </Badge>
+                                                    )}
                                                 </div>
                                                 <p className="text-xs text-muted-foreground mt-2">
                                                     Updated {formatDate(template.updated_at || template.created_at)}

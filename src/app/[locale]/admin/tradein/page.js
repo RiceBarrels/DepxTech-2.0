@@ -57,8 +57,15 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+} from "@/components/ui/dialog"
 import { ImageUpload, uploadFiles, deleteFileFromBucket } from "@/components/admin/ImageUpload"
 import { CategorySelect } from "@/components/admin/CategorySelect"
+import { AICommandPanel } from "@/components/admin/AICommandPanel"
 
 // Helper to normalize image URL
 const normalizeImageUrl = (img) => {
@@ -143,6 +150,10 @@ export default function TradeinManagePage() {
     const [templates, setTemplates] = useState([])
     const [loadingTemplates, setLoadingTemplates] = useState(false)
     const [showTemplateSelect, setShowTemplateSelect] = useState(false)
+
+    // Bulk template apply state
+    const [showBulkTemplateDialog, setShowBulkTemplateDialog] = useState(false)
+    const [applyingTemplate, setApplyingTemplate] = useState(false)
 
     // Fetch tradable products
     useEffect(() => {
@@ -277,7 +288,8 @@ export default function TradeinManagePage() {
             base_date: product.base_date ? product.base_date.split('T')[0] : '',
             depreciation_rate: product.depreciation_rate?.toString() || '',
             is_featured: product.is_featured || false,
-            questions: normalizeQuestions(product.questions)
+            questions: normalizeQuestions(product.questions),
+            question_template_id: product.question_template_id || null
         })
         setShowCopySelect(false)
         setShowTemplateSelect(false)
@@ -326,6 +338,7 @@ export default function TradeinManagePage() {
         if (sourceProduct && sourceProduct.questions) {
             const copiedQuestions = JSON.parse(JSON.stringify(sourceProduct.questions))
             handleEditInputChange('questions', copiedQuestions)
+            handleEditInputChange('question_template_id', null)
             toast.success(`Copied ${copiedQuestions.length} questions from "${sourceProduct.title}"`)
             setShowCopySelect(false)
         }
@@ -362,6 +375,7 @@ export default function TradeinManagePage() {
         if (template && template.questions) {
             const copiedQuestions = JSON.parse(JSON.stringify(template.questions))
             handleEditInputChange('questions', copiedQuestions)
+            handleEditInputChange('question_template_id', templateId)
             toast.success(`Applied "${template.name}" template (${copiedQuestions.length} questions)`)
             setShowTemplateSelect(false)
         }
@@ -412,7 +426,8 @@ export default function TradeinManagePage() {
                     base_date: editFormData.base_date || null,
                     depreciation_rate: parseFloat(editFormData.depreciation_rate) || 0,
                     is_featured: editFormData.is_featured || false,
-                    questions: processedQuestions
+                    questions: processedQuestions,
+                    question_template_id: editFormData.question_template_id
                 })
             })
 
@@ -586,33 +601,93 @@ export default function TradeinManagePage() {
                 body: JSON.stringify({ ids: Array.from(selectedIds) })
             })
 
-            const data = await response.json()
-
             if (!response.ok) {
-                throw new Error(data.error || 'Failed to fetch eBay prices')
+                let errMsg = 'Failed to fetch eBay prices'
+                try {
+                    const data = await response.json()
+                    errMsg = data.error || errMsg
+                } catch {}
+                throw new Error(errMsg)
             }
 
-            // Update local product state with new prices
-            setProducts(prev => prev.map(p => {
-                const result = data.results?.find(r => r.id === p.id && r.success)
-                if (result) {
-                    return { ...p, base_price: result.ebay_price, base_date: new Date().toISOString().split('T')[0] }
+            // Stream results — update each product as it arrives
+            const reader = response.body.getReader()
+            const decoder = new TextDecoder()
+            let buffer = ''
+            let summary = null
+
+            while (true) {
+                const { done, value } = await reader.read()
+                if (done) break
+                buffer += decoder.decode(value, { stream: true })
+                const lines = buffer.split('\n')
+                buffer = lines.pop() || ''
+
+                for (const line of lines) {
+                    if (!line.trim()) continue
+                    try {
+                        const result = JSON.parse(line)
+                        if (result.done) {
+                            summary = result
+                            continue
+                        }
+                        // Update product immediately
+                        if (result.success) {
+                            setProducts(prev => prev.map(p =>
+                                p.id === result.id
+                                    ? { ...p, base_price: result.ebay_price, base_date: new Date().toISOString().split('T')[0] }
+                                    : p
+                            ))
+                            toast.success(`${result.title}: $${result.ebay_price}`, { duration: 3000 })
+                        } else {
+                            toast.warning(`${result.title}: ${result.reason}`, { duration: 4000 })
+                        }
+                    } catch {}
                 }
-                return p
-            }))
+            }
 
-            const details = data.results?.map(r =>
-                r.success ? `${r.title}: $${r.ebay_price}` : `${r.title}: ${r.reason}`
-            ).join('\n')
-
-            toast.success(`Updated ${data.updated} of ${data.updated + data.failed} products`, {
-                description: details,
-                duration: 8000
-            })
+            if (summary) {
+                toast.success(`Done — updated ${summary.updated} of ${summary.updated + summary.failed} products`, { duration: 5000 })
+            }
         } catch (err) {
             toast.error('Error: ' + err.message)
         } finally {
             setFetchingPrices(false)
+        }
+    }
+
+    const handleBulkApplyTemplate = async (templateId) => {
+        if (selectedIds.size === 0) return
+
+        setApplyingTemplate(true)
+        try {
+            const response = await fetch('/api/admin/tradein/apply-template', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    templateId,
+                    productIds: Array.from(selectedIds)
+                })
+            })
+
+            const data = await response.json()
+            if (!response.ok) {
+                throw new Error(data.error || 'Failed to apply template')
+            }
+
+            // Refresh products list
+            const refreshResponse = await fetch('/api/admin/tradein')
+            const refreshData = await refreshResponse.json()
+            if (refreshResponse.ok) {
+                setProducts(refreshData.products || [])
+            }
+
+            toast.success(`Applied "${data.templateName}" to ${data.updatedCount} products`)
+            setShowBulkTemplateDialog(false)
+        } catch (err) {
+            toast.error('Error: ' + err.message)
+        } finally {
+            setApplyingTemplate(false)
         }
     }
 
@@ -751,11 +826,32 @@ export default function TradeinManagePage() {
                 <input ref={fileInputRef} type="file" accept=".csv" onChange={handleImport} className="hidden" />
             </div>
 
+            {/* AI Command Panel */}
+            <AICommandPanel
+                products={products}
+                onProductsChanged={async () => {
+                    try {
+                        const response = await fetch('/api/admin/tradein')
+                        const data = await response.json()
+                        if (response.ok) {
+                            setProducts(data.products || [])
+                            setFilteredProducts(data.products || [])
+                        }
+                    } catch (err) {
+                        console.error('Failed to refresh products:', err)
+                    }
+                }}
+            />
+
             {/* Selection Bar */}
             {selectedIds.size > 0 && (
                 <div className="flex items-center gap-3 p-3 bg-primary/10 border border-primary/20 rounded-lg">
                     <span className="font-medium">{t('selected', { count: selectedIds.size })}</span>
                     <div className="flex-1" />
+                    <Button variant="outline" size="sm" onClick={() => { fetchTemplates(); setShowBulkTemplateDialog(true) }} disabled={applyingTemplate}>
+                        {applyingTemplate ? <LoaderIcon className="w-4 h-4 mr-1.5 animate-spin" /> : <FileTextIcon className="w-4 h-4 mr-1.5" />}
+                        {applyingTemplate ? t('applyingTemplate') : t('applyTemplate')}
+                    </Button>
                     <Button variant="outline" size="sm" onClick={handleFetchEbayPrices} disabled={fetchingPrices}>
                         {fetchingPrices ? <LoaderIcon className="w-4 h-4 mr-1.5 animate-spin" /> : <DollarSignIcon className="w-4 h-4 mr-1.5" />}
                         {fetchingPrices ? t('fetching') : t('fetchEbayPrices')}
@@ -778,7 +874,7 @@ export default function TradeinManagePage() {
             )}
 
             {/* Toolbar */}
-            <div className="flex flex-col lg:flex-row gap-3 p-3 bg-muted/50 rounded-lg border">
+            <div className="flex flex-col lg:flex-row gap-3 p-3 bg-muted/50 rounded-xl border">
                 <div className="relative flex-1 min-w-[200px]">
                     <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                     <Input value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} placeholder={t('searchPlaceholder')} className="pl-9 h-9" />
@@ -961,6 +1057,11 @@ export default function TradeinManagePage() {
                                                                         <div className="font-medium truncate flex items-center gap-2">
                                                                             {product.title}
                                                                             {product.is_featured && <StarIcon className="w-3 h-3 text-yellow-500 fill-yellow-500" />}
+                                                                            {product.question_template_id && (
+                                                                                <Badge variant="outline" className="text-[10px] h-4 px-1 bg-blue-50 text-blue-600 border-blue-200 dark:bg-blue-950/30 dark:text-blue-400 dark:border-blue-800">
+                                                                                    <FileTextIcon className="w-2.5 h-2.5 mr-0.5" />T
+                                                                                </Badge>
+                                                                            )}
                                                                         </div>
                                                                         <div className="text-xs text-muted-foreground">{product.brand} · {product.series}</div>
                                                                     </div>
@@ -1060,6 +1161,11 @@ export default function TradeinManagePage() {
                                                                     <h3 className="font-semibold truncate flex items-center gap-2">
                                                                         {product.title}
                                                                         {product.is_featured && <StarIcon className="w-4 h-4 text-yellow-500 fill-yellow-500 flex-shrink-0" />}
+                                                                        {product.question_template_id && (
+                                                                            <Badge variant="outline" className="text-[10px] h-4 px-1 bg-blue-50 text-blue-600 border-blue-200 dark:bg-blue-950/30 dark:text-blue-400 dark:border-blue-800 shrink-0">
+                                                                                <FileTextIcon className="w-2.5 h-2.5 mr-0.5" />T
+                                                                            </Badge>
+                                                                        )}
                                                                     </h3>
                                                                     <p className="text-sm text-muted-foreground">{product.brand} · {product.series}</p>
                                                                     <div className="flex items-center gap-2 mt-2">
@@ -1240,6 +1346,26 @@ export default function TradeinManagePage() {
 
                                 {/* Questions */}
                                 <div className="border rounded-lg p-3 space-y-3 bg-muted/30">
+                                    {editFormData.question_template_id && (
+                                        <div className="flex items-center justify-between bg-blue-50 dark:bg-blue-950/30 rounded-md px-2 py-1.5">
+                                            <span className="text-xs text-blue-600 dark:text-blue-400 flex items-center gap-1">
+                                                <FileTextIcon className="w-3 h-3" />
+                                                {t('linkedToTemplate')}
+                                            </span>
+                                            <Button
+                                                type="button"
+                                                variant="ghost"
+                                                size="sm"
+                                                className="h-5 text-[10px] px-1.5 text-muted-foreground hover:text-foreground"
+                                                onClick={() => {
+                                                    handleEditInputChange('question_template_id', null)
+                                                    toast.info('Template unlinked (questions kept)')
+                                                }}
+                                            >
+                                                {t('unlinkTemplate')}
+                                            </Button>
+                                        </div>
+                                    )}
                                     <div className="flex items-center justify-between">
                                         <h4 className="font-medium text-sm flex items-center gap-2">
                                             <HelpCircleIcon className="w-4 h-4 text-blue-600" />
@@ -1511,6 +1637,46 @@ export default function TradeinManagePage() {
                     </div>
                 )}
             </div>
+
+            {/* Bulk Apply Template Dialog */}
+            <Dialog open={showBulkTemplateDialog} onOpenChange={setShowBulkTemplateDialog}>
+                <DialogContent className="sm:max-w-md">
+                    <DialogHeader>
+                        <DialogTitle>Apply Template to {selectedIds.size} Product{selectedIds.size !== 1 ? 's' : ''}</DialogTitle>
+                    </DialogHeader>
+                    <div className="space-y-2 max-h-[300px] overflow-y-auto py-2">
+                        {loadingTemplates ? (
+                            <div className="flex items-center justify-center py-8">
+                                <LoaderIcon className="w-6 h-6 animate-spin text-muted-foreground" />
+                            </div>
+                        ) : templates.length === 0 ? (
+                            <p className="text-center text-muted-foreground py-4 text-sm">No templates with questions found.</p>
+                        ) : (
+                            templates.map((tmpl) => (
+                                <button
+                                    key={tmpl.id}
+                                    className="w-full text-left p-3 rounded-lg border hover:bg-muted/50 transition-colors disabled:opacity-50"
+                                    onClick={() => handleBulkApplyTemplate(tmpl.id)}
+                                    disabled={applyingTemplate}
+                                >
+                                    <div className="flex items-center justify-between">
+                                        <span className="font-medium text-sm">{tmpl.name}</span>
+                                        <Badge variant="secondary" className="text-xs">
+                                            {tmpl.questions?.length || 0} questions
+                                        </Badge>
+                                    </div>
+                                    {tmpl.questions?.length > 0 && (
+                                        <div className="mt-1 text-xs text-muted-foreground truncate">
+                                            {tmpl.questions.slice(0, 2).map(q => q.title).join(', ')}
+                                            {tmpl.questions.length > 2 && ` +${tmpl.questions.length - 2} more`}
+                                        </div>
+                                    )}
+                                </button>
+                            ))
+                        )}
+                    </div>
+                </DialogContent>
+            </Dialog>
         </div>
     )
 }

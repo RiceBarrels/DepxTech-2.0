@@ -22,6 +22,8 @@ import { ImageUpload, uploadFiles, deleteFileFromBucket } from "@/components/adm
 import { Checkbox } from '@/components/ui/checkbox'
 import { CategorySelect } from '@/components/admin/CategorySelect'
 import { toast } from 'sonner'
+import { AITranslateButton, AITranslateQuestionsButton, AIGenerateButton } from '@/components/admin/AIButton'
+import TranslationEditor from '@/components/admin/TranslationEditor'
 
 export default function AddTradeinProductPage({defaultData={
     title: '',
@@ -36,7 +38,11 @@ export default function AddTradeinProductPage({defaultData={
     base_date: '',
     depreciation_rate: '',
     is_featured: false,
-    questions: []
+    questions: [],
+    question_template_id: null,
+    title_i18n: {},
+    des_i18n: {},
+    questions_i18n: {},
 }}) {
     const router = useTransitionRouter()
     const pathname = usePathname()
@@ -83,6 +89,7 @@ export default function AddTradeinProductPage({defaultData={
         if (template && template.questions) {
             const copiedQuestions = JSON.parse(JSON.stringify(template.questions))
             handleInputChange('questions', copiedQuestions)
+            handleInputChange('question_template_id', templateId)
             toast.success(`Applied "${template.name}" template (${copiedQuestions.length} questions)`)
             setShowTemplateSelect(false)
         }
@@ -119,6 +126,7 @@ export default function AddTradeinProductPage({defaultData={
             // Deep copy the questions
             const copiedQuestions = JSON.parse(JSON.stringify(sourceProduct.questions))
             handleInputChange('questions', copiedQuestions)
+            handleInputChange('question_template_id', null)
             toast.success(`Copied ${copiedQuestions.length} questions from "${sourceProduct.title}"`)
             setShowCopySelect(false)
         }
@@ -190,7 +198,8 @@ export default function AddTradeinProductPage({defaultData={
                     base_date: formData.base_date || null,
                     depreciation_rate: parseFloat(formData.depreciation_rate) || 0,
                     is_featured: formData.is_featured || false,
-                    questions: processedQuestions
+                    questions: processedQuestions,
+                    question_template_id: formData.question_template_id
                 })
             })
 
@@ -217,7 +226,11 @@ export default function AddTradeinProductPage({defaultData={
                 base_date: '',
                 depreciation_rate: '',
                 is_featured: false,
-                questions: []
+                questions: [],
+                question_template_id: null,
+                title_i18n: {},
+                des_i18n: {},
+                questions_i18n: {},
             })
 
             setTimeout(() => {
@@ -311,7 +324,15 @@ export default function AddTradeinProductPage({defaultData={
 
                         {/* Description */}
                         <div className="space-y-2">
-                            <Label htmlFor="des">Description</Label>
+                            <div className="flex items-center justify-between">
+                                <Label htmlFor="des">Description</Label>
+                                <AIGenerateButton
+                                    type="product_description"
+                                    prompt={formData.title}
+                                    context={{ title: formData.title, category: formData.category, brand: formData.brand }}
+                                    onResult={(text) => handleInputChange('des', text)}
+                                />
+                            </div>
                             <textarea
                                 id="des"
                                 className="w-full min-h-[100px] px-3 py-2 border border-input rounded-md resize-none focus:outline-none focus:ring-2 focus:ring-ring bg-background"
@@ -464,6 +485,26 @@ export default function AddTradeinProductPage({defaultData={
 
                         {/* Product-specific Questions */}
                         <div className="border rounded-lg p-4 space-y-4 bg-muted/30">
+                            {formData.question_template_id && (
+                                <div className="flex items-center justify-between bg-blue-50 dark:bg-blue-950/30 rounded-md px-2.5 py-1.5">
+                                    <span className="text-xs text-blue-600 dark:text-blue-400 flex items-center gap-1">
+                                        <FileTextIcon className="w-3 h-3" />
+                                        Linked to template
+                                    </span>
+                                    <Button
+                                        type="button"
+                                        variant="ghost"
+                                        size="sm"
+                                        className="h-5 text-[10px] px-1.5 text-muted-foreground hover:text-foreground"
+                                        onClick={() => {
+                                            handleInputChange('question_template_id', null)
+                                            toast.info('Template unlinked (questions kept)')
+                                        }}
+                                    >
+                                        Unlink
+                                    </Button>
+                                </div>
+                            )}
                             <div className="flex items-center justify-between flex-wrap gap-2">
                                 <h3 className="font-semibold flex items-center gap-2">
                                     <HelpCircleIcon className="w-5 h-5 text-blue-600" />
@@ -808,6 +849,40 @@ export default function AddTradeinProductPage({defaultData={
                                 folder="tradein/products"
                                 label="Product Images"
                                 onDelete={deleteFileFromBucket}
+                            />
+                        </div>
+
+                        {/* Translations */}
+                        <div className="border rounded-lg p-4 space-y-4 bg-muted/30">
+                            <h3 className="font-semibold flex items-center gap-2">
+                                Translations
+                            </h3>
+                            <div className="flex items-center gap-2 flex-wrap">
+                                <AITranslateButton
+                                    fields={{ title: formData.title, des: formData.des }}
+                                    context="trade-in product"
+                                    onResult={(translations) => {
+                                        handleInputChange('title_i18n', translations.title_i18n || formData.title_i18n)
+                                        handleInputChange('des_i18n', translations.des_i18n || formData.des_i18n)
+                                    }}
+                                />
+                                {formData.questions && formData.questions.length > 0 && (
+                                    <AITranslateQuestionsButton
+                                        questions={formData.questions}
+                                        context="trade-in product condition questionnaire"
+                                        onResult={(questionsI18n) => {
+                                            handleInputChange('questions_i18n', questionsI18n)
+                                        }}
+                                    />
+                                )}
+                            </div>
+                            <TranslationEditor
+                                fields={[
+                                    { key: 'title', label: 'Title', value: formData.title },
+                                    { key: 'des', label: 'Description', value: formData.des },
+                                ]}
+                                i18nData={{ title_i18n: formData.title_i18n, des_i18n: formData.des_i18n }}
+                                onChange={(i18nKey, value) => handleInputChange(i18nKey, value)}
                             />
                         </div>
 

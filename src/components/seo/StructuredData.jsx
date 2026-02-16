@@ -143,6 +143,101 @@ export function BreadcrumbStructuredData({ items }) {
   )
 }
 
+export function FAQPageStructuredData({ questions }) {
+  if (!questions || questions.length === 0) return null
+
+  const faqSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: questions.map(({ q, a }) => ({
+      '@type': 'Question',
+      name: q,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: a,
+      },
+    })),
+  }
+
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+    />
+  )
+}
+
+export function ArticleStructuredData({ article }) {
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://depxtech.com'
+
+  if (!article) return null
+
+  const articleSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: article.title,
+    description: article.excerpt,
+    image: article.image ? `${baseUrl}${article.image}` : undefined,
+    datePublished: article.date,
+    author: {
+      '@type': 'Person',
+      name: article.author,
+    },
+    publisher: {
+      '@type': 'Organization',
+      name: 'DepxTech',
+      logo: { '@type': 'ImageObject', url: `${baseUrl}/lightLogo.svg` },
+    },
+    mainEntityOfPage: {
+      '@type': 'WebPage',
+      '@id': `${baseUrl}/blog/${article.slug}`,
+    },
+  }
+
+  if (!articleSchema.image) delete articleSchema.image
+
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }}
+    />
+  )
+}
+
+export function TradeProductStructuredData({ product, depreciatedPrice }) {
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://depxtech.com'
+
+  if (!product) return null
+
+  const schema = {
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    name: product.title,
+    description: product.des || `Trade in your ${product.title} at DepxTech`,
+    image: product.imgs && product.imgs.length > 0 ? product.imgs : undefined,
+    brand: { '@type': 'Brand', name: product.brand },
+    category: product.category,
+    offers: {
+      '@type': 'Offer',
+      url: `${baseUrl}/trade/product/${product.id}`,
+      priceCurrency: 'USD',
+      price: (depreciatedPrice || product.base_price)?.toString() || '0',
+      availability: 'https://schema.org/InStock',
+      seller: { '@type': 'Organization', name: 'DepxTech' },
+      description: `Trade-in value up to $${(depreciatedPrice || product.base_price)?.toFixed(2)}`,
+    },
+  }
+
+  if (!schema.image) delete schema.image
+
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+    />
+  )
+}
+
 export function ItemListStructuredData({ products, searchTerm, currentPage, totalItems }) {
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://depxtech.com'
   

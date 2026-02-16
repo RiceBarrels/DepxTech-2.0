@@ -1,6 +1,7 @@
 import { supabaseAdmin } from '@/lib/supabase-admin'
 import { getTranslations } from 'next-intl/server'
 import TradeBrowseSteps from '@/components/trade/TradeBrowseSteps'
+import { resolveTradeProduct } from '@/lib/i18n-db'
 
 export async function generateMetadata({ params, searchParams }) {
   const { locale } = await params
@@ -14,10 +15,22 @@ export async function generateMetadata({ params, searchParams }) {
     ? t('metaDescFiltered', { parts: parts.join(' ') })
     : t('metaDescDefault')
 
-  return { title, description, robots: { index: true, follow: true } }
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://depxtech.com'
+  const params_str = new URLSearchParams(
+    Object.fromEntries(Object.entries({ category: sp.category, brand: sp.brand, series: sp.series }).filter(([, v]) => v))
+  ).toString()
+
+  return {
+    title,
+    description,
+    robots: { index: true, follow: true },
+    openGraph: { title, description, url: `${baseUrl}/trade/browse${params_str ? `?${params_str}` : ''}` },
+    alternates: { canonical: `${baseUrl}/trade/browse${params_str ? `?${params_str}` : ''}` },
+  }
 }
 
-export default async function TradeBrowsePage({ searchParams }) {
+export default async function TradeBrowsePage({ params, searchParams }) {
+  const { locale } = await params
   const sp = await searchParams
   const category = sp.category || null
   const brand = sp.brand || null
@@ -58,7 +71,7 @@ export default async function TradeBrowsePage({ searchParams }) {
   if (category && brand && (seriesSkipped || series)) {
     let query = supabaseAdmin
       .from('tradable_products')
-      .select('id, title, base_price, imgs, des, brand, category, series, views')
+      .select('id, title, title_i18n, base_price, imgs, des, des_i18n, brand, category, series, views')
       .eq('category', category)
       .eq('brand', brand)
       .order('base_price', { ascending: false })
@@ -66,7 +79,7 @@ export default async function TradeBrowsePage({ searchParams }) {
     if (series) query = query.eq('series', series)
 
     const { data } = await query
-    products = data || []
+    products = (data || []).map((p) => resolveTradeProduct(p, locale))
   }
 
   // Auto-skip logic

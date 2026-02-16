@@ -83,7 +83,7 @@ export function RelatedPosts({ posts, className }) {
                       {formatDate(post.date)}
                     </span>
                     <span>·</span>
-                    <span>{post.readTime}</span>
+                    <span>{post.read_time || post.readTime}</span>
                   </div>
                 </div>
               </div>
