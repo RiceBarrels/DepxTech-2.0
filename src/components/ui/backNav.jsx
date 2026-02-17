@@ -25,7 +25,7 @@ export default function BackNav({ isShareButton = false }) {
     return (
         <>
             <TopSafeArea extraPX={48} />
-            <div className="flex flex-col fixed top-0 left-0 right-0 z-50 px-4">
+            <div className="flex flex-col sticky top-0 left-0 right-0 z-50 pt-4 px-4">
                 <TopSafeArea extraPX={0} />
                 <div className="flex items-center justify-between">
                     <Button 

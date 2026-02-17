@@ -14,14 +14,13 @@ export default function NavLayout({ children }) {
         style={{ viewTransitionName: 'main-content' }}
       >
         <TopSafeArea/>
-        <div className="h-[4.5rem] sm:h-30"/>
         <div className="min-h-screen">
+          <Nav />
           {children}
         </div>
         <ConditionalFooter />
         <BottomSafeArea/>
       </div>
-      <Nav />
     </div>
   )
 }

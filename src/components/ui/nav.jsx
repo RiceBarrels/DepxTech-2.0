@@ -71,7 +71,7 @@ export default function Nav({}) {
         <>
             {/* ── Desktop Navigation ── */}
             <nav
-                className="hidden sm:flex flex-col fixed top-0 left-0 w-full bg-background/95 backdrop-blur-md border-b border-border z-10"
+                className="hidden sm:flex flex-col sticky top-0 left-0 w-full bg-background/95 backdrop-blur-md border-b border-border z-100"
                 style={{
                     viewTransitionName: 'nav-bar',
                     paddingTop: `${safeArea.top}px`
@@ -275,7 +275,7 @@ export default function Nav({}) {
 
             {/* ── Mobile Top Header (two layers) ── */}
             <nav
-                className="fixed top-0 left-0 right-0 bg-background/95 backdrop-blur-md border-b border-border flex sm:hidden flex-col z-10 gap-2"
+                className="sticky top-0 left-0 right-0 bg-background/95 backdrop-blur-md border-b border-border flex sm:hidden flex-col z-100 gap-2"
                 style={{
                     viewTransitionName: 'nav-bar-mobile',
                     paddingTop: `${safeArea.top}px`,
