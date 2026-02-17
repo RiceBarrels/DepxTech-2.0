@@ -2,31 +2,43 @@
 
 import { usePathname } from "@/i18n/navigation";
 import { TransitionLink } from "@/components/ui/pageTransitions";
-import { HomeIcon, ArrowRightLeftIcon, PaletteIcon, UserIcon, ShoppingCartIcon, TicketPercentIcon, GlobeIcon, BookOpen, ListOrderedIcon, LeafIcon, CircleHelpIcon, MessageCircleQuestionIcon, SmartphoneIcon, LaptopIcon, TabletIcon, GamepadIcon, HeadphonesIcon, WatchIcon, ShieldCheckIcon, TruckIcon, RotateCcwIcon } from "lucide-react";
+import { HomeIcon, ArrowRightLeftIcon, PaletteIcon, UserIcon, ShoppingCartIcon, TicketPercentIcon, GlobeIcon, BookOpen, ListOrderedIcon, LeafIcon, CircleHelpIcon, MessageCircleQuestionIcon, SmartphoneIcon, LaptopIcon, TabletIcon, GamepadIcon, HeadphonesIcon, WatchIcon, ShieldCheckIcon, TruckIcon, RotateCcwIcon, MenuIcon, XIcon, ChevronRightIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import { Button } from "./button";
 import { Separator } from "./separator";
 import { ModeToggle } from "./modeToggle";
-import { BottomSafeArea, useSafeArea } from "../safe-area";
+import { useSafeArea } from "../safe-area";
 import { useAuth } from "@/lib/auth";
-import { XIcon } from "lucide-react";
 import { useTransitionRouter } from "./pageTransitions";
 import { useTranslations } from 'next-intl';
 import { LanguageSwitcher } from './language-switcher';
 import { heavyHapticsImpact } from "@/lib/haptics";
+import { NavSearch } from "./NavSearch";
+import {
+    Drawer,
+    DrawerContent,
+    DrawerHeader,
+    DrawerTitle,
+    DrawerClose,
+} from "./drawer";
 
 export default function Nav({}) {
     const router = useTransitionRouter();
     const pathname = usePathname();
     const t = useTranslations('nav');
     const tCommon = useTranslations('common');
-    const [justOpenedPage, setJustOpenedPage] = useState();
-    const [touchedLink, setTouchedLink] = useState();
     const navRef = useRef(null);
     const safeArea = useSafeArea();
     const { user, profileData, loading } = useAuth();
+
+    const [drawerOpen, setDrawerOpen] = useState(false)
+
+    // Close drawer on route change
+    useEffect(() => {
+        setDrawerOpen(false)
+    }, [pathname])
 
     // Helper function to check if a path is active
     const isActive = (path) => {
@@ -36,23 +48,31 @@ export default function Nav({}) {
         return pathname.startsWith(path);
     };
 
-    useEffect(() => {
-        if (justOpenedPage === pathname) {
-            setJustOpenedPage(null);
-        }
-    }, [justOpenedPage, pathname]);
+    const mobileNavLinks = [
+        { href: "/", icon: HomeIcon, label: t('home') },
+        { href: "/trade", icon: ArrowRightLeftIcon, label: t('tradeIn') },
+        { href: "/trade/process", icon: ListOrderedIcon, label: t('process') },
+        { href: "/trade/how-it-works", icon: CircleHelpIcon, label: t('howItWorks') },
+        { href: "/trade/faq", icon: MessageCircleQuestionIcon, label: t('faq') },
+        { href: "/blog", icon: BookOpen, label: t('blog') },
+        { href: "/offers", icon: TicketPercentIcon, label: tCommon('offers') || 'Offers' },
+    ]
 
-    useEffect(() => {
-        if (touchedLink === pathname) {
-            setTouchedLink(null);
-        }
-    }, [touchedLink, pathname]);
+    const mobileCategoryLinks = [
+        { href: "/trade?category=smartphones", icon: SmartphoneIcon, label: t('categories.smartphones') },
+        { href: "/trade?category=laptops", icon: LaptopIcon, label: t('categories.laptops') },
+        { href: "/trade?category=tablets", icon: TabletIcon, label: t('categories.tablets') },
+        { href: "/trade?category=gaming", icon: GamepadIcon, label: t('categories.gamingConsoles') },
+        { href: "/trade?category=audio", icon: HeadphonesIcon, label: t('categories.audioDevices') },
+        { href: "/trade?category=wearables", icon: WatchIcon, label: t('categories.wearables') },
+    ]
 
     return (
         <>
-            <nav 
+            {/* ── Desktop Navigation ── */}
+            <nav
                 className="hidden sm:flex flex-col fixed top-0 left-0 w-full bg-background/95 backdrop-blur-md border-b border-border z-10"
-                style={{ 
+                style={{
                     viewTransitionName: 'nav-bar',
                     paddingTop: `${safeArea.top}px`
                 }}
@@ -132,6 +152,9 @@ export default function Nav({}) {
                             </TransitionLink>
                         </div>
 
+                        {/* Search */}
+                        <NavSearch className="w-56 xl:w-64 flex-shrink-0" />
+
                         {/* Right Actions */}
                         <div className="flex items-center gap-2 flex-shrink-0">
                             {!loading && user ? (
@@ -158,11 +181,6 @@ export default function Nav({}) {
                             ) : (
                                 <div className="size-7 rounded-full bg-muted animate-pulse" />
                             )}
-{/* Cart hidden - currently trade-in only
-                            <TransitionLink href="/cart" className="relative p-1.5 hover:text-primary transition-colors">
-                                <ShoppingCartIcon className="size-4.5" />
-                            </TransitionLink>
-*/}
                         </div>
                     </div>
                 </div>
@@ -254,71 +272,158 @@ export default function Nav({}) {
                     </div>
                 </div>
             </nav>
+
+            {/* ── Mobile Top Header (two layers) ── */}
             <nav
-                className="fixed bottom-0 left-0 right-0 bg-background border-t border-border flex sm:hidden z-10"
-                onTouchEnd={() => setTouchedLink(null)}
+                className="fixed top-0 left-0 right-0 bg-background/95 backdrop-blur-md border-b border-border flex sm:hidden flex-col z-10 gap-2"
                 style={{
                     viewTransitionName: 'nav-bar-mobile',
-                    paddingBottom: `${safeArea.bottom}px`
+                    paddingTop: `${safeArea.top}px`,
                 }}
             >
-                {[
-                    { href: "/", icon: HomeIcon, label: t('home') },
-                    { href: "/trade", icon: ArrowRightLeftIcon, label: t('tradeInMobile') },
-                    { href: "/blog", icon: BookOpen, label: t('blog') },
-                    { href: user ? "/account" : "/login", icon: UserIcon, label: user ? tCommon('account') : tCommon('signIn') },
-                ].map(({ href, icon: Icon, label }) => {
-                    const active = isActive(href)
-                    const pressed = justOpenedPage === href || touchedLink === href
-                    return (
-                        <TransitionLink
-                            key={href}
-                            href={href}
-                            className={cn(
-                                'flex-1 flex flex-col items-center justify-center gap-0.5 py-2 relative',
-                                active ? "text-primary" : "text-muted-foreground"
-                            )}
-                            onClick={() => setJustOpenedPage(href)}
-                            onTouchStart={() => setTouchedLink(href)}
-                            onTouchMove={() => setTouchedLink(href)}
-                            onTouchEnd={() => heavyHapticsImpact()}
+                {/* Layer 1: Logo + Account + Hamburger */}
+                <div className="flex items-center justify-between h-11 px-4">
+                    <TransitionLink href="/" className="flex items-center shrink-0">
+                        <h1 className="font-black text-xl tracking-tight">DepxTech</h1>
+                    </TransitionLink>
+
+                    <div className="flex items-center gap-1">
+                        {!loading && user ? (
+                            <TransitionLink href="/account" className="p-2">
+                                {profileData?.avatar && profileData?.avatar !== "default" ? (
+                                    <img
+                                        src={profileData.avatar}
+                                        alt="Profile"
+                                        className="size-6 rounded-full object-cover border border-border"
+                                    />
+                                ) : (
+                                    <div className="size-6 rounded-full bg-muted flex items-center justify-center">
+                                        <UserIcon className="size-3.5 text-muted-foreground" />
+                                    </div>
+                                )}
+                            </TransitionLink>
+                        ) : !loading ? (
+                            <TransitionLink href="/login" className="p-2">
+                                <UserIcon className="size-5 text-muted-foreground" />
+                            </TransitionLink>
+                        ) : null}
+
+                        <button
+                            onClick={() => { setDrawerOpen(true); heavyHapticsImpact() }}
+                            className="p-2 -mr-2 text-foreground"
+                            aria-label="Open menu"
                         >
-                            {active && (
-                                <div
-                                    className="absolute top-0 left-1/2 -translate-x-1/2 w-12 h-0.5 bg-primary rounded-full"
-                                    style={{ animation: 'fade-and-scale-in 0.3s ease-out' }}
-                                />
-                            )}
-                            {href === (user ? "/account" : "/login") && !loading && user && profileData?.avatar && profileData?.avatar !== "default" ? (
-                                <img
-                                    src={profileData.avatar}
-                                    alt="Profile"
-                                    className={cn(
-                                        "size-6 rounded-full object-cover",
-                                        active && "ring-1.5 ring-primary ring-offset-1 ring-offset-background"
-                                    )}
-                                />
-                            ) : (
-                                <Icon
-                                    strokeWidth={active || pressed ? 2 : 1.5}
-                                    className="size-5"
-                                    style={{
-                                        transition: 'all 0.3s ease-out',
-                                        transform: pressed ? 'scale(1.1)' : 'scale(1)'
-                                    }}
-                                />
-                            )}
-                            <span className={cn(
-                                "text-[0.625rem] leading-tight",
-                                active ? "font-semibold" : "font-medium"
-                            )}>
-                                {label}
-                            </span>
-                        </TransitionLink>
-                    )
-                })}
+                            <MenuIcon className="size-5" />
+                        </button>
+                    </div>
+                </div>
+
+                {/* Layer 2: Search bar */}
+                <div className="px-3 pb-2">
+                    <NavSearch className="w-full" />
+                </div>
             </nav>
-            <BottomSafeArea/>
+
+            {/* ── Mobile Drawer Menu ── */}
+            <Drawer open={drawerOpen} onOpenChange={setDrawerOpen} direction="right">
+                <DrawerContent
+                    className="h-full w-[280px] ml-auto rounded-none"
+                    showCloseButton={false}
+                >
+                    <DrawerHeader className="flex items-center justify-between px-4 py-3 border-b border-border">
+                        <DrawerTitle className="font-bold text-lg">Menu</DrawerTitle>
+                        <DrawerClose asChild>
+                            <button className="p-1.5 rounded-md hover:bg-muted transition-colors" aria-label="Close menu">
+                                <XIcon className="size-5" />
+                            </button>
+                        </DrawerClose>
+                    </DrawerHeader>
+
+                    <div className="flex-1 overflow-y-auto py-2">
+                        {/* Main links */}
+                        <div className="px-2">
+                            {mobileNavLinks.map(({ href, icon: Icon, label }) => (
+                                <TransitionLink
+                                    key={href}
+                                    href={href}
+                                    onClick={() => setDrawerOpen(false)}
+                                    className={cn(
+                                        "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors",
+                                        isActive(href)
+                                            ? "bg-primary/10 text-primary font-semibold"
+                                            : "text-foreground hover:bg-muted"
+                                    )}
+                                >
+                                    <Icon className="size-4" />
+                                    {label}
+                                    {isActive(href) && (
+                                        <div className="ml-auto w-1.5 h-1.5 rounded-full bg-primary" />
+                                    )}
+                                </TransitionLink>
+                            ))}
+                        </div>
+
+                        <Separator className="my-2" />
+
+                        {/* Categories */}
+                        <div className="px-2">
+                            <p className="px-3 py-1.5 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                                {t('tradeIn')}
+                            </p>
+                            {mobileCategoryLinks.map(({ href, icon: Icon, label }) => (
+                                <TransitionLink
+                                    key={href}
+                                    href={href}
+                                    onClick={() => setDrawerOpen(false)}
+                                    className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+                                >
+                                    <Icon className="size-3.5" />
+                                    {label}
+                                    <ChevronRightIcon className="size-3.5 ml-auto opacity-40" />
+                                </TransitionLink>
+                            ))}
+                        </div>
+
+                        <Separator className="my-2" />
+
+                        {/* Secondary links */}
+                        <div className="px-2">
+                            <TransitionLink
+                                href="/trade/sustainability"
+                                onClick={() => setDrawerOpen(false)}
+                                className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+                            >
+                                <LeafIcon className="size-3.5" />
+                                {t('sustainability')}
+                            </TransitionLink>
+                            <TransitionLink
+                                href="/warranty"
+                                onClick={() => setDrawerOpen(false)}
+                                className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+                            >
+                                <ShieldCheckIcon className="size-3.5" />
+                                {t('warranty')}
+                            </TransitionLink>
+                            <TransitionLink
+                                href="/shipping"
+                                onClick={() => setDrawerOpen(false)}
+                                className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+                            >
+                                <TruckIcon className="size-3.5" />
+                                {t('freeShipping')}
+                            </TransitionLink>
+                        </div>
+
+                        <Separator className="my-2" />
+
+                        {/* Language + Theme */}
+                        <div className="px-5 py-2 flex items-center justify-between">
+                            <LanguageSwitcher variant="compact" />
+                            <ModeToggle />
+                        </div>
+                    </div>
+                </DrawerContent>
+            </Drawer>
         </>
     )
 }

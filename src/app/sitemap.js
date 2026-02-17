@@ -113,7 +113,7 @@ export default async function sitemap() {
 
       uniqueBrands.forEach(({ category, brand }) => {
         tradeBrowsePages.push(
-          ...localizedEntries(`/trade/browse?category=${encodeURIComponent(category)}&brand=${encodeURIComponent(brand)}`, {
+          ...localizedEntries(`/trade/browse?category=${encodeURIComponent(category)}&amp;brand=${encodeURIComponent(brand)}`, {
             lastModified: new Date(),
             changeFrequency: 'weekly',
             priority: 0.6,
@@ -123,7 +123,7 @@ export default async function sitemap() {
 
       uniqueSeries.forEach(({ category, brand, series }) => {
         tradeBrowsePages.push(
-          ...localizedEntries(`/trade/browse?category=${encodeURIComponent(category)}&brand=${encodeURIComponent(brand)}&series=${encodeURIComponent(series)}`, {
+          ...localizedEntries(`/trade/browse?category=${encodeURIComponent(category)}&amp;brand=${encodeURIComponent(brand)}&amp;series=${encodeURIComponent(series)}`, {
             lastModified: new Date(),
             changeFrequency: 'weekly',
             priority: 0.6,

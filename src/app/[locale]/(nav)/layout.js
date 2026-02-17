@@ -14,7 +14,7 @@ export default function NavLayout({ children }) {
         style={{ viewTransitionName: 'main-content' }}
       >
         <TopSafeArea/>
-        <div className="h-30 hidden sm:block"/>
+        <div className="h-[4.5rem] sm:h-30"/>
         <div className="min-h-screen">
           {children}
         </div>

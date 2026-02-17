@@ -21,11 +21,11 @@ export async function generateMetadata({ params }) {
 export default function HomePage() {
   return (
     <main className="bg-background">
-      {/* Promotional Banner */}
-      <HomeBanner />
-
       {/* Hero Section with Aceternity Spotlight */}
       <HomeHero />
+
+      {/* Promotional Banner
+      <HomeBanner /> */}
 
       {/* Category Section with Hover Effects */}
       <CategoryGrid />

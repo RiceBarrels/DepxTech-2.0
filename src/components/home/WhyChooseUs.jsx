@@ -111,7 +111,7 @@ export function WhyChooseUs() {
                   </div>
                   <div>
                     <h5 className="font-bold text-slate-900 dark:text-white">
-                      Over <ScrollCounter value={1200000} suffix=" kg" className="text-emerald-500" /> {t('eWasteDiverted')}
+                      Over <ScrollCounter value={12000} suffix=" kg" className="text-emerald-500" /> {t('eWasteDiverted')}
                     </h5>
                     <p className="text-slate-500">{t('eWasteDesc')}</p>
                   </div>

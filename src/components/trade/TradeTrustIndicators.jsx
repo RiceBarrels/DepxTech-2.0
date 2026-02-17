@@ -67,7 +67,7 @@ export function TradeValueProposition() {
         </div>
         <div className="flex gap-8">
           <div className="text-center">
-            <div className="text-2xl font-bold text-emerald-500">50K+</div>
+            <div className="text-2xl font-bold text-emerald-500">5k+</div>
             <div className="text-xs text-muted-foreground">{t('customers')}</div>
           </div>
           <div className="text-center">

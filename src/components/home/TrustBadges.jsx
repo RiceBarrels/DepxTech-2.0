@@ -161,7 +161,7 @@ function TrustMarquee() {
     { icon: LockIcon, text: 'Secure Checkout', color: 'text-violet-500' },
     { icon: AwardIcon, text: '12-Month Warranty', color: 'text-cyan-500' },
     { icon: LeafIcon, text: 'Eco-Certified', color: 'text-green-500' },
-    { icon: HeartIcon, text: '50K+ Happy Customers', color: 'text-rose-500' },
+    { icon: HeartIcon, text: '5k+ Happy Customers', color: 'text-rose-500' },
   ]
 
   const duplicatedItems = [...items, ...items]
@@ -285,7 +285,7 @@ export default function TrustBadges() {
         >
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
             {[
-              { value: '50K+', label: 'Happy Customers', icon: HeartIcon, color: 'text-rose-500' },
+              { value: '5k+', label: 'Happy Customers', icon: HeartIcon, color: 'text-rose-500' },
               { value: '98%', label: 'Satisfaction Rate', icon: StarIcon, color: 'text-amber-500' },
               { value: '100K+', label: 'Devices Sold', icon: BadgeCheckIcon, color: 'text-emerald-500' },
               { value: '24/7', label: 'Support Available', icon: ClockIcon, color: 'text-cyan-500' },
