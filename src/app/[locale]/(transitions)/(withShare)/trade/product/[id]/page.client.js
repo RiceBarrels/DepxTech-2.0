@@ -3,26 +3,19 @@
 import { useState, useMemo, useEffect, useRef, useCallback } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 import {
   CheckCircle,
-  Loader2,
   ChevronRight,
   ChevronLeft,
-  UserIcon,
-  MailIcon,
-  PhoneIcon,
-  MessageSquareIcon,
 } from 'lucide-react'
 import { toast } from 'sonner'
 import { useTranslations } from 'next-intl'
-import { useAuth } from '@/lib/auth'
 import { cn } from '@/lib/utils'
 import { motion, AnimatePresence } from 'framer-motion'
 import { heavyHapticsImpact } from '@/lib/haptics'
+import { useRouter } from 'next/navigation'
 
-// ── Helpers (unchanged) ──────────────────────────
+// ── Helpers ──────────────────────────
 const parsePercentage = (value) => {
   if (!value) return 0
   const num = parseFloat(String(value).trim())
@@ -50,30 +43,22 @@ const stepVariants = {
 }
 
 export default function TradeProductPageClient({ product, questions, basePrice, minPrice, depreciation }) {
-  const { user } = useAuth()
   const t = useTranslations('trade.product')
+  const router = useRouter()
 
   const [answers, setAnswers] = useState({})
   const [currentStep, setCurrentStep] = useState(0)
   const [direction, setDirection] = useState(1)
-  const [formData, setFormData] = useState({
-    name: user?.user_metadata?.full_name || '',
-    email: user?.email || '',
-    phone: '',
-    notes: ''
-  })
-  const [submitting, setSubmitting] = useState(false)
-  const [submitted, setSubmitted] = useState(false)
   const [pricePulse, setPricePulse] = useState(false)
   const autoAdvanceTimer = useRef(null)
 
-  const totalSteps = (questions?.length || 0) + 1
+  const totalSteps = questions?.length || 1
 
   const formatCurrency = (amount) => {
     return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(amount)
   }
 
-  // ── Price calculation (ALL LOGIC UNCHANGED) ────
+  // ── Price calculation ────
   const calculatedQuote = useMemo(function calculateQuote() {
     const questionsList = questions || []
     let totalPercentageAdjustment = 0
@@ -139,7 +124,7 @@ export default function TradeProductPageClient({ product, questions, basePrice, 
     }
   }, [calculatedQuote.value])
 
-  // ── Step completion (unchanged) ────────────────
+  // ── Step completion ────────────────
   const isStepComplete = (stepIndex) => {
     const questionsList = questions || []
     if (stepIndex < questionsList.length) {
@@ -152,12 +137,12 @@ export default function TradeProductPageClient({ product, questions, basePrice, 
       }
       return answer !== undefined
     }
-    return formData.name && formData.email
+    return true
   }
 
   const canProceed = isStepComplete(currentStep)
 
-  // ── Answer selection (unchanged logic) + auto-advance ──
+  // ── Answer selection + auto-advance ──
   const handleAnswerSelect = useCallback((questionIndex, answerIndex) => {
     const question = questions?.[questionIndex]
     const isMultiple = question?.type === 'multiple' || question?.type === 'opposite_multiple'
@@ -191,10 +176,6 @@ export default function TradeProductPageClient({ product, questions, basePrice, 
     if (autoAdvanceTimer.current) clearTimeout(autoAdvanceTimer.current)
   }, [])
 
-  const handleInputChange = (field, value) => {
-    setFormData(prev => ({ ...prev, [field]: value }))
-  }
-
   const handleNext = () => {
     if (currentStep < totalSteps - 1) {
       setDirection(1)
@@ -210,10 +191,9 @@ export default function TradeProductPageClient({ product, questions, basePrice, 
     }
   }
 
-  // ── Submit (unchanged) ─────────────────────────
-  const handleSubmit = async (e) => {
-    e.preventDefault()
-
+  // ── Navigate to result page ─────────────────────────
+  const handleViewEstimate = () => {
+    // Validate all required questions are answered
     const unansweredQuestions = (questions || []).filter((q, idx) => {
       if (q.required === false) return false
       const answer = answers[idx]
@@ -224,168 +204,52 @@ export default function TradeProductPageClient({ product, questions, basePrice, 
       toast.error(t('errorAnswerRequired'))
       return
     }
-    if (!formData.name || !formData.email) {
-      toast.error(t('errorFieldsRequired'))
-      return
-    }
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      toast.error(t('errorInvalidEmail'))
-      return
-    }
 
-    setSubmitting(true)
+    // Build answers summary
+    const answersSummary = (questions || []).map((q, qIndex) => {
+      const selectedAnswer = answers[qIndex]
+      const isMultiple = q.type === 'multiple' || q.type === 'opposite_multiple'
 
-    try {
-      const answersSummary = (questions || []).map((q, qIndex) => {
-        const selectedAnswer = answers[qIndex]
-        const isMultiple = q.type === 'multiple' || q.type === 'opposite_multiple'
-
-        if (isMultiple) {
-          const selected = Array.isArray(selectedAnswer) ? selectedAnswer : []
-          if (q.type === 'opposite_multiple') {
-            const uncheckedAnswers = (q.ans || []).filter((_, i) => !selected.includes(i))
-            return {
-              questionIndex: qIndex, questionText: q.title, questionType: 'opposite_multiple',
-              answerIndices: selected, answerTexts: selected.map(i => q.ans?.[i]?.content || 'N/A'),
-              percentageAdjustment: uncheckedAnswers.reduce((sum, a) => sum + parsePercentage(a?.persentage), 0),
-              fixedAdjustment: uncheckedAnswers.reduce((sum, a) => sum + parseFixed(a?.fixed), 0)
-            }
-          }
-          const selectedAnswers = selected.map(ansIdx => q.ans && q.ans[ansIdx]).filter(Boolean)
+      if (isMultiple) {
+        const selected = Array.isArray(selectedAnswer) ? selectedAnswer : []
+        if (q.type === 'opposite_multiple') {
+          const uncheckedAnswers = (q.ans || []).filter((_, i) => !selected.includes(i))
           return {
-            questionIndex: qIndex, questionText: q.title, questionType: 'multiple',
-            answerIndices: selected, answerTexts: selectedAnswers.map(a => a?.content || 'Not answered'),
-            percentageAdjustment: selectedAnswers.reduce((sum, a) => sum + parsePercentage(a?.persentage), 0),
-            fixedAdjustment: selectedAnswers.reduce((sum, a) => sum + parseFixed(a?.fixed), 0)
+            questionIndex: qIndex, questionText: q.title, questionType: 'opposite_multiple',
+            answerIndices: selected, answerTexts: selected.map(i => q.ans?.[i]?.content || 'N/A'),
+            percentageAdjustment: uncheckedAnswers.reduce((sum, a) => sum + parsePercentage(a?.persentage), 0),
+            fixedAdjustment: uncheckedAnswers.reduce((sum, a) => sum + parseFixed(a?.fixed), 0)
           }
         }
-        const answer = q.ans && q.ans[selectedAnswer]
+        const selectedAnswers = selected.map(ansIdx => q.ans && q.ans[ansIdx]).filter(Boolean)
         return {
-          questionIndex: qIndex, questionText: q.title, questionType: 'single',
-          answerIndex: selectedAnswer, answerText: answer?.content || 'Not answered',
-          percentageAdjustment: parsePercentage(answer?.persentage),
-          fixedAdjustment: parseFixed(answer?.fixed)
+          questionIndex: qIndex, questionText: q.title, questionType: 'multiple',
+          answerIndices: selected, answerTexts: selectedAnswers.map(a => a?.content || 'Not answered'),
+          percentageAdjustment: selectedAnswers.reduce((sum, a) => sum + parsePercentage(a?.persentage), 0),
+          fixedAdjustment: selectedAnswers.reduce((sum, a) => sum + parseFixed(a?.fixed), 0)
         }
-      })
+      }
+      const answer = q.ans && q.ans[selectedAnswer]
+      return {
+        questionIndex: qIndex, questionText: q.title, questionType: 'single',
+        answerIndex: selectedAnswer, answerText: answer?.content || 'Not answered',
+        percentageAdjustment: parsePercentage(answer?.persentage),
+        fixedAdjustment: parseFixed(answer?.fixed)
+      }
+    })
 
-      const response = await fetch('/api/tradeins/quote', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          productId: product.id, productTitle: product.title,
-          answers: answersSummary, estimatedValue: calculatedQuote.value,
-          totalDeduction: calculatedQuote.deduction, totalBonus: calculatedQuote.bonus,
-          basePrice, depreciation, priceSource: 'database',
-          name: formData.name, email: formData.email,
-          phone: formData.phone || null, notes: formData.notes || null,
-          userId: user?.id || null
-        })
-      })
+    // Store data in sessionStorage for the result page
+    sessionStorage.setItem('tradeQuoteData', JSON.stringify({
+      productId: product.id,
+      productTitle: product.title,
+      answers: answersSummary,
+      calculatedQuote,
+      basePrice,
+      depreciation,
+      minPrice,
+    }))
 
-      const data = await response.json()
-      if (!response.ok) throw new Error(data.error || 'Failed to submit quote request')
-      setSubmitted(true)
-      toast.success(t('successMessage'))
-    } catch (error) {
-      console.error('Error submitting quote:', error)
-      toast.error(error.message || t('errorSubmit'))
-    } finally {
-      setSubmitting(false)
-    }
-  }
-
-  // ── Success state ──────────────────────────────
-  if (submitted) {
-    return (
-      <motion.div
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.4, ease: 'easeOut' }}
-      >
-        <Card className="bg-card border border-border shadow-sm rounded-2xl overflow-hidden">
-          <CardContent className="p-6 md:p-8">
-            <div className="text-center">
-              <motion.div
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                transition={{ type: 'spring', stiffness: 300, damping: 20, delay: 0.1 }}
-                className="w-16 h-16 mx-auto mb-5 bg-emerald-100 dark:bg-emerald-900/30 rounded-full flex items-center justify-center"
-              >
-                <CheckCircle className="w-8 h-8 text-emerald-600 dark:text-emerald-400" />
-              </motion.div>
-              <h3 className="text-xl font-bold text-foreground mb-2">{t('quoteSubmitted')}</h3>
-              <p className="text-sm text-muted-foreground mb-6">
-                {t('quoteSubmittedDesc')}
-              </p>
-
-              <div className="p-5 bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800 rounded-xl mb-6">
-                <p className="text-xs font-medium text-emerald-600 dark:text-emerald-400 mb-1">{t('estimatedValue')}</p>
-                <p className="text-3xl font-bold text-emerald-600 dark:text-emerald-400">
-                  {formatCurrency(calculatedQuote.value)}
-                </p>
-                <p className="text-xs text-emerald-600/70 dark:text-emerald-400/70 mt-1">
-                  {t('finalValueNote')}
-                </p>
-              </div>
-
-              <div className="text-left bg-muted/50 rounded-xl p-4">
-                <p className="text-sm font-semibold text-foreground mb-3">{t('whatsNext')}</p>
-                <div className="space-y-2.5">
-                  {[
-                    t('step1'),
-                    t('step2'),
-                    t('step3'),
-                    t('step4'),
-                  ].map((step, i) => (
-                    <motion.div
-                      key={i}
-                      initial={{ opacity: 0, x: -12 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: 0.3 + i * 0.1 }}
-                      className="flex items-center gap-3 text-sm"
-                    >
-                      <span className="w-5 h-5 rounded-full bg-primary/10 text-primary text-xs font-bold flex items-center justify-center shrink-0">
-                        {i + 1}
-                      </span>
-                      <span className="text-muted-foreground">{step}</span>
-                    </motion.div>
-                  ))}
-                </div>
-              </div>
-
-              <div className="flex items-center justify-center gap-4 mt-5 text-xs text-muted-foreground">
-                <span className="flex items-center gap-1">
-                  <CheckCircle className="w-3.5 h-3.5 text-emerald-500" /> {t('freeShipping')}
-                </span>
-                <span className="flex items-center gap-1">
-                  <CheckCircle className="w-3.5 h-3.5 text-emerald-500" /> {t('dataWiping')}
-                </span>
-                <span className="flex items-center gap-1">
-                  <CheckCircle className="w-3.5 h-3.5 text-emerald-500" /> {t('response24h')}
-                </span>
-              </div>
-
-              <Button
-                onClick={() => {
-                  setSubmitted(false)
-                  setCurrentStep(0)
-                  setAnswers({})
-                  setFormData({
-                    name: user?.user_metadata?.full_name || '',
-                    email: user?.email || '',
-                    phone: '', notes: ''
-                  })
-                }}
-                variant="outline"
-                className="mt-6 w-full"
-              >
-                {t('submitAnother')}
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-      </motion.div>
-    )
+    router.push(`/trade/product/${product.id}/result`)
   }
 
   // ── Render question step ───────────────────────
@@ -453,7 +317,7 @@ export default function TradeProductPageClient({ product, questions, basePrice, 
                   tabIndex={0}
                   onClick={() => handleAnswerSelect(currentStep, ansIdx)}
                   onTouchEnd={() => {
-                    heavyHapticsImpact(); 
+                    heavyHapticsImpact();
                   }}
                   onKeyDown={(e) => {
                     if (e.key === 'Enter' || e.key === ' ') {
@@ -470,7 +334,6 @@ export default function TradeProductPageClient({ product, questions, basePrice, 
                   )}
                 >
                   <div className="flex items-center gap-3">
-                    {/* Selection indicator */}
                     <div className={cn(
                       "shrink-0 w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all",
                       isMultiple && "rounded-md",
@@ -481,7 +344,6 @@ export default function TradeProductPageClient({ product, questions, basePrice, 
                       {isSelected && <CheckCircle className="w-4 h-4 text-white" />}
                     </div>
 
-                    {/* Answer image */}
                     {getImageUrl(answer.img) && (
                       <img
                         src={getImageUrl(answer.img)}
@@ -538,80 +400,7 @@ export default function TradeProductPageClient({ product, questions, basePrice, 
     )
   }
 
-  // ── Render contact form ────────────────────────
-  const renderContactForm = () => (
-    <div className="space-y-4">
-      <div className="space-y-1">
-        <h3 className="text-base font-semibold text-foreground">{t('contactInfo')}</h3>
-        <p className="text-sm text-muted-foreground">
-          {t('contactDesc')}
-        </p>
-      </div>
-
-      <div className="space-y-3">
-        <div className="space-y-1.5">
-          <Label htmlFor="name" className="text-sm font-medium">
-            {t('fullName')} <span className="text-red-500">*</span>
-          </Label>
-          <div className="relative">
-            <UserIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-            <Input
-              id="name" type="text" value={formData.name}
-              onChange={(e) => handleInputChange('name', e.target.value)}
-              placeholder={t('namePlaceholder')} className="h-11 pl-9" required
-            />
-          </div>
-        </div>
-
-        <div className="space-y-1.5">
-          <Label htmlFor="email" className="text-sm font-medium">
-            {t('emailAddress')} <span className="text-red-500">*</span>
-          </Label>
-          <div className="relative">
-            <MailIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-            <Input
-              id="email" type="email" value={formData.email}
-              onChange={(e) => handleInputChange('email', e.target.value)}
-              placeholder={t('emailPlaceholder')} className="h-11 pl-9" required
-            />
-          </div>
-        </div>
-
-        <div className="space-y-1.5">
-          <Label htmlFor="phone" className="text-sm font-medium">
-            {t('phoneNumber')} <span className="text-xs text-muted-foreground">({t('optional')})</span>
-          </Label>
-          <div className="relative">
-            <PhoneIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-            <Input
-              id="phone" type="tel" value={formData.phone}
-              onChange={(e) => handleInputChange('phone', e.target.value)}
-              placeholder={t('phonePlaceholder')} className="h-11 pl-9"
-            />
-          </div>
-        </div>
-
-        <div className="space-y-1.5">
-          <Label htmlFor="notes" className="text-sm font-medium">
-            {t('additionalNotes')} <span className="text-xs text-muted-foreground">({t('optional')})</span>
-          </Label>
-          <div className="relative">
-            <MessageSquareIcon className="absolute left-3 top-3 w-4 h-4 text-muted-foreground" />
-            <textarea
-              id="notes"
-              className="w-full min-h-[80px] pl-9 px-3 py-2.5 border border-input rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-ring focus:border-ring bg-background text-sm"
-              value={formData.notes}
-              onChange={(e) => handleInputChange('notes', e.target.value)}
-              placeholder={t('notesPlaceholder')}
-            />
-          </div>
-        </div>
-      </div>
-    </div>
-  )
-
   const isLastStep = currentStep === totalSteps - 1
-  const questionsList = questions || []
 
   return (
     <Card className="bg-card border border-border shadow-sm rounded-2xl overflow-hidden">
@@ -655,7 +444,7 @@ export default function TradeProductPageClient({ product, questions, basePrice, 
       </CardHeader>
 
       <CardContent className="p-5">
-        <form onSubmit={handleSubmit} className="space-y-5">
+        <div className="space-y-5">
           {/* Animated price display */}
           <div className={cn(
             "p-4 rounded-xl border transition-colors",
@@ -722,7 +511,7 @@ export default function TradeProductPageClient({ product, questions, basePrice, 
                 exit="exit"
                 transition={{ duration: 0.25, ease: 'easeInOut' }}
               >
-                {currentStep < questionsList.length ? renderQuestionStep() : renderContactForm()}
+                {renderQuestionStep()}
               </motion.div>
             </AnimatePresence>
           </div>
@@ -740,15 +529,12 @@ export default function TradeProductPageClient({ product, questions, basePrice, 
 
             {isLastStep ? (
               <Button
-                type="submit"
-                disabled={submitting || !canProceed}
+                type="button"
+                onClick={handleViewEstimate}
+                disabled={!canProceed}
                 className="gap-2 px-6"
               >
-                {submitting ? (
-                  <><Loader2 className="w-4 h-4 animate-spin" /> {t('submitting')}</>
-                ) : (
-                  <>{t('getMyQuote')} <ChevronRight className="w-4 h-4" /></>
-                )}
+                {t('viewEstimate')} <ChevronRight className="w-4 h-4" />
               </Button>
             ) : (
               <Button
@@ -759,22 +545,7 @@ export default function TradeProductPageClient({ product, questions, basePrice, 
               </Button>
             )}
           </div>
-
-          {/* Trust badges on last step */}
-          {isLastStep && (
-            <div className="flex items-center justify-center gap-4 pt-3 text-xs text-muted-foreground">
-              <span className="flex items-center gap-1">
-                <CheckCircle className="w-3.5 h-3.5 text-emerald-500" /> {t('freeShipping')}
-              </span>
-              <span className="flex items-center gap-1">
-                <CheckCircle className="w-3.5 h-3.5 text-emerald-500" /> {t('dataWiping')}
-              </span>
-              <span className="flex items-center gap-1">
-                <CheckCircle className="w-3.5 h-3.5 text-emerald-500" /> {t('response24h')}
-              </span>
-            </div>
-          )}
-        </form>
+        </div>
       </CardContent>
     </Card>
   )

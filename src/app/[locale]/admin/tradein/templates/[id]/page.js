@@ -391,7 +391,7 @@ export default function EditTemplatePage() {
                     <div className="flex items-center gap-3 min-w-0">
                         <Button variant="outline" size="sm" onClick={() => {
                             if (hasChanges && !confirm('You have unsaved changes. Leave anyway?')) return
-                            router.push('/admin/tradein/templates')
+                            router.back()
                         }}>
                             <ArrowLeftIcon className="w-4 h-4 mr-1.5" />
                             Back

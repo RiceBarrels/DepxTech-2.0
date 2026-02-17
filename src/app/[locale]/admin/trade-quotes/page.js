@@ -9,7 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Badge } from '@/components/ui/badge'
-import { Search, RefreshCw, Eye, ArrowRightLeft, DollarSign, Clock, CheckCircle, XCircle, CircleDot, ListChecks, Cable } from 'lucide-react'
+import { Search, RefreshCw, Eye, ArrowRightLeft, DollarSign, Clock, CheckCircle, XCircle, CircleDot, ListChecks, Cable, Package, BoxIcon } from 'lucide-react'
 
 function parseCondition(condition) {
   if (!condition) return null
@@ -93,6 +93,27 @@ function ConditionDisplay({ quote }) {
   }
 
   return null
+}
+
+function ShippingMethodBadge({ method }) {
+  if (!method) return <span className="text-xs text-muted-foreground">—</span>
+  if (method === 'depxtech_box') {
+    return (
+      <Badge variant="secondary" className="text-xs font-normal gap-1">
+        <Package className="w-3 h-3" />
+        DepxTech Kit
+      </Badge>
+    )
+  }
+  if (method === 'own_box') {
+    return (
+      <Badge variant="outline" className="text-xs font-normal gap-1">
+        <BoxIcon className="w-3 h-3" />
+        Own Box
+      </Badge>
+    )
+  }
+  return <Badge variant="outline" className="text-xs">{method}</Badge>
 }
 
 export default function AdminTradeQuotes() {
@@ -316,6 +337,7 @@ export default function AdminTradeQuotes() {
                       <TableHead>{t('product')}</TableHead>
                       <TableHead>{t('customer')}</TableHead>
                       <TableHead>{t('estimatedValue')}</TableHead>
+                      <TableHead>Shipping</TableHead>
                       <TableHead>{t('status')}</TableHead>
                       <TableHead>{t('created')}</TableHead>
                       <TableHead>{t('actions')}</TableHead>
@@ -338,6 +360,9 @@ export default function AdminTradeQuotes() {
                         </TableCell>
                         <TableCell className="font-semibold">
                           ${Number(quote.estimated_value).toFixed(2)}
+                        </TableCell>
+                        <TableCell>
+                          <ShippingMethodBadge method={quote.shipping_method} />
                         </TableCell>
                         <TableCell>
                           <select
@@ -415,6 +440,10 @@ export default function AdminTradeQuotes() {
                       <Badge className={getStatusBadgeColor(selectedQuote.status)}>
                         {selectedQuote.status}
                       </Badge>
+                    </p>
+                    <p className="flex items-center gap-1.5">
+                      <strong>Shipping:</strong>{' '}
+                      <ShippingMethodBadge method={selectedQuote.shipping_method} />
                     </p>
                   </div>
                 </div>

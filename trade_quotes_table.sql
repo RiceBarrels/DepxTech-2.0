@@ -13,6 +13,7 @@ CREATE TABLE IF NOT EXISTS "public"."trade_quotes" (
     "notes" text,
     "user_id" uuid,
     "status" text DEFAULT 'pending' NOT NULL,
+    "shipping_method" text,
     "created_at" timestamp with time zone DEFAULT now() NOT NULL,
     "updated_at" timestamp with time zone DEFAULT now(),
     CONSTRAINT "trade_quotes_pkey" PRIMARY KEY ("id")

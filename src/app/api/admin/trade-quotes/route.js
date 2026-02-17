@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { verifyAdminAccess } from '@/lib/serverAuth'
 import { createClient } from '@supabase/supabase-js'
+import { notifyCustomer, buildQuoteStatusEmail } from '@/lib/email'
 
 function createServiceRoleClient() {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
@@ -103,6 +104,20 @@ export async function PUT(request) {
         { error: 'Failed to update trade quote' },
         { status: 500 }
       )
+    }
+
+    // Notify customer via email when status changes (fire-and-forget)
+    if (status && data?.customer_email) {
+      notifyCustomer({
+        to: data.customer_email,
+        subject: `Trade-in Quote ${status.charAt(0).toUpperCase() + status.slice(1)}: ${data.product_title}`,
+        html: buildQuoteStatusEmail({
+          productTitle: data.product_title,
+          customerName: data.customer_name,
+          estimatedValue: data.estimated_value,
+          status,
+        }),
+      })
     }
 
     return NextResponse.json({
