@@ -132,9 +132,12 @@ export function NavSearch({ className }) {
                                             {product.brand}{product.category ? ` / ${product.category}` : ''}
                                         </p>
                                     </div>
-                                    <span className="text-xs font-semibold text-emerald-600 dark:text-emerald-400 shrink-0">
-                                        {formatPrice(product.base_price)}
-                                    </span>
+                                    <div className="text-right shrink-0">
+                                        <span className="text-xs font-semibold text-emerald-600 dark:text-emerald-400">
+                                            {formatPrice(product.base_price)}
+                                        </span>
+                                        <p className="text-[10px] text-emerald-600/70 dark:text-emerald-400/70">+10% bonus</p>
+                                    </div>
                                 </button>
                             ))}
                         </div>

@@ -26,6 +26,7 @@ import {
   BoxIcon,
   Clock,
   ArrowLeft,
+  Sparkles,
 } from 'lucide-react'
 import { toast } from 'sonner'
 import { useTranslations } from 'next-intl'
@@ -249,6 +250,12 @@ export default function TradeResultPageClient({ product }) {
                 <p className="text-3xl font-bold text-emerald-600 dark:text-emerald-400">
                   {formatCurrency(calculatedQuote.value)}
                 </p>
+                <div className="flex items-center justify-center gap-1.5 mt-1.5 text-xs text-emerald-600 dark:text-emerald-400">
+                  <Sparkles className="w-3.5 h-3.5" />
+                  <span className="font-medium">
+                    {t('onlineBonusIncluded', { amount: formatCurrency(Math.round(calculatedQuote.value * 0.0909)) })}
+                  </span>
+                </div>
                 <p className="text-xs text-emerald-600/70 dark:text-emerald-400/70 mt-1">
                   {t('finalValueNote')}
                 </p>
@@ -369,6 +376,14 @@ export default function TradeResultPageClient({ product }) {
               </span>
             )}
           </div>
+          {!calculatedQuote.isZeroValue && calculatedQuote.value > 0 && (
+            <div className="flex items-center gap-1.5 mt-2 text-xs text-emerald-600 dark:text-emerald-400">
+              <Sparkles className="w-3.5 h-3.5" />
+              <span className="font-medium">
+                {t('onlineBonusIncluded', { amount: formatCurrency(Math.round(calculatedQuote.value * 0.0909)) })}
+              </span>
+            </div>
+          )}
           <p className="text-xs text-muted-foreground mt-2">{t('finalValueNote')}</p>
         </div>
 
@@ -569,6 +584,12 @@ export default function TradeResultPageClient({ product }) {
                 {formatCurrency(calculatedQuote.value)}
               </span>
             </div>
+            {!calculatedQuote.isZeroValue && calculatedQuote.value > 0 && (
+              <div className="flex items-center gap-1.5 text-xs text-emerald-600 dark:text-emerald-400 pl-1">
+                <Sparkles className="w-3 h-3" />
+                <span>{t('onlineBonusIncluded', { amount: formatCurrency(Math.round(calculatedQuote.value * 0.0909)) })}</span>
+              </div>
+            )}
             <div className="flex items-center justify-between text-sm">
               <span className="text-muted-foreground">{t('shippingMethod')}</span>
               <span className="font-medium text-foreground flex items-center gap-1.5">

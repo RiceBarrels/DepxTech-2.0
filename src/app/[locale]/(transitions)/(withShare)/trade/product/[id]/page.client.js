@@ -7,6 +7,7 @@ import {
   CheckCircle,
   ChevronRight,
   ChevronLeft,
+  Sparkles,
 } from 'lucide-react'
 import { toast } from 'sonner'
 import { useTranslations } from 'next-intl'
@@ -492,6 +493,14 @@ export default function TradeProductPageClient({ product, questions, basePrice, 
                 )}
               </div>
             </div>
+            {!calculatedQuote.isZeroValue && calculatedQuote.value > 0 && (
+              <div className="flex items-center gap-1.5 mt-2 text-xs text-emerald-600 dark:text-emerald-400">
+                <Sparkles className="w-3.5 h-3.5" />
+                <span className="font-medium">
+                  {t('onlineBonusIncluded', { amount: formatCurrency(Math.round(calculatedQuote.value * 0.0909)) })}
+                </span>
+              </div>
+            )}
             {calculatedQuote.isZeroValue && (
               <p className="text-xs text-orange-600/70 dark:text-orange-400/70 mt-2">
                 {t('freeRecyclingDesc')}

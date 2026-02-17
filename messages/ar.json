@@ -1468,7 +1468,8 @@
       "confirmSubmitButton": "Confirm & Submit",
       "cancelButton": "Cancel",
       "product": "Product",
-      "errorShippingRequired": "Please select a shipping method"
+      "errorShippingRequired": "Please select a shipping method",
+      "onlineBonusIncluded": "Includes +10% Online Bonus ({amount})"
     }
   },
   "tradeHowItWorks": {

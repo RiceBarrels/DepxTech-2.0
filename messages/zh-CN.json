@@ -1618,7 +1618,8 @@
       "confirmSubmitButton": "确认并提交",
       "cancelButton": "取消",
       "product": "产品",
-      "errorShippingRequired": "请选择寄送方式"
+      "errorShippingRequired": "请选择寄送方式",
+      "onlineBonusIncluded": "含 +10% 在线奖励 ({amount})"
     }
   }
 }
