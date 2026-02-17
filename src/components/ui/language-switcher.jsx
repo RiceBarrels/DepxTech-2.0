@@ -41,8 +41,8 @@ export function LanguageSwitcher({ variant = 'default' }) {
 
   if (variant === 'compact') {
     return (
-      <Select value={locale} onValueChange={handleChange}>
-        <SelectTrigger className="w-auto h-7 gap-1 px-2 text-xs border-none bg-transparent">
+      <Select value={locale} onValueChange={handleChange} popover>
+        <SelectTrigger className="w-auto h-7 gap-1 px-4 text-xs border-none ">
           <GlobeIcon className="size-3" />
           <SelectValue />
         </SelectTrigger>

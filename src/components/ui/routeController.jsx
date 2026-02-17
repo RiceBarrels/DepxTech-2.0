@@ -40,7 +40,7 @@ export default function RouteController() {
         <div 
             onMouseEnter={() => setIsHover(true)}
             onMouseLeave={() => setIsHover(false)}
-            className="flex items-center gap-2 p-2 bg-background/50 backdrop-blur-sm rounded-lg fixed bottom-2 right-2 z-10 shadow-lg h-14 z-20"style={{ 
+            className="flex items-center gap-2 p-2 bg-background/50 backdrop-blur-sm rounded-lg fixed bottom-2 right-2 z-100 shadow-lg h-14"style={{ 
                 viewTransitionName: 'route-controller',
                 bottom: `${4 + safeArea.top}px`,
 
@@ -48,7 +48,6 @@ export default function RouteController() {
             <AnimatePresence mode="popLayout">
                 {!minimized && (
                 <motion.div 
-                    initial={{ opacity: 0, scale: 0 }}
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 0 }}
                     whileHover={{ scale: 1.1 }}
