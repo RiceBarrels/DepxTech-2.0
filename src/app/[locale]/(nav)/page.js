@@ -22,10 +22,10 @@ export default function HomePage() {
   return (
     <main className="bg-background">
       {/* Hero Section with Aceternity Spotlight */}
-      <HomeHero />
+      {/* <HomeHero /> */}
 
-      {/* Promotional Banner
-      <HomeBanner /> */}
+      {/* Promotional Banner */}
+      <HomeBanner />
 
       {/* Category Section with Hover Effects */}
       <CategoryGrid />
