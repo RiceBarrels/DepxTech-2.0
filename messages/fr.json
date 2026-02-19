@@ -1526,7 +1526,16 @@
       "metaTitleDefault": "Parcourir les appareils de reprise | DepxTech",
       "metaDescDefault": "Parcourez tous les appareils éligibles à la reprise chez DepxTech. Smartphones, ordinateurs portables, tablettes, GPU et plus encore.",
       "metaTitleFiltered": "Reprise {parts} | DepxTech",
-      "metaDescFiltered": "Reprenez votre {parts} chez DepxTech. Obtenez des devis instantanés et les meilleurs paiements."
+      "metaDescFiltered": "Reprenez votre {parts} chez DepxTech. Obtenez des devis instantanés et les meilleurs paiements.",
+      "filterBtn": "Filter",
+      "searchLabel": "Search",
+      "sortLabel": "Sort by",
+      "sortPriceDesc": "Price: High to Low",
+      "sortPriceAsc": "Price: Low to High",
+      "sortName": "Name: A to Z",
+      "sortPopular": "Most Popular",
+      "priceRange": "Price Range",
+      "seriesLabel": "Series"
     },
     "product": {
       "notFound": "Produit introuvable | DepxTech",
@@ -1625,7 +1634,8 @@
       "cancelButton": "Cancel",
       "product": "Product",
       "errorShippingRequired": "Please select a shipping method",
-      "onlineBonusIncluded": "Includes +10% Online Bonus ({amount})"
+      "onlineBonusIncluded": "Includes +10% Online Bonus ({amount})",
+      "shippingDeadlineWarning": "Please ship your device within 14 days. The final price may change if received after this period due to market fluctuations."
     }
   }
 }

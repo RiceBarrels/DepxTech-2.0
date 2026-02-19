@@ -1510,7 +1510,16 @@
       "metaTitleDefault": "Каталог устройств для обмена | DepxTech",
       "metaDescDefault": "Просматривайте все устройства, доступные для обмена, на DepxTech. Смартфоны, ноутбуки, планшеты, GPU и многое другое.",
       "metaTitleFiltered": "Обмен {parts} | DepxTech",
-      "metaDescFiltered": "Обменяйте ваш {parts} на DepxTech. Мгновенные оценки и максимальные выплаты."
+      "metaDescFiltered": "Обменяйте ваш {parts} на DepxTech. Мгновенные оценки и максимальные выплаты.",
+      "filterBtn": "Filter",
+      "searchLabel": "Search",
+      "sortLabel": "Sort by",
+      "sortPriceDesc": "Price: High to Low",
+      "sortPriceAsc": "Price: Low to High",
+      "sortName": "Name: A to Z",
+      "sortPopular": "Most Popular",
+      "priceRange": "Price Range",
+      "seriesLabel": "Series"
     },
     "product": {
       "notFound": "Товар не найден | DepxTech",
@@ -1603,7 +1612,8 @@
       "cancelButton": "Cancel",
       "product": "Product",
       "errorShippingRequired": "Please select a shipping method",
-      "onlineBonusIncluded": "Includes +10% Online Bonus ({amount})"
+      "onlineBonusIncluded": "Includes +10% Online Bonus ({amount})",
+      "shippingDeadlineWarning": "Please ship your device within 14 days. The final price may change if received after this period due to market fluctuations."
     }
   }
 }

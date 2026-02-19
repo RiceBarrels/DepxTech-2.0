@@ -27,6 +27,7 @@ import {
   Clock,
   ArrowLeft,
   Sparkles,
+  AlertTriangle,
 } from 'lucide-react'
 import { toast } from 'sonner'
 import { useTranslations } from 'next-intl'
@@ -261,6 +262,14 @@ export default function TradeResultPageClient({ product }) {
                 </p>
               </div>
 
+              {/* 14-day shipping deadline warning */}
+              <div className="flex items-start gap-2.5 p-3 bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 rounded-lg mb-6 text-left">
+                <AlertTriangle className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
+                <p className="text-xs text-amber-700 dark:text-amber-300">
+                  {t('shippingDeadlineWarning')}
+                </p>
+              </div>
+
               {/* Shipping method badge */}
               <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-muted rounded-full text-sm text-muted-foreground mb-6">
                 {shippingMethod === 'depxtech_box' ? (
@@ -385,6 +394,10 @@ export default function TradeResultPageClient({ product }) {
             </div>
           )}
           <p className="text-xs text-muted-foreground mt-2">{t('finalValueNote')}</p>
+          <div className="flex items-start gap-2 mt-3 p-2.5 bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 rounded-lg">
+            <AlertTriangle className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
+            <p className="text-xs text-amber-700 dark:text-amber-300">{t('shippingDeadlineWarning')}</p>
+          </div>
         </div>
 
         {/* Shipping method selection */}

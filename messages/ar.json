@@ -1376,7 +1376,16 @@
       "metaTitleDefault": "تصفح أجهزة الاستبدال | DepxTech",
       "metaDescDefault": "تصفح جميع الأجهزة المؤهلة للاستبدال في DepxTech. هواتف ذكية، لابتوبات، أجهزة لوحية، بطاقات رسوميات والمزيد.",
       "metaTitleFiltered": "استبدال {parts} | DepxTech",
-      "metaDescFiltered": "استبدل {parts} الخاص بك في DepxTech. احصل على عروض أسعار فورية وأفضل المدفوعات."
+      "metaDescFiltered": "استبدل {parts} الخاص بك في DepxTech. احصل على عروض أسعار فورية وأفضل المدفوعات.",
+      "filterBtn": "Filter",
+      "searchLabel": "Search",
+      "sortLabel": "Sort by",
+      "sortPriceDesc": "Price: High to Low",
+      "sortPriceAsc": "Price: Low to High",
+      "sortName": "Name: A to Z",
+      "sortPopular": "Most Popular",
+      "priceRange": "Price Range",
+      "seriesLabel": "Series"
     },
     "product": {
       "notFound": "المنتج غير موجود | DepxTech",
@@ -1469,7 +1478,8 @@
       "cancelButton": "Cancel",
       "product": "Product",
       "errorShippingRequired": "Please select a shipping method",
-      "onlineBonusIncluded": "Includes +10% Online Bonus ({amount})"
+      "onlineBonusIncluded": "Includes +10% Online Bonus ({amount})",
+      "shippingDeadlineWarning": "Please ship your device within 14 days. The final price may change if received after this period due to market fluctuations."
     }
   },
   "tradeHowItWorks": {

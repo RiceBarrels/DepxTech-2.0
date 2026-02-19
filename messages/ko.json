@@ -1510,7 +1510,16 @@
       "metaTitleDefault": "보상 판매 기기 검색 | DepxTech",
       "metaDescDefault": "DepxTech에서 보상 판매 가능한 모든 기기를 검색하세요. 스마트폰, 노트북, 태블릿, GPU 등.",
       "metaTitleFiltered": "{parts} 보상 판매 | DepxTech",
-      "metaDescFiltered": "DepxTech에서 {parts}을(를) 보상 판매하세요. 즉시 견적과 최고 보상가를 받으세요."
+      "metaDescFiltered": "DepxTech에서 {parts}을(를) 보상 판매하세요. 즉시 견적과 최고 보상가를 받으세요.",
+      "filterBtn": "Filter",
+      "searchLabel": "Search",
+      "sortLabel": "Sort by",
+      "sortPriceDesc": "Price: High to Low",
+      "sortPriceAsc": "Price: Low to High",
+      "sortName": "Name: A to Z",
+      "sortPopular": "Most Popular",
+      "priceRange": "Price Range",
+      "seriesLabel": "Series"
     },
     "product": {
       "notFound": "상품을 찾을 수 없습니다 | DepxTech",
@@ -1603,7 +1612,8 @@
       "cancelButton": "Cancel",
       "product": "Product",
       "errorShippingRequired": "Please select a shipping method",
-      "onlineBonusIncluded": "Includes +10% Online Bonus ({amount})"
+      "onlineBonusIncluded": "Includes +10% Online Bonus ({amount})",
+      "shippingDeadlineWarning": "Please ship your device within 14 days. The final price may change if received after this period due to market fluctuations."
     }
   }
 }

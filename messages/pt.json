@@ -1510,7 +1510,16 @@
       "metaTitleDefault": "Navegue pelos Dispositivos de Trade-In | DepxTech",
       "metaDescDefault": "Navegue por todos os dispositivos elegíveis para trade-in na DepxTech. Smartphones, notebooks, tablets, GPUs e mais.",
       "metaTitleFiltered": "Negocie {parts} | DepxTech",
-      "metaDescFiltered": "Negocie seu {parts} na DepxTech. Obtenha cotações instantâneas e os melhores pagamentos."
+      "metaDescFiltered": "Negocie seu {parts} na DepxTech. Obtenha cotações instantâneas e os melhores pagamentos.",
+      "filterBtn": "Filter",
+      "searchLabel": "Search",
+      "sortLabel": "Sort by",
+      "sortPriceDesc": "Price: High to Low",
+      "sortPriceAsc": "Price: Low to High",
+      "sortName": "Name: A to Z",
+      "sortPopular": "Most Popular",
+      "priceRange": "Price Range",
+      "seriesLabel": "Series"
     },
     "product": {
       "notFound": "Produto Não Encontrado | DepxTech",
@@ -1603,7 +1612,8 @@
       "cancelButton": "Cancel",
       "product": "Product",
       "errorShippingRequired": "Please select a shipping method",
-      "onlineBonusIncluded": "Includes +10% Online Bonus ({amount})"
+      "onlineBonusIncluded": "Includes +10% Online Bonus ({amount})",
+      "shippingDeadlineWarning": "Please ship your device within 14 days. The final price may change if received after this period due to market fluctuations."
     }
   }
 }

@@ -1510,7 +1510,16 @@
       "metaTitleDefault": "Przeglądaj urządzenia do wymiany | DepxTech",
       "metaDescDefault": "Przeglądaj wszystkie urządzenia kwalifikujące się do wymiany w DepxTech. Smartfony, laptopy, tablety, GPU i więcej.",
       "metaTitleFiltered": "Wymień {parts} | DepxTech",
-      "metaDescFiltered": "Wymień swoje {parts} w DepxTech. Uzyskaj natychmiastowe wyceny i najwyższe wypłaty."
+      "metaDescFiltered": "Wymień swoje {parts} w DepxTech. Uzyskaj natychmiastowe wyceny i najwyższe wypłaty.",
+      "filterBtn": "Filter",
+      "searchLabel": "Search",
+      "sortLabel": "Sort by",
+      "sortPriceDesc": "Price: High to Low",
+      "sortPriceAsc": "Price: Low to High",
+      "sortName": "Name: A to Z",
+      "sortPopular": "Most Popular",
+      "priceRange": "Price Range",
+      "seriesLabel": "Series"
     },
     "product": {
       "notFound": "Nie znaleziono produktu | DepxTech",
@@ -1603,7 +1612,8 @@
       "cancelButton": "Cancel",
       "product": "Product",
       "errorShippingRequired": "Please select a shipping method",
-      "onlineBonusIncluded": "Includes +10% Online Bonus ({amount})"
+      "onlineBonusIncluded": "Includes +10% Online Bonus ({amount})",
+      "shippingDeadlineWarning": "Please ship your device within 14 days. The final price may change if received after this period due to market fluctuations."
     }
   }
 }

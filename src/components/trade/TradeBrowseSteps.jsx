@@ -3,10 +3,10 @@
 import Image from 'next/image'
 import { useRouter } from '@/i18n/navigation'
 import { useSearchParams } from 'next/navigation'
-import { useCallback, useTransition, useEffect } from 'react'
+import { useCallback, useTransition, useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useTranslations } from 'next-intl'
-import { ChevronRight, X, ArrowLeft } from 'lucide-react'
+import { ChevronRight, X, ArrowLeft, SearchIcon } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import {
@@ -17,6 +17,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { TransitionLink } from '@/components/ui/pageTransitions'
+import { Input } from '@/components/ui/input'
 import TradeBrandCard from './TradeBrandCard'
 import { TradeProductCard } from './TradeCards'
 import { heavyHapticsImpact, mediumHapticsImpact } from '@/lib/haptics'
@@ -81,7 +82,7 @@ export default function TradeBrowseSteps({
     }
 
     startTransition(() => {
-      router.push(`/trade/browse?${params.toString()}`, { scroll: false })
+      router.replace(`/trade/browse?${params.toString()}`, { scroll: false })
     })
   }, [searchParams, router, startTransition])
 
@@ -98,9 +99,21 @@ export default function TradeBrowseSteps({
     }
   }, [autoSkip.series, series, updateParam])
 
+  const [filterQuery, setFilterQuery] = useState('')
+
   const seriesSkipped = autoSkip.seriesSkipped || seriesList.length === 0
   const showProducts = category && brand && (seriesSkipped || series)
   const tc = useTranslations('trade.categories')
+
+  // Filter products by search, default sort Z-A
+  const filteredProducts = (() => {
+    let result = products || []
+    if (filterQuery.trim()) {
+      const q = filterQuery.toLowerCase()
+      result = result.filter(p => p.title?.toLowerCase().includes(q))
+    }
+    return [...result].sort((a, b) => (b.title || '').localeCompare(a.title || ''))
+  })()
 
   // Map category DB name to i18n key
   const categoryI18nKey = {
@@ -286,15 +299,30 @@ export default function TradeBrowseSteps({
             animate="visible"
             exit="exit"
           >
-            <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center justify-between mb-4">
               <h2 className="text-xl font-bold">{t('selectModel')}</h2>
               <span className="text-sm text-muted-foreground">
-                {t('devicesFound', { count: products.length })}
+                {t('devicesFound', { count: filteredProducts.length })}
               </span>
             </div>
-            {products.length > 0 ? (
+
+            {/* Search bar */}
+            {products.length > 0 && (
+              <div className="relative max-w-sm mb-4">
+                <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground pointer-events-none" />
+                <Input
+                  type="text"
+                  value={filterQuery}
+                  onChange={(e) => setFilterQuery(e.target.value)}
+                  placeholder={t('searchPlaceholder')}
+                  className="h-9 pl-9 text-sm"
+                />
+              </div>
+            )}
+
+            {filteredProducts.length > 0 ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2 md:gap-4">
-                {products.map((product, i) => (
+                {filteredProducts.map((product, i) => (
                   <TradeProductCard
                     key={product.id}
                     product={product}
