@@ -17,6 +17,7 @@
     "condition": "상태:",
     "getYourQuote": "견적 받기",
     "readyToTradeIn": "보상 판매를 시작하시겠어요?",
+    "offers": "혜택",
     "status": {
       "pending": "대기 중",
       "approved": "승인됨",

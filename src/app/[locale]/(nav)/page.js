@@ -1,5 +1,5 @@
 import { HomeHero } from '@/components/home/HomeHero'
-import HomeBanner from '@/components/home/HomeBanner'
+import { HomeBanner } from '@/components/home/HomeBanner'
 import { CategoryGrid } from '@/components/home/CategoryGrid'
 import { HowItWorks } from '@/components/home/HowItWorks'
 import { WhyChooseUs } from '@/components/home/WhyChooseUs'

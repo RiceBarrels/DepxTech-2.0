@@ -736,6 +736,7 @@
     "condition": "الحالة:",
     "getYourQuote": "احصل على عرض السعر",
     "readyToTradeIn": "هل أنت مستعد للاستبدال؟",
+    "offers": "العروض",
     "status": {
       "pending": "قيد الانتظار",
       "approved": "تمت الموافقة",

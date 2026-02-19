@@ -17,6 +17,7 @@
     "condition": "Zustand:",
     "getYourQuote": "Angebot erhalten",
     "readyToTradeIn": "Bereit zum Eintauschen?",
+    "offers": "Angebote",
     "status": {
       "pending": "Ausstehend",
       "approved": "Genehmigt",
