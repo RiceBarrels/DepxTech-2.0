@@ -258,8 +258,8 @@ const slides = [
 
 export function HomeBanner() {
   return (
-    <section className="w-full relative group">
-      <div className="relative w-full h-[75dvh] overflow-hidden">
+    <section className="w-full justify-center items-center relative group flex">
+      <div className="relative w-full max-w-418 md:h-[65dvh] h-[50dvh] overflow-hidden">
         {/* Scrollable slide container — native CSS scroll-snap */}
         <div
           id="banner-scroller"
