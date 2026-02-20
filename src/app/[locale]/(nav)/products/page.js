@@ -1,6 +1,6 @@
-import { Metadata } from 'next'
 import ProductsPageClient from './page.client'
 import { supabaseAdmin } from '@/lib/supabase-admin'
+import { BreadcrumbStructuredData } from '@/components/seo/StructuredData'
 
 const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://depxtech.com'
 
@@ -150,11 +150,17 @@ export default async function ProductsPage({ searchParams }) {
   const initialData = await fetchProductsServer(search, page, 12)
   
   return (
-    <ProductsPageClient 
-      initialProducts={initialData.products}
-      initialPagination={initialData.pagination}
-      initialSearch={search}
-      initialPage={page}
-    />
+    <>
+      <BreadcrumbStructuredData items={[
+        { name: 'Home', url: baseUrl },
+        { name: 'Products', url: `${baseUrl}/products` },
+      ]} />
+      <ProductsPageClient
+        initialProducts={initialData.products}
+        initialPagination={initialData.pagination}
+        initialSearch={search}
+        initialPage={page}
+      />
+    </>
   )
 }

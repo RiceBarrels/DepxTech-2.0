@@ -1699,5 +1699,58 @@
       "onlineBonusIncluded": "Includes +10% Online Bonus ({amount})",
       "shippingDeadlineWarning": "Please ship your device within 14 days. The final price may change if received after this period due to market fluctuations."
     }
+  },
+  "error": {
+    "title": "Something went wrong",
+    "description": "We encountered an unexpected error. Please try again.",
+    "tryAgain": "Try Again",
+    "goHome": "Go Home"
+  },
+  "breadcrumb": {
+    "home": "Home",
+    "products": "Products",
+    "blog": "Blog",
+    "tradeIn": "Trade-In",
+    "faq": "FAQ",
+    "howItWorks": "How it Works",
+    "sustainability": "Sustainability",
+    "offers": "Offers",
+    "browse": "Browse"
+  },
+  "cookieConsent": {
+    "message": "We use cookies to improve your experience.",
+    "accept": "Accept",
+    "learnMore": "Learn More"
+  },
+  "floatingChat": {
+    "title": "Need Help?",
+    "emailUs": "Email Us",
+    "liveChat": "Live Chat"
+  },
+  "recentlyViewed": {
+    "title": "Recently Viewed"
+  },
+  "chat": {
+    "startChat": "Start Chat",
+    "yourName": "Your Name",
+    "yourEmail": "Your Email (optional)",
+    "typeMessage": "Type a message...",
+    "send": "Send",
+    "endChat": "End Chat",
+    "chatEnded": "This conversation has been closed.",
+    "newConversation": "Start New Chat",
+    "connecting": "Connecting...",
+    "connected": "Connected",
+    "noMessages": "Send a message to start the conversation.",
+    "guestForm": "Enter your name to start chatting",
+    "adminTitle": "Customer Support",
+    "openChats": "Open",
+    "closedChats": "Closed",
+    "noChats": "No active conversations",
+    "closeConversation": "Close Conversation",
+    "unread": "unread",
+    "guest": "Guest",
+    "you": "You",
+    "agent": "Support"
   }
 }

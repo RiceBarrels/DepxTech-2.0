@@ -3,6 +3,7 @@ import Image from 'next/image'
 import { getAllPosts, getFeaturedPosts, getAllCategories } from '@/lib/blog'
 import { BlogHero } from '@/components/blog/BlogHero'
 import { BlogCardGrid, FeaturedBlogCard } from '@/components/blog/BlogCard'
+import { getTranslations } from 'next-intl/server'
 import {
   BookOpen,
   Calendar,
@@ -13,7 +14,6 @@ import {
 } from 'lucide-react'
 
 export async function generateMetadata({ params }) {
-  const { getTranslations } = await import('next-intl/server')
   const { locale } = await params
   const t = await getTranslations({ locale, namespace: 'metadata' })
   return { title: t('blogTitle'), description: t('blogDescription') }
@@ -29,6 +29,7 @@ function formatDate(dateString) {
 
 export default async function BlogPage({ params }) {
   const { locale } = await params
+  const t = await getTranslations({ locale, namespace: 'blog' })
   const allPosts = await getAllPosts(locale)
   const featuredPosts = (await getFeaturedPosts(locale)).slice(0, 3)
   const categories = await getAllCategories()
@@ -48,7 +49,7 @@ export default async function BlogPage({ params }) {
               href="/blog"
               className="px-5 py-2.5 rounded-full bg-primary text-white text-sm font-semibold transition-colors"
             >
-              All Posts
+              {t('allPosts')}
             </Link>
             {categories.map((category) => (
               <Link
@@ -76,7 +77,7 @@ export default async function BlogPage({ params }) {
                 <div className="flex flex-col justify-center">
                   <div className="flex items-center gap-3 mb-6">
                     <span className="px-3 py-1 rounded-full bg-primary text-white text-xs font-semibold">
-                      Latest
+                      {t('latest')}
                     </span>
                     <span className="px-3 py-1 rounded-full bg-white/10 text-white/80 text-xs font-medium">
                       {latestPost.category}
@@ -100,7 +101,7 @@ export default async function BlogPage({ params }) {
                   </div>
                   <div className="mt-8">
                     <span className="inline-flex items-center gap-2 text-primary font-semibold group-hover:gap-3 transition-all">
-                      Read Article <ArrowRight className="size-5" />
+                      {t('readArticle')} <ArrowRight className="size-5" />
                     </span>
                   </div>
                 </div>
@@ -131,7 +132,7 @@ export default async function BlogPage({ params }) {
             <div className="flex items-center gap-3 mb-8">
               <TrendingUp className="size-5 text-primary" />
               <h2 className="text-2xl font-bold text-slate-900 dark:text-white">
-                Featured Articles
+                {t('featuredArticles')}
               </h2>
             </div>
             <FeaturedBlogCard posts={featuredPosts} />
@@ -143,7 +144,7 @@ export default async function BlogPage({ params }) {
       <section className="py-16 bg-slate-50/50 dark:bg-slate-900/50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-8">
-            All Articles
+            {t('allArticles')}
           </h2>
           <BlogCardGrid posts={remainingPosts} />
         </div>
@@ -156,16 +157,16 @@ export default async function BlogPage({ params }) {
             <div>
               <BookOpen className="size-14 text-white/90 mx-auto mb-6" />
               <h2 className="text-3xl lg:text-4xl font-bold text-white mb-4">
-                Ready to Trade In Your Device?
+                {t('ctaHeading')}
               </h2>
               <p className="text-white/80 text-lg mb-10 max-w-xl mx-auto">
-                Put your knowledge into action. Get an instant quote and turn your old electronics into cash.
+                {t('ctaSubheading')}
               </p>
               <Link
                 href="/trade"
                 className="inline-flex items-center gap-2 bg-white text-primary font-bold py-4 px-10 rounded-xl hover:bg-slate-100 transition-colors"
               >
-                Get Your Quote <ArrowRight className="size-5" />
+                {t('getYourQuote')} <ArrowRight className="size-5" />
               </Link>
             </div>
           </div>

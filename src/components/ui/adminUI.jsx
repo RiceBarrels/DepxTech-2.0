@@ -4,6 +4,7 @@ import { useAuth } from '@/lib/auth'
 import { useTransitionRouter } from '@/components/ui/pageTransitions'
 import { useEffect, useState, useRef } from 'react'
 import RouteController from './routeController'
+import AdminChatButton from '@/components/chat/AdminChatButton'
 
 function AdminUI() {
     const { user, loading } = useAuth()
@@ -118,7 +119,14 @@ function AdminUI() {
 
     return (
         <>
-            {isAdmin && <RouteController />}
+            {isAdmin && (
+                <>
+                    <RouteController />
+                    <div className="fixed bottom-16 right-3 z-50">
+                        <AdminChatButton />
+                    </div>
+                </>
+            )}
         </>
     )
 }

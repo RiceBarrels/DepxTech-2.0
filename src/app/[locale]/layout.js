@@ -11,6 +11,7 @@ import { DisableLinkContextMenu } from "@/components/ui/disableLinkContextMenu"
 import MobileSetupGuard from "@/components/mobile-setup-guard";
 import PasswordWall from "@/components/password-wall";
 import ServiceWorkerRegistration from "@/components/pwa/ServiceWorkerRegistration";
+import { CookieConsent } from "@/components/ui/cookie-consent";
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages, getTranslations, setRequestLocale } from 'next-intl/server';
 import { routing } from '@/i18n/routing';
@@ -130,6 +131,7 @@ export default async function LocaleLayout({ children, params }) {
                   <WindowsLayer />
                   <AdminUI/>
                   <Toaster />
+                  <CookieConsent />
                   <ServiceWorkerRegistration />
                 </NextIntlClientProvider>
               </ThemeProvider>

@@ -17,23 +17,33 @@ export async function generateMetadata({ params }) {
   }
 }
 
+function SectionDivider() {
+  return <div className="w-full h-px bg-linear-to-r from-transparent via-border to-transparent" />
+}
+
 // Server component for the homepage
 export default function HomePage() {
   return (
     <main className="bg-background">
-      {/* Hero Section with Aceternity Spotlight */}
-      {/* <HomeHero /> */}
-
       {/* Promotional Banner */}
       <HomeBanner />
+
+      <SectionDivider />
+
       {/* Category Section with Hover Effects */}
       <CategoryGrid />
+
+      <SectionDivider />
 
       {/* How it Works Section with Animations */}
       <HowItWorks />
 
+      <SectionDivider />
+
       {/* Why Choose Us with Animated Cards */}
       <WhyChooseUs />
+
+      <SectionDivider />
 
       {/* Newsletter CTA with Animations */}
       <NewsletterSection />

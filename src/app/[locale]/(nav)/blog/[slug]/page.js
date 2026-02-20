@@ -5,7 +5,7 @@ import { MarkdownContent } from '@/components/blog/MarkdownContent'
 import { BlogPostHero } from '@/components/blog/BlogPostHero'
 import { RelatedPosts } from '@/components/blog/RelatedPosts'
 import { getTranslations } from 'next-intl/server'
-import { ArticleStructuredData } from '@/components/seo/StructuredData'
+import { ArticleStructuredData, BreadcrumbStructuredData } from '@/components/seo/StructuredData'
 import {
   ArrowRight,
   Tag,
@@ -65,9 +65,16 @@ export default async function BlogPostPage({ params }) {
 
   const relatedPosts = await getRelatedPosts(slug, 3, locale)
 
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://depxtech.com'
+
   return (
     <main className="bg-background min-h-screen">
       <ArticleStructuredData article={post} />
+      <BreadcrumbStructuredData items={[
+        { name: 'Home', url: baseUrl },
+        { name: 'Blog', url: `${baseUrl}/blog` },
+        { name: post.title, url: `${baseUrl}/blog/${slug}` },
+      ]} />
       {/* Hero Section with Aceternity Spotlight */}
       <BlogPostHero post={post} />
 

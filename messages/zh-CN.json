@@ -1642,5 +1642,58 @@
       "onlineBonusIncluded": "含 +10% 在线奖励 ({amount})",
       "shippingDeadlineWarning": "请在14天内寄出您的设备。超过此期限，最终价格可能会因市场波动而调整。"
     }
+  },
+  "error": {
+    "title": "出了点问题",
+    "description": "遇到意外错误，请重试。",
+    "tryAgain": "重试",
+    "goHome": "返回首页"
+  },
+  "breadcrumb": {
+    "home": "首页",
+    "products": "产品",
+    "blog": "博客",
+    "tradeIn": "以旧换新",
+    "faq": "常见问题",
+    "howItWorks": "运作方式",
+    "sustainability": "可持续发展",
+    "offers": "优惠",
+    "browse": "浏览"
+  },
+  "cookieConsent": {
+    "message": "我们使用 Cookie 来改善您的体验。",
+    "accept": "接受",
+    "learnMore": "了解更多"
+  },
+  "floatingChat": {
+    "title": "需要帮助？",
+    "emailUs": "发送邮件",
+    "liveChat": "在线客服"
+  },
+  "recentlyViewed": {
+    "title": "最近浏览"
+  },
+  "chat": {
+    "startChat": "开始聊天",
+    "yourName": "您的姓名",
+    "yourEmail": "您的邮箱（可选）",
+    "typeMessage": "输入消息...",
+    "send": "发送",
+    "endChat": "结束聊天",
+    "chatEnded": "此对话已关闭。",
+    "newConversation": "开始新对话",
+    "connecting": "连接中...",
+    "connected": "已连接",
+    "noMessages": "发送消息开始对话。",
+    "guestForm": "输入姓名开始聊天",
+    "adminTitle": "客户支持",
+    "openChats": "进行中",
+    "closedChats": "已结束",
+    "noChats": "暂无对话",
+    "closeConversation": "关闭对话",
+    "unread": "未读",
+    "guest": "访客",
+    "you": "你",
+    "agent": "客服"
   }
 }

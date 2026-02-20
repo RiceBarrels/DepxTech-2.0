@@ -6,12 +6,27 @@ import { toast } from 'sonner'
 import { useTransitionRouter } from '@/components/ui/pageTransitions'
 import ProductDetailEnhanced from './ProductDetailEnhanced'
 import Recommends from '@/components/ui/recommends'
+import { RecentlyViewed } from '@/components/product/RecentlyViewed'
+import { useRecentlyViewed } from '@/hooks/useRecentlyViewed'
 import { motion } from 'framer-motion'
+import { useEffect } from 'react'
 
 export default function ProductDetailClient({ product, productId }) {
   const t = useTranslations('productDetail')
   const { addToCart, user } = useAuth()
   const router = useTransitionRouter()
+  const { addItem } = useRecentlyViewed()
+
+  useEffect(() => {
+    if (product) {
+      addItem({
+        id: productId,
+        title: product.title,
+        price: product.price,
+        image: product.imgs?.[0] || null,
+      })
+    }
+  }, [productId])
 
   const handleAddToCart = async (product, quantity = 1) => {
     if (!user) {
@@ -87,6 +102,11 @@ export default function ProductDetailClient({ product, productId }) {
           />
         </div>
       </motion.section>
+
+      {/* Recently Viewed */}
+      <div className="max-w-7xl mx-auto px-4 pb-8">
+        <RecentlyViewed excludeId={productId} />
+      </div>
     </div>
   )
 }

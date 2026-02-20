@@ -2,7 +2,7 @@
 
 import { getTranslations } from 'next-intl/server'
 import ProductDetailClient from '@/components/product/ProductDetailClient'
-import { ProductStructuredData } from '@/components/seo/StructuredData'
+import { ProductStructuredData, BreadcrumbStructuredData } from '@/components/seo/StructuredData'
 
 export async function generateMetadata({ params }) {
   const { id } = await params
@@ -108,9 +108,16 @@ export default async function ProductPage({ params }) {
         throw new Error('Product not found')
     }
     
+    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://depxtech.com'
+
     return (
         <>
             <ProductStructuredData product={productDetails} />
+            <BreadcrumbStructuredData items={[
+                { name: 'Home', url: baseUrl },
+                { name: 'Products', url: `${baseUrl}/products` },
+                { name: productDetails.title, url: `${baseUrl}/products/${id}` },
+            ]} />
             <ProductDetailClient product={productDetails} productId={id} />
         </>
     )
