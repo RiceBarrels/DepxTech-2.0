@@ -1,7 +1,4 @@
-'use client'
-
 import { Link } from '@/i18n/navigation'
-import { motion } from 'framer-motion'
 import { cn } from '@/lib/utils'
 import {
   Recycle,
@@ -11,7 +8,7 @@ import {
   Check,
 } from 'lucide-react'
 import { ScrollStagger, ScrollReveal, ScrollCounter } from '@/components/ui/scroll-animation'
-import { useTranslations } from 'next-intl'
+import { getTranslations } from 'next-intl/server'
 
 const featureIcons = [Recycle, Zap, DollarSign, Shield]
 const featureStyles = [
@@ -21,8 +18,8 @@ const featureStyles = [
   { bgColor: 'bg-primary text-white', iconColor: 'text-white', isHighlighted: true },
 ]
 
-export function WhyChooseUs() {
-  const t = useTranslations('home.whyChooseUs')
+export async function WhyChooseUs() {
+  const t = await getTranslations('home.whyChooseUs')
 
   const features = [
     { Icon: featureIcons[0], title: t('zeroWasteTitle'), description: t('zeroWasteDesc'), ...featureStyles[0] },
@@ -41,8 +38,7 @@ export function WhyChooseUs() {
               <ScrollStagger staggerChildren={0.15} className="flex flex-col gap-4">
                 {features.slice(0, 2).map((feature) => (
                   <ScrollReveal key={feature.title} animation="left">
-                    <motion.div
-                      whileHover={{ scale: 1.02, y: -4 }}
+                    <div
                       className={cn('p-4 sm:p-6 md:p-8 rounded-3xl', feature.bgColor)}
                     >
                       <feature.Icon className={cn('w-10 h-10 mb-4', feature.iconColor)} />
@@ -58,15 +54,14 @@ export function WhyChooseUs() {
                       )}>
                         {feature.description}
                       </p>
-                    </motion.div>
+                    </div>
                   </ScrollReveal>
                 ))}
               </ScrollStagger>
               <ScrollStagger staggerChildren={0.15} delayChildren={0.2} className="flex flex-col gap-4 mt-8">
                 {features.slice(2, 4).map((feature) => (
                   <ScrollReveal key={feature.title} animation="right">
-                    <motion.div
-                      whileHover={{ scale: 1.02, y: -4 }}
+                    <div
                       className={cn('p-4 sm:p-6 md:p-8 rounded-3xl', feature.bgColor)}
                     >
                       <feature.Icon className={cn('w-10 h-10 mb-4', feature.iconColor)} />
@@ -82,7 +77,7 @@ export function WhyChooseUs() {
                       )}>
                         {feature.description}
                       </p>
-                    </motion.div>
+                    </div>
                   </ScrollReveal>
                 ))}
               </ScrollStagger>

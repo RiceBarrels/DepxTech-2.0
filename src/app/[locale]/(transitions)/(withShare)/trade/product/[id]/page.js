@@ -115,7 +115,7 @@ export default async function TradeProductPage({ params }) {
                     <div className="relative w-full h-full">
                       <Image
                         src={product.imgs[0]}
-                        alt={product.title}
+                        alt={product.title + " png - DepxTech"}
                         fill
                         className="object-contain"
                         priority

@@ -3,6 +3,10 @@ import { HomeBanner } from '@/components/home/HomeBanner'
 import { CategoryGrid } from '@/components/home/CategoryGrid'
 import { HowItWorks } from '@/components/home/HowItWorks'
 import { WhyChooseUs } from '@/components/home/WhyChooseUs'
+import { PopularTradeIns } from '@/components/home/PopularTradeIns'
+import { Testimonials } from '@/components/home/Testimonials'
+import { ImpactStats } from '@/components/home/ImpactStats'
+import { BrandMarquee } from '@/components/home/BrandMarquee'
 import { NewsletterSection } from '@/components/home/NewsletterSection'
 import { getTranslations } from 'next-intl/server'
 
@@ -30,22 +34,40 @@ export default function HomePage() {
 
       <SectionDivider />
 
-      {/* Category Section with Hover Effects */}
+      {/* Category Section */}
       <CategoryGrid />
 
       <SectionDivider />
 
-      {/* How it Works Section with Animations */}
+      {/* Popular Trade-In Devices */}
+      <PopularTradeIns />
+
+      <SectionDivider />
+
+      {/* How it Works */}
       <HowItWorks />
 
       <SectionDivider />
 
-      {/* Why Choose Us with Animated Cards */}
+      {/* Why Choose Us */}
       <WhyChooseUs />
 
       <SectionDivider />
 
-      {/* Newsletter CTA with Animations */}
+      {/* Customer Testimonials */}
+      <Testimonials />
+
+      <SectionDivider />
+
+      {/* Environmental Impact Stats */}
+      <ImpactStats />
+
+      {/* Brand Marquee */}
+      <BrandMarquee />
+
+      <SectionDivider />
+
+      {/* Newsletter CTA */}
       <NewsletterSection />
     </main>
   )

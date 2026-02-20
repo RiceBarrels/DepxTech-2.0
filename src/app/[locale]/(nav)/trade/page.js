@@ -4,6 +4,10 @@ import TradeHero from '@/components/trade/TradeHero'
 import CategoryGrid from '@/components/trade/CategoryGrid'
 import { TradeTrustIndicators, TradeValueProposition } from '@/components/trade/TradeTrustIndicators'
 import { TradeProductCard } from '@/components/trade/TradeCards'
+import { TradeTestimonials } from '@/components/trade/TradeTestimonials'
+import { TradeEnvironmentalImpact } from '@/components/trade/TradeEnvironmentalImpact'
+import { AcceptedBrands } from '@/components/trade/AcceptedBrands'
+import { TradeFAQPreview } from '@/components/trade/TradeFAQPreview'
 import { supabaseAdmin } from '@/lib/supabase-admin'
 import { Package, Truck, CreditCard } from 'lucide-react'
 import { getTranslations } from 'next-intl/server'
@@ -83,8 +87,11 @@ export default async function TradePage() {
         </div>
       </section>
 
+      {/* Environmental Impact */}
+      <TradeEnvironmentalImpact />
+
       {/* Trust Indicators */}
-      <section className="w-full max-w-7xl px-4 pb-6">
+      <section className="w-full max-w-7xl px-4 py-6">
         <TradeTrustIndicators />
       </section>
 
@@ -92,6 +99,15 @@ export default async function TradePage() {
       <section className="w-full max-w-7xl px-4 pb-6">
         <TradeValueProposition />
       </section>
+
+      {/* Customer Testimonials */}
+      <TradeTestimonials />
+
+      {/* Accepted Brands */}
+      <AcceptedBrands />
+
+      {/* FAQ Preview */}
+      <TradeFAQPreview />
 
       {/* CTA */}
       <section className="w-full max-w-7xl px-4 pb-16">

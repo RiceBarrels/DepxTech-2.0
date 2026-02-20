@@ -88,8 +88,8 @@ export function Footer(){
                         <div>
                             <h3 className="font-semibold text-sm mb-3">{t('helpSection')}</h3>
                             <div className="flex flex-col gap-2">
-                                <TransitionLink href="help" className={desktopLinkClass}>{t('helpCenter')}</TransitionLink>
-                                <TransitionLink href="support" className={desktopLinkClass}>{t('chatNow')}</TransitionLink>
+                                <TransitionLink href="/help" className={desktopLinkClass}>{t('helpCenter')}</TransitionLink>
+                                <TransitionLink href="/support" className={desktopLinkClass}>{t('chatNow')}</TransitionLink>
                                 <TransitionLink href="/shipping" className={desktopLinkClass}>{t('shippingInfo')}</TransitionLink>
                                 <TransitionLink href="/warranty" className={desktopLinkClass}>{t('warranty')}</TransitionLink>
                                 <TransitionLink href="/returns" className={desktopLinkClass}>{t('returns')}</TransitionLink>
@@ -198,9 +198,9 @@ export function Footer(){
                         <AccordionTrigger>{t('helpSection')}</AccordionTrigger>
                         <AccordionContent>
                             <div className="px-6"><Separator /></div>
-                            <TransitionLink href="help" className={linkClass}>{t('helpCenter')}</TransitionLink>
+                            <TransitionLink href="/help" className={linkClass}>{t('helpCenter')}</TransitionLink>
                             <div className="px-6"><Separator /></div>
-                            <TransitionLink href="support" className={linkClass}>{t('chatNow')}</TransitionLink>
+                            <TransitionLink href="/support" className={linkClass}>{t('chatNow')}</TransitionLink>
                             <div className="px-6"><Separator /></div>
                             <TransitionLink href="/shipping" className={linkClass}>{t('shippingInfo')}</TransitionLink>
                             <div className="px-6"><Separator /></div>

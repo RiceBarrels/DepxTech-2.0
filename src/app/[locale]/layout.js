@@ -56,10 +56,6 @@ export async function generateMetadata({ params }) {
     publisher: 'DepxTech',
     formatDetection: { email: false, address: false, telephone: false },
     manifest: '/manifest.webmanifest',
-    themeColor: [
-      { media: '(prefers-color-scheme: light)', color: '#ffffff' },
-      { media: '(prefers-color-scheme: dark)', color: '#0f172a' },
-    ],
     appleWebApp: { capable: true, statusBarStyle: 'default', title: 'DepxTech' },
     icons: {
       icon: [
@@ -92,6 +88,15 @@ export async function generateMetadata({ params }) {
       canonical: baseUrl,
       languages: Object.fromEntries(routing.locales.map(l => [l, `/${l}`])),
     },
+  }
+}
+
+export function generateViewport() {
+  return {
+    themeColor: [
+      { media: '(prefers-color-scheme: light)', color: '#ffffff' },
+      { media: '(prefers-color-scheme: dark)', color: '#0f172a' },
+    ],
   }
 }
 

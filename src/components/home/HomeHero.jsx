@@ -1,33 +1,30 @@
-'use client'
-
 import Image from 'next/image'
 import { TextGenerateEffect } from '@/components/ui/aceternity/text-generate-effect'
-import { motion } from 'framer-motion'
 import TradeSearch from '@/components/trade/TradeSearch'
 import { Leaf, BadgeCheck, DollarSign } from 'lucide-react'
 import { FlipWords } from '../ui/flip-words'
-import { useTranslations } from 'next-intl'
+import { getTranslations } from 'next-intl/server'
 
-export function HomeHero() {
-  const t = useTranslations('home.hero')
+export async function HomeHero() {
+  const t = await getTranslations('home.hero')
   return (
     <section className="relative h-full overflow-hidden bg-violet-50 dark:bg-[#07070f]">
 
-      {/* Orbs — light */}
-      <div className="dark:hidden absolute inset-0 pointer-events-none">
+      {/* Orbs — light (hidden on mobile for performance) */}
+      <div className="dark:hidden absolute inset-0 pointer-events-none hidden sm:block">
         <div className="absolute -top-32 -left-32 w-[600px] h-[600px] rounded-full blur-[130px]" style={{ background: 'radial-gradient(circle, rgba(124,58,237,0.12) 0%, transparent 70%)' }} />
         <div className="absolute bottom-0 right-1/3 w-[400px] h-[400px] rounded-full blur-[100px]" style={{ background: 'radial-gradient(circle, rgba(79,70,229,0.07) 0%, transparent 70%)' }} />
       </div>
-      {/* Orbs — dark */}
-      <div className="hidden dark:block absolute inset-0 pointer-events-none">
+      {/* Orbs — dark (hidden on mobile for performance) */}
+      <div className="absolute inset-0 pointer-events-none hidden dark:sm:block">
         <div className="absolute -top-32 -left-32 w-[600px] h-[600px] rounded-full blur-[130px]" style={{ background: 'radial-gradient(circle, rgba(124,58,237,0.28) 0%, transparent 70%)' }} />
         <div className="absolute bottom-0 right-1/3 w-[400px] h-[400px] rounded-full blur-[100px]" style={{ background: 'radial-gradient(circle, rgba(79,70,229,0.18) 0%, transparent 70%)' }} />
         <div className="absolute top-1/3 right-0 w-80 h-80 rounded-full blur-[90px]" style={{ background: 'radial-gradient(circle, rgba(139,92,246,0.12) 0%, transparent 70%)' }} />
       </div>
 
-      {/* Grid texture */}
+      {/* Grid texture (hidden on mobile for performance) */}
       <div
-        className="absolute inset-0 opacity-[0.18] dark:opacity-[0.03] pointer-events-none"
+        className="absolute inset-0 opacity-[0.18] dark:opacity-[0.03] pointer-events-none hidden sm:block"
         style={{ backgroundImage: 'linear-gradient(rgba(109,40,217,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(109,40,217,0.5) 1px, transparent 1px)', backgroundSize: '48px 48px' }}
       />
 
@@ -36,22 +33,12 @@ export function HomeHero() {
         <div className="grid lg:grid-cols-2 gap-8 lg:gap-16 items-center w-full py-10 lg:py-0">
 
           {/* Left */}
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5 }}
-            className="flex flex-col gap-4 sm:gap-5"
-          >
+          <div className="flex flex-col gap-4 sm:gap-5">
             {/* Badge */}
-            <motion.div
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.1 }}
-              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider w-fit border border-emerald-300 dark:border-emerald-500/20 bg-emerald-100 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400"
-            >
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider w-fit border border-emerald-300 dark:border-emerald-500/20 bg-emerald-100 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400">
               <Leaf className="w-3.5 h-3.5" />
               {t('badge')}
-            </motion.div>
+            </div>
 
             {/* Headline */}
             <div className="text-3xl sm:text-4xl lg:text-5xl font-black leading-[1.05] tracking-tight">
@@ -68,52 +55,31 @@ export function HomeHero() {
             </div>
 
             {/* Subheadline */}
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.3 }}
-              className="text-slate-600 dark:text-slate-400 text-base max-w-md leading-relaxed"
-            >
+            <p className="text-slate-600 dark:text-slate-400 text-base max-w-md leading-relaxed">
               {t('subheadline')}
-            </motion.p>
+            </p>
 
             {/* Search */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.4 }}
-            >
-              <TradeSearch variant="hero" />
-            </motion.div>
+            <TradeSearch variant="hero" />
 
             {/* Trust */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.5 }}
-              className="flex items-center gap-4 text-sm"
-            >
+            <div className="flex items-center gap-4 text-sm">
               <span className="flex items-center gap-1.5 font-medium text-slate-600 dark:text-slate-400">
                 <BadgeCheck className="w-4 h-4 text-emerald-500 dark:text-emerald-400" />
                 {t('trustScore')}
               </span>
               <span className="w-1 h-1 bg-slate-300 dark:bg-slate-700 rounded-full" />
               <span className="font-medium text-slate-600 dark:text-slate-400">{t('devicesRecycled')}</span>
-            </motion.div>
-          </motion.div>
+            </div>
+          </div>
 
-          {/* Right — Image card */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.92 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="relative hidden lg:block"
-          >
+          {/* Right — Image card (desktop only) */}
+          <div className="relative hidden lg:block">
             {/* Glow — dark only */}
             <div className="hidden dark:block absolute inset-0 rounded-[2rem] blur-2xl opacity-30" style={{ background: 'linear-gradient(135deg, rgba(124,58,237,0.6), rgba(79,70,229,0.4))' }} />
 
             {/* Card */}
-            <div className="relative rounded-[2rem] p-6 border bg-white dark:bg-white/[0.03] border-violet-100 dark:border-violet-500/20 shadow-xl shadow-violet-100/50 dark:shadow-none" style={{ backdropFilter: 'blur(12px)' }}>
+            <div className="relative rounded-[2rem] p-6 border bg-white dark:bg-white/[0.03] border-violet-100 dark:border-violet-500/20 shadow-xl shadow-violet-100/50 dark:shadow-none">
               <div className="aspect-square w-full rounded-2xl flex items-center justify-center overflow-hidden bg-slate-50 dark:bg-white/[0.02] border border-slate-100 dark:border-white/5">
                 <Image
                   src="/stockImg/iphone_17_pro_max.png"
@@ -126,13 +92,7 @@ export function HomeHero() {
               </div>
 
               {/* Floating payout card */}
-              <motion.div
-                initial={{ opacity: 0, x: -20, y: 20 }}
-                animate={{ opacity: 1, x: 0, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.6 }}
-                className="absolute -bottom-5 -left-5 p-4 rounded-xl border bg-white dark:bg-[rgba(10,10,20,0.9)] border-violet-100 dark:border-violet-500/25 shadow-lg shadow-violet-100/40 dark:shadow-none"
-                style={{ backdropFilter: 'blur(16px)' }}
-              >
+              <div className="absolute -bottom-5 -left-5 p-4 rounded-xl border bg-white dark:bg-[rgba(10,10,20,0.9)] border-violet-100 dark:border-violet-500/25 shadow-lg shadow-violet-100/40 dark:shadow-none">
                 <div className="flex items-center gap-3">
                   <div
                     className="size-10 rounded-lg flex items-center justify-center text-white"
@@ -145,7 +105,7 @@ export function HomeHero() {
                     <p className="text-xl font-bold text-slate-900 dark:text-white">{t('averagePayoutValue')}</p>
                   </div>
                 </div>
-              </motion.div>
+              </div>
 
               {/* Decorative corner dots */}
               <div className="absolute top-4 right-4 flex gap-1.5">
@@ -154,7 +114,7 @@ export function HomeHero() {
                 <span className="w-2 h-2 rounded-full bg-slate-200 dark:bg-slate-700/60" />
               </div>
             </div>
-          </motion.div>
+          </div>
 
         </div>
       </div>

@@ -1,8 +1,5 @@
-'use client'
-
-import { useTranslations } from 'next-intl'
 import { Link } from '@/i18n/navigation'
-import { motion } from 'framer-motion'
+import { getTranslations } from 'next-intl/server'
 import {
   Leaf,
   Recycle,
@@ -16,23 +13,8 @@ import {
   CheckCircle2,
 } from 'lucide-react'
 
-const sectionVariants = {
-  hidden: { opacity: 0, y: 24 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: 'easeOut' } }
-}
-
-const staggerContainer = {
-  hidden: {},
-  visible: { transition: { staggerChildren: 0.1 } }
-}
-
-const staggerItem = {
-  hidden: { opacity: 0, y: 16 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.4, ease: 'easeOut' } }
-}
-
-export default function SustainabilityPage() {
-  const t = useTranslations('sustainability')
+export default async function SustainabilityPage() {
+  const t = await getTranslations('sustainability')
 
   const impactStats = [
     { Icon: Recycle, value: t('stat1Value'), label: t('stat1Label'), description: t('stat1Desc') },
@@ -59,12 +41,7 @@ export default function SustainabilityPage() {
       {/* Hero */}
       <section className="py-16 lg:py-24 bg-emerald-50 dark:bg-emerald-900/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            className="text-center max-w-3xl mx-auto"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-          >
+          <div className="text-center max-w-3xl mx-auto">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 text-sm font-bold mb-6">
               <Leaf className="size-4" />
               {t('badge')}
@@ -75,42 +52,27 @@ export default function SustainabilityPage() {
             <p className="mt-6 text-lg text-muted-foreground leading-relaxed">
               {t('subheading')}
             </p>
-          </motion.div>
+          </div>
         </div>
       </section>
 
       {/* Impact Stats */}
       <section className="py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            className="text-center mb-12"
-            variants={sectionVariants}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-          >
+          <div className="text-center mb-12">
             <h2 className="text-3xl font-bold text-foreground mb-4">
               {t('impactHeading')}
             </h2>
             <p className="text-muted-foreground">
               {t('impactSubheading')}
             </p>
-          </motion.div>
+          </div>
 
-          <motion.div
-            className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6"
-            variants={staggerContainer}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-          >
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
             {impactStats.map((stat) => (
-              <motion.div
+              <div
                 key={stat.label}
                 className="bg-card rounded-2xl p-4 sm:p-6 border border-border text-center"
-                variants={staggerItem}
-                whileHover={{ y: -4 }}
-                transition={{ type: 'spring', stiffness: 300 }}
               >
                 <div className="size-14 bg-emerald-100 dark:bg-emerald-900/30 rounded-xl flex items-center justify-center mx-auto mb-4">
                   <stat.Icon className="size-7 text-emerald-500" />
@@ -118,22 +80,16 @@ export default function SustainabilityPage() {
                 <p className="text-3xl font-bold text-foreground mb-1">{stat.value}</p>
                 <p className="text-sm font-medium text-emerald-600 dark:text-emerald-400 mb-2">{stat.label}</p>
                 <p className="text-xs text-muted-foreground">{stat.description}</p>
-              </motion.div>
+              </div>
             ))}
-          </motion.div>
+          </div>
         </div>
       </section>
 
       {/* The Problem */}
       <section className="py-16 bg-foreground text-background">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            className="grid lg:grid-cols-2 gap-6 md:gap-12 items-center"
-            variants={sectionVariants}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: '-60px' }}
-          >
+          <div className="grid lg:grid-cols-2 gap-6 md:gap-12 items-center">
             <div>
               <h2 className="text-3xl lg:text-4xl font-bold mb-6">
                 {t('problemHeading')}
@@ -141,29 +97,17 @@ export default function SustainabilityPage() {
               <p className="text-background/70 text-lg mb-6">
                 {t('problemDesc')}
               </p>
-              <motion.ul
-                className="space-y-4"
-                variants={staggerContainer}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true }}
-              >
+              <ul className="space-y-4">
                 {[t('problemStat1'), t('problemStat2'), t('problemStat3')].map((text, i) => (
-                  <motion.li key={i} className="flex items-start gap-3" variants={staggerItem}>
+                  <li key={i} className="flex items-start gap-3">
                     <CheckCircle2 className="size-5 text-emerald-400 flex-shrink-0 mt-1" />
                     <span className="text-background/70">{text}</span>
-                  </motion.li>
+                  </li>
                 ))}
-              </motion.ul>
+              </ul>
             </div>
 
-            <motion.div
-              className="bg-background/10 rounded-2xl p-6"
-              variants={sectionVariants}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-            >
+            <div className="bg-background/10 rounded-2xl p-6">
               <h3 className="text-lg font-bold mb-4">{t('manufacturingImpact')}</h3>
               <div className="space-y-4">
                 {deviceImpact.map((item) => (
@@ -186,42 +130,28 @@ export default function SustainabilityPage() {
                   </div>
                 ))}
               </div>
-            </motion.div>
-          </motion.div>
+            </div>
+          </div>
         </div>
       </section>
 
       {/* Our Principles */}
       <section className="py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            className="text-center mb-12"
-            variants={sectionVariants}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-          >
+          <div className="text-center mb-12">
             <h2 className="text-3xl font-bold text-foreground mb-4">
               {t('principlesHeading')}
             </h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
               {t('principlesSubheading')}
             </p>
-          </motion.div>
+          </div>
 
-          <motion.div
-            className="grid md:grid-cols-2 gap-4 sm:gap-6 md:gap-8"
-            variants={staggerContainer}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-          >
+          <div className="grid md:grid-cols-2 gap-4 sm:gap-6 md:gap-8">
             {principles.map((principle) => (
-              <motion.div
+              <div
                 key={principle.title}
                 className="flex gap-3 sm:gap-4 p-4 sm:p-6 bg-card rounded-2xl border border-border"
-                variants={staggerItem}
-                whileHover={{ y: -2 }}
               >
                 <div className="flex-shrink-0">
                   <div className="size-12 bg-emerald-100 dark:bg-emerald-900/30 rounded-xl flex items-center justify-center">
@@ -236,67 +166,47 @@ export default function SustainabilityPage() {
                     {principle.description}
                   </p>
                 </div>
-              </motion.div>
+              </div>
             ))}
-          </motion.div>
+          </div>
         </div>
       </section>
 
       {/* Certifications */}
       <section className="py-16 bg-card/50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            className="text-center mb-12"
-            variants={sectionVariants}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-          >
+          <div className="text-center mb-12">
             <h2 className="text-3xl font-bold text-foreground mb-4">
               {t('certificationsHeading')}
             </h2>
             <p className="text-muted-foreground">
               {t('certificationsSubheading')}
             </p>
-          </motion.div>
+          </div>
 
-          <motion.div
-            className="grid grid-cols-3 gap-3 sm:gap-6"
-            variants={staggerContainer}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-          >
+          <div className="grid grid-cols-3 gap-3 sm:gap-6">
             {[
               { code: t('cert1Code'), name: t('cert1Name'), desc: t('cert1Desc') },
               { code: t('cert2Code'), name: t('cert2Name'), desc: t('cert2Desc') },
               { code: t('cert3Code'), name: t('cert3Name'), desc: t('cert3Desc') },
             ].map((cert) => (
-              <motion.div
+              <div
                 key={cert.code}
                 className="text-center p-3 sm:p-6 bg-muted/50 rounded-2xl"
-                variants={staggerItem}
-                whileHover={{ scale: 1.03 }}
               >
                 <div className="text-4xl font-bold text-primary mb-2">{cert.code}</div>
                 <p className="text-sm font-medium text-foreground mb-1">{cert.name}</p>
                 <p className="text-xs text-muted-foreground">{cert.desc}</p>
-              </motion.div>
+              </div>
             ))}
-          </motion.div>
+          </div>
         </div>
       </section>
 
       {/* CTA */}
       <section className="py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            className="bg-emerald-600 rounded-3xl p-6 sm:p-8 lg:p-12 text-center"
-            variants={sectionVariants}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-          >
+          <div className="bg-emerald-600 rounded-3xl p-6 sm:p-8 lg:p-12 text-center">
             <Leaf className="size-12 text-white mx-auto mb-4" />
             <h2 className="text-3xl lg:text-4xl font-bold text-white mb-4">
               {t('ctaHeading')}
@@ -310,7 +220,7 @@ export default function SustainabilityPage() {
             >
               {t('ctaButton')} <ArrowRight className="size-5" />
             </Link>
-          </motion.div>
+          </div>
         </div>
       </section>
     </main>

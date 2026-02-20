@@ -6,21 +6,22 @@ import Nav from "@/components/ui/nav";
 // import { useEffect } from "react";
 // import { usePathname } from "next/navigation";
 import { PageLoadHaptics } from "@/components/ui/pageLoadHaptics";
-import Link from "next/link";
 
 export default function transitionLayout({ children }) {
 
     return (
         <div 
-            className="min-h-screen w-full relative z-20 bg-background"
+            className="h-screen w-full relative bg-background flex flex-col"
         >
             <Nav layers={1}/>
             <PageLoadHaptics />
-            <div className="min-h-screen rounded-t-3xl border-t border-border bg-background" style={{ viewTransitionName: 'transition-page' }}>
-              {children}
+            <div className="rounded-t-3xl border border-b-0 border-border bg-background overflow-y-auto flex-1" style={{ viewTransitionName: 'transition-page' }}>
+                <div className="min-h-screen">
+                    {children}
+                </div>
+                <ConditionalFooter />
+                <BottomSafeArea />
             </div>
-            <ConditionalFooter />
-            <BottomSafeArea />
         </div>
     )
 }

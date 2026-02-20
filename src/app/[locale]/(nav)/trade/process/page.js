@@ -1,7 +1,5 @@
-'use client'
-
 import { Link } from '@/i18n/navigation'
-import { useTranslations } from 'next-intl'
+import { getTranslations } from 'next-intl/server'
 import {
   Search,
   FileText,
@@ -15,8 +13,8 @@ import {
   Info
 } from 'lucide-react'
 
-export default function ProcessPage() {
-  const t = useTranslations('tradeProcess')
+export default async function ProcessPage() {
+  const t = await getTranslations('tradeProcess')
 
   const processSteps = [
     {
