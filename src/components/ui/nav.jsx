@@ -71,7 +71,7 @@ export default function Nav({layers = 3}) {
         <>
             {/* ── Desktop Navigation ── */}
             <nav
-                className="hidden sm:flex flex-col sticky top-0 left-0 w-full bg-background/95 backdrop-blur-md z-100"
+                className="hidden sm:flex flex-col sticky top-0 left-0 w-full bg-background z-100"
                 style={{
                     viewTransitionName: 'nav-bar',
                     paddingTop: `${safeArea.top}px`
@@ -254,7 +254,7 @@ export default function Nav({layers = 3}) {
 
                 {/* Third Layer - Secondary Links */}
                 {layers > 2 && (
-                    <div className="w-full h-8 px-4 flex items-center bg-muted/30">
+                    <div className="w-full h-8 px-4 flex items-center shadow-[0_24px_36px_var(--background)]">
                         <div className="flex items-center gap-4 max-w-7xl mx-auto w-full text-xs text-muted-foreground">
                             <TransitionLink href="/warranty" className="hover:text-foreground transition-colors flex items-center gap-1">
                                 <ShieldCheckIcon className="size-3" />
@@ -325,7 +325,7 @@ export default function Nav({layers = 3}) {
 
                 {/* Layer 2: Search bar */}
                 {layers > 1 && (
-                    <div className="px-3 pb-2">
+                    <div className="px-3 pb-2  shadow-[0_24px_36px_var(--background)]">
                         <NavSearch className="w-full" />
                     </div>
                 )}

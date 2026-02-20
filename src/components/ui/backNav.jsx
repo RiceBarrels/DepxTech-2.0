@@ -24,7 +24,7 @@ export default function BackNav({ isShareButton = false }) {
 
     return (
         <>
-            <div className="flex flex-col sticky top-0 left-0 right-0 z-50 pt-4 px-4">
+            <div className="flex flex-col sticky top-[-1px] left-0 right-0 z-50 py-4 px-4 bg-[linear-gradient(to_bottom,var(--background)_25%,rgba(255,255,255,0)_100%)]">
                 <div className="flex items-center justify-between">
                     <Button 
                         className="bg-background/50 backdrop-blur-sm" 

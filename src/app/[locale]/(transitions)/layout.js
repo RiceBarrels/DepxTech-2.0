@@ -11,7 +11,7 @@ export default function transitionLayout({ children }) {
 
     return (
         <div 
-            className="h-screen w-full relative bg-background flex flex-col"
+            className="h-dvh w-full relative bg-background flex flex-col overflow-y-hidden"
         >
             <Nav layers={1}/>
             <PageLoadHaptics />
