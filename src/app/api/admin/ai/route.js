@@ -261,7 +261,7 @@ async function handleTradeinCommand(body) {
 }
 
 async function handleTradeinCommandStream(body) {
-  const { command, productContext, model, chatHistory } = body
+  const { command, productContext, model, chatHistory, webSearch } = body
 
   if (!command || typeof command !== 'string' || !command.trim()) {
     return NextResponse.json({ error: 'Command is required' }, { status: 400 })
@@ -304,6 +304,7 @@ async function handleTradeinCommandStream(body) {
       temperature: 0.3,
       max_tokens: 16384,
       stream: true,
+      ...(webSearch ? { plugins: [{ id: 'web', max_results: 5 }] } : {}),
     }),
   })
 

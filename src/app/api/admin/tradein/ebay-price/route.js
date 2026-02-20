@@ -15,6 +15,8 @@ const COMMISSION_TIERS = [
   { maxPrice: 1000, percentage: 0.20, fixedFee: 25 },
 ]
 
+const EBAY_SCRAPER_API = process.env.EBAY_SCRAPER_API || 'https://rb-ebay-scraper-api.onrender.com'
+
 function createServiceRoleClient() {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
   const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE
@@ -29,38 +31,35 @@ function createServiceRoleClient() {
 }
 
 async function fetchMedianEbayPrice(query) {
-  const apiKey = process.env.SERPAPI_KEY
-  if (!apiKey) throw new Error('SERPAPI_KEY is not configured')
-
   const searchQuery = `${query} used`
 
   const params = new URLSearchParams({
-    engine: 'ebay',
-    _nkw: searchQuery,
-    buying_format: 'BIN',
-    api_key: apiKey,
-    _ipg: '50',
+    query: searchQuery,
+    max_results: '30',
   })
 
-  const res = await fetch(`https://serpapi.com/search.json?${params}`)
+  const res = await fetch(`${EBAY_SCRAPER_API}/search/lite?${params}`, {
+    signal: AbortSignal.timeout(60000),
+  })
+
   if (!res.ok) {
     const text = await res.text()
-    throw new Error(`SerpAPI error ${res.status}: ${text}`)
+    throw new Error(`Scraper API error ${res.status}: ${text}`)
   }
 
   const data = await res.json()
-  const results = data.organic_results || []
+  if (!data.success) throw new Error(data.error || 'Scraper API failed')
 
+  const results = data.results || []
   const queryLower = query.toLowerCase()
+
   const prices = []
   for (const item of results) {
     // Skip results whose title doesn't contain the query
     if (!item.title?.toLowerCase().includes(queryLower)) continue
-    if (!item.price) continue
-    // price can be { extracted: number } or { from: { extracted }, to: { extracted } }
-    const extracted = item.price.extracted ?? item.price.from?.extracted
-    if (typeof extracted === 'number' && extracted > 0) {
-      prices.push(extracted)
+    // Use numeric price from API
+    if (typeof item.price_num === 'number' && item.price_num > 0) {
+      prices.push(item.price_num)
     }
   }
 

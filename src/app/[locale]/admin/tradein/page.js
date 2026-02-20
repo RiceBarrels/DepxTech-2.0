@@ -2,10 +2,11 @@
 
 import { useTransitionRouter } from "@/components/ui/pageTransitions"
 import { useSearchParams, useRouter as useNextRouter } from "next/navigation"
-import { useState, useEffect, useRef, Fragment, useCallback } from "react"
+import { useState, useEffect, useRef, Fragment, useCallback, useMemo } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { Textarea } from '@/components/ui/textarea'
 import { Badge } from '@/components/ui/badge'
 import { Label } from '@/components/ui/label'
 import { Checkbox } from '@/components/ui/checkbox'
@@ -32,6 +33,7 @@ import {
     LayoutGridIcon,
     LayoutListIcon,
     ChevronDownIcon,
+    ChevronLeftIcon,
     ChevronRightIcon,
     PackageIcon,
     PercentIcon,
@@ -96,17 +98,24 @@ export default function TradeinManagePage() {
     const [products, setProducts] = useState([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState(null)
-    const [filteredProducts, setFilteredProducts] = useState([])
     const [deleting, setDeleting] = useState(null)
     const [exporting, setExporting] = useState(false)
     const [importing, setImporting] = useState(false)
     const [fetchingPrices, setFetchingPrices] = useState(false)
+    const [priceProgress, setPriceProgress] = useState({ done: 0, total: 0 })
     const fileInputRef = useRef(null)
 
     // View mode from localStorage
     const [viewMode, setViewMode] = useState(() => {
         if (typeof window !== 'undefined') return localStorage.getItem('tradein_viewMode') || 'table'
         return 'table'
+    })
+
+    // Pagination state
+    const [currentPage, setCurrentPage] = useState(1)
+    const [perPage, setPerPage] = useState(() => {
+        if (typeof window !== 'undefined') return parseInt(localStorage.getItem('tradein_perPage') || '20', 10)
+        return 20
     })
 
     // Filter and search state from URL params
@@ -130,6 +139,7 @@ export default function TradeinManagePage() {
 
     const setSearchTerm = (v) => setParam('q', v, '')
     const handleSetViewMode = (v) => { setViewMode(v); localStorage.setItem('tradein_viewMode', v) }
+    const handleSetPerPage = (v) => { const n = parseInt(v, 10); setPerPage(n); setCurrentPage(1); localStorage.setItem('tradein_perPage', String(n)) }
     const setCategoryFilter = (v) => setParam('category', v, 'all')
     const setBrandFilter = (v) => setParam('brand', v, 'all')
     const setSortBy = (v) => setParam('sort', v, 'created_desc')
@@ -155,6 +165,18 @@ export default function TradeinManagePage() {
     const [showBulkTemplateDialog, setShowBulkTemplateDialog] = useState(false)
     const [applyingTemplate, setApplyingTemplate] = useState(false)
 
+    // Image dialog state
+    const [imageDialogProduct, setImageDialogProduct] = useState(null)
+    const [imageDialogImages, setImageDialogImages] = useState([])
+    const [savingImages, setSavingImages] = useState(false)
+
+    // Description expand state
+    const [expandedDesIds, setExpandedDesIds] = useState(new Set())
+
+    // Inline editing state
+    const [inlineEdits, setInlineEdits] = useState({})
+    const [savingInline, setSavingInline] = useState(null)
+
     // Fetch tradable products
     useEffect(() => {
         async function fetchProducts() {
@@ -168,7 +190,6 @@ export default function TradeinManagePage() {
                 }
 
                 setProducts(data.products || [])
-                setFilteredProducts(data.products || [])
             } catch (err) {
                 setError(err.message)
             } finally {
@@ -180,21 +201,19 @@ export default function TradeinManagePage() {
     }, [])
 
     // Get unique values for filters
-    const categories = [...new Set(products.map(p => p.category).filter(Boolean))].sort()
-    const brands = [...new Set(products.map(p => p.brand).filter(Boolean))].sort()
+    const categories = useMemo(() => [...new Set(products.map(p => p.category).filter(Boolean))].sort(), [products])
+    const brands = useMemo(() => [...new Set(products.map(p => p.brand).filter(Boolean))].sort(), [products])
 
-    // Filter and sort products
-    useEffect(() => {
-        let filtered = [...products]
+    // Filter and sort products (memoized)
+    const filteredProducts = useMemo(() => {
+        let filtered = products
 
         if (categoryFilter !== 'all') {
             filtered = filtered.filter(p => p.category === categoryFilter)
         }
-
         if (brandFilter !== 'all') {
             filtered = filtered.filter(p => p.brand === brandFilter)
         }
-
         if (searchTerm) {
             const search = searchTerm.toLowerCase()
             filtered = filtered.filter(product =>
@@ -206,39 +225,46 @@ export default function TradeinManagePage() {
             )
         }
 
-        filtered.sort((a, b) => {
+        return [...filtered].sort((a, b) => {
             switch (sortBy) {
-                case 'title_asc':
-                    return (a.title || '').localeCompare(b.title || '')
-                case 'title_desc':
-                    return (b.title || '').localeCompare(a.title || '')
-                case 'price_asc':
-                    return (a.base_price || 0) - (b.base_price || 0)
-                case 'price_desc':
-                    return (b.base_price || 0) - (a.base_price || 0)
-                case 'created_asc':
-                    return new Date(a.created_at) - new Date(b.created_at)
+                case 'title_asc': return (a.title || '').localeCompare(b.title || '')
+                case 'title_desc': return (b.title || '').localeCompare(a.title || '')
+                case 'price_asc': return (a.base_price || 0) - (b.base_price || 0)
+                case 'price_desc': return (b.base_price || 0) - (a.base_price || 0)
+                case 'created_asc': return new Date(a.created_at) - new Date(b.created_at)
                 case 'created_desc':
-                default:
-                    return new Date(b.created_at) - new Date(a.created_at)
+                default: return new Date(b.created_at) - new Date(a.created_at)
             }
         })
+    }, [products, categoryFilter, brandFilter, searchTerm, sortBy])
 
-        setFilteredProducts(filtered)
-    }, [searchTerm, products, categoryFilter, brandFilter, sortBy])
+    // Reset page when filters change
+    const prevFilterKey = useRef('')
+    useEffect(() => {
+        const key = `${searchTerm}|${categoryFilter}|${brandFilter}|${sortBy}`
+        if (prevFilterKey.current && prevFilterKey.current !== key) setCurrentPage(1)
+        prevFilterKey.current = key
+    }, [searchTerm, categoryFilter, brandFilter, sortBy])
 
-    // Group products
-    const groupedProducts = () => {
-        if (groupBy === 'none') return { 'All Products': filteredProducts }
+    // Pagination (memoized)
+    const totalPages = Math.max(1, Math.ceil(filteredProducts.length / perPage))
+    const safePage = Math.min(currentPage, totalPages)
+    const paginatedProducts = useMemo(
+        () => filteredProducts.slice((safePage - 1) * perPage, safePage * perPage),
+        [filteredProducts, safePage, perPage]
+    )
 
+    // Group products (memoized)
+    const groupedProducts = useMemo(() => {
+        if (groupBy === 'none') return { 'All Products': paginatedProducts }
         const groups = {}
-        filteredProducts.forEach(product => {
+        paginatedProducts.forEach(product => {
             const key = product[groupBy] || 'Unknown'
             if (!groups[key]) groups[key] = []
             groups[key].push(product)
         })
         return groups
-    }
+    }, [paginatedProducts, groupBy])
 
     const toggleGroup = (groupName) => {
         setExpandedGroups(prev => ({
@@ -594,6 +620,8 @@ export default function TradeinManagePage() {
         if (selectedIds.size === 0) return
 
         setFetchingPrices(true)
+        const total = selectedIds.size
+        setPriceProgress({ done: 0, total })
         try {
             const response = await fetch('/api/admin/tradein/ebay-price', {
                 method: 'POST',
@@ -615,6 +643,7 @@ export default function TradeinManagePage() {
             const decoder = new TextDecoder()
             let buffer = ''
             let summary = null
+            let processed = 0
 
             while (true) {
                 const { done, value } = await reader.read()
@@ -631,6 +660,8 @@ export default function TradeinManagePage() {
                             summary = result
                             continue
                         }
+                        processed++
+                        setPriceProgress({ done: processed, total })
                         // Update product immediately
                         if (result.success) {
                             setProducts(prev => prev.map(p =>
@@ -653,6 +684,7 @@ export default function TradeinManagePage() {
             toast.error('Error: ' + err.message)
         } finally {
             setFetchingPrices(false)
+            setPriceProgress({ done: 0, total: 0 })
         }
     }
 
@@ -721,6 +753,158 @@ export default function TradeinManagePage() {
         }
     }
 
+    // Toggle description expand in grid/table view
+    const toggleDesExpand = (productId, e) => {
+        if (e) e.stopPropagation()
+        setExpandedDesIds(prev => {
+            const newSet = new Set(prev)
+            if (newSet.has(productId)) newSet.delete(productId)
+            else newSet.add(productId)
+            return newSet
+        })
+    }
+
+    // Open image dialog for a product
+    const openImageDialog = (product, e) => {
+        if (e) e.stopPropagation()
+        setImageDialogProduct(product)
+        setImageDialogImages(product.imgs || [])
+    }
+
+    // Save images from dialog
+    const handleImageDialogSave = async () => {
+        if (!imageDialogProduct) return
+        setSavingImages(true)
+        try {
+            const uploadedImgs = await uploadFiles(imageDialogImages, 'tradein/products')
+            const response = await fetch('/api/admin/tradein', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    ...imageDialogProduct,
+                    imgs: uploadedImgs
+                })
+            })
+            if (!response.ok) throw new Error('Failed to update images')
+            const data = await response.json()
+            setProducts(prev => prev.map(p => p.id === imageDialogProduct.id ? data.product : p))
+            if (editFormData && editingProduct?.id === imageDialogProduct.id) {
+                handleEditInputChange('imgs', uploadedImgs)
+            }
+            toast.success('Images updated')
+            setImageDialogProduct(null)
+        } catch (err) {
+            toast.error('Error: ' + err.message)
+        } finally {
+            setSavingImages(false)
+        }
+    }
+
+    // Quick template change for a product from grid/table view
+    const handleQuickTemplateChange = async (product, templateId, e) => {
+        if (e) e.stopPropagation()
+        const template = templates.find(tmpl => tmpl.id === templateId)
+        if (!template) return
+        try {
+            const response = await fetch('/api/admin/tradein/apply-template', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    templateId,
+                    productIds: [product.id]
+                })
+            })
+            const data = await response.json()
+            if (!response.ok) throw new Error(data.error || 'Failed to apply template')
+            // Refresh this product
+            const refreshResponse = await fetch('/api/admin/tradein')
+            const refreshData = await refreshResponse.json()
+            if (refreshResponse.ok) setProducts(refreshData.products || [])
+            toast.success(`Applied "${template.name}" to ${product.title}`)
+        } catch (err) {
+            toast.error('Error: ' + err.message)
+        }
+    }
+
+    // Inline editing helpers
+    const getInlineValue = (product, field) => {
+        if (inlineEdits[product.id]?.[field] !== undefined) return inlineEdits[product.id][field]
+        if (field === 'base_price') return product.base_price?.toString() || ''
+        return product[field] || ''
+    }
+
+    const handleInlineChange = (productId, field, value) => {
+        setInlineEdits(prev => ({
+            ...prev,
+            [productId]: { ...prev[productId], [field]: value }
+        }))
+    }
+
+    const handleInlineBlur = async (product, field) => {
+        const edits = inlineEdits[product.id]
+        if (!edits || edits[field] === undefined) return
+
+        const newValue = edits[field]
+        const oldValue = field === 'base_price' ? (product.base_price?.toString() || '') : (product[field] || '')
+        if (newValue === oldValue) {
+            // No change, clear edit
+            setInlineEdits(prev => {
+                const next = { ...prev }
+                if (next[product.id]) {
+                    delete next[product.id][field]
+                    if (Object.keys(next[product.id]).length === 0) delete next[product.id]
+                }
+                return next
+            })
+            return
+        }
+
+        setSavingInline(product.id)
+        try {
+            const updateData = {
+                id: product.id,
+                title: product.title,
+                des: product.des,
+                category: product.category,
+                brand: product.brand,
+                series: product.series,
+                brand_img: product.brand_img,
+                imgs: product.imgs,
+                base_price: product.base_price,
+                min_price: product.min_price,
+                base_date: product.base_date,
+                depreciation_rate: product.depreciation_rate,
+                is_featured: product.is_featured,
+                questions: product.questions,
+                question_template_id: product.question_template_id,
+            }
+            if (field === 'base_price') {
+                updateData.base_price = parseFloat(newValue) || 0
+            } else {
+                updateData[field] = newValue
+            }
+
+            const response = await fetch('/api/admin/tradein', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(updateData)
+            })
+            if (!response.ok) throw new Error('Failed to save')
+            const data = await response.json()
+            setProducts(prev => prev.map(p => p.id === product.id ? data.product : p))
+            // Clear inline edit
+            setInlineEdits(prev => {
+                const next = { ...prev }
+                delete next[product.id]
+                return next
+            })
+        } catch (err) {
+            toast.error(`Save failed: ${err.message}`)
+        } finally {
+            setSavingInline(null)
+        }
+    }
+
     const formatPrice = (price) => {
         return new Intl.NumberFormat('en-US', {
             style: 'currency',
@@ -751,22 +935,6 @@ export default function TradeinManagePage() {
 
     const hasActiveFilters = searchTerm || categoryFilter !== 'all' || brandFilter !== 'all'
 
-    if (loading) {
-        return (
-            <div className="flex flex-col gap-4 p-4 md:p-6">
-                <div className="flex items-center gap-3">
-                    <Button variant="ghost" size="icon" onClick={() => router.back()}>
-                        <ArrowLeftIcon className="w-4 h-4" />
-                    </Button>
-                    <h1 className="text-2xl font-bold">{t('title')}</h1>
-                </div>
-                <div className="flex items-center justify-center py-20">
-                    <div className="animate-spin w-8 h-8 border-2 border-primary border-t-transparent rounded-full" />
-                </div>
-            </div>
-        )
-    }
-
     if (error) {
         return (
             <div className="flex flex-col gap-4 p-4 md:p-6">
@@ -785,7 +953,7 @@ export default function TradeinManagePage() {
         )
     }
 
-    const groups = groupedProducts()
+    const groups = groupedProducts
     const estimatedValue = getEstimatedValue()
     const allSelected = selectedIds.size === filteredProducts.length && filteredProducts.length > 0
     const someSelected = selectedIds.size > 0 && selectedIds.size < filteredProducts.length
@@ -835,7 +1003,6 @@ export default function TradeinManagePage() {
                         const data = await response.json()
                         if (response.ok) {
                             setProducts(data.products || [])
-                            setFilteredProducts(data.products || [])
                         }
                     } catch (err) {
                         console.error('Failed to refresh products:', err)
@@ -852,10 +1019,22 @@ export default function TradeinManagePage() {
                         {applyingTemplate ? <LoaderIcon className="w-4 h-4 mr-1.5 animate-spin" /> : <FileTextIcon className="w-4 h-4 mr-1.5" />}
                         {applyingTemplate ? t('applyingTemplate') : t('applyTemplate')}
                     </Button>
-                    <Button variant="outline" size="sm" onClick={handleFetchEbayPrices} disabled={fetchingPrices}>
-                        {fetchingPrices ? <LoaderIcon className="w-4 h-4 mr-1.5 animate-spin" /> : <DollarSignIcon className="w-4 h-4 mr-1.5" />}
-                        {fetchingPrices ? t('fetching') : t('fetchEbayPrices')}
-                    </Button>
+                    <div className="flex flex-col gap-1.5">
+                        <Button variant="outline" size="sm" onClick={handleFetchEbayPrices} disabled={fetchingPrices}>
+                            {fetchingPrices ? <LoaderIcon className="w-4 h-4 mr-1.5 animate-spin" /> : <DollarSignIcon className="w-4 h-4 mr-1.5" />}
+                            {fetchingPrices && priceProgress.total > 0
+                                ? `${priceProgress.done}/${priceProgress.total}`
+                                : fetchingPrices ? t('fetching') : t('fetchEbayPrices')}
+                        </Button>
+                        {fetchingPrices && priceProgress.total > 0 && (
+                            <div className="w-full h-1.5 bg-muted rounded-full overflow-hidden">
+                                <div
+                                    className="h-full bg-primary rounded-full transition-all duration-300 ease-out"
+                                    style={{ width: `${(priceProgress.done / priceProgress.total) * 100}%` }}
+                                />
+                            </div>
+                        )}
+                    </div>
                     <Button variant="outline" size="sm" onClick={() => {
                         const firstSelected = products.find(p => selectedIds.has(p.id))
                         if (firstSelected) openEditPanel(firstSelected)
@@ -958,7 +1137,7 @@ export default function TradeinManagePage() {
                         className="flex items-center gap-2 hover:text-foreground transition-colors"
                     >
                         <div className={cn(
-                            "w-4 h-4 border rounded flex items-center justify-center",
+                            "w-4 h-4 border rounded-xs flex items-center justify-center",
                             allSelected ? "bg-primary border-primary" : someSelected ? "bg-primary/50 border-primary" : "border-muted-foreground/50"
                         )}>
                             {allSelected ? <CheckIcon className="w-3 h-3 text-primary-foreground" /> : someSelected ? <MinusIcon className="w-3 h-3 text-primary-foreground" /> : null}
@@ -968,13 +1147,42 @@ export default function TradeinManagePage() {
                     <span>·</span>
                     <span>{t('showing', { filtered: filteredProducts.length, total: products.length })}</span>
                 </div>
+                <div className="flex items-center gap-2">
+                    <span className="text-xs">Per page:</span>
+                    <Select value={String(perPage)} onValueChange={handleSetPerPage}>
+                        <SelectTrigger className="w-[70px] h-7 text-xs">
+                            <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="10">10</SelectItem>
+                            <SelectItem value="20">20</SelectItem>
+                            <SelectItem value="50">50</SelectItem>
+                            <SelectItem value="100">100</SelectItem>
+                        </SelectContent>
+                    </Select>
+                </div>
             </div>
 
             {/* Main content with side panel */}
             <div className="flex gap-4">
                 {/* Products list */}
                 <div className={cn("flex-1 min-w-0 transition-all", editingProduct ? "lg:w-1/2" : "w-full")}>
-                    {filteredProducts.length === 0 ? (
+                    {loading ? (
+                        <div className="border rounded-lg overflow-hidden">
+                            {Array.from({ length: perPage > 8 ? 8 : perPage }).map((_, i) => (
+                                <div key={i} className="flex items-center gap-4 p-3 border-b last:border-0">
+                                    <div className="h-4 w-4 bg-muted rounded-xs animate-pulse" />
+                                    <div className="w-10 h-10 bg-muted rounded-xs animate-pulse flex-shrink-0" />
+                                    <div className="flex-1 space-y-2">
+                                        <div className="h-4 bg-muted rounded-xs animate-pulse" style={{ width: `${45 + (i * 7) % 35}%` }} />
+                                        <div className="h-3 w-24 bg-muted rounded-xs animate-pulse" />
+                                    </div>
+                                    <div className="h-4 w-16 bg-muted rounded-xs animate-pulse" />
+                                    <div className="h-4 w-16 bg-muted rounded-xs animate-pulse" />
+                                </div>
+                            ))}
+                        </div>
+                    ) : filteredProducts.length === 0 ? (
                         <Card>
                             <CardContent className="py-12">
                                 <div className="text-center">
@@ -1000,7 +1208,7 @@ export default function TradeinManagePage() {
                                         <tr>
                                             <th className="text-left p-3 font-medium w-10">
                                                 <button onClick={selectAll} className={cn(
-                                                    "w-4 h-4 border rounded flex items-center justify-center",
+                                                    "w-4 h-4 border rounded-xs flex items-center justify-center",
                                                     allSelected ? "bg-primary border-primary" : someSelected ? "bg-primary/50 border-primary" : ""
                                                 )}>
                                                     {allSelected ? <CheckIcon className="w-3 h-3 text-primary-foreground" /> : someSelected ? <MinusIcon className="w-3 h-3 text-primary-foreground" /> : null}
@@ -1033,18 +1241,21 @@ export default function TradeinManagePage() {
                                                     const isEditing = editingProduct?.id === product.id
 
                                                     return (
-                                                        <tr key={product.id} className={cn("hover:bg-muted/30 cursor-pointer", isEditing && "bg-primary/5", isSelected && "bg-primary/10")} onDoubleClick={() => router.push(`/admin/tradein/edit/${product.id}`)}>
-                                                            <td className="p-3">
+                                                        <tr key={product.id} className={cn("hover:bg-muted/30", isEditing && "bg-primary/5", isSelected && "bg-primary/10", savingInline === product.id && "opacity-60")} onDoubleClick={() => router.push(`/admin/tradein/edit/${product.id}`)}>
+                                                            <td className="p-3 align-top">
                                                                 <button onClick={(e) => { e.stopPropagation(); toggleSelect(product.id) }} className={cn(
-                                                                    "w-4 h-4 border rounded flex items-center justify-center",
+                                                                    "w-4 h-4 border rounded-xs flex items-center justify-center mt-1",
                                                                     isSelected ? "bg-primary border-primary" : ""
                                                                 )}>
                                                                     {isSelected && <CheckIcon className="w-3 h-3 text-primary-foreground" />}
                                                                 </button>
                                                             </td>
-                                                            <td className="p-3">
-                                                                <div className="flex items-center gap-3">
-                                                                    <div className="w-10 h-10 rounded-none flex-shrink-0 overflow-hidden">
+                                                            <td className="p-2">
+                                                                <div className="flex items-start gap-3">
+                                                                    <div
+                                                                        className="w-10 h-10 rounded-xs flex-shrink-0 overflow-hidden cursor-pointer hover:ring-2 hover:ring-primary/50 transition-all bg-muted"
+                                                                        onClick={(e) => openImageDialog(product, e)}
+                                                                    >
                                                                         {product.imgs?.[0] ? (
                                                                             <Image src={product.imgs[0]} alt="" width={40} height={40} className="w-full h-full object-contain" />
                                                                         ) : (
@@ -1053,36 +1264,63 @@ export default function TradeinManagePage() {
                                                                             </div>
                                                                         )}
                                                                     </div>
-                                                                    <div className="min-w-0">
-                                                                        <div className="font-medium truncate flex items-center gap-2">
-                                                                            {product.title}
-                                                                            {product.is_featured && <StarIcon className="w-3 h-3 text-yellow-500 fill-yellow-500" />}
+                                                                    <div className="flex-1 min-w-0 space-y-1">
+                                                                        <div className="flex items-center gap-1">
+                                                                            <Textarea
+                                                                                className="w-full bg-transparent border-0 shadow-none p-0 px-1 -mx-1 text-sm font-medium min-h-0 resize-none focus-visible:ring-1 focus-visible:ring-primary/40 focus-visible:bg-muted/30 rounded-sm"
+                                                                                rows={1}
+                                                                                value={getInlineValue(product, 'title')}
+                                                                                onChange={(e) => handleInlineChange(product.id, 'title', e.target.value)}
+                                                                                onBlur={() => handleInlineBlur(product, 'title')}
+                                                                                onClick={(e) => e.stopPropagation()}
+                                                                            />
+                                                                            {product.is_featured && <StarIcon className="w-3 h-3 text-yellow-500 fill-yellow-500 flex-shrink-0" />}
                                                                             {product.question_template_id && (
-                                                                                <Badge variant="outline" className="text-[10px] h-4 px-1 bg-blue-50 text-blue-600 border-blue-200 dark:bg-blue-950/30 dark:text-blue-400 dark:border-blue-800">
+                                                                                <Badge variant="outline" className="text-[10px] h-4 px-1 bg-blue-50 text-blue-600 border-blue-200 dark:bg-blue-950/30 dark:text-blue-400 dark:border-blue-800 flex-shrink-0 cursor-pointer" onClick={(e) => { e.stopPropagation(); openEditPanel(product) }}>
                                                                                     <FileTextIcon className="w-2.5 h-2.5 mr-0.5" />T
                                                                                 </Badge>
                                                                             )}
                                                                         </div>
-                                                                        <div className="text-xs text-muted-foreground">{product.brand} · {product.series}</div>
+                                                                        <Textarea
+                                                                            className="w-full bg-transparent border-0 shadow-none p-0 px-1 -mx-1 text-xs text-muted-foreground min-h-0 resize-none rounded-xs focus-visible:ring-1 focus-visible:ring-primary/40 focus-visible:bg-muted/30"
+                                                                            rows={expandedDesIds.has(product.id) ? 3 : 1}
+                                                                            placeholder="Description..."
+                                                                            value={getInlineValue(product, 'des')}
+                                                                            onChange={(e) => handleInlineChange(product.id, 'des', e.target.value)}
+                                                                            onBlur={() => { handleInlineBlur(product, 'des'); setExpandedDesIds(prev => { const n = new Set(prev); n.delete(product.id); return n }) }}
+                                                                            onFocus={() => { if (!expandedDesIds.has(product.id)) toggleDesExpand(product.id) }}
+                                                                            onClick={(e) => e.stopPropagation()}
+                                                                        />
                                                                     </div>
                                                                 </div>
                                                             </td>
-                                                            <td className="p-3 hidden md:table-cell">
+                                                            <td className="p-2 hidden md:table-cell align-top">
                                                                 <Badge variant="outline">{product.category}</Badge>
                                                             </td>
-                                                            <td className="p-3 text-right font-medium">{formatPrice(product.base_price)}</td>
-                                                            <td className="p-3 text-right hidden sm:table-cell">
-                                                                <span className="text-green-600 font-medium">{formatPrice(currentValue)}</span>
+                                                            <td className="p-2 text-right align-top">
+                                                                <input
+                                                                    type="number"
+                                                                    step="0.01"
+                                                                    className="w-20 bg-transparent border-0 p-0 px-1 text-sm font-medium text-right rounded-xs focus:ring-1 focus:ring-primary/40 focus:bg-muted/30 outline-none"
+                                                                    value={getInlineValue(product, 'base_price')}
+                                                                    onChange={(e) => handleInlineChange(product.id, 'base_price', e.target.value)}
+                                                                    onBlur={() => handleInlineBlur(product, 'base_price')}
+                                                                    onClick={(e) => e.stopPropagation()}
+                                                                />
                                                             </td>
-                                                            <td className="p-3">
+                                                            <td className="p-2 text-right hidden sm:table-cell align-top">
+                                                                <span className="text-green-600 font-medium text-sm">{formatPrice(currentValue)}</span>
+                                                            </td>
+                                                            <td className="p-2 align-top">
                                                                 <div className="flex items-center justify-center gap-1">
-                                                                    <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => openEditPanel(product)}>
-                                                                        <EditIcon className="w-4 h-4" />
+                                                                    {savingInline === product.id && <LoaderIcon className="w-3 h-3 animate-spin text-muted-foreground" />}
+                                                                    <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => openEditPanel(product)}>
+                                                                        <EditIcon className="w-3.5 h-3.5" />
                                                                     </Button>
                                                                     <DropdownMenu>
                                                                         <DropdownMenuTrigger asChild>
-                                                                            <Button variant="ghost" size="icon" className="h-8 w-8">
-                                                                                <MoreHorizontalIcon className="w-4 h-4" />
+                                                                            <Button variant="ghost" size="icon" className="h-7 w-7">
+                                                                                <MoreHorizontalIcon className="w-3.5 h-3.5" />
                                                                             </Button>
                                                                         </DropdownMenuTrigger>
                                                                         <DropdownMenuContent align="end">
@@ -1131,14 +1369,14 @@ export default function TradeinManagePage() {
                                                 const isEditing = editingProduct?.id === product.id
 
                                                 return (
-                                                    <Card key={product.id} className={cn("group hover:shadow-md transition-all cursor-pointer", isEditing && "ring-2 ring-primary", isSelected && "bg-primary/5")}>
-                                                        <CardContent className="p-4" onClick={() => openEditPanel(product)} onDoubleClick={() => router.push(`/admin/tradein/edit/${product.id}`)}>
-                                                            <div className="flex gap-4">
+                                                    <Card key={product.id} className={cn("group hover:shadow-md transition-all", isEditing && "ring-2 ring-primary", isSelected && "bg-primary/5", savingInline === product.id && "opacity-60")}>
+                                                        <CardContent className="p-4">
+                                                            <div className="flex gap-3">
                                                                 {/* Checkbox */}
                                                                 <button
-                                                                    onClick={(e) => { e.stopPropagation(); toggleSelect(product.id) }}
+                                                                    onClick={() => toggleSelect(product.id)}
                                                                     className={cn(
-                                                                        "w-5 h-5 border rounded flex-shrink-0 flex items-center justify-center mt-1",
+                                                                        "w-5 h-5 border rounded-xs flex-shrink-0 flex items-center justify-center mt-1",
                                                                         isSelected ? "bg-primary border-primary" : "border-muted-foreground/30"
                                                                     )}
                                                                 >
@@ -1146,7 +1384,10 @@ export default function TradeinManagePage() {
                                                                 </button>
 
                                                                 {/* Image */}
-                                                                <div className="w-16 h-16 rounded-lg bg-muted flex-shrink-0 overflow-hidden">
+                                                                <div
+                                                                    className="w-16 h-16 rounded-lg bg-muted flex-shrink-0 overflow-hidden cursor-pointer hover:ring-2 hover:ring-primary/50 transition-all"
+                                                                    onClick={() => openImageDialog(product)}
+                                                                >
                                                                     {product.imgs?.[0] ? (
                                                                         <Image src={product.imgs[0]} alt={product.title} width={64} height={64} className="w-full h-full object-contain" />
                                                                     ) : (
@@ -1156,48 +1397,90 @@ export default function TradeinManagePage() {
                                                                     )}
                                                                 </div>
 
-                                                                {/* Info */}
-                                                                <div className="flex-1 min-w-0">
-                                                                    <h3 className="font-semibold truncate flex items-center gap-2">
-                                                                        {product.title}
+                                                                {/* Info - inline editable */}
+                                                                <div className="flex-1 min-w-0 space-y-1">
+                                                                    <div className="flex items-center gap-1">
+                                                                        <Textarea
+                                                                            className="w-full bg-transparent border-0 shadow-none p-0 px-1 -mx-1 text-sm font-semibold min-h-0 resize-none rounded-xs focus-visible:ring-1 focus-visible:ring-primary/40 focus-visible:bg-muted/30"
+                                                                            rows={1}
+                                                                            value={getInlineValue(product, 'title')}
+                                                                            onChange={(e) => handleInlineChange(product.id, 'title', e.target.value)}
+                                                                            onBlur={() => handleInlineBlur(product, 'title')}
+                                                                        />
                                                                         {product.is_featured && <StarIcon className="w-4 h-4 text-yellow-500 fill-yellow-500 flex-shrink-0" />}
-                                                                        {product.question_template_id && (
-                                                                            <Badge variant="outline" className="text-[10px] h-4 px-1 bg-blue-50 text-blue-600 border-blue-200 dark:bg-blue-950/30 dark:text-blue-400 dark:border-blue-800 shrink-0">
-                                                                                <FileTextIcon className="w-2.5 h-2.5 mr-0.5" />T
-                                                                            </Badge>
-                                                                        )}
-                                                                    </h3>
-                                                                    <p className="text-sm text-muted-foreground">{product.brand} · {product.series}</p>
-                                                                    <div className="flex items-center gap-2 mt-2">
-                                                                        <span className="font-semibold">{formatPrice(product.base_price)}</span>
+                                                                    </div>
+                                                                    <p className="text-sm text-muted-foreground px-1">{product.brand} · {product.series}</p>
+                                                                    <Textarea
+                                                                        className="w-full bg-transparent border-0 shadow-none p-0 px-1 -mx-1 text-xs text-muted-foreground min-h-0 resize-none rounded-xs focus-visible:ring-1 focus-visible:ring-primary/40 focus-visible:bg-muted/30"
+                                                                        rows={expandedDesIds.has(product.id) ? 3 : 1}
+                                                                        placeholder="Description..."
+                                                                        value={getInlineValue(product, 'des')}
+                                                                        onChange={(e) => handleInlineChange(product.id, 'des', e.target.value)}
+                                                                        onBlur={() => { handleInlineBlur(product, 'des'); setExpandedDesIds(prev => { const n = new Set(prev); n.delete(product.id); return n }) }}
+                                                                        onFocus={() => { if (!expandedDesIds.has(product.id)) toggleDesExpand(product.id) }}
+                                                                    />
+                                                                    <div className="flex items-center gap-2">
+                                                                        <span className="text-xs text-muted-foreground">$</span>
+                                                                        <input
+                                                                            type="number"
+                                                                            step="0.01"
+                                                                            className="w-20 bg-transparent border-0 p-0 px-1 text-sm font-semibold resize-none rounded-xs focus:ring-1 focus:ring-primary/40 focus:bg-muted/30 outline-none"
+                                                                            value={getInlineValue(product, 'base_price')}
+                                                                            onChange={(e) => handleInlineChange(product.id, 'base_price', e.target.value)}
+                                                                            onBlur={() => handleInlineBlur(product, 'base_price')}
+                                                                        />
                                                                         <span className="text-muted-foreground">→</span>
-                                                                        <span className="font-semibold text-green-600">{formatPrice(currentValue)}</span>
+                                                                        <span className="font-semibold text-green-600 text-sm">{formatPrice(currentValue)}</span>
                                                                         {depRate > 0 && (
                                                                             <Badge variant="secondary" className="text-xs">-{depRate}%</Badge>
                                                                         )}
                                                                     </div>
+                                                                    {/* Template badge */}
+                                                                    {product.question_template_id ? (
+                                                                        <Badge
+                                                                            variant="outline"
+                                                                            className="text-[10px] h-4 px-1 bg-blue-50 text-blue-600 border-blue-200 dark:bg-blue-950/30 dark:text-blue-400 dark:border-blue-800 cursor-pointer hover:bg-blue-100 dark:hover:bg-blue-950/50"
+                                                                            onClick={() => openEditPanel(product)}
+                                                                        >
+                                                                            <FileTextIcon className="w-2.5 h-2.5 mr-0.5" />Template
+                                                                        </Badge>
+                                                                    ) : (
+                                                                        <Badge
+                                                                            variant="outline"
+                                                                            className="text-[10px] h-4 px-1 text-muted-foreground/50 cursor-pointer hover:text-muted-foreground hover:border-muted-foreground/50"
+                                                                            onClick={() => openEditPanel(product)}
+                                                                        >
+                                                                            <PlusIcon className="w-2.5 h-2.5 mr-0.5" />Template
+                                                                        </Badge>
+                                                                    )}
                                                                 </div>
 
                                                                 {/* Actions */}
-                                                                <DropdownMenu>
-                                                                    <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
-                                                                        <Button variant="ghost" size="icon" className="h-8 w-8 flex-shrink-0">
-                                                                            <MoreHorizontalIcon className="w-4 h-4" />
-                                                                        </Button>
-                                                                    </DropdownMenuTrigger>
-                                                                    <DropdownMenuContent align="end">
-                                                                        <DropdownMenuItem onClick={(e) => { e.stopPropagation(); window.open(`/trade/product/${product.id}`, '_blank') }}>
-                                                                            <EyeIcon className="w-4 h-4 mr-2" />{t('viewLive')}
-                                                                        </DropdownMenuItem>
-                                                                        <DropdownMenuItem onClick={(e) => { e.stopPropagation(); handleDuplicate(product) }}>
-                                                                            <CopyIcon className="w-4 h-4 mr-2" />{t('duplicate')}
-                                                                        </DropdownMenuItem>
-                                                                        <DropdownMenuSeparator />
-                                                                        <DropdownMenuItem className="text-red-600" onClick={(e) => { e.stopPropagation(); handleDelete(product.id) }} disabled={deleting === product.id}>
-                                                                            <TrashIcon className="w-4 h-4 mr-2" />{t('delete')}
-                                                                        </DropdownMenuItem>
-                                                                    </DropdownMenuContent>
-                                                                </DropdownMenu>
+                                                                <div className="flex flex-col items-center gap-1 flex-shrink-0">
+                                                                    {savingInline === product.id && <LoaderIcon className="w-3 h-3 animate-spin text-muted-foreground" />}
+                                                                    <DropdownMenu>
+                                                                        <DropdownMenuTrigger asChild>
+                                                                            <Button variant="ghost" size="icon" className="h-7 w-7">
+                                                                                <MoreHorizontalIcon className="w-4 h-4" />
+                                                                            </Button>
+                                                                        </DropdownMenuTrigger>
+                                                                        <DropdownMenuContent align="end">
+                                                                            <DropdownMenuItem onClick={() => openEditPanel(product)}>
+                                                                                <EditIcon className="w-4 h-4 mr-2" />{t('edit') || 'Edit'}
+                                                                            </DropdownMenuItem>
+                                                                            <DropdownMenuItem onClick={() => window.open(`/trade/product/${product.id}`, '_blank')}>
+                                                                                <EyeIcon className="w-4 h-4 mr-2" />{t('viewLive')}
+                                                                            </DropdownMenuItem>
+                                                                            <DropdownMenuItem onClick={() => handleDuplicate(product)}>
+                                                                                <CopyIcon className="w-4 h-4 mr-2" />{t('duplicate')}
+                                                                            </DropdownMenuItem>
+                                                                            <DropdownMenuSeparator />
+                                                                            <DropdownMenuItem className="text-red-600" onClick={() => handleDelete(product.id)} disabled={deleting === product.id}>
+                                                                                <TrashIcon className="w-4 h-4 mr-2" />{t('delete')}
+                                                                            </DropdownMenuItem>
+                                                                        </DropdownMenuContent>
+                                                                    </DropdownMenu>
+                                                                </div>
                                                             </div>
                                                         </CardContent>
                                                     </Card>
@@ -1207,6 +1490,30 @@ export default function TradeinManagePage() {
                                     )}
                                 </div>
                             ))}
+                        </div>
+                    )}
+
+                    {/* Pagination */}
+                    {totalPages > 1 && (
+                        <div className="flex items-center justify-between pt-4">
+                            <span className="text-sm text-muted-foreground">
+                                {(currentPage - 1) * perPage + 1}–{Math.min(currentPage * perPage, filteredProducts.length)} of {filteredProducts.length}
+                            </span>
+                            <div className="flex items-center gap-1">
+                                <Button variant="outline" size="icon" className="h-8 w-8" disabled={currentPage <= 1} onClick={() => setCurrentPage(1)}>
+                                    <ChevronLeftIcon className="w-4 h-4" /><ChevronLeftIcon className="w-4 h-4 -ml-2.5" />
+                                </Button>
+                                <Button variant="outline" size="icon" className="h-8 w-8" disabled={currentPage <= 1} onClick={() => setCurrentPage(p => p - 1)}>
+                                    <ChevronLeftIcon className="w-4 h-4" />
+                                </Button>
+                                <span className="px-3 text-sm font-medium">{currentPage} / {totalPages}</span>
+                                <Button variant="outline" size="icon" className="h-8 w-8" disabled={currentPage >= totalPages} onClick={() => setCurrentPage(p => p + 1)}>
+                                    <ChevronRightIcon className="w-4 h-4" />
+                                </Button>
+                                <Button variant="outline" size="icon" className="h-8 w-8" disabled={currentPage >= totalPages} onClick={() => setCurrentPage(totalPages)}>
+                                    <ChevronRightIcon className="w-4 h-4" /><ChevronRightIcon className="w-4 h-4 -ml-2.5" />
+                                </Button>
+                            </div>
                         </div>
                     )}
                 </div>
@@ -1238,15 +1545,20 @@ export default function TradeinManagePage() {
                                 {/* Title */}
                                 <div className="space-y-1.5">
                                     <Label htmlFor="edit-title">Title *</Label>
-                                    <Input id="edit-title" value={editFormData.title} onChange={(e) => handleEditInputChange('title', e.target.value)} />
+                                    <Textarea
+                                        id="edit-title"
+                                        className="min-h-[60px] resize-none"
+                                        value={editFormData.title}
+                                        onChange={(e) => handleEditInputChange('title', e.target.value)}
+                                    />
                                 </div>
 
                                 {/* Description */}
                                 <div className="space-y-1.5">
                                     <Label htmlFor="edit-des">Description</Label>
-                                    <textarea
+                                    <Textarea
                                         id="edit-des"
-                                        className="w-full min-h-[80px] px-3 py-2 border border-input rounded-md resize-none focus:outline-none focus:ring-2 focus:ring-ring bg-background text-sm"
+                                        className="min-h-[80px] resize-none"
                                         value={editFormData.des}
                                         onChange={(e) => handleEditInputChange('des', e.target.value)}
                                     />
@@ -1273,7 +1585,7 @@ export default function TradeinManagePage() {
                                     <Label className="text-sm">Brand Image</Label>
                                     <div className="flex items-center gap-3">
                                         {editFormData.brand_img && (
-                                            <div className="relative w-12 h-12 rounded border bg-muted flex-shrink-0">
+                                            <div className="relative w-12 h-12 rounded-xs border bg-muted flex-shrink-0">
                                                 <Image
                                                     src={normalizeImageUrl(editFormData.brand_img)}
                                                     alt="Brand"
@@ -1443,7 +1755,7 @@ export default function TradeinManagePage() {
                                     {editFormData.questions && editFormData.questions.length > 0 ? (
                                         <div className="space-y-2 max-h-[300px] overflow-y-auto">
                                             {editFormData.questions.map((question, qIndex) => (
-                                                <div key={qIndex} className="border rounded p-2 bg-background space-y-2 text-sm">
+                                                <div key={qIndex} className="border rounded-xs p-2 bg-background space-y-2 text-sm">
                                                     <div className="flex items-start gap-2">
                                                         <div className="flex-1 space-y-1">
                                                             <Input
@@ -1564,6 +1876,27 @@ export default function TradeinManagePage() {
                                 {/* Images */}
                                 <div className="space-y-2">
                                     <Label className="text-sm">{t('productImages')}</Label>
+                                    {editFormData.imgs?.length > 0 && (
+                                        <div className="flex gap-2 flex-wrap">
+                                            {editFormData.imgs.map((img, idx) => (
+                                                <div
+                                                    key={idx}
+                                                    className="relative w-16 h-16 rounded-xs border bg-muted cursor-pointer hover:ring-2 hover:ring-primary/50 transition-all"
+                                                    onClick={() => {
+                                                        setImageDialogProduct(editingProduct)
+                                                        setImageDialogImages(editFormData.imgs)
+                                                    }}
+                                                >
+                                                    <Image
+                                                        src={normalizeImageUrl(img)}
+                                                        alt=""
+                                                        fill
+                                                        className="object-contain p-1"
+                                                    />
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
                                     <ImageUpload
                                         value={editFormData.imgs}
                                         onChange={(urls) => handleEditInputChange('imgs', urls)}
@@ -1637,6 +1970,70 @@ export default function TradeinManagePage() {
                     </div>
                 )}
             </div>
+
+            {/* Image Dialog */}
+            <Dialog open={!!imageDialogProduct} onOpenChange={(open) => { if (!open) setImageDialogProduct(null) }}>
+                <DialogContent className="sm:max-w-lg">
+                    <DialogHeader>
+                        <DialogTitle>Product Images — {imageDialogProduct?.title}</DialogTitle>
+                    </DialogHeader>
+                    <div className="space-y-4">
+                        {imageDialogImages.length > 0 ? (
+                            <div className="grid grid-cols-3 gap-3">
+                                {imageDialogImages.map((img, idx) => (
+                                    <div key={idx} className="relative aspect-square rounded-lg border bg-muted overflow-hidden group">
+                                        <Image
+                                            src={normalizeImageUrl(img)}
+                                            alt=""
+                                            fill
+                                            className="object-contain p-2"
+                                        />
+                                        <button
+                                            type="button"
+                                            onClick={() => {
+                                                const newImgs = imageDialogImages.filter((_, i) => i !== idx)
+                                                setImageDialogImages(newImgs)
+                                            }}
+                                            className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-0.5 hover:bg-red-600 opacity-0 group-hover:opacity-100 transition-opacity"
+                                        >
+                                            <XIcon className="w-3 h-3" />
+                                        </button>
+                                    </div>
+                                ))}
+                            </div>
+                        ) : (
+                            <div className="text-center py-8 text-muted-foreground text-sm">
+                                <ImageIcon className="w-8 h-8 mx-auto mb-2 opacity-30" />
+                                No images
+                            </div>
+                        )}
+                        <ImageUpload
+                            value={imageDialogImages}
+                            onChange={(urls) => setImageDialogImages(urls)}
+                            multiple={true}
+                            folder="tradein/products"
+                            label="Upload Images"
+                            onDelete={deleteFileFromBucket}
+                        />
+                        <div className="flex justify-end gap-2">
+                            <Button variant="outline" onClick={() => setImageDialogProduct(null)}>Cancel</Button>
+                            <Button onClick={handleImageDialogSave} disabled={savingImages}>
+                                {savingImages ? (
+                                    <>
+                                        <LoaderIcon className="w-4 h-4 animate-spin mr-1" />
+                                        Saving...
+                                    </>
+                                ) : (
+                                    <>
+                                        <SaveIcon className="w-4 h-4 mr-1" />
+                                        Save Images
+                                    </>
+                                )}
+                            </Button>
+                        </div>
+                    </div>
+                </DialogContent>
+            </Dialog>
 
             {/* Bulk Apply Template Dialog */}
             <Dialog open={showBulkTemplateDialog} onOpenChange={setShowBulkTemplateDialog}>

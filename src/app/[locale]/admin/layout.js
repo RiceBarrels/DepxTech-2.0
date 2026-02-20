@@ -1,3 +1,4 @@
+"use client"
 import AdminChecker from '@/lib/adminChecker'
 import { AdminSidebar, AdminMobileHeader } from '@/components/admin/AdminSidebar'
 

@@ -9,13 +9,6 @@ import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
 import { Separator } from "@/components/ui/separator"
 import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select"
-import {
     Dialog,
     DialogContent,
     DialogDescription,
@@ -44,12 +37,7 @@ import { toast } from "sonner"
 import { TransitionLink } from "@/components/ui/pageTransitions"
 import { useTransitionRouter } from "@/components/ui/pageTransitions"
 import { useTranslations } from 'next-intl'
-
-const LANGUAGE_OPTIONS = [
-    { value: 'en', label: 'English' },
-    { value: 'es', label: 'Español' },
-    { value: 'zh', label: '中文' },
-]
+import { LanguageSwitcher } from "@/components/ui/language-switcher"
 
 export default function SettingsPage() {
     const t = useTranslations('account.settingsPage')
@@ -329,21 +317,7 @@ export default function SettingsPage() {
                                     </p>
                                 </div>
                             </div>
-                            <Select
-                                value={settings.language}
-                                onValueChange={(value) => updateSetting('language', value)}
-                            >
-                                <SelectTrigger className="w-[140px]">
-                                    <SelectValue />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    {LANGUAGE_OPTIONS.map((option) => (
-                                        <SelectItem key={option.value} value={option.value}>
-                                            {option.label}
-                                        </SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
+                            <LanguageSwitcher />
                         </div>
                     </CardContent>
                 </Card>

@@ -22,7 +22,7 @@ export function Footer(){
             {/* Desktop Footer */}
             <footer className="hidden sm:block border-t bg-muted/30 mt-12">
                 <div className="max-w-7xl mx-auto px-6 py-12">
-                    <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-8">
+                    <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-8">
                         {/* About */}
                         <div className="col-span-2 md:col-span-4 lg:col-span-2">
                             <h2 className="font-black text-2xl tracking-tight mb-3">DepxTech</h2>
@@ -36,25 +36,38 @@ export function Footer(){
                             </div>
                         </div>
 
-                        {/* About Links */}
+                        {/* Shopping */}
+                        <div>
+                            <h3 className="font-semibold text-sm mb-3">{t('shoppingSection')}</h3>
+                            <div className="flex flex-col gap-2">
+                                <TransitionLink href="/" className={desktopLinkClass}>{t('home')}</TransitionLink>
+                                <TransitionLink href="/products" className={desktopLinkClass}>{t('allProducts')}</TransitionLink>
+                                <TransitionLink href="/offers" className={desktopLinkClass}>{t('offers')}</TransitionLink>
+                                <TransitionLink href="/cart" className={desktopLinkClass}>{t('shoppingCart')}</TransitionLink>
+                                <TransitionLink href="/checkout" className={desktopLinkClass}>{t('checkout')}</TransitionLink>
+                            </div>
+                        </div>
+
+                        {/* Trade-in */}
+                        <div>
+                            <h3 className="font-semibold text-sm mb-3">{t('tradingSection')}</h3>
+                            <div className="flex flex-col gap-2">
+                                <TransitionLink href="/trade" className={desktopLinkClass}>{t('tradeHub')}</TransitionLink>
+                                <TransitionLink href="/trade/browse" className={desktopLinkClass}>{t('browseDevices')}</TransitionLink>
+                                <TransitionLink href="/trade/how-it-works" className={desktopLinkClass}>{t('howItWorks')}</TransitionLink>
+                                <TransitionLink href="/trade/process" className={desktopLinkClass}>{t('tradeProcess')}</TransitionLink>
+                                <TransitionLink href="/trade/faq" className={desktopLinkClass}>{t('tradeFaq')}</TransitionLink>
+                                <TransitionLink href="/trade/sustainability" className={desktopLinkClass}>{t('sustainability')}</TransitionLink>
+                            </div>
+                        </div>
+
+                        {/* About */}
                         <div>
                             <h3 className="font-semibold text-sm mb-3">{t('aboutSection')}</h3>
                             <div className="flex flex-col gap-2">
                                 <TransitionLink href="/about" className={desktopLinkClass}>{t('aboutUs')}</TransitionLink>
                                 <TransitionLink href="/blog" className={desktopLinkClass}>{t('blog')}</TransitionLink>
                                 <TransitionLink href="/deephuo" className={desktopLinkClass}>{t('wthIsDeephuo')}</TransitionLink>
-                            </div>
-                        </div>
-
-                        {/* Trading */}
-                        <div>
-                            <h3 className="font-semibold text-sm mb-3">{t('tradingSection')}</h3>
-                            <div className="flex flex-col gap-2">
-                                <TransitionLink href="/trade" className={desktopLinkClass}>{t('tradeHub')}</TransitionLink>
-                                <TransitionLink href="/trade" className={desktopLinkClass}>{t('tradeGpu')}</TransitionLink>
-                                <TransitionLink href="/trade" className={desktopLinkClass}>{t('tradeCpu')}</TransitionLink>
-                                <TransitionLink href="/trade" className={desktopLinkClass}>{t('tradeRam')}</TransitionLink>
-                                <TransitionLink href="/refund-policy" className={desktopLinkClass}>{t('returnPolicy')}</TransitionLink>
                             </div>
                         </div>
 
@@ -66,16 +79,20 @@ export function Footer(){
                                 <TransitionLink href="/signup" className={desktopLinkClass}>{t('signUp')}</TransitionLink>
                                 <TransitionLink href="/account" className={desktopLinkClass}>{t('myAccount')}</TransitionLink>
                                 <TransitionLink href="/account/orders" className={desktopLinkClass}>{t('myOrders')}</TransitionLink>
+                                <TransitionLink href="/account/trade-ins" className={desktopLinkClass}>{t('myTradeIns')}</TransitionLink>
                                 <TransitionLink href="/account/settings" className={desktopLinkClass}>{t('accountSettings')}</TransitionLink>
                             </div>
                         </div>
 
-                        {/* Help */}
+                        {/* Help & Info */}
                         <div>
                             <h3 className="font-semibold text-sm mb-3">{t('helpSection')}</h3>
                             <div className="flex flex-col gap-2">
                                 <TransitionLink href="help" className={desktopLinkClass}>{t('helpCenter')}</TransitionLink>
                                 <TransitionLink href="support" className={desktopLinkClass}>{t('chatNow')}</TransitionLink>
+                                <TransitionLink href="/shipping" className={desktopLinkClass}>{t('shippingInfo')}</TransitionLink>
+                                <TransitionLink href="/warranty" className={desktopLinkClass}>{t('warranty')}</TransitionLink>
+                                <TransitionLink href="/returns" className={desktopLinkClass}>{t('returns')}</TransitionLink>
                                 <span className="text-xs text-muted-foreground">{t('helpHours')}</span>
                                 <span className="text-xs text-muted-foreground">{t('helpEmail')}</span>
                             </div>
@@ -128,6 +145,8 @@ export function Footer(){
                             <div className="px-6"><Separator /></div>
                             <TransitionLink href="/products" className={linkClass}>{t('allProducts')}</TransitionLink>
                             <div className="px-6"><Separator /></div>
+                            <TransitionLink href="/offers" className={linkClass}>{t('offers')}</TransitionLink>
+                            <div className="px-6"><Separator /></div>
                             <TransitionLink href="/cart" className={linkClass}>{t('shoppingCart')}</TransitionLink>
                             <div className="px-6"><Separator /></div>
                             <TransitionLink href="/checkout" className={linkClass}>{t('checkout')}</TransitionLink>
@@ -141,13 +160,15 @@ export function Footer(){
                             <div className="px-6"><Separator /></div>
                             <TransitionLink href="/trade" className={linkClass}>{t('tradeHub')}</TransitionLink>
                             <div className="px-6"><Separator /></div>
-                            <TransitionLink href="/trade" className={linkClass}>{t('tradeGpu')}</TransitionLink>
+                            <TransitionLink href="/trade/browse" className={linkClass}>{t('browseDevices')}</TransitionLink>
                             <div className="px-6"><Separator /></div>
-                            <TransitionLink href="/trade" className={linkClass}>{t('tradeCpu')}</TransitionLink>
+                            <TransitionLink href="/trade/how-it-works" className={linkClass}>{t('howItWorks')}</TransitionLink>
                             <div className="px-6"><Separator /></div>
-                            <TransitionLink href="/trade" className={linkClass}>{t('tradeRam')}</TransitionLink>
+                            <TransitionLink href="/trade/process" className={linkClass}>{t('tradeProcess')}</TransitionLink>
                             <div className="px-6"><Separator /></div>
-                            <TransitionLink href="/refund-policy" className={linkClass}>{t('returnPolicy')}</TransitionLink>
+                            <TransitionLink href="/trade/faq" className={linkClass}>{t('tradeFaq')}</TransitionLink>
+                            <div className="px-6"><Separator /></div>
+                            <TransitionLink href="/trade/sustainability" className={linkClass}>{t('sustainability')}</TransitionLink>
                         </AccordionContent>
                     </AccordionItem>
                     <AccordionItem value="item-4">
@@ -161,6 +182,8 @@ export function Footer(){
                             <TransitionLink href="/account" className={linkClass}>{t('myAccount')}</TransitionLink>
                             <div className="px-6"><Separator /></div>
                             <TransitionLink href="/account/orders" className={linkClass}>{t('myOrders')}</TransitionLink>
+                            <div className="px-6"><Separator /></div>
+                            <TransitionLink href="/account/trade-ins" className={linkClass}>{t('myTradeIns')}</TransitionLink>
                             <div className="px-6"><Separator /></div>
                             <TransitionLink href="/account/settings" className={linkClass}>{t('accountSettings')}</TransitionLink>
                             <div className="px-6"><Separator /></div>
@@ -178,6 +201,12 @@ export function Footer(){
                             <TransitionLink href="help" className={linkClass}>{t('helpCenter')}</TransitionLink>
                             <div className="px-6"><Separator /></div>
                             <TransitionLink href="support" className={linkClass}>{t('chatNow')}</TransitionLink>
+                            <div className="px-6"><Separator /></div>
+                            <TransitionLink href="/shipping" className={linkClass}>{t('shippingInfo')}</TransitionLink>
+                            <div className="px-6"><Separator /></div>
+                            <TransitionLink href="/warranty" className={linkClass}>{t('warranty')}</TransitionLink>
+                            <div className="px-6"><Separator /></div>
+                            <TransitionLink href="/returns" className={linkClass}>{t('returns')}</TransitionLink>
                             <div className="px-6"><Separator /></div>
                             <small className={linkClass}>{t('helpHours')}</small>
                             <small className={linkClass}>{t('helpEmail')}</small>
