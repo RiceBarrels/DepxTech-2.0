@@ -6,9 +6,8 @@ import { useSearchParams } from 'next/navigation'
 import { useCallback, useTransition, useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useTranslations } from 'next-intl'
-import { ChevronRight, X, ArrowLeft, SearchIcon } from 'lucide-react'
+import { ChevronRight, X, SearchIcon } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
 import {
   Select,
   SelectContent,
@@ -16,7 +15,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { TransitionLink } from '@/components/ui/pageTransitions'
 import { Input } from '@/components/ui/input'
 import TradeBrandCard from './TradeBrandCard'
 import { TradeProductCard } from './TradeCards'
@@ -91,6 +89,19 @@ export default function TradeBrowseSteps({
       updateParam('brand', autoSkip.brand)
     }
   }, [autoSkip.brand, brand, updateParam])
+
+  // Redirect to /trade if no category selected
+  useEffect(() => {
+    if (!category) {
+      // Add transition class before navigation
+      document.documentElement.classList.add('transition-fade')
+      document.documentElement.classList.remove('transition-slide')
+
+      startTransition(() => {
+        router.push('/trade')
+      })
+    }
+  }, [category, router, startTransition])
 
   const [filterQuery, setFilterQuery] = useState('')
   const [selectedSeries, setSelectedSeries] = useState('all')
@@ -189,27 +200,6 @@ export default function TradeBrowseSteps({
       </div>
 
       <AnimatePresence mode="wait">
-        {/* No category — prompt to go back */}
-        {!category && (
-          <motion.div
-            key="no-category"
-            variants={sectionVariants}
-            initial="hidden"
-            animate="visible"
-            exit="exit"
-            className="text-center py-16"
-          >
-            <h2 className="text-2xl font-bold mb-3">{t('title')}</h2>
-            <p className="text-muted-foreground mb-6">{t('selectCategoryHint')}</p>
-            <TransitionLink href="/trade">
-              <Button>
-                <ArrowLeft className="w-4 h-4 mr-2" />
-                {t('browseCategoriesBtn')}
-              </Button>
-            </TransitionLink>
-          </motion.div>
-        )}
-
         {/* Step 1: Brand selection — card grid */}
         {category && !brand && (
           <motion.section

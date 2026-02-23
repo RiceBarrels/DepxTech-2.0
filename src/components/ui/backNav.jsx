@@ -3,14 +3,19 @@
 import { ChevronLeftIcon, ShareIcon } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useTransitionRouter } from "./pageTransitions"
-import { TopSafeArea } from "../safe-area"
 
 export default function BackNav({ isShareButton = false }) {
     const router = useTransitionRouter()
 
     const handleBack = () => {
-        router.back()
-    }
+    // if (document.startViewTransition) {
+    //     document.startViewTransition(() => {
+            router.back();
+    //     });
+    // } else {
+    //     router.back(); // Fallback for unsupported browsers
+    // }
+    };
 
     const handleShare = () => {
         if (navigator.share) {

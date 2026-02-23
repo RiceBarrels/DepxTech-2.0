@@ -4,7 +4,6 @@ import { AuthProvider } from "@/lib/auth";
 import { WindowsLayer } from "@/components/ui/windows";
 import AdminUI from "@/components/ui/adminUI";
 import { Toaster } from "@/components/ui/sonner";
-import { ViewTransitions } from "next-view-transitions";
 import { ThemeProvider } from "@/components/theme-provider"
 import { OrganizationStructuredData, WebSiteStructuredData } from "@/components/seo/StructuredData"
 import { DisableLinkContextMenu } from "@/components/ui/disableLinkContextMenu"
@@ -15,6 +14,7 @@ import { CookieConsent } from "@/components/ui/cookie-consent";
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages, getTranslations, setRequestLocale } from 'next-intl/server';
 import { routing } from '@/i18n/routing';
+import { ViewTransitions } from 'next-view-transitions'
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -107,43 +107,43 @@ export default async function LocaleLayout({ children, params }) {
 
   return (
     <ViewTransitions>
-      <html lang={locale} dir={rtlLocales.includes(locale) ? 'rtl' : 'ltr'} suppressHydrationWarning>
-        <head>
-          <OrganizationStructuredData />
-          <WebSiteStructuredData />
+    <html lang={locale} dir={rtlLocales.includes(locale) ? 'rtl' : 'ltr'} suppressHydrationWarning>
+      <head>
+        <OrganizationStructuredData />
+        <WebSiteStructuredData />
 
-          <script
-            async
-            crossOrigin="anonymous"
-            src="https://tweakcn.com/live-preview.min.js"
-          />
-        </head>
-        <body
-          className={`${geistSans.variable} ${geistMono.variable} antialiased bg-background`}
-        >
-          <PasswordWall>
-            <AuthProvider>
-              <ThemeProvider
-                attribute="class"
-                defaultTheme="system"
-                enableSystem
-              >
-                <NextIntlClientProvider messages={messages}>
-                  <DisableLinkContextMenu />
-                  <MobileSetupGuard>
-                    {children}
-                  </MobileSetupGuard>
-                  <WindowsLayer />
-                  <AdminUI/>
-                  <Toaster />
-                  <CookieConsent />
-                  <ServiceWorkerRegistration />
-                </NextIntlClientProvider>
-              </ThemeProvider>
-            </AuthProvider>
-          </PasswordWall>
-        </body>
-      </html>
+        <script
+          async
+          crossOrigin="anonymous"
+          src="https://tweakcn.com/live-preview.min.js"
+        />
+      </head>
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-background`}
+      >
+        <PasswordWall>
+          <AuthProvider>
+            <ThemeProvider
+              attribute="class"
+              defaultTheme="system"
+              enableSystem
+            >
+              <NextIntlClientProvider messages={messages}>
+                <DisableLinkContextMenu />
+                <MobileSetupGuard>
+                  {children}
+                </MobileSetupGuard>
+                <WindowsLayer />
+                <AdminUI/>
+                <Toaster />
+                <CookieConsent />
+                <ServiceWorkerRegistration />
+              </NextIntlClientProvider>
+            </ThemeProvider>
+          </AuthProvider>
+        </PasswordWall>
+      </body>
+    </html>
     </ViewTransitions>
   );
 }

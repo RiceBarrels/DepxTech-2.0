@@ -9,6 +9,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const nextConfig = {
   experimental: {
     optimizePackageImports: ['lucide-react'],
+    viewTransition: true
   },
   turbopack: {
     root: __dirname,

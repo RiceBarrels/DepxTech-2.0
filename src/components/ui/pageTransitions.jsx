@@ -1,10 +1,11 @@
 "use client"
 
 import { cn } from "@/lib/utils";
-import { useTransitionRouter } from "next-view-transitions";
 import { usePathname } from "@/i18n/navigation";
 import { useEffect } from "react";
-import { Link } from "@/i18n/navigation";
+import { Link } from 'next-view-transitions';
+import { useParams } from 'next/navigation';
+import { useTransitionRouter as useNextViewTransitionRouter } from 'next-view-transitions';
 
 // Check if a route is in the transitions group (no nav)
 export function isTransitionRoute(pathname) {
@@ -53,16 +54,22 @@ function isExternalUrl(url) {
 // - Maintains href attribute for search engine crawlers
 // - Supports aria-disabled for accessibility (which helps SEO)
 // - Proper semantic HTML with anchor tags
-export function TransitionLink({ 
-  href = "", 
+export function TransitionLink({
+  href = "",
   children,
-  disabled = false, 
+  disabled = false,
   prefetch = true, // SEO: Enable prefetching by default for better performance
-  className, 
-  ...props 
+  className,
+  ...props
 }) {
-  const router = useTransitionRouter();
   const pathname = usePathname();
+  const params = useParams();
+  const locale = params?.locale;
+
+  // Add locale prefix to href if needed
+  const localizedHref = typeof href === 'string' && locale && !href.startsWith(`/${locale}`) && !href.startsWith('http')
+    ? `/${locale}${href.startsWith('/') ? '' : '/'}${href}`
+    : href;
 
   useEffect(() => {
     // Add data attribute to body based on route group
@@ -90,43 +97,41 @@ export function TransitionLink({
     );
   }
 
-  const handleClick = async (e) => {
-    // Prevent default to use custom transition navigation
-    // The href is still in the DOM for SEO crawlers to follow
-    e.preventDefault();
-    
-    if (!disabled) {
-      // Call custom onClick handler if provided (for mobile nav state updates, etc.)
-      if (props.onClick) {
-        props.onClick(e);
-      }
-      
-      // Set transition type before navigation
-      const isTransition = isTransitionRoute(href);
-      const isCurrentTransition = isTransitionRoute(pathname);
-      
-      // If navigating to/from transition route, use slide transition
-      if (isTransition || isCurrentTransition) {
-        document.documentElement.classList.add('transition-slide');
-        document.documentElement.classList.remove('transition-fade');
-      } else {
-        document.documentElement.classList.add('transition-fade');
-        document.documentElement.classList.remove('transition-slide');
-      }
-      
-      // Use transition router which handles view transitions
-      await router.push(href);
+  const handleClick = (e) => {
+    if (disabled) {
+      e.preventDefault();
+      return;
     }
+
+    // Call custom onClick handler if provided (for mobile nav state updates, etc.)
+    if (props.onClick) {
+      props.onClick(e);
+    }
+
+    // Set transition type before navigation
+    // The Link from next-view-transitions will handle the actual transition
+    const isTransition = isTransitionRoute(href);
+    const isCurrentTransition = isTransitionRoute(pathname);
+
+    // If navigating to/from transition route, use slide transition
+    if (isTransition || isCurrentTransition) {
+      document.documentElement.classList.add('transition-slide');
+      document.documentElement.classList.remove('transition-fade');
+    } else {
+      document.documentElement.classList.add('transition-fade');
+      document.documentElement.classList.remove('transition-slide');
+    }
+
+    // Don't prevent default - let the Link handle navigation with transitions
   };
 
   // Extract onClick, onMouseDown, onMouseUp, onTouchStart, onTouchEnd from props to avoid conflicts
   const { onClick, ...restProps } = props;
 
   return (
-    <Link 
-      href={href}
+    <Link
+      href={localizedHref}
       prefetch={prefetch}
-      disabled={disabled}
       onClick={handleClick}
       onContextMenu={(e) => e.preventDefault()}
       onDragStart={(e) => e.preventDefault()}
@@ -141,5 +146,5 @@ export function TransitionLink({
   );
 }
 
-// Re-export useTransitionRouter for convenience
-export { useTransitionRouter };
+// Export useTransitionRouter from next-view-transitions
+export const useTransitionRouter = useNextViewTransitionRouter;
