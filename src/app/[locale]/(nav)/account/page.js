@@ -1,38 +1,19 @@
 "use client"
 
 import { useAuth } from '@/lib/auth'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { ArrowRightLeftIcon, BadgeDollarSignIcon, ChevronRightIcon, InboxIcon, LogOutIcon, Package2Icon, PenIcon, SettingsIcon, TicketPercentIcon, UserIcon } from 'lucide-react'
 import { useTranslations } from 'next-intl'
-import { useTransitionRouter, isTransitionRoute } from '@/components/ui/pageTransitions'
-import { usePathname } from '@/i18n/navigation'
+import { TransitionLink } from '@/components/ui/pageTransitions'
 import { Separator } from '@/components/ui/separator'
-import Recommends from '@/components/ui/recommends'
-import { useSpring, useTransition, animated, useScroll, useInView } from '@react-spring/web'
+import { useSpring } from '@react-spring/web'
+import { useRouter } from '@/i18n/navigation'
 
 export default function AccountPage() {
   const t = useTranslations('account')
   const { user, loading, signOut, profileData } = useAuth()
-  const transitionRouter = useTransitionRouter()
-  const pathname = usePathname()
-
-  const navigateWithTransition = async (href) => {
-    // Set transition type before navigation
-    const isTransition = isTransitionRoute(href)
-    const isCurrentTransition = isTransitionRoute(pathname)
-    
-    if (isTransition || isCurrentTransition) {
-      document.documentElement.classList.add('transition-slide')
-      document.documentElement.classList.remove('transition-fade')
-    } else {
-      document.documentElement.classList.add('transition-fade')
-      document.documentElement.classList.remove('transition-slide')
-    }
-    
-    // Use transition router which handles view transitions
-    await transitionRouter.push(href)
-  }
+  const router = useRouter();
 
   const recommendsSpring = useSpring({
     opacity: 1,
@@ -41,15 +22,11 @@ export default function AccountPage() {
     config: { tension: 280, friction: 60 }
   })
 
-  const handleProductClick = async (product) => {
-    await navigateWithTransition(`/products/${product.id}`)
-  }
-
   useEffect(() => {
     if (!loading && !user) {
-      navigateWithTransition('/login')
+      router.push('/login')
     }
-  }, [user, loading])
+  }, [user, loading, router])
 
   if (loading) {
     return null
@@ -87,56 +64,72 @@ export default function AccountPage() {
           </div>
 
           {/* edit */}
-          <Button variant="outline" className='rounded-4xl w-32 h-12 text-base gap-4' onClick={() => navigateWithTransition('/account/edit')}>
-            <PenIcon />{t('edit')}
-          </Button>
+          <TransitionLink href="/account/edit">
+            <Button variant="outline" className='rounded-4xl w-32 h-12 text-base gap-4'>
+              <PenIcon />{t('edit')}
+            </Button>
+          </TransitionLink>
         </div>
 
         <div className='flex justify-between items-center bg-accent/25 rounded-full overflow-hidden h-20 border-1'>
-          <Button variant="ghost" className="flex flex-col gap-1 items-center h-20 rounded-none flex-5" onClick={() => navigateWithTransition('/account/orders')}>
-            <Package2Icon strokeWidth={1.1} className='size-5'/>
-            <span className='text-xs font-light'>{t('orders')}</span>
-          </Button>
+          <TransitionLink href="/account/orders" className="flex-5">
+            <Button variant="ghost" className="flex flex-col gap-1 items-center h-20 rounded-none w-full">
+              <Package2Icon strokeWidth={1.1} className='size-5'/>
+              <span className='text-xs font-light'>{t('orders')}</span>
+            </Button>
+          </TransitionLink>
 
           <div className='h-14'><Separator orientation="vertical"/></div>
 
-            <Button variant="ghost" className="flex flex-col gap-1 items-center h-20 rounded-none flex-4" onClick={() => navigateWithTransition('/account/membership')}>
+          <TransitionLink href="/account/membership" className="flex-4">
+            <Button variant="ghost" className="flex flex-col gap-1 items-center h-20 rounded-none w-full">
               <BadgeDollarSignIcon strokeWidth={1.1} className='size-5'/>
               <span className='text-xs font-light'>{t('premium')}</span>
             </Button>
+          </TransitionLink>
 
           <div className='h-14'><Separator orientation="vertical"/></div>
 
-          <Button variant="ghost" className="flex flex-col gap-1 items-center h-20 rounded-none flex-4" onClick={() => navigateWithTransition('/offers')}>
-            <TicketPercentIcon strokeWidth={1.1} className='size-5'/>
-            <span className='text-xs font-light'>{t('offers')}</span>
-          </Button>
+          <TransitionLink href="/offers" className="flex-4">
+            <Button variant="ghost" className="flex flex-col gap-1 items-center h-20 rounded-none w-full">
+              <TicketPercentIcon strokeWidth={1.1} className='size-5'/>
+              <span className='text-xs font-light'>{t('offers')}</span>
+            </Button>
+          </TransitionLink>
 
           <div className='h-14'><Separator orientation="vertical"/></div>
 
-          <Button variant="ghost" className="flex flex-col gap-1 items-center h-20 rounded-none flex-5" onClick={() => navigateWithTransition('/account/settings')}>
-            <SettingsIcon strokeWidth={1.1} className='size-5'/>
-            <span className='text-xs font-light'>{t('settings')}</span>
-          </Button>
+          <TransitionLink href="/account/settings" className="flex-5">
+            <Button variant="ghost" className="flex flex-col gap-1 items-center h-20 rounded-none w-full">
+              <SettingsIcon strokeWidth={1.1} className='size-5'/>
+              <span className='text-xs font-light'>{t('settings')}</span>
+            </Button>
+          </TransitionLink>
         </div>
         <div className='flex flex-col justify-center items-center bg-accent/25 light:bg-accent rounded-4xl overflow-hidden border-1'>
-          <Button variant="ghost" className='w-full py-4 px-6 sm:p-8 sm:px-8 justify-start gap-4 rounded-none' onClick={() => navigateWithTransition('/account/inbox')}>
-            <div><InboxIcon strokeWidth={1.1} className='size-5'/></div>
-            <span className='font-normal text-base flex-1 flex justify-start items-center'>{t('inbox')}</span>
-            <div><ChevronRightIcon className='size-4 text-muted-foreground'/></div>
-          </Button>
+          <TransitionLink href="/account/inbox" className="w-full">
+            <Button variant="ghost" className='w-full py-4 px-6 sm:p-8 sm:px-8 justify-start gap-4 rounded-none'>
+              <div><InboxIcon strokeWidth={1.1} className='size-5'/></div>
+              <span className='font-normal text-base flex-1 flex justify-start items-center'>{t('inbox')}</span>
+              <div><ChevronRightIcon className='size-4 text-muted-foreground'/></div>
+            </Button>
+          </TransitionLink>
           <div className='w-full px-6'><Separator orientation="horizontal"/></div>
-          <Button variant="ghost" className='w-full py-4 px-6 sm:p-8 sm:px-8 justify-start gap-4 rounded-none items-center' onClick={() => navigateWithTransition('/account/membership/about')}>
-            <div><BadgeDollarSignIcon strokeWidth={1.1} className='size-5'/></div>
-            <span className='font-normal text-base flex-1 flex justify-start items-center'>{t('premiumMembership')}</span>
-            <div><ChevronRightIcon className='size-4 text-muted-foreground'/></div>
-          </Button>
+          <TransitionLink href="/account/membership/about" className="w-full">
+            <Button variant="ghost" className='w-full py-4 px-6 sm:p-8 sm:px-8 justify-start gap-4 rounded-none items-center'>
+              <div><BadgeDollarSignIcon strokeWidth={1.1} className='size-5'/></div>
+              <span className='font-normal text-base flex-1 flex justify-start items-center'>{t('premiumMembership')}</span>
+              <div><ChevronRightIcon className='size-4 text-muted-foreground'/></div>
+            </Button>
+          </TransitionLink>
           <div className='w-full px-6'><Separator orientation="horizontal"/></div>
-          <Button variant="ghost" className='w-full py-4 px-6 sm:p-8 sm:px-8 justify-start gap-4 rounded-none items-center' onClick={() => navigateWithTransition('/account/trade-ins')}>
-            <div><ArrowRightLeftIcon strokeWidth={1.1} className='size-5'/></div>
-            <span className='font-normal text-base flex-1 flex justify-start items-center'>{t('myTradeIns')}</span>
-            <div><ChevronRightIcon className='size-4 text-muted-foreground'/></div>
-          </Button>
+          <TransitionLink href="/account/trade-ins" className="w-full">
+            <Button variant="ghost" className='w-full py-4 px-6 sm:p-8 sm:px-8 justify-start gap-4 rounded-none items-center'>
+              <div><ArrowRightLeftIcon strokeWidth={1.1} className='size-5'/></div>
+              <span className='font-normal text-base flex-1 flex justify-start items-center'>{t('myTradeIns')}</span>
+              <div><ChevronRightIcon className='size-4 text-muted-foreground'/></div>
+            </Button>
+          </TransitionLink>
         </div>
 
         <div className='flex flex-col justify-center items-center bg-accent/25 light:bg-accent rounded-4xl overflow-hidden border-1'>

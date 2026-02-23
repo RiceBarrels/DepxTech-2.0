@@ -1,12 +1,13 @@
 import { supabaseAdmin } from '@/lib/supabase-admin'
 import { notFound } from 'next/navigation'
-import TradeProductPageClient from './page.client'
 import { Badge } from '@/components/ui/badge'
-import { Shield, Truck, Clock, DollarSign } from 'lucide-react'
+import { Shield, Truck, Clock, DollarSign, ChevronRight } from 'lucide-react'
 import Image from 'next/image'
 import { getTranslations } from 'next-intl/server'
 import { TradeProductStructuredData, BreadcrumbStructuredData } from '@/components/seo/StructuredData'
 import { resolveTradeProduct } from '@/lib/i18n-db'
+import { TransitionLink } from '@/components/ui/pageTransitions'
+import { Button } from '@/components/ui/button'
 
 export async function generateMetadata({ params }) {
   const { id, locale } = await params
@@ -78,9 +79,6 @@ export default async function TradeProductPage({ params }) {
   // Resolve i18n fields based on locale
   const product = resolveTradeProduct(rawProduct, locale)
 
-  // Use product-specific questions from the questions column
-  const productQuestions = product.questions || []
-
   // Increment views
   await supabaseAdmin
     .from('tradable_products')
@@ -108,10 +106,13 @@ export default async function TradeProductPage({ params }) {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
             {/* Product Image */}
-            <div className="order-2 lg:order-1">
+            <div className="order-1 lg:order-1">
               {product.imgs && product.imgs.length > 0 && (
                 <div className="relative w-full max-w-md mx-auto">
-                  <div className="aspect-square rounded-2xl bg-slate-100 dark:bg-slate-700/50 p-6 lg:p-8">
+                  <div
+                    className="aspect-square rounded-2xl bg-slate-100 dark:bg-slate-700/50 p-6 lg:p-8"
+                    style={{ viewTransitionName: `product-image-${product.id}` }}
+                  >
                     <div className="relative w-full h-full">
                       <Image
                         src={product.imgs[0]}
@@ -127,12 +128,15 @@ export default async function TradeProductPage({ params }) {
             </div>
 
             {/* Product Info */}
-            <div className="order-1 lg:order-2 space-y-5">
+            <div className="order-2 lg:order-2 space-y-5">
               <div>
                 <Badge variant="secondary" className="mb-3 text-xs">
                   {product.brand} • {product.series}
                 </Badge>
-                <h1 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white leading-tight">
+                <h1
+                  className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white leading-tight"
+                  style={{ viewTransitionName: `product-title-${product.id}` }}
+                >
                   {product.title}
                 </h1>
                 {product.des && (
@@ -199,15 +203,36 @@ export default async function TradeProductPage({ params }) {
         </div>
       </div>
 
-      {/* Main Content - Questionnaire */}
-      <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
-        <TradeProductPageClient
-          product={product}
-          questions={productQuestions}
-          basePrice={depreciatedPrice}
-          minPrice={product.min_price ? Number(product.min_price) : null}
-          depreciation={depreciation}
-        />
+      {/* Desktop CTA Section */}
+      <div className="hidden lg:block max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
+        <div className="text-center space-y-6">
+          <div className="space-y-3">
+            <h2 className="text-2xl md:text-3xl font-bold text-foreground">
+              {t('readyToStart')}
+            </h2>
+            <p className="text-muted-foreground text-lg">
+              {t('answerFewQuestions')}
+            </p>
+          </div>
+
+          <TransitionLink href={`/trade/product/${id}/start`}>
+            <Button size="lg" className="px-8 py-6 text-lg gap-2">
+              {t('startTradeIn')} <ChevronRight className="w-5 h-5" />
+            </Button>
+          </TransitionLink>
+        </div>
+      </div>
+
+      {/* Mobile spacing for fixed button */}
+      <div className="lg:hidden h-24" />
+
+      {/* Mobile Fixed Bottom CTA */}
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 p-4 bg-background/95 backdrop-blur-lg border-t border-border z-50">
+        <TransitionLink href={`/trade/product/${id}/start`} className="block">
+          <Button size="lg" className="w-full py-6 text-lg gap-2">
+            {t('startTradeIn')} <ChevronRight className="w-5 h-5" />
+          </Button>
+        </TransitionLink>
       </div>
     </div>
   )

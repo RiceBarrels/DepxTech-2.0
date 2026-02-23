@@ -70,7 +70,7 @@ export default async function TradeBrowsePage({ params, searchParams }) {
   if (category && brand) {
     const { data } = await supabaseAdmin
       .from('tradable_products')
-      .select('id, title, title_i18n, base_price, imgs, des, des_i18n, brand, category, series, views')
+      .select('id, title, title_i18n, base_price, imgs, des, des_i18n, brand, category, series, views, questions')
       .eq('category', category)
       .eq('brand', brand)
       .order('base_price', { ascending: false })

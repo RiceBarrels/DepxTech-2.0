@@ -727,8 +727,8 @@ body {
 /* View Transitions - Root */
 ::view-transition-old(root),
 ::view-transition-new(root) {
-  animation: none;
-  mix-blend-mode: normal; /* Prevents blending issues */
+  /* animation: none; */
+  /* mix-blend-mode: normal; Prevents blending issues */
 }
 
 /* Default: fade and scale for nav pages */
@@ -873,7 +873,6 @@ nav[class*="fixed"] {
 ::view-transition-old(route-controller),
 ::view-transition-new(route-controller)
  {
-  animation: none !important;
   /* mix-blend-mode: normal; Prevents blending issues */
 }
 
@@ -1211,4 +1210,69 @@ nav[class*="fixed"] {
   transform-origin: calc(50% - 800px) calc(50% + 200px);
   animation: moveInCircle 20s ease infinite;
   opacity: 1;
+}
+
+/* Fix view transition flickering for morphing elements */
+/* Disable all transitions and animations during view transitions */
+::view-transition-group(*) {
+  animation-duration: 0.25s;
+  animation-timing-function: cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+/* Product image view transitions - smooth morphing */
+::view-transition-old(product-image),
+::view-transition-new(product-image) {
+  animation-duration: 0.3s;
+  animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  mix-blend-mode: normal;
+  overflow: hidden;
+}
+
+::view-transition-group(product-image) {
+  z-index: 100;
+}
+
+/* Product title view transitions */
+::view-transition-old(product-title),
+::view-transition-new(product-title) {
+  animation-duration: 0.3s;
+  animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  mix-blend-mode: normal;
+}
+
+::view-transition-group(product-title) {
+  z-index: 99;
+}
+
+/* Price display view transitions */
+::view-transition-old(price-display),
+::view-transition-new(price-display) {
+  animation-duration: 0.3s;
+  animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  mix-blend-mode: normal;
+}
+
+::view-transition-group(price-display) {
+  z-index: 98;
+}
+
+/* Prevent layout shifts during view transitions */
+[style*="viewTransitionName"] {
+  contain: layout;
+}
+
+/* Disable regular CSS transitions during view transitions */
+@media (prefers-reduced-motion: no-preference) {
+  html:has(::view-transition) * {
+    transition-property: none !important;
+    animation: none !important;
+  }
+
+  /* Except for view transition pseudo-elements */
+  html:has(::view-transition) ::view-transition-group(*),
+  html:has(::view-transition) ::view-transition-old(*),
+  html:has(::view-transition) ::view-transition-new(*) {
+    transition-property: all !important;
+    animation: inherit !important;
+  }
 }

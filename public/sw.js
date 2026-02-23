@@ -1,4 +1,4 @@
-const CACHE_VERSION = 'v3'
+const CACHE_VERSION = 'v4'
 const STATIC_CACHE = `depxtech-static-${CACHE_VERSION}`
 const DYNAMIC_CACHE = `depxtech-dynamic-${CACHE_VERSION}`
 const IMAGE_CACHE = `depxtech-images-${CACHE_VERSION}`
@@ -13,6 +13,9 @@ const STATIC_ASSETS = [
 // Max entries per cache to prevent unbounded growth
 const MAX_DYNAMIC_ENTRIES = 50
 const MAX_IMAGE_ENTRIES = 100
+
+// Max response size to cache (5MB)
+const MAX_CACHE_SIZE = 5 * 1024 * 1024
 
 // ─── Lifecycle Events ────────────────────────────────────────────────
 
@@ -67,14 +70,25 @@ async function trimCache(cacheName, maxEntries) {
 /**
  * Network-first strategy: try the network, fall back to cache.
  * Caches successful responses for future offline use.
+ * Only caches responses under MAX_CACHE_SIZE.
  */
 async function networkFirst(request, cacheName, maxEntries) {
   try {
     const response = await fetch(request)
     if (response.ok) {
-      const cache = await caches.open(cacheName)
-      cache.put(request, response.clone())
-      trimCache(cacheName, maxEntries)
+      // Check response size before caching
+      const contentLength = response.headers.get('content-length')
+      const size = contentLength ? parseInt(contentLength, 10) : 0
+
+      // Only cache if size is known and under limit, or if size is unknown but likely small (HTML/JSON)
+      const contentType = response.headers.get('content-type') || ''
+      const isTextContent = contentType.includes('text/') || contentType.includes('application/json')
+
+      if ((size > 0 && size < MAX_CACHE_SIZE) || (size === 0 && isTextContent)) {
+        const cache = await caches.open(cacheName)
+        cache.put(request, response.clone())
+        trimCache(cacheName, maxEntries)
+      }
     }
     return response
   } catch {
@@ -134,8 +148,18 @@ self.addEventListener('fetch', (event) => {
   // Only handle same-origin and GET requests
   if (request.method !== 'GET') return
 
-  // Don't cache any images
-  if (request.destination === 'image') return
+  // Don't cache images, videos, audio, or large media files
+  if (
+    request.destination === 'image' ||
+    request.destination === 'video' ||
+    request.destination === 'audio' ||
+    url.pathname.endsWith('.pdf') ||
+    url.pathname.endsWith('.zip') ||
+    url.pathname.endsWith('.mp4') ||
+    url.pathname.endsWith('.mp3')
+  ) {
+    return
+  }
 
   if (url.origin !== self.location.origin) {
     return

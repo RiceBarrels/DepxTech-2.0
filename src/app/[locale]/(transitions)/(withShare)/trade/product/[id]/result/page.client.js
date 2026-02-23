@@ -1,7 +1,6 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -28,19 +27,23 @@ import {
   ArrowLeft,
   Sparkles,
   AlertTriangle,
+  MapPinIcon,
 } from 'lucide-react'
 import { toast } from 'sonner'
 import { useTranslations } from 'next-intl'
 import { useAuth } from '@/lib/auth'
 import { cn } from '@/lib/utils'
 import { motion } from 'framer-motion'
-import { useRouter } from 'next/navigation'
-import Link from 'next/link'
+import { useTransitionRouter, TransitionLink } from '@/components/ui/pageTransitions'
+import { useParams } from 'next/navigation'
+import Image from 'next/image'
 
 export default function TradeResultPageClient({ product }) {
   const { user } = useAuth()
   const t = useTranslations('trade.product')
-  const router = useRouter()
+  const router = useTransitionRouter()
+  const params = useParams()
+  const locale = params?.locale
 
   const [quoteData, setQuoteData] = useState(null)
   const [loading, setLoading] = useState(true)
@@ -50,6 +53,10 @@ export default function TradeResultPageClient({ product }) {
     name: user?.user_metadata?.full_name || '',
     email: user?.email || '',
     phone: '',
+    address: '',
+    city: '',
+    state: '',
+    zipCode: '',
     notes: ''
   })
   const [submitting, setSubmitting] = useState(false)
@@ -107,7 +114,7 @@ export default function TradeResultPageClient({ product }) {
   const handleRequestSubmit = (e) => {
     e.preventDefault()
 
-    if (!formData.name || !formData.email) {
+    if (!formData.name || !formData.email || !formData.address || !formData.city || !formData.state || !formData.zipCode) {
       toast.error(t('errorFieldsRequired'))
       return
     }
@@ -146,6 +153,10 @@ export default function TradeResultPageClient({ product }) {
           name: formData.name,
           email: formData.email,
           phone: formData.phone || null,
+          address: formData.address,
+          city: formData.city,
+          state: formData.state,
+          zipCode: formData.zipCode,
           notes: formData.notes || null,
           userId: user?.id || null
         })
@@ -168,6 +179,10 @@ export default function TradeResultPageClient({ product }) {
             customerName: formData.name,
             customerEmail: formData.email,
             customerPhone: formData.phone || null,
+            customerAddress: formData.address,
+            customerCity: formData.city,
+            customerState: formData.state,
+            customerZipCode: formData.zipCode,
             estimatedValue: quoteData.calculatedQuote.value,
             notes: formData.notes || null,
           })
@@ -191,28 +206,26 @@ export default function TradeResultPageClient({ product }) {
   // ── Loading / No data state ──────────────────────────
   if (loading) {
     return (
-      <Card className="bg-card border border-border shadow-sm rounded-2xl overflow-hidden">
-        <CardContent className="p-8">
-          <div className="flex items-center justify-center gap-3">
-            <Loader2 className="w-5 h-5 animate-spin text-muted-foreground" />
-            <span className="text-muted-foreground">{t('submitting')}</span>
-          </div>
-        </CardContent>
-      </Card>
+      <div className="p-8">
+        <div className="flex items-center justify-center gap-3">
+          <Loader2 className="w-5 h-5 animate-spin text-muted-foreground" />
+          <span className="text-muted-foreground">{t('submitting')}</span>
+        </div>
+      </div>
     )
   }
 
   if (!quoteData) {
     return (
-      <Card className="bg-card border border-border shadow-sm rounded-2xl overflow-hidden">
-        <CardContent className="p-8 text-center">
-          <p className="text-muted-foreground mb-4">{t('noQuoteData')}</p>
-          <Button onClick={() => router.push(`/trade/product/${product.id}`)} variant="outline">
+      <div className="p-8 text-center">
+        <p className="text-muted-foreground mb-4">{t('noQuoteData')}</p>
+        <TransitionLink href={`/trade/product/${product.id}`}>
+          <Button variant="outline">
             <ArrowLeft className="w-4 h-4 mr-2" />
             {t('backToProduct')}
           </Button>
-        </CardContent>
-      </Card>
+        </TransitionLink>
+      </div>
     )
   }
 
@@ -229,9 +242,8 @@ export default function TradeResultPageClient({ product }) {
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.4, ease: 'easeOut' }}
+        className="p-6 md:p-8"
       >
-        <Card className="bg-card border border-border shadow-sm rounded-2xl overflow-hidden">
-          <CardContent className="p-6 md:p-8">
             <div className="text-center">
               <motion.div
                 initial={{ scale: 0 }}
@@ -312,55 +324,90 @@ export default function TradeResultPageClient({ product }) {
                 </span>
               </div>
 
-              <Button
-                onClick={() => router.push(`/trade/product/${product.id}`)}
-                variant="outline"
-                className="mt-6 w-full"
-              >
-                {t('submitAnother')}
-              </Button>
-              <Button asChild variant="outline" className="mt-2 w-full">
-                <Link href="/account/trade-ins">
+              <TransitionLink href={`/trade/product/${product.id}`}>
+                <Button variant="outline" className="mt-6 w-full">
+                  {t('submitAnother')}
+                </Button>
+              </TransitionLink>
+              <TransitionLink href="/account/trade-ins">
+                <Button variant="outline" className="mt-2 w-full">
                   {t('viewMyTradeIns')}
-                </Link>
-              </Button>
-              <Button
-                onClick={() => router.push('/')}
-                variant="ghost"
-                className="mt-2 w-full gap-1.5"
-              >
-                <ArrowLeft className="w-4 h-4" />
-                {t('backToHome')}
-              </Button>
+                </Button>
+              </TransitionLink>
+              <TransitionLink href="/">
+                <Button variant="ghost" className="mt-2 w-full gap-1.5">
+                  <ArrowLeft className="w-4 h-4" />
+                  {t('backToHome')}
+                </Button>
+              </TransitionLink>
             </div>
-          </CardContent>
-        </Card>
       </motion.div>
     )
   }
 
   // ── Main: Estimate + Shipping selection + Contact form ──────────────────────────
   return (
-    <Card className="bg-card border border-border shadow-sm rounded-2xl overflow-hidden">
-      <CardContent className="p-6 md:p-8">
-        {/* Back button */}
-        <Button
-          type="button"
-          variant="ghost"
-          onClick={() => router.back()}
-          className="gap-1.5 mb-4 -ml-2"
-        >
-          <ChevronLeft className="w-4 h-4" />
-          {t('back')}
-        </Button>
+    <div>
+      {/* Back button */}
+      <Button
+        type="button"
+        variant="ghost"
+        onClick={() => router.back()}
+        className="gap-1.5 mb-6 -ml-2"
+      >
+        <ChevronLeft className="w-4 h-4" />
+        {t('back')}
+      </Button>
+
+      {/* Desktop two-column layout */}
+      <div className="grid grid-cols-1 lg:grid-cols-[400px_1fr] gap-8">
+        {/* Left: Product Image (desktop only) */}
+        <div className="hidden lg:block">
+          <div className="sticky top-8">
+            {product.imgs && product.imgs.length > 0 && (
+              <div
+                className="relative w-full aspect-square rounded-2xl bg-slate-100 dark:bg-slate-700/50 p-8"
+                style={{ viewTransitionName: `product-image-${product.id}` }}
+              >
+                <div className="relative w-full h-full">
+                  <Image
+                    src={product.imgs[0]}
+                    alt={product.title + " - DepxTech"}
+                    fill
+                    className="object-contain"
+                  />
+                </div>
+              </div>
+            )}
+            <div className="mt-4 text-center">
+              <h2
+                className="font-bold text-lg text-foreground"
+                style={{ viewTransitionName: `product-title-${product.id}` }}
+              >
+                {product.title}
+              </h2>
+              {product.brand && product.series && (
+                <p className="text-sm text-muted-foreground mt-1">
+                  {product.brand} • {product.series}
+                </p>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Right: Form */}
+        <div>
 
         {/* Estimate display */}
-        <div className={cn(
-          "p-5 rounded-xl border mb-6",
-          calculatedQuote.isZeroValue
-            ? "bg-orange-50 dark:bg-orange-950/30 border-orange-200 dark:border-orange-800"
-            : "bg-emerald-50 dark:bg-emerald-950/30 border-emerald-200 dark:border-emerald-800"
-        )}>
+        <div
+          className={cn(
+            "p-5 rounded-xl border mb-6",
+            calculatedQuote.isZeroValue
+              ? "bg-orange-50 dark:bg-orange-950/30 border-orange-200 dark:border-orange-800"
+              : "bg-emerald-50 dark:bg-emerald-950/30 border-emerald-200 dark:border-emerald-800"
+          )}
+          style={{ viewTransitionName: `price-display-${product.id}` }}
+        >
           <p className={cn(
             "text-xs font-medium mb-1",
             calculatedQuote.isZeroValue ? "text-orange-600 dark:text-orange-400" : "text-emerald-600 dark:text-emerald-400"
@@ -534,6 +581,56 @@ export default function TradeResultPageClient({ product }) {
               </div>
             </div>
 
+            {/* Address Fields */}
+            <div className="space-y-1.5">
+              <Label htmlFor="address" className="text-sm font-medium">
+                {t('address')} <span className="text-red-500">*</span>
+              </Label>
+              <div className="relative">
+                <MapPinIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                <Input
+                  id="address" type="text" value={formData.address}
+                  onChange={(e) => handleInputChange('address', e.target.value)}
+                  placeholder={t('addressPlaceholder')} className="h-11 pl-9" required
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-1.5">
+                <Label htmlFor="city" className="text-sm font-medium">
+                  {t('city')} <span className="text-red-500">*</span>
+                </Label>
+                <Input
+                  id="city" type="text" value={formData.city}
+                  onChange={(e) => handleInputChange('city', e.target.value)}
+                  placeholder={t('cityPlaceholder')} className="h-11" required
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <Label htmlFor="state" className="text-sm font-medium">
+                  {t('state')} <span className="text-red-500">*</span>
+                </Label>
+                <Input
+                  id="state" type="text" value={formData.state}
+                  onChange={(e) => handleInputChange('state', e.target.value)}
+                  placeholder={t('statePlaceholder')} className="h-11" required
+                />
+              </div>
+            </div>
+
+            <div className="space-y-1.5">
+              <Label htmlFor="zipCode" className="text-sm font-medium">
+                {t('zipCode')} <span className="text-red-500">*</span>
+              </Label>
+              <Input
+                id="zipCode" type="text" value={formData.zipCode}
+                onChange={(e) => handleInputChange('zipCode', e.target.value)}
+                placeholder={t('zipCodePlaceholder')} className="h-11" required
+              />
+            </div>
+
             <div className="space-y-1.5">
               <Label htmlFor="notes" className="text-sm font-medium">
                 {t('additionalNotes')} <span className="text-xs text-muted-foreground">({t('optional')})</span>
@@ -553,7 +650,7 @@ export default function TradeResultPageClient({ product }) {
 
           <Button
             type="submit"
-            disabled={submitting || !formData.name || !formData.email || !shippingMethod}
+            disabled={submitting || !formData.name || !formData.email || !formData.address || !formData.city || !formData.state || !formData.zipCode || !shippingMethod}
             className="w-full gap-2 mt-4"
           >
             {submitting ? (
@@ -576,7 +673,8 @@ export default function TradeResultPageClient({ product }) {
             </span>
           </div>
         </form>
-      </CardContent>
+        </div>
+      </div>
 
       {/* Confirmation Dialog */}
       <Dialog open={confirmOpen} onOpenChange={setConfirmOpen}>
@@ -625,6 +723,14 @@ export default function TradeResultPageClient({ product }) {
                   <span className="font-medium text-foreground">{formData.phone}</span>
                 </div>
               )}
+              <div className="flex items-center justify-between text-sm">
+                <span className="text-muted-foreground">{t('address')}</span>
+                <span className="font-medium text-foreground text-right">{formData.address}</span>
+              </div>
+              <div className="flex items-center justify-between text-sm">
+                <span className="text-muted-foreground">{t('cityStateZip')}</span>
+                <span className="font-medium text-foreground">{formData.city}, {formData.state} {formData.zipCode}</span>
+              </div>
             </div>
           </div>
 
@@ -638,6 +744,6 @@ export default function TradeResultPageClient({ product }) {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </Card>
+    </div>
   )
 }
