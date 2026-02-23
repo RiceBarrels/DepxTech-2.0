@@ -1629,14 +1629,36 @@
       "cancelButton": "Cancel",
       "product": "Product",
       "errorShippingRequired": "Please select a shipping method",
-      "confirmSubmitTitle": "Confirm Submission",
-      "confirmSubmitDesc": "Please review your trade-in details before submitting.",
-      "confirmSubmitButton": "Confirm & Submit",
-      "cancelButton": "Cancel",
-      "product": "Product",
-      "errorShippingRequired": "Please select a shipping method",
       "onlineBonusIncluded": "Includes +10% Online Bonus ({amount})",
       "shippingDeadlineWarning": "Please ship your device within 14 days. The final price may change if received after this period due to market fluctuations."
+    }
+  },
+  "homeBanner": {
+    "tradeIn": {
+      "label": "Programa de Intercambio",
+      "headline": "Intercambia Tu\nDispositivo Antiguo",
+      "description": "Obtén el mejor valor por tus dispositivos usados.\nEnvío gratis incluido.",
+      "cta": "Obtener Cotización →",
+      "instantPayout": "Pago instantáneo",
+      "freeShipping": "Envío gratis"
+    },
+    "shop": {
+      "label": "Nuevos Productos",
+      "headlinePart1": "Compra",
+      "headlinePart2": "Renovados",
+      "headlinePart3": "Tech",
+      "description": "Dispositivos certificados de calidad premium\na precios inmejorables.",
+      "cta": "Ver Colección →",
+      "stock": "Más de 1,200 dispositivos en stock"
+    },
+    "offers": {
+      "badge": "Tiempo Limitado",
+      "headlinePart1": "Ofertas",
+      "headlinePart2": "Especiales",
+      "description": "No te pierdas las mejores ofertas de la temporada.\nPrecios que bajan cada día.",
+      "cta": "Ver Todas las Ofertas →",
+      "upTo": "Hasta",
+      "off": "Desc"
     }
   }
 }

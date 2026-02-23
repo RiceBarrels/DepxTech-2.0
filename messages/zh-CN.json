@@ -1367,7 +1367,7 @@
   },
   "products": {
     "searchPlaceholder": "搜索产品...",
-    "searchResultsFor": "\u201c{query}\u201d 的搜索结果",
+    "searchResultsFor": "“{query}” 的搜索结果",
     "foundProducts": "找到 {count} 件有库存产品",
     "somethingWrong": "出了点问题",
     "tryAgain": "重试",
@@ -1856,5 +1856,33 @@
     "stillNeedHelpDesc": "找不到您想要的答案？我们的支持团队随时为您服务。",
     "contactSupport": "联系支持",
     "emailSupport": "邮件支持"
+  },
+  "homeBanner": {
+    "tradeIn": {
+      "label": "以旧换新计划",
+      "headline": "以旧换新\n升级您的设备",
+      "description": "为您的旧电子设备提供最优价格。\n免费快递服务。",
+      "cta": "获取报价 →",
+      "instantPayout": "即时付款",
+      "freeShipping": "免费快递"
+    },
+    "shop": {
+      "label": "新品上架",
+      "headlinePart1": "选购",
+      "headlinePart2": "翻新",
+      "headlinePart3": "设备",
+      "description": "优质认证设备\n无与伦比的价格。",
+      "cta": "浏览商品 →",
+      "stock": "1,200+ 件库存商品"
+    },
+    "offers": {
+      "badge": "限时优惠",
+      "headlinePart1": "特惠",
+      "headlinePart2": "活动",
+      "description": "不要错过本季最优惠的活动。\n价格每天下调。",
+      "cta": "查看所有优惠 →",
+      "upTo": "最高",
+      "off": "折扣"
+    }
   }
 }

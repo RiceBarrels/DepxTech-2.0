@@ -14,6 +14,7 @@ import {
   subscribeToMessages,
   subscribeToConversationStatus,
 } from '@/lib/chat'
+import { TopSafeArea } from '../safe-area'
 
 const SESSION_KEY = 'depxtech-chat-session'
 
@@ -213,20 +214,23 @@ export function ChatWidget({ onClose }) {
       animate={{ opacity: 1, scale: 1, y: 0 }}
       exit={{ opacity: 0, scale: 0.95, y: 10 }}
       transition={{ duration: 0.2 }}
-      className="bg-background border rounded-2xl shadow-2xl w-80 sm:w-96 flex flex-col overflow-hidden"
-      style={{ maxHeight: 'min(500px, 70vh)' }}
+      className="bg-background border shadow-2xl flex flex-col overflow-hidden
+        fixed inset-0 h-screen sm:static sm:w-96 sm:h-auto sm:max-h-[70vh] sm:rounded-2xl"
     >
       {/* Header */}
-      <div className="flex items-center justify-between px-4 py-3 border-b bg-primary text-primary-foreground">
-        <div className="flex items-center gap-2">
-          <div className="size-2 rounded-full bg-green-400 animate-pulse" />
-          <span className="font-semibold text-sm">
-            {t('adminTitle')}
-          </span>
+      <div className="flex flex-col items-center justify-between px-4 py-3 border-b bg-primary text-primary-foreground">
+        <TopSafeArea extraPX={0} />
+        <div className="flex items-center justify-center">
+          <div className="flex items-center gap-2">
+            <div className="size-2 rounded-full bg-green-400 animate-pulse" />
+            <span className="font-semibold text-sm">
+              {t('adminTitle')}
+            </span>
+          </div>
+          <Button variant="ghost" onClick={onClose} className="hover:opacity-70 transition-opacity">
+            <X className="size-4" />
+          </Button>
         </div>
-        <button onClick={onClose} className="hover:opacity-70 transition-opacity">
-          <X className="size-4" />
-        </button>
       </div>
 
       {/* Guest form */}
@@ -314,7 +318,7 @@ export function ChatWidget({ onClose }) {
                 onChange={(e) => setInput(e.target.value)}
                 disabled={sending}
                 autoFocus
-                className="flex-1 text-sm"
+                className="flex-1"
               />
               <Button
                 type="submit"

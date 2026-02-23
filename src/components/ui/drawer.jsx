@@ -6,6 +6,7 @@ import { Drawer as DrawerPrimitive } from "vaul"
 import { cn } from "@/lib/utils"
 import { XIcon } from "lucide-react";
 import { Button } from "./button";
+import { heavyHapticsImpact } from "@/lib/haptics"
 
 function Drawer({
   ...props
@@ -16,19 +17,43 @@ function Drawer({
 function DrawerTrigger({
   ...props
 }) {
-  return <DrawerPrimitive.Trigger data-slot="drawer-trigger" {...props} />;
+  return <DrawerPrimitive.Trigger data-slot="drawer-trigger" onTouchStart={() => {
+    heavyHapticsImpact(); 
+    props.onTouchStart?.();
+  }} onTouchEnd={() => {
+    setTimeout(() => {
+      heavyHapticsImpact(); 
+    }, 250);
+    props.onTouchEnd?.();
+  }} {...props} />;
 }
 
 function DrawerPortal({
   ...props
 }) {
-  return <DrawerPrimitive.Portal data-slot="drawer-portal" {...props} />;
+  return <DrawerPrimitive.Portal data-slot="drawer-portal" onTouchStart={() => {
+    heavyHapticsImpact(); 
+    props.onTouchStart?.();
+  }} onTouchEnd={() => {
+    setTimeout(() => {
+      heavyHapticsImpact(); 
+    }, 250);
+    props.onTouchEnd?.();
+  }} {...props} />;
 }
 
 function DrawerClose({
   ...props
 }) {
-  return <DrawerPrimitive.Close data-slot="drawer-close" {...props} />;
+  return <DrawerPrimitive.Close data-slot="drawer-close" onTouchStart={() => {
+    heavyHapticsImpact(); 
+    props.onTouchStart?.();
+  }} onTouchEnd={() => {
+    setTimeout(() => {
+      heavyHapticsImpact(); 
+    }, 250);
+    props.onTouchEnd?.();
+  }} {...props} />;
 }
 
 function DrawerOverlay({
@@ -38,6 +63,15 @@ function DrawerOverlay({
   return (
     <DrawerPrimitive.Overlay
       data-slot="drawer-overlay"
+      onTouchStart={() => {
+        heavyHapticsImpact(); 
+        props.onTouchStart?.();
+      }} onTouchEnd={() => {
+        setTimeout(() => {
+          heavyHapticsImpact(); 
+        }, 250);
+        props.onTouchEnd?.();
+      }}
       className={cn(
         "data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 z-50 bg-black/50",
         className
@@ -89,7 +123,15 @@ function DrawerHeader({
       {...props}>
         <div className="flex flex-col gap-0.5">
           <Button variant="ghost" size="icon" asChild>
-            <DrawerClose>
+            <DrawerClose onTouchStart={() => {
+              heavyHapticsImpact(); 
+              props.onTouchStart?.();
+            }} onTouchEnd={() => {
+              setTimeout(() => {
+                heavyHapticsImpact(); 
+              }, 250);
+              props.onTouchEnd?.();
+            }}>
               <XIcon className="w-4 h-4" />
             </DrawerClose>
           </Button>

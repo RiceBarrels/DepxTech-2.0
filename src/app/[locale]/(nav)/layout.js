@@ -15,13 +15,12 @@ export default function NavLayout({ children }) {
         className="flex-1 overflow-y-auto w-full overflow-x-hidden bg-background z-0"
         style={{ viewTransitionName: 'main-content' }}
       >
-        <TopSafeArea/>
+        {/* <TopSafeArea extraPX={0} /> */}
         <div className="min-h-screen">
           <Nav />
           {children}
         </div>
         <ConditionalFooter />
-        <BottomSafeArea/>
       </div>
       <BackToTop />
       <FloatingChat />

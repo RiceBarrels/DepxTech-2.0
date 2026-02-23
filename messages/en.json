@@ -1913,5 +1913,33 @@
     "stillNeedHelpDesc": "Can't find what you're looking for? Our support team is ready to assist.",
     "contactSupport": "Contact Support",
     "emailSupport": "Email Support"
+  },
+  "homeBanner": {
+    "tradeIn": {
+      "label": "Trade-in Program",
+      "headline": "Trade Your\nOld Device",
+      "description": "Get the best value for your used electronics.\nFast, free shipping included.",
+      "cta": "Get a Quote →",
+      "instantPayout": "Instant payout",
+      "freeShipping": "Free shipping"
+    },
+    "shop": {
+      "label": "New Arrivals",
+      "headlinePart1": "Shop",
+      "headlinePart2": "Refurbished",
+      "headlinePart3": "Tech",
+      "description": "Premium quality, certified devices\nat unbeatable prices.",
+      "cta": "Browse Collection →",
+      "stock": "1,200+ devices in stock"
+    },
+    "offers": {
+      "badge": "Limited Time",
+      "headlinePart1": "Special",
+      "headlinePart2": "Offers",
+      "description": "Don't miss out on our best deals of the season.\nPrices drop every day.",
+      "cta": "View All Deals →",
+      "upTo": "Up to",
+      "off": "Off"
+    }
   }
 }

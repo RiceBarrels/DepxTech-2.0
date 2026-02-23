@@ -1613,14 +1613,36 @@
       "cancelButton": "Cancel",
       "product": "Product",
       "errorShippingRequired": "Please select a shipping method",
-      "confirmSubmitTitle": "Confirm Submission",
-      "confirmSubmitDesc": "Please review your trade-in details before submitting.",
-      "confirmSubmitButton": "Confirm & Submit",
-      "cancelButton": "Cancel",
-      "product": "Product",
-      "errorShippingRequired": "Please select a shipping method",
       "onlineBonusIncluded": "Includes +10% Online Bonus ({amount})",
       "shippingDeadlineWarning": "Please ship your device within 14 days. The final price may change if received after this period due to market fluctuations."
+    }
+  },
+  "homeBanner": {
+    "tradeIn": {
+      "label": "下取りプログラム",
+      "headline": "お使いの端末を\n下取りに出す",
+      "description": "中古電子機器を最高の価格で。\n送料無料。",
+      "cta": "見積もりを取得 →",
+      "instantPayout": "即時支払い",
+      "freeShipping": "送料無料"
+    },
+    "shop": {
+      "label": "新着商品",
+      "headlinePart1": "購入",
+      "headlinePart2": "整備済み",
+      "headlinePart3": "Tech",
+      "description": "認定された高品質デバイス\nを最安値で。",
+      "cta": "コレクションを見る →",
+      "stock": "1,200台以上在庫あり"
+    },
+    "offers": {
+      "badge": "期間限定",
+      "headlinePart1": "特別",
+      "headlinePart2": "オファー",
+      "description": "シーズン最高のお得な情報をお見逃しなく。\n毎日価格が下がります。",
+      "cta": "すべてのお得情報を見る →",
+      "upTo": "最大",
+      "off": "オフ"
     }
   }
 }

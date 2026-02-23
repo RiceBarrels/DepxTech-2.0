@@ -1,10 +1,9 @@
-const CACHE_VERSION = 'v1'
+const CACHE_VERSION = 'v3'
 const STATIC_CACHE = `depxtech-static-${CACHE_VERSION}`
 const DYNAMIC_CACHE = `depxtech-dynamic-${CACHE_VERSION}`
 const IMAGE_CACHE = `depxtech-images-${CACHE_VERSION}`
 
 const STATIC_ASSETS = [
-  '/',
   '/manifest.webmanifest',
   '/favicon.ico',
   '/icon-192.png',
@@ -134,11 +133,11 @@ self.addEventListener('fetch', (event) => {
 
   // Only handle same-origin and GET requests
   if (request.method !== 'GET') return
+
+  // Don't cache any images
+  if (request.destination === 'image') return
+
   if (url.origin !== self.location.origin) {
-    // For cross-origin images, use stale-while-revalidate
-    if (request.destination === 'image') {
-      event.respondWith(staleWhileRevalidate(request, IMAGE_CACHE, MAX_IMAGE_ENTRIES))
-    }
     return
   }
 
@@ -159,15 +158,45 @@ self.addEventListener('fetch', (event) => {
     return
   }
 
-  // Images -> stale-while-revalidate
-  if (request.destination === 'image') {
-    event.respondWith(staleWhileRevalidate(request, IMAGE_CACHE, MAX_IMAGE_ENTRIES))
-    return
-  }
-
   // Navigation requests (HTML pages) -> network-first
+  // Only cache allowed routes: /, /en/, /en/trade/, /en/account/, /en/offers/, /en/products/
   if (request.mode === 'navigate') {
-    event.respondWith(networkFirst(request, DYNAMIC_CACHE, MAX_DYNAMIC_ENTRIES))
+    const localePattern = /^\/(en|zh-CN|zh-TW|ar|nl|fr|de|it|ja|ko|pl|pt|ru|es|sv)(\/|$)/
+    const allowedBaseRoutes = ['/account', '/trade', '/offers', '/products']
+
+    let isAllowedRoute = false
+
+    // Check if it's root "/"
+    if (url.pathname === '/' || url.pathname === '') {
+      isAllowedRoute = true
+    }
+    // Check if it's a locale root like "/en/" or locale + allowed route
+    else if (localePattern.test(url.pathname)) {
+      const pathAfterLocale = url.pathname.replace(localePattern, '/')
+      // Allow locale root (e.g., "/en/" -> "/")
+      if (pathAfterLocale === '/' || pathAfterLocale === '') {
+        isAllowedRoute = true
+      }
+      // Check if locale + allowed route (e.g., "/en/trade")
+      else {
+        isAllowedRoute = allowedBaseRoutes.some(route => pathAfterLocale.startsWith(route))
+      }
+    }
+
+    if (isAllowedRoute) {
+      event.respondWith(networkFirst(request, DYNAMIC_CACHE, MAX_DYNAMIC_ENTRIES))
+    } else {
+      // For non-allowed routes, show offline message
+      event.respondWith(
+        fetch(request).catch(() =>
+          new Response('You are offline', {
+            status: 503,
+            statusText: 'Service Unavailable',
+            headers: { 'Content-Type': 'text/plain' }
+          })
+        )
+      )
+    }
     return
   }
 

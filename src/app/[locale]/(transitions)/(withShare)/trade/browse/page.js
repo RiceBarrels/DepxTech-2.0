@@ -65,20 +65,16 @@ export default async function TradeBrowsePage({ params, searchParams }) {
     seriesList = [...new Set((data || []).map((r) => r.series).filter(Boolean))].sort()
   }
 
-  // Fetch products when selection is complete
+  // Fetch products when brand is selected
   let products = []
-  const seriesSkipped = category && brand && seriesList.length === 0
-  if (category && brand && (seriesSkipped || series)) {
-    let query = supabaseAdmin
+  if (category && brand) {
+    const { data } = await supabaseAdmin
       .from('tradable_products')
       .select('id, title, title_i18n, base_price, imgs, des, des_i18n, brand, category, series, views')
       .eq('category', category)
       .eq('brand', brand)
       .order('base_price', { ascending: false })
 
-    if (series) query = query.eq('series', series)
-
-    const { data } = await query
     products = (data || []).map((p) => resolveTradeProduct(p, locale))
   }
 
@@ -87,12 +83,6 @@ export default async function TradeBrowsePage({ params, searchParams }) {
   if (category && brands.length === 1 && !brand) {
     autoSkip.brand = brands[0].name
   }
-  if (category && brand && seriesList.length === 1 && !series) {
-    autoSkip.series = seriesList[0]
-  }
-  if (seriesSkipped) {
-    autoSkip.seriesSkipped = true
-  }
 
   return (
     <div className="min-h-screen">
@@ -100,7 +90,6 @@ export default async function TradeBrowsePage({ params, searchParams }) {
         <TradeBrowseSteps
           category={category}
           brand={brand}
-          series={series}
           brands={brands}
           seriesList={seriesList}
           products={products}

@@ -52,7 +52,6 @@ const itemVariants = {
 export default function TradeBrowseSteps({
   category,
   brand,
-  series,
   brands,
   seriesList,
   products,
@@ -93,21 +92,18 @@ export default function TradeBrowseSteps({
     }
   }, [autoSkip.brand, brand, updateParam])
 
-  useEffect(() => {
-    if (autoSkip.series && !series) {
-      updateParam('series', autoSkip.series)
-    }
-  }, [autoSkip.series, series, updateParam])
-
   const [filterQuery, setFilterQuery] = useState('')
+  const [selectedSeries, setSelectedSeries] = useState('all')
 
-  const seriesSkipped = autoSkip.seriesSkipped || seriesList.length === 0
-  const showProducts = category && brand && (seriesSkipped || series)
+  const showProducts = category && brand
   const tc = useTranslations('trade.categories')
 
-  // Filter products by search, default sort Z-A
+  // Filter products by search and series, default sort Z-A
   const filteredProducts = (() => {
     let result = products || []
+    if (selectedSeries && selectedSeries !== 'all') {
+      result = result.filter(p => p.series === selectedSeries)
+    }
     if (filterQuery.trim()) {
       const q = filterQuery.toLowerCase()
       result = result.filter(p => p.title?.toLowerCase().includes(q))
@@ -172,31 +168,16 @@ export default function TradeBrowseSteps({
               {category}
               <X className="w-3 h-3" />
             </Badge>
-            {(brand || !brand) && <ChevronRight className="w-3.5 h-3.5 text-muted-foreground" />}
+            {brand && <ChevronRight className="w-3.5 h-3.5 text-muted-foreground" />}
           </>
         )}
         {brand && (
-          <>
-            <Badge
-              variant="secondary"
-              className="gap-1 pr-1 cursor-pointer hover:bg-muted"
-              onClick={() => updateParam('brand', '')}
-            >
-              {brand}
-              <X className="w-3 h-3" />
-            </Badge>
-            {(series || (!seriesSkipped && !series)) && (
-              <ChevronRight className="w-3.5 h-3.5 text-muted-foreground" />
-            )}
-          </>
-        )}
-        {series && (
           <Badge
             variant="secondary"
             className="gap-1 pr-1 cursor-pointer hover:bg-muted"
-            onClick={() => updateParam('series', '')}
+            onClick={() => updateParam('brand', '')}
           >
-            {series}
+            {brand}
             <X className="w-3 h-3" />
           </Badge>
         )}
@@ -267,30 +248,7 @@ export default function TradeBrowseSteps({
           </motion.section>
         )}
 
-        {/* Step 2: Series selection — dropdown */}
-        {brand && !seriesSkipped && !series && (
-          <motion.section
-            key="series-step"
-            variants={sectionVariants}
-            initial="hidden"
-            animate="visible"
-            exit="exit"
-          >
-            <h2 className="text-xl font-bold mb-4">{t('selectSeries')}</h2>
-            <Select onValueChange={(v) => updateParam('series', v)}>
-              <SelectTrigger className="w-full max-w-sm h-12 text-base">
-                <SelectValue placeholder={t('chooseSeries')} />
-              </SelectTrigger>
-              <SelectContent>
-                {seriesList.map((s) => (
-                  <SelectItem key={s} value={s}>{s}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </motion.section>
-        )}
-
-        {/* Step 3: Product / model grid */}
+        {/* Products grid */}
         {showProducts && (
           <motion.section
             key="products-step"
@@ -306,17 +264,35 @@ export default function TradeBrowseSteps({
               </span>
             </div>
 
-            {/* Search bar */}
+            {/* Filters */}
             {products.length > 0 && (
-              <div className="relative max-w-sm mb-4">
-                <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground pointer-events-none" />
-                <Input
-                  type="text"
-                  value={filterQuery}
-                  onChange={(e) => setFilterQuery(e.target.value)}
-                  placeholder={t('searchPlaceholder')}
-                  className="h-9 pl-9 text-sm"
-                />
+              <div className="flex flex-col sm:flex-row gap-3 mb-4">
+                {/* Search bar */}
+                <div className="relative flex-1 max-w-sm">
+                  <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground pointer-events-none" />
+                  <Input
+                    type="text"
+                    value={filterQuery}
+                    onChange={(e) => setFilterQuery(e.target.value)}
+                    placeholder={t('searchPlaceholder')}
+                    className="h-9 pl-9 text-sm"
+                  />
+                </div>
+
+                {/* Series filter */}
+                {seriesList.length > 0 && (
+                  <Select value={selectedSeries} onValueChange={setSelectedSeries}>
+                    <SelectTrigger className="w-full sm:w-48 h-9 text-sm">
+                      <SelectValue placeholder={t('seriesLabel')} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">{t('allSeries')}</SelectItem>
+                      {seriesList.map((s) => (
+                        <SelectItem key={s} value={s}>{s}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
               </div>
             )}
 

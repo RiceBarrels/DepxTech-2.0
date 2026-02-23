@@ -1,4 +1,4 @@
-import Link from 'next/link'
+import { TransitionLink as Link } from '@/components/ui/pageTransitions'
 import { BannerControls } from './BannerControls'
 import { HomeHero } from './HomeHero'
 

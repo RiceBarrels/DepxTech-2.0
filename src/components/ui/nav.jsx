@@ -82,7 +82,7 @@ export default function Nav({layers = 3}) {
                 <div className="w-full h-16 px-4 flex items-center justify-between">
                     <div className="flex items-center gap-6 flex-1 max-w-7xl mx-auto w-full">
                         {/* Logo */}
-                        <TransitionLink href="/" className="flex items-center flex-shrink-0">
+                        <TransitionLink href="/" onTouchEnd={()=>{heavyHapticsImpact()}} className="flex items-center flex-shrink-0">
                             <h1 className="font-black text-3xl tracking-tight">DepxTech</h1>
                         </TransitionLink>
 
@@ -288,7 +288,7 @@ export default function Nav({layers = 3}) {
             >
                 {/* Layer 1: Logo + Account + Hamburger */}
                 <div className="flex items-center justify-between h-11 px-4">
-                    <TransitionLink href="/" className="flex items-center shrink-0">
+                    <TransitionLink href="/" onTouchEnd={()=>{heavyHapticsImpact()}} className="flex items-center shrink-0">
                         <h1 className="font-black text-xl tracking-tight">DepxTech</h1>
                     </TransitionLink>
 
@@ -354,6 +354,7 @@ export default function Nav({layers = 3}) {
                                     key={href}
                                     href={href}
                                     onClick={() => setDrawerOpen(false)}
+                                    onTouchEnd={()=>{heavyHapticsImpact()}}
                                     className={cn(
                                         "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors",
                                         isActive(href)
@@ -382,6 +383,7 @@ export default function Nav({layers = 3}) {
                                     key={href}
                                     href={href}
                                     onClick={() => setDrawerOpen(false)}
+                                    onTouchEnd={() => heavyHapticsImpact()}
                                     className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
                                 >
                                     <Icon className="size-3.5" />
@@ -398,6 +400,7 @@ export default function Nav({layers = 3}) {
                             <TransitionLink
                                 href="/trade/sustainability"
                                 onClick={() => setDrawerOpen(false)}
+                                onTouchEnd={() => heavyHapticsImpact()}
                                 className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
                             >
                                 <LeafIcon className="size-3.5" />
@@ -406,6 +409,7 @@ export default function Nav({layers = 3}) {
                             <TransitionLink
                                 href="/warranty"
                                 onClick={() => setDrawerOpen(false)}
+                                onTouchEnd={() => heavyHapticsImpact()}
                                 className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
                             >
                                 <ShieldCheckIcon className="size-3.5" />
@@ -414,6 +418,7 @@ export default function Nav({layers = 3}) {
                             <TransitionLink
                                 href="/shipping"
                                 onClick={() => setDrawerOpen(false)}
+                                onTouchEnd={() => heavyHapticsImpact()}
                                 className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
                             >
                                 <TruckIcon className="size-3.5" />
