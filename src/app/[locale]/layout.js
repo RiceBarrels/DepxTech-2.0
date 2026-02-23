@@ -7,7 +7,6 @@ import { Toaster } from "@/components/ui/sonner";
 import { ThemeProvider } from "@/components/theme-provider"
 import { OrganizationStructuredData, WebSiteStructuredData } from "@/components/seo/StructuredData"
 import { DisableLinkContextMenu } from "@/components/ui/disableLinkContextMenu"
-import MobileSetupGuard from "@/components/mobile-setup-guard";
 import PasswordWall from "@/components/password-wall";
 import ServiceWorkerRegistration from "@/components/pwa/ServiceWorkerRegistration";
 import { CookieConsent } from "@/components/ui/cookie-consent";
@@ -93,6 +92,10 @@ export async function generateMetadata({ params }) {
 
 export function generateViewport() {
   return {
+    width: 'device-width',
+    initialScale: 1,
+    maximumScale: 1,
+    viewportFit: 'cover',
     themeColor: [
       { media: '(prefers-color-scheme: light)', color: '#ffffff' },
       { media: '(prefers-color-scheme: dark)', color: '#0f172a' },
@@ -130,9 +133,7 @@ export default async function LocaleLayout({ children, params }) {
             >
               <NextIntlClientProvider messages={messages}>
                 <DisableLinkContextMenu />
-                <MobileSetupGuard>
-                  {children}
-                </MobileSetupGuard>
+                {children}
                 <WindowsLayer />
                 <AdminUI/>
                 <Toaster />

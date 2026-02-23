@@ -717,6 +717,78 @@ body {
   }
 }
 
+/* iOS Native Enhancements */
+@supports (-webkit-touch-callout: none) {
+  /* Prevent overscroll/rubber banding on body */
+  html,
+  body {
+    overscroll-behavior: none;
+    -webkit-overflow-scrolling: touch;
+    position: fixed;
+    overflow: hidden;
+    width: 100%;
+    height: 100%;
+  }
+
+  /* Main scrollable container */
+  body > * {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Safe area support */
+  :root {
+    --safe-area-inset-top: env(safe-area-inset-top, 0px);
+    --safe-area-inset-right: env(safe-area-inset-right, 0px);
+    --safe-area-inset-bottom: env(safe-area-inset-bottom, 0px);
+    --safe-area-inset-left: env(safe-area-inset-left, 0px);
+  }
+
+  /* Native-style momentum scrolling */
+  * {
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Disable pull-to-refresh on specific elements */
+  .no-pull-to-refresh {
+    overscroll-behavior-y: contain;
+  }
+
+  /* Better tap highlight */
+  * {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Smooth button press feedback */
+  button,
+  [role="button"],
+  a {
+    -webkit-touch-callout: none;
+    touch-action: manipulation;
+    transition: opacity 0.15s ease;
+  }
+
+  button:active,
+  [role="button"]:active,
+  a:active {
+    opacity: 0.7;
+    transition: opacity 0s;
+  }
+
+  /* Prevent double-tap zoom on inputs */
+  input,
+  textarea,
+  select {
+    font-size: 16px;
+    touch-action: manipulation;
+  }
+}
+
 /* Enable view transitions on mobile */
 @supports (view-transition-name: none) {
   :root {
@@ -1215,45 +1287,126 @@ nav[class*="fixed"] {
 /* Fix view transition flickering for morphing elements */
 /* Disable all transitions and animations during view transitions */
 ::view-transition-group(*) {
-  animation-duration: 0.25s;
-  animation-timing-function: cubic-bezier(0.32, 0.72, 0, 1);
+  animation-duration: 0.35s;
+  animation-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
-/* Product image view transitions - smooth morphing */
-::view-transition-old(product-image),
+/* Product image view transitions - smooth morphing with blur and scale */
+::view-transition-old(product-image) {
+  animation: product-image-exit 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
 ::view-transition-new(product-image) {
-  animation-duration: 0.3s;
-  animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  mix-blend-mode: normal;
-  overflow: hidden;
+  animation: product-image-enter 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 ::view-transition-group(product-image) {
   z-index: 100;
+  transform-origin: center;
 }
 
-/* Product title view transitions */
-::view-transition-old(product-title),
+/* Product title view transitions - fancy slide with rotation */
+::view-transition-old(product-title) {
+  animation: title-exit 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
 ::view-transition-new(product-title) {
-  animation-duration: 0.3s;
-  animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  mix-blend-mode: normal;
+  animation: title-enter 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
 }
 
 ::view-transition-group(product-title) {
   z-index: 99;
 }
 
-/* Price display view transitions */
-::view-transition-old(price-display),
+/* Price display view transitions - bounce effect */
+::view-transition-old(price-display) {
+  animation: price-exit 0.35s cubic-bezier(0.6, -0.28, 0.735, 0.045);
+}
+
 ::view-transition-new(price-display) {
-  animation-duration: 0.3s;
-  animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  mix-blend-mode: normal;
+  animation: price-enter 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 ::view-transition-group(price-display) {
   z-index: 98;
+}
+
+/* Fancy animation keyframes */
+@keyframes product-image-exit {
+  from {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+    filter: blur(0px);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.85) rotate(-2deg);
+    filter: blur(8px);
+  }
+}
+
+@keyframes product-image-enter {
+  from {
+    opacity: 0;
+    transform: scale(1.15) rotate(2deg);
+    filter: blur(8px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+    filter: blur(0px);
+  }
+}
+
+@keyframes title-exit {
+  from {
+    opacity: 1;
+    transform: translateY(0) translateX(0) rotate(0deg);
+    filter: blur(0px);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-20px) translateX(-10px) rotate(-3deg);
+    filter: blur(4px);
+  }
+}
+
+@keyframes title-enter {
+  from {
+    opacity: 0;
+    transform: translateY(20px) translateX(10px) rotate(3deg);
+    filter: blur(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) translateX(0) rotate(0deg);
+    filter: blur(0px);
+  }
+}
+
+@keyframes price-exit {
+  from {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.8) translateY(-15px);
+  }
+}
+
+@keyframes price-enter {
+  from {
+    opacity: 0;
+    transform: scale(0.7) translateY(15px);
+  }
+  50% {
+    transform: scale(1.05) translateY(-2px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
 }
 
 /* Prevent layout shifts during view transitions */

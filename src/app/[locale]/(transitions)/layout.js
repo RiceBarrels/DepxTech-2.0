@@ -3,18 +3,13 @@
 import { BottomSafeArea } from "@/components/safe-area";
 import { ConditionalFooter } from "@/components/ui/conditional-footer";
 import Nav from "@/components/ui/nav";
-// import { useEffect } from "react";
-// import { usePathname } from "next/navigation";
-import { PageLoadHaptics } from "@/components/ui/pageLoadHaptics";
-
 export default function transitionLayout({ children }) {
 
     return (
-        <div 
+        <div
             className="h-dvh w-full relative bg-background flex flex-col overflow-y-hidden"
         >
             <Nav layers={1}/>
-            <PageLoadHaptics />
             <div className="rounded-t-3xl border border-b-0 border-border bg-background overflow-y-auto flex-1" style={{ viewTransitionName: 'transition-page' }}>
                 <div className="min-h-screen">
                     {children}

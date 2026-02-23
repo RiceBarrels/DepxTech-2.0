@@ -3,8 +3,6 @@
 import * as React from "react"
 import { Slot } from "@radix-ui/react-slot"
 import { cva } from "class-variance-authority";
-import { heavyHapticsImpact } from "@/lib/haptics";
-
 import { cn } from "@/lib/utils"
 
 const buttonVariants = cva(
@@ -52,9 +50,6 @@ function Button({
     <Comp
       data-slot="button"
       className={cn(buttonVariants({ variant, size, className }), disabled === true ? "cursor-not-allowed" : "cursor-pointer")}
-      onTouchStart={() => {
-        heavyHapticsImpact(); 
-      }}
       disabled={disabled}
       {...props} />
   );

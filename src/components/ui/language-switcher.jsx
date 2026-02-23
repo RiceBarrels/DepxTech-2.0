@@ -10,7 +10,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { GlobeIcon } from 'lucide-react'
+import Flag from 'react-flagpack'
+import 'react-flagpack/dist/style.css'
 
 const localeLabels = {
   en: 'English',
@@ -30,6 +31,24 @@ const localeLabels = {
   sv: 'Svenska',
 }
 
+const localeFlags = {
+  en: 'US',
+  'zh-CN': 'CN',
+  'zh-TW': 'TW',
+  ar: 'SA',
+  nl: 'NL',
+  fr: 'FR',
+  de: 'DE',
+  it: 'IT',
+  ja: 'JP',
+  ko: 'KR',
+  pl: 'PL',
+  pt: 'PT',
+  ru: 'RU',
+  es: 'ES',
+  sv: 'SE',
+}
+
 export function LanguageSwitcher({ variant = 'default' }) {
   const locale = useLocale()
   const router = useRouter()
@@ -42,14 +61,28 @@ export function LanguageSwitcher({ variant = 'default' }) {
   if (variant === 'compact') {
     return (
       <Select value={locale} onValueChange={handleChange} popover>
-        <SelectTrigger className="w-auto h-7 gap-1 px-4 text-xs border-none ">
-          <GlobeIcon className="size-3" />
+        <SelectTrigger className="w-auto h-7 gap-1.5 px-4 text-xs border-none">
+          <Flag
+            code={localeFlags[locale]}
+            size="S"
+            hasBorderRadius
+            hasBorder={false}
+            className="shrink-0"
+          />
           <SelectValue />
         </SelectTrigger>
         <SelectContent>
           {routing.locales.map((l) => (
             <SelectItem key={l} value={l} className="text-xs">
-              {localeLabels[l]}
+              <div className="flex items-center gap-2">
+                <Flag
+                  code={localeFlags[l]}
+                  size="S"
+                  gradient="real-linear"
+                  hasBorderRadius
+                />
+                <span>{localeLabels[l]}</span>
+              </div>
             </SelectItem>
           ))}
         </SelectContent>
@@ -59,14 +92,28 @@ export function LanguageSwitcher({ variant = 'default' }) {
 
   return (
     <Select value={locale} onValueChange={handleChange}>
-      <SelectTrigger className="w-[140px] h-8 gap-1.5 text-sm">
-        <GlobeIcon className="size-3.5" />
+      <SelectTrigger className="w-[160px] h-8 gap-2 text-sm">
+        <Flag
+          code={localeFlags[locale]}
+          size="M"
+          gradient="real-linear"
+          hasBorderRadius
+          className="shrink-0"
+        />
         <SelectValue />
       </SelectTrigger>
       <SelectContent>
         {routing.locales.map((l) => (
           <SelectItem key={l} value={l}>
-            {localeLabels[l]}
+            <div className="flex items-center gap-2">
+              <Flag
+                code={localeFlags[l]}
+                size="M"
+                gradient="real-linear"
+                hasBorderRadius
+              />
+              <span>{localeLabels[l]}</span>
+            </div>
           </SelectItem>
         ))}
       </SelectContent>

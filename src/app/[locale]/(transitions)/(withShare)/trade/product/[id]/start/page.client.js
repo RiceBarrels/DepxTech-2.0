@@ -12,7 +12,6 @@ import { toast } from 'sonner'
 import { useTranslations } from 'next-intl'
 import { cn } from '@/lib/utils'
 import { motion, AnimatePresence } from 'framer-motion'
-import { heavyHapticsImpact } from '@/lib/haptics'
 import { useTransitionRouter } from '@/components/ui/pageTransitions'
 import { useParams } from 'next/navigation'
 import Image from 'next/image'
@@ -321,9 +320,6 @@ export default function TradeProductStartClient({ product, questions, basePrice,
                   role="button"
                   tabIndex={0}
                   onClick={() => handleAnswerSelect(currentStep, ansIdx)}
-                  onTouchEnd={() => {
-                    heavyHapticsImpact();
-                  }}
                   onKeyDown={(e) => {
                     if (e.key === 'Enter' || e.key === ' ') {
                       e.preventDefault()

@@ -18,8 +18,6 @@ import {
 import { Input } from '@/components/ui/input'
 import TradeBrandCard from './TradeBrandCard'
 import { TradeProductCard } from './TradeCards'
-import { heavyHapticsImpact, mediumHapticsImpact } from '@/lib/haptics'
-
 const categoryImages = {
   'Smartphones': '/stockImg/tradein-cata-img/Smartphone.png',
   'Laptops': '/stockImg/tradein-cata-img/Laptop.png',
@@ -222,12 +220,6 @@ export default function TradeBrowseSteps({
                     name={b.name}
                     img={b.img}
                     onClick={() => updateParam('brand', b.name)}
-                    onTouchStart={() => {
-                      heavyHapticsImpact()
-                      setTimeout(() => {
-                        mediumHapticsImpact()
-                      }, 250)
-                    }}
                   />
                 </motion.div>
               ))}
