@@ -71,7 +71,7 @@ export default function Nav({layers = 3}) {
         <>
             {/* ── Desktop Navigation ── */}
             <nav
-                className="hidden sm:flex flex-col sticky top-0 left-0 w-full bg-background z-100"
+                className="hidden sm:flex flex-col sticky top-0 left-0 w-full bg-background/95 backdrop-blur-md z-100"
                 style={{
                     viewTransitionName: 'nav-bar',
                     paddingTop: `${safeArea.top}px`
