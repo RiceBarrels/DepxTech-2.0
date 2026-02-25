@@ -33,7 +33,7 @@ const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://depxtech.com'
 
 const rtlLocales = ['ar']
 
-const ogLocaleMap = { en: 'en_US', 'zh-CN': 'zh_CN', 'zh-TW': 'zh_TW', ar: 'ar_AR', nl: 'nl_NL', fr: 'fr_FR', de: 'de_DE', it: 'it_IT', ja: 'ja_JP', ko: 'ko_KR', pl: 'pl_PL', pt: 'pt_BR', ru: 'ru_RU', es: 'es_ES', sv: 'sv_SE' }
+const ogLocaleMap = { en: 'en_US', 'zh-CN': 'zh_CN', 'zh-HK': 'zh_HK', ar: 'ar_AR', nl: 'nl_NL', fr: 'fr_FR', de: 'de_DE', it: 'it_IT', ja: 'ja_JP', ko: 'ko_KR', pl: 'pl_PL', pt: 'pt_BR', ru: 'ru_RU', es: 'es_ES', sv: 'sv_SE' }
 
 export async function generateMetadata({ params }) {
   const { locale } = await params

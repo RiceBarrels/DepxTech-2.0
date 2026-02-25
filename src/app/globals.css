@@ -826,19 +826,13 @@ body {
   animation-timing-function: cubic-bezier(0.32, 0.72, 0, 1);
 }
 
-/* View Transitions for Main Content Only - Enhanced animations */
-::view-transition-old(main-content),
-::view-transition-new(main-content) {
-  animation-duration: 0.3s;
-  animation-timing-function: cubic-bezier(0.32, 0.72, 0, 1);
-}
-
+/* View Transitions for Main Content Only - fast start, ease out */
 ::view-transition-old(main-content) {
-  animation-name: main-content-fade-out;
+  animation: main-content-out 0.2s cubic-bezier(0.4, 0, 1, 1) forwards;
 }
 
 ::view-transition-new(main-content) {
-  animation-name: main-content-fade-in;
+  animation: main-content-in 0.3s cubic-bezier(0.0, 0, 0.2, 1) 0.15s both;
 }
 
 /* View Transitions for transition pages - fancy left-to-right slide */
@@ -1016,25 +1010,34 @@ nav[class*="fixed"] {
 }
 
 /* Smooth main-content animations */
-@keyframes main-content-fade-out {
-  from {
+/* Old page exits upward */
+@keyframes main-content-out {
+  0% {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
+    filter: blur(0);
   }
-  to {
+  100% {
     opacity: 0;
-    transform: translateY(-12px);
+    transform: translateY(-50px) scale(0.95);
+    filter: blur(4px);
   }
 }
 
-@keyframes main-content-fade-in {
-  from {
+/* New page enters from below */
+@keyframes main-content-in {
+  0% {
     opacity: 0;
-    transform: translateY(12px);
+    transform: translateY(50px) scale(1.03);
+    filter: blur(4px);
   }
-  to {
+  50% {
+    filter: blur(0);
+  }
+  100% {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
+    filter: blur(0);
   }
 }
 

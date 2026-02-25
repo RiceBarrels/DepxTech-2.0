@@ -62,17 +62,17 @@ const nextConfig = {
   async redirects() {
     return [
       {
-        source: '/:locale(en|zh-CN|zh-TW|ar|nl|fr|de|it|ja|ko|pl|pt|ru|es|sv)/trade/category/:cat',
+        source: '/:locale(en|zh-CN|zh-HK|ar|nl|fr|de|it|ja|ko|pl|pt|ru|es|sv)/trade/category/:cat',
         destination: '/:locale/trade/browse?category=:cat',
         permanent: true,
       },
       {
-        source: '/:locale(en|zh-CN|zh-TW|ar|nl|fr|de|it|ja|ko|pl|pt|ru|es|sv)/trade/category/:cat/brand/:brand',
+        source: '/:locale(en|zh-CN|zh-HK|ar|nl|fr|de|it|ja|ko|pl|pt|ru|es|sv)/trade/category/:cat/brand/:brand',
         destination: '/:locale/trade/browse?category=:cat&brand=:brand',
         permanent: true,
       },
       {
-        source: '/:locale(en|zh-CN|zh-TW|ar|nl|fr|de|it|ja|ko|pl|pt|ru|es|sv)/trade/category/:cat/brand/:brand/series/:series',
+        source: '/:locale(en|zh-CN|zh-HK|ar|nl|fr|de|it|ja|ko|pl|pt|ru|es|sv)/trade/category/:cat/brand/:brand/series/:series',
         destination: '/:locale/trade/browse?category=:cat&brand=:brand&series=:series',
         permanent: true,
       },

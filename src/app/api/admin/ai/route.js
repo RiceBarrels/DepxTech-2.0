@@ -6,7 +6,7 @@ const MODEL = 'google/gemini-3-flash-preview'
 
 const LOCALE_NAMES = {
   'zh-CN': 'Simplified Chinese',
-  'zh-TW': 'Traditional Chinese',
+  'zh-HK': 'Traditional Chinese',
   ar: 'Arabic',
   nl: 'Dutch',
   fr: 'French',

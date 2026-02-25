@@ -186,7 +186,7 @@ self.addEventListener('fetch', (event) => {
   // Navigation requests (HTML pages) -> network-first
   // Only cache allowed routes: /, /en/, /en/trade/, /en/account/, /en/offers/, /en/products/
   if (request.mode === 'navigate') {
-    const localePattern = /^\/(en|zh-CN|zh-TW|ar|nl|fr|de|it|ja|ko|pl|pt|ru|es|sv)(\/|$)/
+    const localePattern = /^\/(en|zh-CN|zh-HK|ar|nl|fr|de|it|ja|ko|pl|pt|ru|es|sv)(\/|$)/
     const allowedBaseRoutes = ['/account', '/trade', '/offers', '/products']
 
     let isAllowedRoute = false

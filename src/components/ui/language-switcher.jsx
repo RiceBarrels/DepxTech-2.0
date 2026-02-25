@@ -14,39 +14,39 @@ import Flag from 'react-flagpack'
 import 'react-flagpack/dist/style.css'
 
 const localeLabels = {
-  en: 'English',
-  'zh-CN': '简体中文',
-  'zh-TW': '繁體中文',
   ar: 'العربية',
-  nl: 'Nederlands',
-  fr: 'Français',
   de: 'Deutsch',
+  en: 'English',
+  es: 'Español',
+  fr: 'Français',
   it: 'Italiano',
   ja: '日本語',
   ko: '한국어',
+  nl: 'Nederlands',
   pl: 'Polski',
   pt: 'Português',
   ru: 'Русский',
-  es: 'Español',
   sv: 'Svenska',
+  'zh-CN': '简体中文',
+  'zh-HK': '繁體中文',
 }
 
 const localeFlags = {
-  en: 'US',
-  'zh-CN': 'CN',
-  'zh-TW': 'TW',
   ar: 'SA',
-  nl: 'NL',
-  fr: 'FR',
   de: 'DE',
+  en: 'US',
+  es: 'ES',
+  fr: 'FR',
   it: 'IT',
   ja: 'JP',
   ko: 'KR',
+  nl: 'NL',
   pl: 'PL',
   pt: 'PT',
   ru: 'RU',
-  es: 'ES',
   sv: 'SE',
+  'zh-CN': 'CN',
+  'zh-HK': 'HK',
 }
 
 export function LanguageSwitcher({ variant = 'default' }) {
@@ -62,13 +62,6 @@ export function LanguageSwitcher({ variant = 'default' }) {
     return (
       <Select value={locale} onValueChange={handleChange} popover>
         <SelectTrigger className="w-auto h-7 gap-1.5 px-4 text-xs border-none">
-          <Flag
-            code={localeFlags[locale]}
-            size="S"
-            hasBorderRadius
-            hasBorder={false}
-            className="shrink-0"
-          />
           <SelectValue />
         </SelectTrigger>
         <SelectContent>

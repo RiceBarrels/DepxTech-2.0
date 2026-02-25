@@ -117,7 +117,13 @@ export default function TradeBrowseSteps({
       const q = filterQuery.toLowerCase()
       result = result.filter(p => p.title?.toLowerCase().includes(q))
     }
-    return [...result].sort((a, b) => (b.title || '').localeCompare(a.title || ''))
+    return [...result].sort((a, b) => {
+      const ta = a.title || '', tb = b.title || ''
+      const na = /\d/.test(ta), nb = /\d/.test(tb)
+      if (na && !nb) return -1
+      if (!na && nb) return 1
+      return tb.localeCompare(ta, undefined, { numeric: true })
+    })
   })()
 
   // Map category DB name to i18n key
