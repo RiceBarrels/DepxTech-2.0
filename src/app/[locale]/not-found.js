@@ -1,4 +1,5 @@
 import { ConditionalFooter } from "@/components/ui/conditional-footer";
+import { Footer } from "@/components/ui/footer";
 import Nav from "@/components/ui/nav";
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -90,7 +91,7 @@ export default function NotFound() {
               </div>
             </div>
 
-            <ConditionalFooter />
+            <ConditionalFooter><Footer /></ConditionalFooter>
         </div>
         <Nav />
     </div>

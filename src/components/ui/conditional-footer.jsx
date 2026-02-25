@@ -1,15 +1,10 @@
 "use client"
 
-import { Footer } from './footer';
 import { isPWA } from '@/lib/isPWA';
 
-export function ConditionalFooter() {
-    // Only render footer when NOT in PWA
+export function ConditionalFooter({ children }) {
     if (isPWA()) {
         return null;
     }
-
-    return <Footer />;
+    return children;
 }
-
-

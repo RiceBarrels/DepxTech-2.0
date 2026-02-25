@@ -2,6 +2,7 @@
 
 import { BottomSafeArea } from "@/components/safe-area";
 import { ConditionalFooter } from "@/components/ui/conditional-footer";
+import { Footer } from "@/components/ui/footer";
 import Nav from "@/components/ui/nav";
 export default function transitionLayout({ children }) {
 
@@ -14,7 +15,7 @@ export default function transitionLayout({ children }) {
                 <div className="min-h-screen">
                     {children}
                 </div>
-                <ConditionalFooter />
+                <ConditionalFooter><Footer /></ConditionalFooter>
                 <BottomSafeArea />
             </div>
         </div>

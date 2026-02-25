@@ -1,5 +1,3 @@
-'use client'
-
 import {
     Accordion,
     AccordionContent,
@@ -8,14 +6,14 @@ import {
 } from "@/components/ui/accordion"
 import { TransitionLink } from "./pageTransitions";
 import { Separator } from "./separator";
-import { useTranslations } from 'next-intl';
+import { getTranslations } from 'next-intl/server';
 import { LanguageSwitcher } from './language-switcher';
 
 const linkClass = "block p-4 px-8 hover:bg-accent active:bg-accent focus:bg-accent"
 const desktopLinkClass = "text-sm text-muted-foreground hover:text-foreground transition-colors"
 
-export function Footer(){
-    const t = useTranslations('footer')
+export async function Footer(){
+    const t = await getTranslations('footer')
 
     return(
         <>

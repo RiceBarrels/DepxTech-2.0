@@ -25,7 +25,6 @@ export default function RouteController() {
         }
         return false
     })
-    const [isHover, setIsHover] = useState(false)
     
     useEffect(() => {
         if (typeof window !== 'undefined') {
@@ -38,9 +37,7 @@ export default function RouteController() {
     }, [minimized])
 
     return (
-        <div 
-            onMouseEnter={() => setIsHover(true)}
-            onMouseLeave={() => setIsHover(false)}
+        <div
             className="flex items-center gap-2 p-2 bg-background/50 backdrop-blur-sm rounded-lg fixed bottom-2 right-2 z-100 shadow-lg h-14"style={{ 
                 viewTransitionName: 'route-controller',
                 bottom: `${4 + safeArea.top}px`,
@@ -75,14 +72,9 @@ export default function RouteController() {
                 </motion.div>
                 )}
             </AnimatePresence>
-            {(isHover || !minimized) ?
-                <Button onClick={() => setMinimized(!minimized)} variant="ghost" size="icon">
-                    {minimized ? <Maximize2Icon className="w-4 h-4" /> : <Minimize2Icon className="w-4 h-4" />}
-                </Button> 
-                :
-                <ChevronRightIcon strokeWidth={1.5} className="w-3 h-4"/>
-
-            }
+            <Button onClick={() => setMinimized(!minimized)} variant="ghost" size="icon">
+                {minimized ? <Maximize2Icon className="w-4 h-4" /> : <Minimize2Icon className="w-4 h-4" />}
+            </Button>
 
         </div>
     )
