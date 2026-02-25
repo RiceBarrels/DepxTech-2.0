@@ -171,7 +171,8 @@ self.addEventListener('fetch', (event) => {
   }
 
   // Next.js build assets (hashed filenames) -> cache-first
-  if (url.pathname.startsWith('/_next/static/')) {
+  // Skip chunks (large JS bundles) to avoid bloating the cache
+  if (url.pathname.startsWith('/_next/static/') && !url.pathname.startsWith('/_next/static/chunks/')) {
     event.respondWith(cacheFirst(request, STATIC_CACHE))
     return
   }

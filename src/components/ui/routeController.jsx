@@ -1,6 +1,6 @@
 "use client"
 
-import { useTransitionRouter } from "@/components/ui/pageTransitions"
+import { useRouter } from "@/i18n/navigation"
 import { ChevronLeftIcon, ChevronRightIcon, HomeIcon, RefreshCcwIcon } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { LayoutDashboardIcon } from "lucide-react"
@@ -9,8 +9,9 @@ import { Minimize2Icon } from "lucide-react"
 import { Maximize2Icon } from "lucide-react"
 import { motion, AnimatePresence } from "motion/react"
 import { useSafeArea } from "@/components/safe-area"
+
 export default function RouteController() {
-    const router = useTransitionRouter()
+    const router = useRouter()
     const safeArea = useSafeArea()
     const [minimized, setMinimized] = useState(() => {
         if (typeof window !== 'undefined') {
@@ -67,7 +68,7 @@ export default function RouteController() {
                     {
                         <Button onClick={() => router.forward()} variant="ghost" size="icon"><ChevronRightIcon className="w-4 h-4" /></Button>
                     }
-                    <Button onClick={() => router.refresh()} variant="ghost" size="icon"><RefreshCcwIcon className="w-4 h-4" /></Button>
+                    <Button onClick={() => window.location.reload()} variant="ghost" size="icon"><RefreshCcwIcon className="w-4 h-4" /></Button>
                     
                     <Button onClick={() => router.push('/')} variant="ghost" size="icon"><HomeIcon className="w-4 h-4" /></Button>
                     <Button onClick={() => router.push('/admin')} variant="ghost"><LayoutDashboardIcon className="w-4 h-4" />Dashboard</Button>
