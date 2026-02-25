@@ -8,6 +8,6 @@ export function proxy(request) {
 }
 
 export const config = {
-  // Match only internationalized pathnames
-  matcher: ['/', '/(en|zh-CN|zh-TW|ar|nl|fr|de|it|ja|ko|pl|pt|ru|es|sv)/:path*']
+  // Match all pathnames except Next.js internals and static files
+  matcher: ['/((?!_next|api|.*\\..*).*)']
 };
