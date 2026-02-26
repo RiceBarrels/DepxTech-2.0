@@ -32,11 +32,11 @@ import {
     UndoIcon,
     AlertCircleIcon,
     GripVerticalIcon,
+    GlobeIcon,
 } from 'lucide-react'
 import { toast } from 'sonner'
 import { ImageUpload, uploadFiles, deleteFileFromBucket } from "@/components/admin/ImageUpload"
 import { AITranslateQuestionsButton } from '@/components/admin/AIButton'
-import { GlobeIcon } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { DndContext, closestCenter, PointerSensor, useSensor, useSensors } from '@dnd-kit/core'
 import { SortableContext, verticalListSortingStrategy, useSortable, arrayMove } from '@dnd-kit/sortable'
