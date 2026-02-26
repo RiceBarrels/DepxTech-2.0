@@ -271,7 +271,8 @@
       "tradeInOrders": "طلبات الاستبدال",
       "offers": "العروض",
       "users": "المستخدمون",
-      "signOut": "تسجيل الخروج"
+      "signOut": "تسجيل الخروج",
+      "goBackHome": "العودة للصفحة الرئيسية"
     },
     "dashboard": {
       "title": "لوحة التحكم",
@@ -1496,7 +1497,13 @@
       "product": "Product",
       "errorShippingRequired": "Please select a shipping method",
       "onlineBonusIncluded": "Includes +10% Online Bonus ({amount})",
-      "shippingDeadlineWarning": "Please ship your device within 14 days. The final price may change if received after this period due to market fluctuations."
+      "shippingDeadlineWarning": "Please ship your device within 14 days. The final price may change if received after this period due to market fluctuations.",
+      "pushDialogTitle": "ابقَ على اطلاع بعملية الاستبدال",
+      "pushDialogDesc": "احصل على إشعارات عند الموافقة على عملية الاستبدال أو شحنها أو إكمالها. سنرسل لك فقط التحديثات المهمة.",
+      "pushDialogEnable": "تفعيل الإشعارات",
+      "pushDialogSkip": "ربما لاحقاً",
+      "pushEnabled": "تم تفعيل الإشعارات! سنبقيك على اطلاع.",
+      "pushFailed": "تعذر تفعيل الإشعارات. يرجى المحاولة لاحقاً."
     }
   },
   "tradeHowItWorks": {

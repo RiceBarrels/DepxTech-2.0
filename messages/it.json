@@ -895,7 +895,8 @@
       "tradeInOrders": "Ordini di permuta",
       "offers": "Offerte",
       "users": "Utenti",
-      "signOut": "Esci"
+      "signOut": "Esci",
+      "goBackHome": "Torna alla Home"
     },
     "dashboard": {
       "title": "Dashboard",
@@ -1629,14 +1630,14 @@
       "cancelButton": "Cancel",
       "product": "Product",
       "errorShippingRequired": "Please select a shipping method",
-      "confirmSubmitTitle": "Confirm Submission",
-      "confirmSubmitDesc": "Please review your trade-in details before submitting.",
-      "confirmSubmitButton": "Confirm & Submit",
-      "cancelButton": "Cancel",
-      "product": "Product",
-      "errorShippingRequired": "Please select a shipping method",
       "onlineBonusIncluded": "Includes +10% Online Bonus ({amount})",
-      "shippingDeadlineWarning": "Please ship your device within 14 days. The final price may change if received after this period due to market fluctuations."
+      "shippingDeadlineWarning": "Please ship your device within 14 days. The final price may change if received after this period due to market fluctuations.",
+      "pushDialogTitle": "Resta aggiornato sulla permuta",
+      "pushDialogDesc": "Ricevi notifiche quando la tua permuta viene approvata, spedita o completata. Solo aggiornamenti importanti.",
+      "pushDialogEnable": "Attiva notifiche",
+      "pushDialogSkip": "Forse dopo",
+      "pushEnabled": "Notifiche attivate! Ti terremo aggiornato.",
+      "pushFailed": "Impossibile attivare le notifiche. Riprova più tardi."
     }
   }
 }

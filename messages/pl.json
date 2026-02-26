@@ -487,7 +487,7 @@
     "ofMaxValue": "wartości maksymalnej",
     "step1Title": "Wyszukaj swoje urządzenie",
     "step1Desc": "Zacznij od wyszukania urządzenia za pomocą naszej wyszukiwarki lub przeglądaj według kategorii.",
-    "step1Tip1": "Wpisz model urządzenia (np. \u201eiPhone 15 Pro\u201d)",
+    "step1Tip1": "Wpisz model urządzenia (np. „iPhone 15 Pro”)",
     "step1Tip2": "Podaj dokładnie pojemność pamięci i kolor, jeśli dotyczy",
     "step1Tip3": "Sprawdź kilka wariantów, jeśli nie jesteś pewien dokładnego modelu",
     "step2Title": "Odpowiedz na pytania o stan",
@@ -895,7 +895,8 @@
       "tradeInOrders": "Zamówienia wymiany",
       "offers": "Oferty",
       "users": "Użytkownicy",
-      "signOut": "Wyloguj się"
+      "signOut": "Wyloguj się",
+      "goBackHome": "Wróć na stronę główną"
     },
     "dashboard": {
       "title": "Panel",
@@ -1630,7 +1631,13 @@
       "product": "Product",
       "errorShippingRequired": "Please select a shipping method",
       "onlineBonusIncluded": "Includes +10% Online Bonus ({amount})",
-      "shippingDeadlineWarning": "Please ship your device within 14 days. The final price may change if received after this period due to market fluctuations."
+      "shippingDeadlineWarning": "Please ship your device within 14 days. The final price may change if received after this period due to market fluctuations.",
+      "pushDialogTitle": "Bądź na bieżąco z wymianą",
+      "pushDialogDesc": "Otrzymuj powiadomienia o zatwierdzeniu, wysyłce lub zakończeniu wymiany. Wysyłamy tylko ważne aktualizacje.",
+      "pushDialogEnable": "Włącz powiadomienia",
+      "pushDialogSkip": "Może później",
+      "pushEnabled": "Powiadomienia włączone! Będziemy Cię informować.",
+      "pushFailed": "Nie udało się włączyć powiadomień. Spróbuj ponownie później."
     }
   }
 }

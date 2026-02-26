@@ -895,7 +895,8 @@
       "tradeInOrders": "Inbytesordrar",
       "offers": "Erbjudanden",
       "users": "Användare",
-      "signOut": "Logga ut"
+      "signOut": "Logga ut",
+      "goBackHome": "Tillbaka till startsidan"
     },
     "dashboard": {
       "title": "Översikt",
@@ -1630,7 +1631,13 @@
       "product": "Product",
       "errorShippingRequired": "Please select a shipping method",
       "onlineBonusIncluded": "Includes +10% Online Bonus ({amount})",
-      "shippingDeadlineWarning": "Please ship your device within 14 days. The final price may change if received after this period due to market fluctuations."
+      "shippingDeadlineWarning": "Please ship your device within 14 days. The final price may change if received after this period due to market fluctuations.",
+      "pushDialogTitle": "Håll koll på ditt inbyte",
+      "pushDialogDesc": "Få notiser när ditt inbyte godkänns, skickas eller slutförs. Vi skickar bara viktiga uppdateringar.",
+      "pushDialogEnable": "Aktivera notiser",
+      "pushDialogSkip": "Kanske senare",
+      "pushEnabled": "Notiser aktiverade! Vi håller dig uppdaterad.",
+      "pushFailed": "Kunde inte aktivera notiser. Försök igen senare."
     }
   }
 }

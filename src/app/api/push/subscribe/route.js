@@ -1,6 +1,22 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@/utils/supabase/server'
 
+export async function GET() {
+    const supabase = await createClient()
+    const { data: { user }, error: userError } = await supabase.auth.getUser()
+
+    if (userError || !user) {
+        return NextResponse.json({ subscribed: false })
+    }
+
+    const { count } = await supabase
+        .from('push_subscriptions')
+        .select('id', { count: 'exact', head: true })
+        .eq('user_id', user.id)
+
+    return NextResponse.json({ subscribed: (count || 0) > 0 })
+}
+
 export async function POST(request) {
     const supabase = await createClient()
     const { data: { user }, error: userError } = await supabase.auth.getUser()

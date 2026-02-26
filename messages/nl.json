@@ -895,7 +895,8 @@
       "tradeInOrders": "Inruilbestellingen",
       "offers": "Aanbiedingen",
       "users": "Gebruikers",
-      "signOut": "Uitloggen"
+      "signOut": "Uitloggen",
+      "goBackHome": "Terug naar Home"
     },
     "dashboard": {
       "title": "Dashboard",
@@ -1630,7 +1631,13 @@
       "product": "Product",
       "errorShippingRequired": "Please select a shipping method",
       "onlineBonusIncluded": "Includes +10% Online Bonus ({amount})",
-      "shippingDeadlineWarning": "Please ship your device within 14 days. The final price may change if received after this period due to market fluctuations."
+      "shippingDeadlineWarning": "Please ship your device within 14 days. The final price may change if received after this period due to market fluctuations.",
+      "pushDialogTitle": "Blijf op de hoogte van je inruil",
+      "pushDialogDesc": "Ontvang meldingen wanneer je inruil is goedgekeurd, verzonden of voltooid. We sturen alleen belangrijke updates.",
+      "pushDialogEnable": "Meldingen inschakelen",
+      "pushDialogSkip": "Misschien later",
+      "pushEnabled": "Meldingen ingeschakeld! We houden je op de hoogte.",
+      "pushFailed": "Kan meldingen niet inschakelen. Probeer het later opnieuw."
     }
   }
 }

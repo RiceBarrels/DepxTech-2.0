@@ -895,7 +895,8 @@
       "tradeInOrders": "Pedidos de Trade-in",
       "offers": "Ofertas",
       "users": "Usuários",
-      "signOut": "Sair"
+      "signOut": "Sair",
+      "goBackHome": "Voltar para o Início"
     },
     "dashboard": {
       "title": "Painel",
@@ -1630,7 +1631,13 @@
       "product": "Product",
       "errorShippingRequired": "Please select a shipping method",
       "onlineBonusIncluded": "Includes +10% Online Bonus ({amount})",
-      "shippingDeadlineWarning": "Please ship your device within 14 days. The final price may change if received after this period due to market fluctuations."
+      "shippingDeadlineWarning": "Please ship your device within 14 days. The final price may change if received after this period due to market fluctuations.",
+      "pushDialogTitle": "Acompanhe sua troca",
+      "pushDialogDesc": "Receba notificações quando sua troca for aprovada, enviada ou concluída. Enviamos apenas atualizações importantes.",
+      "pushDialogEnable": "Ativar notificações",
+      "pushDialogSkip": "Talvez depois",
+      "pushEnabled": "Notificações ativadas! Manteremos você informado.",
+      "pushFailed": "Não foi possível ativar notificações. Tente novamente mais tarde."
     }
   }
 }

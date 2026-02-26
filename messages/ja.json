@@ -895,7 +895,8 @@
       "tradeInOrders": "買取注文",
       "offers": "特典",
       "users": "ユーザー",
-      "signOut": "ログアウト"
+      "signOut": "ログアウト",
+      "goBackHome": "ホームに戻る"
     },
     "dashboard": {
       "title": "ダッシュボード",
@@ -1639,7 +1640,13 @@
       "product": "Product",
       "errorShippingRequired": "Please select a shipping method",
       "onlineBonusIncluded": "Includes +10% Online Bonus ({amount})",
-      "shippingDeadlineWarning": "Please ship your device within 14 days. The final price may change if received after this period due to market fluctuations."
+      "shippingDeadlineWarning": "Please ship your device within 14 days. The final price may change if received after this period due to market fluctuations.",
+      "pushDialogTitle": "下取りの最新情報を受け取る",
+      "pushDialogDesc": "下取りの承認・発送・完了時に通知を受け取れます。重要な更新のみお送りします。",
+      "pushDialogEnable": "通知を有効にする",
+      "pushDialogSkip": "あとで",
+      "pushEnabled": "通知が有効になりました！最新情報をお届けします。",
+      "pushFailed": "通知を有効にできませんでした。後でもう一度お試しください。"
     }
   },
   "homeBanner": {

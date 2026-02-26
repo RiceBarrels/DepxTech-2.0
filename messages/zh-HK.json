@@ -895,7 +895,8 @@
       "tradeInOrders": "回收變現訂單",
       "offers": "優惠",
       "users": "使用者",
-      "signOut": "登出"
+      "signOut": "登出",
+      "goBackHome": "返回首頁"
     },
     "dashboard": {
       "title": "儀表板",
@@ -1639,7 +1640,13 @@
       "product": "Product",
       "errorShippingRequired": "Please select a shipping method",
       "onlineBonusIncluded": "Includes +10% Online Bonus ({amount})",
-      "shippingDeadlineWarning": "Please ship your device within 14 days. The final price may change if received after this period due to market fluctuations."
+      "shippingDeadlineWarning": "Please ship your device within 14 days. The final price may change if received after this period due to market fluctuations.",
+      "pushDialogTitle": "獲取回收變現更新",
+      "pushDialogDesc": "當您的回收變現獲得批准、出貨或完成時收到通知。我們只會向您傳送有關訂單的重要更新。",
+      "pushDialogEnable": "開啟通知",
+      "pushDialogSkip": "稍後再說",
+      "pushEnabled": "通知已開啟！我們會及時通知您。",
+      "pushFailed": "無法開啟通知，請稍後重試。"
     }
   }
 }

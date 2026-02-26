@@ -895,7 +895,8 @@
       "tradeInOrders": "Commandes de reprise",
       "offers": "Offres",
       "users": "Utilisateurs",
-      "signOut": "Se déconnecter"
+      "signOut": "Se déconnecter",
+      "goBackHome": "Retour à l'accueil"
     },
     "dashboard": {
       "title": "Tableau de bord",
@@ -1654,14 +1655,14 @@
       "cancelButton": "Cancel",
       "product": "Product",
       "errorShippingRequired": "Please select a shipping method",
-      "confirmSubmitTitle": "Confirm Submission",
-      "confirmSubmitDesc": "Please review your trade-in details before submitting.",
-      "confirmSubmitButton": "Confirm & Submit",
-      "cancelButton": "Cancel",
-      "product": "Product",
-      "errorShippingRequired": "Please select a shipping method",
       "onlineBonusIncluded": "Includes +10% Online Bonus ({amount})",
-      "shippingDeadlineWarning": "Please ship your device within 14 days. The final price may change if received after this period due to market fluctuations."
+      "shippingDeadlineWarning": "Please ship your device within 14 days. The final price may change if received after this period due to market fluctuations.",
+      "pushDialogTitle": "Suivez votre reprise",
+      "pushDialogDesc": "Recevez des notifications lorsque votre reprise est approuvée, expédiée ou terminée. Nous n'envoyons que les mises à jour importantes.",
+      "pushDialogEnable": "Activer les notifications",
+      "pushDialogSkip": "Plus tard",
+      "pushEnabled": "Notifications activées ! Nous vous tiendrons informé.",
+      "pushFailed": "Impossible d'activer les notifications. Veuillez réessayer."
     }
   }
 }

@@ -14,6 +14,8 @@ import { NextIntlClientProvider } from 'next-intl';
 import { getMessages, getTranslations, setRequestLocale } from 'next-intl/server';
 import { routing } from '@/i18n/routing';
 import { ViewTransitions } from 'next-view-transitions'
+import OnlyUSDialog from "@/components/OnlyUSDialog";
+import PushPrompt from "@/components/PushPrompt";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -150,6 +152,8 @@ export default async function LocaleLayout({ children, params }) {
                 <AdminUI/>
                 <Toaster />
                 <CookieConsent />
+                <OnlyUSDialog />
+                <PushPrompt />
                 <ServiceWorkerRegistration />
               </NextIntlClientProvider>
             </ThemeProvider>

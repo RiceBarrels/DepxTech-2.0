@@ -895,7 +895,8 @@
       "tradeInOrders": "Заказы на обмен",
       "offers": "Предложения",
       "users": "Пользователи",
-      "signOut": "Выйти"
+      "signOut": "Выйти",
+      "goBackHome": "Вернуться на главную"
     },
     "dashboard": {
       "title": "Панель управления",
@@ -1630,7 +1631,13 @@
       "product": "Product",
       "errorShippingRequired": "Please select a shipping method",
       "onlineBonusIncluded": "Includes +10% Online Bonus ({amount})",
-      "shippingDeadlineWarning": "Please ship your device within 14 days. The final price may change if received after this period due to market fluctuations."
+      "shippingDeadlineWarning": "Please ship your device within 14 days. The final price may change if received after this period due to market fluctuations.",
+      "pushDialogTitle": "Следите за обменом",
+      "pushDialogDesc": "Получайте уведомления об одобрении, отправке или завершении обмена. Только важные обновления.",
+      "pushDialogEnable": "Включить уведомления",
+      "pushDialogSkip": "Позже",
+      "pushEnabled": "Уведомления включены! Будем держать вас в курсе.",
+      "pushFailed": "Не удалось включить уведомления. Попробуйте позже."
     }
   }
 }

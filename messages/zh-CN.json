@@ -951,7 +951,8 @@
       "tradeInOrders": "回收变现订单",
       "offers": "优惠",
       "users": "用户",
-      "signOut": "退出登录"
+      "signOut": "退出登录",
+      "goBackHome": "返回首页"
     },
     "dashboard": {
       "title": "仪表盘",
@@ -1711,7 +1712,13 @@
       "product": "产品",
       "errorShippingRequired": "请选择寄送方式",
       "onlineBonusIncluded": "含 +10% 在线奖励 ({amount})",
-      "shippingDeadlineWarning": "请在14天内寄出您的设备。超过此期限，最终价格可能会因市场波动而调整。"
+      "shippingDeadlineWarning": "请在14天内寄出您的设备。超过此期限，最终价格可能会因市场波动而调整。",
+      "pushDialogTitle": "获取以旧换新更新",
+      "pushDialogDesc": "当您的以旧换新获得批准、发货或完成时收到通知。我们只会向您发送有关订单的重要更新。",
+      "pushDialogEnable": "开启通知",
+      "pushDialogSkip": "以后再说",
+      "pushEnabled": "通知已开启！我们会及时通知您。",
+      "pushFailed": "无法开启通知，请稍后重试。"
     },
     "testimonials": {
       "heading": "值得信赖",

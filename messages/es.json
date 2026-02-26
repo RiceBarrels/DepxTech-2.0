@@ -895,7 +895,8 @@
       "tradeInOrders": "Pedidos de intercambio",
       "offers": "Ofertas",
       "users": "Usuarios",
-      "signOut": "Cerrar sesión"
+      "signOut": "Cerrar sesión",
+      "goBackHome": "Volver al Inicio"
     },
     "dashboard": {
       "title": "Panel de control",
@@ -1655,7 +1656,13 @@
       "product": "Product",
       "errorShippingRequired": "Please select a shipping method",
       "onlineBonusIncluded": "Includes +10% Online Bonus ({amount})",
-      "shippingDeadlineWarning": "Please ship your device within 14 days. The final price may change if received after this period due to market fluctuations."
+      "shippingDeadlineWarning": "Please ship your device within 14 days. The final price may change if received after this period due to market fluctuations.",
+      "pushDialogTitle": "Mantente al día con tu intercambio",
+      "pushDialogDesc": "Recibe notificaciones cuando tu intercambio sea aprobado, enviado o completado. Solo enviaremos actualizaciones importantes.",
+      "pushDialogEnable": "Activar notificaciones",
+      "pushDialogSkip": "Quizás después",
+      "pushEnabled": "¡Notificaciones activadas! Te mantendremos informado.",
+      "pushFailed": "No se pudieron activar las notificaciones. Inténtalo más tarde."
     }
   },
   "homeBanner": {

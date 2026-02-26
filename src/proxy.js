@@ -9,5 +9,5 @@ export function proxy(request) {
 
 export const config = {
   // Match all pathnames except Next.js internals and static files
-  matcher: ['/((?!_next|api|.*\\..*).*)']
+  matcher: ['/((?!_next|api|auth|.*\\..*).*)']
 };
