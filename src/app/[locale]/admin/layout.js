@@ -6,7 +6,7 @@ export default function AdminLayout({ children }) {
     return (
         <>
             <AdminChecker />
-            <div className="flex min-h-screen">
+            <div className="flex h-screen overflow-y-scroll">
                 <AdminSidebar />
                 <div className="flex-1 flex flex-col lg:ml-64">
                     <AdminMobileHeader />
