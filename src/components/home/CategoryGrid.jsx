@@ -1,25 +1,21 @@
 import Image from 'next/image'
 import { Link } from '@/i18n/navigation'
-import { ArrowRight } from 'lucide-react'
+import { ArrowRight, LayoutGridIcon } from 'lucide-react'
 import { ScrollStagger, ScrollReveal } from '@/components/ui/scroll-animation'
 import { getTranslations } from 'next-intl/server'
-
-const categoryData = [
-  { key: 'smartphones', image: '/stockImg/iphone_17_pro_max.png', href: '/trade/category/Smartphones' },
-  { key: 'laptops', image: '/stockImg/macbook_pro.png', href: '/trade/category/Laptops' },
-  { key: 'tablets', image: '/stockImg/ipad_pro.png', href: '/trade/category/Tablets' },
-  { key: 'wearables', image: '/stockImg/apple_watch.png', href: '/trade/category/Wearables' },
-]
+import { supabaseAdmin } from '@/lib/supabase-admin'
 
 export async function CategoryGrid() {
   const t = await getTranslations('home.categories')
   const tCommon = await getTranslations('common')
 
-  const categories = categoryData.map(c => ({
-    ...c,
-    title: t(c.key),
-    description: t(`${c.key}Desc`),
-  }))
+  const { data: categories } = await supabaseAdmin
+    .from('trade_categories')
+    .select('name, slug, description, img')
+    .eq('is_active', true)
+    .eq('is_featured', true)
+    .order('display_order', { ascending: true })
+    .limit(4)
 
   return (
     <section className="py-16 bg-white dark:bg-background/50">
@@ -44,27 +40,33 @@ export async function CategoryGrid() {
 
         {/* Categories Grid */}
         <ScrollStagger staggerChildren={0.08} delayChildren={0.2} className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-          {categories.map((category) => (
-            <ScrollReveal key={category.key} animation="z">
+          {(categories || []).map((cat) => (
+            <ScrollReveal key={cat.slug} animation="z">
               <Link
-                href={category.href}
+                href={`/trade/browse?category=${cat.slug}`}
                 className="relative group block p-2 h-full w-full"
               >
                 <div className="relative z-20 flex flex-col gap-4 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/30 h-full transition-all group-hover:border-primary/50 group-hover:shadow-xl group-hover:shadow-primary/5">
                   <div className="w-full aspect-square rounded-xl bg-slate-100 dark:bg-slate-700 mb-2 flex items-center justify-center overflow-hidden">
                     <div className="relative w-32 h-32 transition-transform group-hover:scale-110 duration-300">
-                      <Image
-                        src={category.image}
-                        alt={category.title}
-                        fill
-                        sizes="128px"
-                        className="object-contain"
-                      />
+                      {cat.img ? (
+                        <Image
+                          src={cat.img}
+                          alt={cat.name}
+                          fill
+                          sizes="128px"
+                          className="object-contain"
+                        />
+                      ) : (
+                        <LayoutGridIcon className="w-16 h-16 text-muted-foreground/30" />
+                      )}
                     </div>
                   </div>
                   <div>
-                    <h3 className="text-lg font-bold text-slate-900 dark:text-white group-hover:text-primary transition-colors">{category.title}</h3>
-                    <p className="text-sm text-slate-500">{category.description}</p>
+                    <h3 className="text-lg font-bold text-slate-900 dark:text-white group-hover:text-primary transition-colors">{cat.name}</h3>
+                    {cat.description && (
+                      <p className="text-sm text-slate-500">{cat.description}</p>
+                    )}
                   </div>
                 </div>
               </Link>

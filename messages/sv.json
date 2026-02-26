@@ -815,13 +815,26 @@
       "errorLoadSettings": "Kunde inte ladda inställningar",
       "errorUpdateSetting": "Kunde inte uppdatera inställning",
       "errorDeleteAccount": "Kontoborttagning kräver att du kontaktar support",
+      "pushPermissionDenied": "Behörighet för push-aviseringar nekades",
       "loadingSettings": "Laddar inställningar...",
       "pleaseLogIn": "Vänligen logga in",
       "needLogIn": "Du måste vara inloggad för att komma åt inställningar",
       "goToLogin": "Gå till inloggning"
     },
     "inboxPage": {
-      "title": "Inkorg"
+      "title": "Inkorg",
+      "subtitle": "Dina aviseringar och uppdateringar",
+      "loading": "Laddar aviseringar...",
+      "empty": "Inga aviseringar ännu",
+      "emptyDesc": "Här ser du uppdateringar om dina inbyten och beställningar",
+      "markAllRead": "Markera alla som lästa",
+      "loadMore": "Ladda fler",
+      "errorLoad": "Kunde inte ladda aviseringar",
+      "errorMarkRead": "Kunde inte uppdatera avisering",
+      "browseTradeIn": "Bläddra bland inbyten",
+      "pleaseLogIn": "Vänligen logga in",
+      "needLogIn": "Du måste vara inloggad för att se din inkorg.",
+      "goToLogin": "Gå till inloggning"
     },
     "membershipPage": {
       "title": "Medlemskap"

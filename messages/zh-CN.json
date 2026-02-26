@@ -871,13 +871,26 @@
       "errorLoadSettings": "加载设置失败",
       "errorUpdateSetting": "更新设置失败",
       "errorDeleteAccount": "删除账户需要联系客服",
+      "pushPermissionDenied": "推送通知权限被拒绝",
       "loadingSettings": "加载设置中...",
       "pleaseLogIn": "请登录",
       "needLogIn": "您需要登录才能访问设置",
       "goToLogin": "前往登录"
     },
     "inboxPage": {
-      "title": "收件箱"
+      "title": "收件箱",
+      "subtitle": "您的通知和更新",
+      "loading": "正在加载通知...",
+      "empty": "暂无通知",
+      "emptyDesc": "您的以旧换新和订单更新将显示在这里",
+      "markAllRead": "全部标为已读",
+      "loadMore": "加载更多",
+      "errorLoad": "加载通知失败",
+      "errorMarkRead": "更新通知失败",
+      "browseTradeIn": "浏览以旧换新",
+      "pleaseLogIn": "请登录",
+      "needLogIn": "您需要登录才能查看收件箱。",
+      "goToLogin": "前往登录"
     },
     "membershipPage": {
       "title": "会员"

@@ -5,10 +5,10 @@ import { ScrollStagger, ScrollReveal } from '@/components/ui/scroll-animation'
 import { getTranslations } from 'next-intl/server'
 
 const deviceData = [
-  { key: 'device1', image: '/stockImg/iphone_17_pro_max.png', href: '/trade/browse?category=Smartphones' },
-  { key: 'device2', image: '/stockImg/macbook_pro.png', href: '/trade/browse?category=Laptops' },
-  { key: 'device3', image: '/stockImg/ipad_pro.png', href: '/trade/browse?category=Tablets' },
-  { key: 'device4', image: '/stockImg/apple_watch.png', href: '/trade/browse?category=Wearables' },
+  { key: 'device1', image: '/stockImg/iphone_17_pro_max.png', href: '/trade/browse?category=smartphones' },
+  { key: 'device2', image: '/stockImg/macbook_pro.png', href: '/trade/browse?category=laptops' },
+  { key: 'device3', image: '/stockImg/ipad_pro.png', href: '/trade/browse?category=tablets' },
+  { key: 'device4', image: '/stockImg/apple_watch.png', href: '/trade/browse?category=wearables' },
 ]
 
 export async function PopularTradeIns() {

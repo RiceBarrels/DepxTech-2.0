@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server'
 import { verifyAdminAccess } from '@/lib/serverAuth'
 import { createClient } from '@supabase/supabase-js'
 
-const COMMISSION_TIERS = [
+const DEFAULT_TIERS = [
   { maxPrice: 100, percentage: 0.31, fixedFee: 7 },
   { maxPrice: 200, percentage: 0.295, fixedFee: 9 },
   { maxPrice: 300, percentage: 0.28, fixedFee: 11 },
@@ -31,7 +31,9 @@ function createServiceRoleClient() {
 }
 
 async function fetchMedianEbayPrice(query) {
-  const searchQuery = `${query} used`
+  // Strip parenthetical info like "(2019, A10)" from the title for cleaner searches
+  const cleanQuery = query.replace(/\s*\([^)]*\)/g, '').trim()
+  const searchQuery = `${cleanQuery} used`
 
   const params = new URLSearchParams({
     query: searchQuery,
@@ -51,12 +53,12 @@ async function fetchMedianEbayPrice(query) {
   if (!data.success) throw new Error(data.error || 'Scraper API failed')
 
   const results = data.results || []
-  const queryLower = query.toLowerCase()
+  const cleanLower = cleanQuery.toLowerCase()
 
   const prices = []
   for (const item of results) {
-    // Skip results whose title doesn't contain the query
-    if (!item.title?.toLowerCase().includes(queryLower)) continue
+    // Skip results whose title doesn't contain the cleaned query
+    if (!item.title?.toLowerCase().includes(cleanLower)) continue
     // Use numeric price from API
     if (typeof item.price_num === 'number' && item.price_num > 0) {
       prices.push(item.price_num)
@@ -68,18 +70,14 @@ async function fetchMedianEbayPrice(query) {
   // Calculate median
   prices.sort((a, b) => a - b)
   const mid = Math.floor(prices.length / 2)
-  const median = prices.length % 2 === 0
+  return prices.length % 2 === 0
     ? (prices[mid - 1] + prices[mid]) / 2
     : prices[mid]
-
-  // Apply commission tier based on median price
-  return applyCommission(median)
 }
 
-function applyCommission(median) {
-  // Find the first tier where median fits under maxPrice, fallback to last tier
-  const appliedTier = COMMISSION_TIERS.find(t => median <= t.maxPrice)
-    || COMMISSION_TIERS[COMMISSION_TIERS.length - 1]
+function applyCommission(median, tiers) {
+  const appliedTier = tiers.find(t => median <= t.maxPrice)
+    || tiers[tiers.length - 1]
 
   const commission = median * appliedTier.percentage + appliedTier.fixedFee
   const net = median - commission
@@ -103,54 +101,84 @@ export async function POST(request) {
 
     const supabase = createServiceRoleClient()
 
-    // Fetch all selected products
+    // Fetch all selected products with brand and category for tier matching
     const { data: products, error: fetchError } = await supabase
       .from('tradable_products')
-      .select('id, title')
+      .select('id, title, brand, category')
       .in('id', ids)
 
     if (fetchError) {
       return NextResponse.json({ error: 'Failed to fetch products' }, { status: 500 })
     }
 
+    // Pre-fetch all commission tiers once
+    const { data: allTiers } = await supabase
+      .from('commission_tiers')
+      .select('brand, category, tiers')
+
+    const tierConfigs = allTiers || []
+
+    function getTiersForProduct(brand, category) {
+      const exact = tierConfigs.find(r => r.brand === brand && r.category === category)
+      if (exact) return exact.tiers
+
+      const brandOnly = tierConfigs.find(r => r.brand === brand && !r.category)
+      if (brandOnly) return brandOnly.tiers
+
+      const categoryOnly = tierConfigs.find(r => !r.brand && r.category === category)
+      if (categoryOnly) return categoryOnly.tiers
+
+      const global = tierConfigs.find(r => !r.brand && !r.category)
+      if (global) return global.tiers
+
+      return DEFAULT_TIERS
+    }
+
     const today = new Date().toISOString().split('T')[0]
     const encoder = new TextEncoder()
 
-    // Stream results as NDJSON — each product result sent immediately when done
+    const CONCURRENCY = 5
+
+    // Stream results as NDJSON — products fetched in parallel batches
     const stream = new ReadableStream({
       async start(controller) {
         let updated = 0
         let failed = 0
 
-        for (const product of products) {
-          let result
-          try {
-            const ebayPrice = await fetchMedianEbayPrice(product.title)
+        // Process products in batches of CONCURRENCY
+        for (let i = 0; i < products.length; i += CONCURRENCY) {
+          const batch = products.slice(i, i + CONCURRENCY)
 
-            if (ebayPrice === null) {
-              result = { id: product.id, title: product.title, ebay_price: null, success: false, reason: 'No listings found' }
-              failed++
-            } else {
+          const results = await Promise.all(batch.map(async (product) => {
+            try {
+              const median = await fetchMedianEbayPrice(product.title)
+
+              if (median === null) {
+                return { id: product.id, title: product.title, ebay_price: null, success: false, reason: 'No listings found' }
+              }
+
+              const tiers = getTiersForProduct(product.brand, product.category)
+              const ebayPrice = applyCommission(median, tiers)
+
               const { error: updateError } = await supabase
                 .from('tradable_products')
                 .update({ base_price: ebayPrice, base_date: today })
                 .eq('id', product.id)
 
               if (updateError) {
-                result = { id: product.id, title: product.title, ebay_price: ebayPrice, success: false, reason: 'DB update failed' }
-                failed++
-              } else {
-                result = { id: product.id, title: product.title, ebay_price: ebayPrice, success: true }
-                updated++
+                return { id: product.id, title: product.title, ebay_price: ebayPrice, success: false, reason: 'DB update failed' }
               }
-            }
-          } catch (err) {
-            result = { id: product.id, title: product.title, ebay_price: null, success: false, reason: err.message }
-            failed++
-          }
 
-          // Send this result immediately
-          controller.enqueue(encoder.encode(JSON.stringify(result) + '\n'))
+              return { id: product.id, title: product.title, ebay_price: ebayPrice, success: true }
+            } catch (err) {
+              return { id: product.id, title: product.title, ebay_price: null, success: false, reason: err.message }
+            }
+          }))
+
+          for (const result of results) {
+            if (result.success) updated++; else failed++
+            controller.enqueue(encoder.encode(JSON.stringify(result) + '\n'))
+          }
         }
 
         // Send final summary line

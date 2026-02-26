@@ -112,6 +112,18 @@ export default async function LocaleLayout({ children, params }) {
     <ViewTransitions>
     <html lang={locale} dir={rtlLocales.includes(locale) ? 'rtl' : 'ltr'} suppressHydrationWarning>
       <head>
+        <script dangerouslySetInnerHTML={{ __html: `
+          if (typeof Node !== 'undefined') {
+            var oRC = Node.prototype.removeChild;
+            Node.prototype.removeChild = function(c) {
+              return c.parentNode !== this ? c : oRC.apply(this, arguments);
+            };
+            var oIB = Node.prototype.insertBefore;
+            Node.prototype.insertBefore = function(n, r) {
+              return r && r.parentNode !== this ? n : oIB.apply(this, arguments);
+            };
+          }
+        `}} />
         <OrganizationStructuredData />
         <WebSiteStructuredData />
 

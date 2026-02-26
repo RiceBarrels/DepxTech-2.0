@@ -815,13 +815,26 @@
       "errorLoadSettings": "Falha ao carregar configurações",
       "errorUpdateSetting": "Falha ao atualizar configuração",
       "errorDeleteAccount": "A exclusão da conta requer contato com o suporte",
+      "pushPermissionDenied": "A permissão de notificação push foi negada",
       "loadingSettings": "Carregando configurações...",
       "pleaseLogIn": "Por favor, faça login",
       "needLogIn": "Você precisa estar logado para acessar as configurações",
       "goToLogin": "Ir para Login"
     },
     "inboxPage": {
-      "title": "Caixa de Entrada"
+      "title": "Caixa de Entrada",
+      "subtitle": "Suas notificações e atualizações",
+      "loading": "Carregando notificações...",
+      "empty": "Nenhuma notificação ainda",
+      "emptyDesc": "Você verá atualizações sobre suas trocas e pedidos aqui",
+      "markAllRead": "Marcar todas como lidas",
+      "loadMore": "Carregar mais",
+      "errorLoad": "Falha ao carregar notificações",
+      "errorMarkRead": "Falha ao atualizar notificação",
+      "browseTradeIn": "Ver Trocas",
+      "pleaseLogIn": "Por favor, faça login",
+      "needLogIn": "Você precisa estar logado para ver sua caixa de entrada.",
+      "goToLogin": "Ir para Login"
     },
     "membershipPage": {
       "title": "Associação"

@@ -45,24 +45,40 @@ export function resolveTradeProduct(product, locale) {
 
 /**
  * Resolve localized questions.
- * questions_i18n: { "zh-CN": [...questions] }
+ * questions_i18n stores text-only translations: { "zh-CN": [{title, description, ans:[{content, description}]}] }
+ * Merges translated text with base questions (preserving type, required, img, persentage, fixed).
  * Falls back to product.questions if no locale version exists.
  */
 function resolveQuestionsI18n(product, locale) {
   if (!product || !locale) return product?.questions || []
+  const base = product.questions || []
 
   const i18nQuestions = product.questions_i18n
   if (i18nQuestions && typeof i18nQuestions === 'object') {
-    if (i18nQuestions[locale]) return i18nQuestions[locale]
+    const translated = i18nQuestions[locale]
+      || (locale.includes('-') ? i18nQuestions[locale.split('-')[0]] : null)
 
-    // Fallback to base locale
-    if (locale.includes('-')) {
-      const baseLocale = locale.split('-')[0]
-      if (i18nQuestions[baseLocale]) return i18nQuestions[baseLocale]
+    if (translated && Array.isArray(translated)) {
+      return base.map((q, qi) => {
+        const tq = translated[qi] || {}
+        return {
+          ...q,
+          title: tq.title || q.title,
+          description: tq.description ?? q.description,
+          ans: (q.ans || []).map((a, ai) => {
+            const ta = tq.ans?.[ai] || {}
+            return {
+              ...a,
+              content: ta.content || a.content,
+              description: ta.description ?? a.description,
+            }
+          })
+        }
+      })
     }
   }
 
-  return product.questions || []
+  return base
 }
 
 /**

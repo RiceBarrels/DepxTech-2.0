@@ -815,13 +815,26 @@
       "errorLoadSettings": "Impossibile caricare le impostazioni",
       "errorUpdateSetting": "Impossibile aggiornare l'impostazione",
       "errorDeleteAccount": "L'eliminazione dell'account richiede di contattare l'assistenza",
+      "pushPermissionDenied": "L'autorizzazione alle notifiche push è stata negata",
       "loadingSettings": "Caricamento impostazioni...",
       "pleaseLogIn": "Effettua l'accesso",
       "needLogIn": "Devi effettuare l'accesso per accedere alle impostazioni",
       "goToLogin": "Vai all'accesso"
     },
     "inboxPage": {
-      "title": "Posta in arrivo"
+      "title": "Posta in arrivo",
+      "subtitle": "Le tue notifiche e aggiornamenti",
+      "loading": "Caricamento notifiche...",
+      "empty": "Nessuna notifica al momento",
+      "emptyDesc": "Qui vedrai gli aggiornamenti sulle tue permute e ordini",
+      "markAllRead": "Segna tutto come letto",
+      "loadMore": "Carica altro",
+      "errorLoad": "Impossibile caricare le notifiche",
+      "errorMarkRead": "Impossibile aggiornare la notifica",
+      "browseTradeIn": "Sfoglia permute",
+      "pleaseLogIn": "Effettua l'accesso",
+      "needLogIn": "Devi effettuare l'accesso per visualizzare la posta in arrivo.",
+      "goToLogin": "Vai al login"
     },
     "membershipPage": {
       "title": "Abbonamento"

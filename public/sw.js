@@ -1,4 +1,4 @@
-const CACHE_VERSION = 'v4'
+const CACHE_VERSION = 'v5'
 const STATIC_CACHE = `depxtech-static-${CACHE_VERSION}`
 const DYNAMIC_CACHE = `depxtech-dynamic-${CACHE_VERSION}`
 const IMAGE_CACHE = `depxtech-images-${CACHE_VERSION}`
@@ -237,4 +237,42 @@ self.addEventListener('fetch', (event) => {
 
   // Everything else -> network-first
   event.respondWith(networkFirst(request, DYNAMIC_CACHE, MAX_DYNAMIC_ENTRIES))
+})
+
+// ─── Push Notification Handlers ──────────────────────────────────────
+
+self.addEventListener('push', (event) => {
+  if (!event.data) return
+
+  const data = event.data.json()
+  const { title, body, url, tag } = data
+
+  event.waitUntil(
+    self.registration.showNotification(title || 'DepxTech', {
+      body: body || '',
+      icon: '/icon-192.png',
+      badge: '/icon-192.png',
+      tag: tag || 'depxtech-notification',
+      data: { url: url || '/account/inbox' },
+    })
+  )
+})
+
+self.addEventListener('notificationclick', (event) => {
+  event.notification.close()
+
+  const targetUrl = event.notification.data?.url || '/account/inbox'
+
+  event.waitUntil(
+    clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
+      for (const client of clientList) {
+        if (client.url.includes(targetUrl) && 'focus' in client) {
+          return client.focus()
+        }
+      }
+      if (clients.openWindow) {
+        return clients.openWindow(targetUrl)
+      }
+    })
+  )
 })

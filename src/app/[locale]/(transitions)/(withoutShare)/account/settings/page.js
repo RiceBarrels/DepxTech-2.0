@@ -38,6 +38,7 @@ import { TransitionLink } from "@/components/ui/pageTransitions"
 import { useTransitionRouter } from "@/components/ui/pageTransitions"
 import { useTranslations } from 'next-intl'
 import { LanguageSwitcher } from "@/components/ui/language-switcher"
+import { subscribeToPush, unsubscribeFromPush } from "@/lib/pushClient"
 
 export default function SettingsPage() {
     const t = useTranslations('account.settingsPage')
@@ -235,7 +236,18 @@ export default function SettingsPage() {
                             <Switch
                                 id="push-notifications"
                                 checked={settings.notification_push}
-                                onCheckedChange={(checked) => updateSetting('notification_push', checked)}
+                                onCheckedChange={async (checked) => {
+                                    if (checked) {
+                                        const sub = await subscribeToPush()
+                                        if (!sub) {
+                                            toast.error(t('pushPermissionDenied'))
+                                            return
+                                        }
+                                    } else {
+                                        await unsubscribeFromPush()
+                                    }
+                                    updateSetting('notification_push', checked)
+                                }}
                             />
                         </div>
 

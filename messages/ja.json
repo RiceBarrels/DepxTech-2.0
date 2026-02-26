@@ -815,13 +815,26 @@
       "errorLoadSettings": "設定の読み込みに失敗しました",
       "errorUpdateSetting": "設定の更新に失敗しました",
       "errorDeleteAccount": "アカウントの削除にはサポートへのお問い合わせが必要です",
+      "pushPermissionDenied": "プッシュ通知の許可が拒否されました",
       "loadingSettings": "設定を読み込み中...",
       "pleaseLogIn": "ログインしてください",
       "needLogIn": "設定にアクセスするにはログインが必要です",
       "goToLogin": "ログインへ"
     },
     "inboxPage": {
-      "title": "受信トレイ"
+      "title": "受信トレイ",
+      "subtitle": "通知とアップデート",
+      "loading": "通知を読み込み中...",
+      "empty": "通知はまだありません",
+      "emptyDesc": "下取りや注文に関する更新がここに表示されます",
+      "markAllRead": "すべて既読にする",
+      "loadMore": "さらに読み込む",
+      "errorLoad": "通知の読み込みに失敗しました",
+      "errorMarkRead": "通知の更新に失敗しました",
+      "browseTradeIn": "下取りを見る",
+      "pleaseLogIn": "ログインしてください",
+      "needLogIn": "受信トレイを表示するにはログインが必要です。",
+      "goToLogin": "ログインへ"
     },
     "membershipPage": {
       "title": "メンバーシップ"

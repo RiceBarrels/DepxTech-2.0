@@ -815,13 +815,26 @@
       "errorLoadSettings": "Instellingen konden niet worden geladen",
       "errorUpdateSetting": "Instelling kon niet worden bijgewerkt",
       "errorDeleteAccount": "Voor het verwijderen van uw account moet u contact opnemen met support",
+      "pushPermissionDenied": "Pushmeldingstoestemming is geweigerd",
       "loadingSettings": "Instellingen laden...",
       "pleaseLogIn": "Log alstublieft in",
       "needLogIn": "U moet ingelogd zijn om toegang te krijgen tot instellingen",
       "goToLogin": "Naar inloggen"
     },
     "inboxPage": {
-      "title": "Inbox"
+      "title": "Inbox",
+      "subtitle": "Uw meldingen en updates",
+      "loading": "Meldingen laden...",
+      "empty": "Nog geen meldingen",
+      "emptyDesc": "Hier ziet u updates over uw inruilacties en bestellingen",
+      "markAllRead": "Alles als gelezen markeren",
+      "loadMore": "Meer laden",
+      "errorLoad": "Meldingen laden mislukt",
+      "errorMarkRead": "Melding bijwerken mislukt",
+      "browseTradeIn": "Inruil bekijken",
+      "pleaseLogIn": "Log alstublieft in",
+      "needLogIn": "U moet ingelogd zijn om uw inbox te bekijken.",
+      "goToLogin": "Ga naar inloggen"
     },
     "membershipPage": {
       "title": "Lidmaatschap"

@@ -815,13 +815,26 @@
       "errorLoadSettings": "Échec du chargement des paramètres",
       "errorUpdateSetting": "Échec de la mise à jour du paramètre",
       "errorDeleteAccount": "La suppression du compte nécessite de contacter l'assistance",
+      "pushPermissionDenied": "L'autorisation de notification push a été refusée",
       "loadingSettings": "Chargement des paramètres...",
       "pleaseLogIn": "Veuillez vous connecter",
       "needLogIn": "Vous devez être connecté pour accéder aux paramètres",
       "goToLogin": "Aller à la connexion"
     },
     "inboxPage": {
-      "title": "Boîte de réception"
+      "title": "Boîte de réception",
+      "subtitle": "Vos notifications et mises à jour",
+      "loading": "Chargement des notifications...",
+      "empty": "Aucune notification pour le moment",
+      "emptyDesc": "Vous verrez ici les mises à jour de vos reprises et commandes",
+      "markAllRead": "Tout marquer comme lu",
+      "loadMore": "Charger plus",
+      "errorLoad": "Échec du chargement des notifications",
+      "errorMarkRead": "Échec de la mise à jour de la notification",
+      "browseTradeIn": "Parcourir les reprises",
+      "pleaseLogIn": "Veuillez vous connecter",
+      "needLogIn": "Vous devez être connecté pour consulter votre boîte de réception.",
+      "goToLogin": "Aller à la connexion"
     },
     "membershipPage": {
       "title": "Abonnement"

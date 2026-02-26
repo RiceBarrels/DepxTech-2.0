@@ -18,16 +18,6 @@ import {
 import { Input } from '@/components/ui/input'
 import TradeBrandCard from './TradeBrandCard'
 import { TradeProductCard } from './TradeCards'
-const categoryImages = {
-  'Smartphones': '/stockImg/tradein-cata-img/Smartphone.png',
-  'Laptops': '/stockImg/tradein-cata-img/Laptop.png',
-  'Tablets': '/stockImg/tradein-cata-img/Tablet.png',
-  'Gaming': '/stockImg/tradein-cata-img/Gaming.png',
-  'Wearables': '/stockImg/tradein-cata-img/Wearable.png',
-  'Processors': '/stockImg/tradein-cata-img/CPU.png',
-  'Graphics Cards': '/stockImg/tradein-cata-img/GPU.png',
-  'Memory': '/stockImg/tradein-cata-img/RAM.png',
-}
 
 const sectionVariants = {
   hidden: { opacity: 0, y: 16 },
@@ -46,7 +36,7 @@ const itemVariants = {
 }
 
 export default function TradeBrowseSteps({
-  category,
+  categoryData,
   brand,
   brands,
   seriesList,
@@ -57,6 +47,8 @@ export default function TradeBrowseSteps({
   const searchParams = useSearchParams()
   const [isPending, startTransition] = useTransition()
   const t = useTranslations('trade.browse')
+
+  const category = categoryData?.name || null
 
   const updateParam = useCallback((key, value) => {
     const params = new URLSearchParams(searchParams.toString())
@@ -90,8 +82,7 @@ export default function TradeBrowseSteps({
 
   // Redirect to /trade if no category selected
   useEffect(() => {
-    if (!category) {
-      // Add transition class before navigation
+    if (!categoryData) {
       document.documentElement.classList.add('transition-fade')
       document.documentElement.classList.remove('transition-slide')
 
@@ -99,13 +90,12 @@ export default function TradeBrowseSteps({
         router.push('/trade')
       })
     }
-  }, [category, router, startTransition])
+  }, [categoryData, router, startTransition])
 
   const [filterQuery, setFilterQuery] = useState('')
   const [selectedSeries, setSelectedSeries] = useState('all')
 
   const showProducts = category && brand
-  const tc = useTranslations('trade.categories')
 
   // Filter products by search and series, default sort Z-A
   const filteredProducts = (() => {
@@ -126,22 +116,10 @@ export default function TradeBrowseSteps({
     })
   })()
 
-  // Map category DB name to i18n key
-  const categoryI18nKey = {
-    'Smartphones': 'smartphone',
-    'Laptops': 'laptop',
-    'Tablets': 'tablet',
-    'Gaming': 'gaming',
-    'Wearables': 'wearable',
-    'Processors': 'cpu',
-    'Graphics Cards': 'gpu',
-    'Memory': 'ram',
-  }
-
   return (
     <div className="space-y-6">
       {/* Banner */}
-      {category && (
+      {categoryData && (
         <motion.div
           initial={{ opacity: 0, y: -8 }}
           animate={{ opacity: 1, y: 0 }}
@@ -149,10 +127,10 @@ export default function TradeBrowseSteps({
           className="relative overflow-hidden rounded-2xl bg-muted/60 border border-border"
         >
           <div className="flex items-center gap-4 sm:gap-6 px-5 sm:px-8 py-4 sm:py-5">
-            {categoryImages[category] && (
+            {categoryData.img && (
               <div className="relative w-14 h-14 sm:w-20 sm:h-20 shrink-0">
                 <Image
-                  src={categoryImages[category]}
+                  src={categoryData.img}
                   alt={category}
                   fill
                   className="object-contain"
@@ -161,11 +139,13 @@ export default function TradeBrowseSteps({
             )}
             <div className="min-w-0">
               <h1 className="text-lg sm:text-2xl font-bold tracking-tight text-foreground truncate">
-                {tc(categoryI18nKey[category] || 'smartphone')}
+                {categoryData.name}
               </h1>
-              <p className="text-xs sm:text-sm text-muted-foreground mt-0.5 line-clamp-1">
-                {tc(`${categoryI18nKey[category] || 'smartphone'}Desc`)}
-              </p>
+              {categoryData.description && (
+                <p className="text-xs sm:text-sm text-muted-foreground mt-0.5 line-clamp-1">
+                  {categoryData.description}
+                </p>
+              )}
             </div>
           </div>
         </motion.div>

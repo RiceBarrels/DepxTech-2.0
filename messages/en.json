@@ -871,13 +871,26 @@
       "errorLoadSettings": "Failed to load settings",
       "errorUpdateSetting": "Failed to update setting",
       "errorDeleteAccount": "Account deletion requires contacting support",
+      "pushPermissionDenied": "Push notification permission was denied",
       "loadingSettings": "Loading settings...",
       "pleaseLogIn": "Please log in",
       "needLogIn": "You need to be logged in to access settings",
       "goToLogin": "Go to Login"
     },
     "inboxPage": {
-      "title": "Inbox"
+      "title": "Inbox",
+      "subtitle": "Your notifications and updates",
+      "loading": "Loading notifications...",
+      "empty": "No notifications yet",
+      "emptyDesc": "You'll see updates about your trade-ins and orders here",
+      "markAllRead": "Mark all as read",
+      "loadMore": "Load more",
+      "errorLoad": "Failed to load notifications",
+      "errorMarkRead": "Failed to update notification",
+      "browseTradeIn": "Browse Trade-In",
+      "pleaseLogIn": "Please Log In",
+      "needLogIn": "You need to be logged in to view your inbox.",
+      "goToLogin": "Go to Login"
     },
     "membershipPage": {
       "title": "Membership"

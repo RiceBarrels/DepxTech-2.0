@@ -67,6 +67,7 @@ import {
 } from "@/components/ui/dialog"
 import { ImageUpload, uploadFiles, deleteFileFromBucket } from "@/components/admin/ImageUpload"
 import { CategorySelect } from "@/components/admin/CategorySelect"
+import { BrandSelect } from "@/components/admin/BrandSelect"
 import { AICommandPanel } from "@/components/admin/AICommandPanel"
 
 // Helper to normalize image URL
@@ -231,6 +232,8 @@ export default function TradeinManagePage() {
                 case 'title_desc': return (b.title || '').localeCompare(a.title || '')
                 case 'price_asc': return (a.base_price || 0) - (b.base_price || 0)
                 case 'price_desc': return (b.base_price || 0) - (a.base_price || 0)
+                case 'updated_asc': return (a.base_date || '0') < (b.base_date || '0') ? -1 : (a.base_date || '0') > (b.base_date || '0') ? 1 : 0
+                case 'updated_desc': return (b.base_date || '9') < (a.base_date || '9') ? -1 : (b.base_date || '9') > (a.base_date || '9') ? 1 : 0
                 case 'created_asc': return new Date(a.created_at) - new Date(b.created_at)
                 case 'created_desc':
                 default: return new Date(b.created_at) - new Date(a.created_at)
@@ -414,9 +417,6 @@ export default function TradeinManagePage() {
         setSaving(true)
         try {
             // Upload images
-            const uploadedBrandImg = editFormData.brand_img instanceof File
-                ? (await uploadFiles(editFormData.brand_img, 'tradein/brands'))[0]
-                : editFormData.brand_img
             const uploadedProductImgs = await uploadFiles(editFormData.imgs, 'tradein/products')
 
             // Process questions with images
@@ -445,7 +445,6 @@ export default function TradeinManagePage() {
                 body: JSON.stringify({
                     id: editingProduct.id,
                     ...editFormData,
-                    brand_img: uploadedBrandImg || null,
                     imgs: uploadedProductImgs,
                     base_price: parseFloat(editFormData.base_price) || 0,
                     min_price: editFormData.min_price ? parseFloat(editFormData.min_price) : null,
@@ -986,6 +985,18 @@ export default function TradeinManagePage() {
                         <FileTextIcon className="w-4 h-4 mr-1.5" />
                         {t('templates')}
                     </Button>
+                    <Button variant="outline" size="sm" onClick={() => router.push('/admin/tradein/commission')}>
+                        <PercentIcon className="w-4 h-4 mr-1.5" />
+                        Commission
+                    </Button>
+                    <Button variant="outline" size="sm" onClick={() => router.push('/admin/tradein/brands')}>
+                        <ImageIcon className="w-4 h-4 mr-1.5" />
+                        Brands
+                    </Button>
+                    <Button variant="outline" size="sm" onClick={() => router.push('/admin/tradein/categories')}>
+                        <LayoutGridIcon className="w-4 h-4 mr-1.5" />
+                        Categories
+                    </Button>
                     <Button onClick={() => router.push('/admin/tradein/add')} size="sm">
                         <PlusIcon className="w-4 h-4 mr-1.5" />
                         {t('addProduct')}
@@ -1095,6 +1106,8 @@ export default function TradeinManagePage() {
                             <SelectItem value="title_desc">Z-A</SelectItem>
                             <SelectItem value="price_desc">Price ↓</SelectItem>
                             <SelectItem value="price_asc">Price ↑</SelectItem>
+                            <SelectItem value="updated_asc">Stale first</SelectItem>
+                            <SelectItem value="updated_desc">Recent first</SelectItem>
                         </SelectContent>
                     </Select>
 
@@ -1218,6 +1231,7 @@ export default function TradeinManagePage() {
                                             <th className="text-left p-3 font-medium hidden md:table-cell">Category</th>
                                             <th className="text-right p-3 font-medium">{t('basePrice')}</th>
                                             <th className="text-right p-3 font-medium hidden sm:table-cell">{t('current')}</th>
+                                            <th className="text-center p-3 font-medium hidden lg:table-cell">Updated</th>
                                             <th className="text-center p-3 font-medium w-[80px]">Actions</th>
                                         </tr>
                                     </thead>
@@ -1226,7 +1240,7 @@ export default function TradeinManagePage() {
                                             <Fragment key={groupName}>
                                                 {groupBy !== 'none' && (
                                                     <tr key={`group-${groupName}`} className="bg-muted/30 cursor-pointer hover:bg-muted/50" onClick={() => toggleGroup(groupName)}>
-                                                        <td colSpan={6} className="p-2 px-3">
+                                                        <td colSpan={7} className="p-2 px-3">
                                                             <div className="flex items-center gap-2 font-medium">
                                                                 {expandedGroups[groupName] === false ? <ChevronRightIcon className="w-4 h-4" /> : <ChevronDownIcon className="w-4 h-4" />}
                                                                 {groupName}
@@ -1310,6 +1324,25 @@ export default function TradeinManagePage() {
                                                             </td>
                                                             <td className="p-2 text-right hidden sm:table-cell align-top">
                                                                 <span className="text-green-600 font-medium text-sm">{formatPrice(currentValue)}</span>
+                                                            </td>
+                                                            <td className="p-2 text-center hidden lg:table-cell align-top">
+                                                                {product.base_date ? (
+                                                                    <span className={cn("text-xs", (() => {
+                                                                        const days = Math.floor((Date.now() - new Date(product.base_date).getTime()) / 86400000)
+                                                                        return days > 30 ? "text-red-500" : days > 14 ? "text-yellow-500" : "text-muted-foreground"
+                                                                    })())}>
+                                                                        {(() => {
+                                                                            const days = Math.floor((Date.now() - new Date(product.base_date).getTime()) / 86400000)
+                                                                            if (days === 0) return 'Today'
+                                                                            if (days === 1) return '1d ago'
+                                                                            if (days < 30) return `${days}d ago`
+                                                                            if (days < 365) return `${Math.floor(days / 30)}mo ago`
+                                                                            return `${Math.floor(days / 365)}y ago`
+                                                                        })()}
+                                                                    </span>
+                                                                ) : (
+                                                                    <span className="text-xs text-muted-foreground/40">—</span>
+                                                                )}
                                                             </td>
                                                             <td className="p-2 align-top">
                                                                 <div className="flex items-center justify-center gap-1">
@@ -1433,6 +1466,21 @@ export default function TradeinManagePage() {
                                                                         <span className="font-semibold text-green-600 text-sm">{formatPrice(currentValue)}</span>
                                                                         {depRate > 0 && (
                                                                             <Badge variant="secondary" className="text-xs">-{depRate}%</Badge>
+                                                                        )}
+                                                                        {product.base_date && (
+                                                                            <span className={cn("text-[10px]", (() => {
+                                                                                const days = Math.floor((Date.now() - new Date(product.base_date).getTime()) / 86400000)
+                                                                                return days > 30 ? "text-red-500" : days > 14 ? "text-yellow-500" : "text-muted-foreground"
+                                                                            })())}>
+                                                                                {(() => {
+                                                                                    const days = Math.floor((Date.now() - new Date(product.base_date).getTime()) / 86400000)
+                                                                                    if (days === 0) return 'Today'
+                                                                                    if (days === 1) return '1d ago'
+                                                                                    if (days < 30) return `${days}d ago`
+                                                                                    if (days < 365) return `${Math.floor(days / 30)}mo ago`
+                                                                                    return `${Math.floor(days / 365)}y ago`
+                                                                                })()}
+                                                                            </span>
                                                                         )}
                                                                     </div>
                                                                     {/* Template badge */}
@@ -1572,44 +1620,11 @@ export default function TradeinManagePage() {
                                     </div>
                                     <div className="space-y-1.5">
                                         <Label htmlFor="edit-brand">Brand *</Label>
-                                        <Input id="edit-brand" value={editFormData.brand} onChange={(e) => handleEditInputChange('brand', e.target.value)} className="h-9" />
+                                        <BrandSelect value={editFormData.brand} onChange={(val) => handleEditInputChange('brand', val)} className="h-9" />
                                     </div>
                                     <div className="space-y-1.5">
                                         <Label htmlFor="edit-series">Series *</Label>
                                         <Input id="edit-series" value={editFormData.series} onChange={(e) => handleEditInputChange('series', e.target.value)} className="h-9" />
-                                    </div>
-                                </div>
-
-                                {/* Brand Image */}
-                                <div className="space-y-1.5">
-                                    <Label className="text-sm">Brand Image</Label>
-                                    <div className="flex items-center gap-3">
-                                        {editFormData.brand_img && (
-                                            <div className="relative w-12 h-12 rounded-xs border bg-muted flex-shrink-0">
-                                                <Image
-                                                    src={normalizeImageUrl(editFormData.brand_img)}
-                                                    alt="Brand"
-                                                    fill
-                                                    className="object-contain p-1"
-                                                />
-                                                <button
-                                                    type="button"
-                                                    onClick={() => handleEditInputChange('brand_img', '')}
-                                                    className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full p-0.5 hover:bg-red-600"
-                                                >
-                                                    <XIcon className="w-3 h-3" />
-                                                </button>
-                                            </div>
-                                        )}
-                                        <ImageUpload
-                                            value={editFormData.brand_img ? [editFormData.brand_img] : []}
-                                            onChange={(urls) => handleEditInputChange('brand_img', urls[0] || '')}
-                                            multiple={false}
-                                            folder="tradein/brands"
-                                            label={editFormData.brand_img ? "Change" : "Upload"}
-                                            onDelete={deleteFileFromBucket}
-                                            compact={true}
-                                        />
                                     </div>
                                 </div>
 

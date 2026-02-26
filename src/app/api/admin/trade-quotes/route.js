@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server'
 import { verifyAdminAccess } from '@/lib/serverAuth'
 import { createClient } from '@supabase/supabase-js'
-import { notifyCustomer, buildQuoteStatusEmail } from '@/lib/email'
+import { buildQuoteStatusEmail } from '@/lib/email'
+import { notifyUser } from '@/lib/notify'
 
 function createServiceRoleClient() {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
@@ -106,17 +107,38 @@ export async function PUT(request) {
       )
     }
 
-    // Notify customer via email when status changes (fire-and-forget)
-    if (status && data?.customer_email) {
-      notifyCustomer({
-        to: data.customer_email,
-        subject: `Trade-in Quote ${status.charAt(0).toUpperCase() + status.slice(1)}: ${data.product_title}`,
-        html: buildQuoteStatusEmail({
+    // Notify customer via all channels when status changes (fire-and-forget)
+    if (status && data) {
+      const statusLabels = { approved: 'Approved', rejected: 'Rejected', completed: 'Completed', pending: 'Pending' }
+      const statusMessages = {
+        approved: 'Your trade-in has been approved! Please ship your device.',
+        rejected: 'Your trade-in was not approved. Contact us for questions.',
+        completed: 'Your trade-in is complete! Payment is on the way.',
+        pending: 'Your trade-in is being reviewed.',
+      }
+      const notifTitle = `Trade-in ${statusLabels[status] || status}: ${data.product_title}`
+      const notifBody = statusMessages[status] || `Your trade-in status changed to ${status}.`
+
+      notifyUser({
+        userId: data.user_id,
+        email: data.customer_email,
+        type: 'trade_status',
+        title: notifTitle,
+        body: notifBody,
+        data: {
+          quote_id: data.id,
+          product_title: data.product_title,
+          status,
+          estimated_value: data.estimated_value,
+        },
+        emailSubject: `Trade-in Quote ${statusLabels[status] || status}: ${data.product_title}`,
+        emailHtml: buildQuoteStatusEmail({
           productTitle: data.product_title,
           customerName: data.customer_name,
           estimatedValue: data.estimated_value,
           status,
         }),
+        pushUrl: '/account/inbox',
       })
     }
 

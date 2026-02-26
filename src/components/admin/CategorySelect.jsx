@@ -33,8 +33,9 @@ export function CategorySelect({ value, onChange, className = "h-9" }) {
             const res = await fetch("/api/admin/tradein/categories")
             const data = await res.json()
             if (data.categories) {
-                cachedCategories = data.categories
-                setCategories(data.categories)
+                const active = data.categories.filter(c => c.is_active !== false)
+                cachedCategories = active
+                setCategories(active)
             }
         } catch {
             toast.error("Failed to load categories")
@@ -120,7 +121,12 @@ export function CategorySelect({ value, onChange, className = "h-9" }) {
             <SelectContent>
                 {categories.map((cat) => (
                     <SelectItem key={cat.id} value={cat.name}>
-                        {cat.name}
+                        <span className="flex items-center gap-2">
+                            {cat.img && (
+                                <img src={cat.img} alt="" className="w-4 h-4 object-contain" />
+                            )}
+                            {cat.name}
+                        </span>
                     </SelectItem>
                 ))}
                 <button

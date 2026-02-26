@@ -79,6 +79,16 @@ export default async function TradeProductPage({ params }) {
   // Resolve i18n fields based on locale
   const product = resolveTradeProduct(rawProduct, locale)
 
+  // Lookup category slug for URLs
+  if (product.category) {
+    const { data: catRow } = await supabaseAdmin
+      .from('trade_categories')
+      .select('slug')
+      .eq('name', product.category)
+      .single()
+    product._categorySlug = catRow?.slug || null
+  }
+
   // Increment views
   await supabaseAdmin
     .from('tradable_products')
@@ -97,8 +107,8 @@ export default async function TradeProductPage({ params }) {
       <TradeProductStructuredData product={product} depreciatedPrice={depreciatedPrice} />
       <BreadcrumbStructuredData items={[
         { name: 'Trade-In', url: `${baseUrl}/trade` },
-        { name: product.category, url: `${baseUrl}/trade/browse?category=${encodeURIComponent(product.category)}` },
-        { name: product.brand, url: `${baseUrl}/trade/browse?category=${encodeURIComponent(product.category)}&brand=${encodeURIComponent(product.brand)}` },
+        { name: product.category, url: `${baseUrl}/trade/browse?category=${product._categorySlug || encodeURIComponent(product.category).toLowerCase()}` },
+        { name: product.brand, url: `${baseUrl}/trade/browse?category=${product._categorySlug || encodeURIComponent(product.category).toLowerCase()}&brand=${encodeURIComponent(product.brand)}` },
         { name: product.title, url: `${baseUrl}/trade/product/${product.id}` },
       ]} />
       {/* Hero Section */}

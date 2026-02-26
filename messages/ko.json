@@ -815,13 +815,26 @@
       "errorLoadSettings": "설정을 불러오지 못했습니다",
       "errorUpdateSetting": "설정을 업데이트하지 못했습니다",
       "errorDeleteAccount": "계정 삭제는 고객지원팀에 문의해야 합니다",
+      "pushPermissionDenied": "푸시 알림 권한이 거부되었습니다",
       "loadingSettings": "설정 로딩 중...",
       "pleaseLogIn": "로그인해 주세요",
       "needLogIn": "설정에 접근하려면 로그인이 필요합니다",
       "goToLogin": "로그인으로 이동"
     },
     "inboxPage": {
-      "title": "수신함"
+      "title": "수신함",
+      "subtitle": "알림 및 업데이트",
+      "loading": "알림을 불러오는 중...",
+      "empty": "아직 알림이 없습니다",
+      "emptyDesc": "보상판매 및 주문에 대한 업데이트가 여기에 표시됩니다",
+      "markAllRead": "모두 읽음으로 표시",
+      "loadMore": "더 보기",
+      "errorLoad": "알림을 불러오지 못했습니다",
+      "errorMarkRead": "알림 업데이트에 실패했습니다",
+      "browseTradeIn": "보상판매 둘러보기",
+      "pleaseLogIn": "로그인해 주세요",
+      "needLogIn": "수신함을 보려면 로그인이 필요합니다.",
+      "goToLogin": "로그인으로 이동"
     },
     "membershipPage": {
       "title": "멤버십"

@@ -84,6 +84,13 @@ export async function GET() {
         )
       }
 
+      // Build category name → slug mapping
+      const { data: catRows } = await supabaseAdmin
+        .from('trade_categories')
+        .select('name, slug')
+        .eq('is_active', true)
+      const catSlugMap = new Map((catRows || []).map(c => [c.name, c.slug]))
+
       const uniqueCategories = new Set()
       const uniqueBrands = new Map()
       const uniqueSeries = new Map()
@@ -101,8 +108,9 @@ export async function GET() {
       })
 
       uniqueCategories.forEach((category) => {
+        const slug = catSlugMap.get(category) || encodeURIComponent(category).toLowerCase()
         entries.push(
-          ...urlEntry(`/trade/browse?category=${encodeURIComponent(category)}`, {
+          ...urlEntry(`/trade/browse?category=${slug}`, {
             lastModified: new Date(),
             changeFrequency: 'weekly',
             priority: 0.7,
@@ -111,8 +119,9 @@ export async function GET() {
       })
 
       uniqueBrands.forEach(({ category, brand }) => {
+        const slug = catSlugMap.get(category) || encodeURIComponent(category).toLowerCase()
         entries.push(
-          ...urlEntry(`/trade/browse?category=${encodeURIComponent(category)}&brand=${encodeURIComponent(brand)}`, {
+          ...urlEntry(`/trade/browse?category=${slug}&brand=${encodeURIComponent(brand)}`, {
             lastModified: new Date(),
             changeFrequency: 'weekly',
             priority: 0.6,
@@ -121,8 +130,9 @@ export async function GET() {
       })
 
       uniqueSeries.forEach(({ category, brand, series }) => {
+        const slug = catSlugMap.get(category) || encodeURIComponent(category).toLowerCase()
         entries.push(
-          ...urlEntry(`/trade/browse?category=${encodeURIComponent(category)}&brand=${encodeURIComponent(brand)}&series=${encodeURIComponent(series)}`, {
+          ...urlEntry(`/trade/browse?category=${slug}&brand=${encodeURIComponent(brand)}&series=${encodeURIComponent(series)}`, {
             lastModified: new Date(),
             changeFrequency: 'weekly',
             priority: 0.6,

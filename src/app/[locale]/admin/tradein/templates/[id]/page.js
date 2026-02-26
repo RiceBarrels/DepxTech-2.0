@@ -35,12 +35,21 @@ import {
 } from 'lucide-react'
 import { toast } from 'sonner'
 import { ImageUpload, uploadFiles, deleteFileFromBucket } from "@/components/admin/ImageUpload"
+import { AITranslateQuestionsButton } from '@/components/admin/AIButton'
+import { GlobeIcon } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { DndContext, closestCenter, PointerSensor, useSensor, useSensors } from '@dnd-kit/core'
 import { SortableContext, verticalListSortingStrategy, useSortable, arrayMove } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 
 const genId = () => Math.random().toString(36).slice(2, 10)
+
+const LOCALE_NAMES = {
+    'zh-CN': '简体中文', 'zh-HK': '繁體中文',
+    ar: 'العربية', nl: 'Nederlands', fr: 'Français', de: 'Deutsch',
+    it: 'Italiano', ja: '日本語', ko: '한국어', pl: 'Polski',
+    pt: 'Português', ru: 'Русский', es: 'Español', sv: 'Svenska',
+}
 
 function SortableItem({ id, children }) {
     const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id })
@@ -67,7 +76,10 @@ export default function EditTemplatePage() {
     const [questions, setQuestions] = useState([])
     const [originalName, setOriginalName] = useState('')
     const [originalQuestions, setOriginalQuestions] = useState([])
+    const [questionsI18n, setQuestionsI18n] = useState({})
+    const [originalQuestionsI18n, setOriginalQuestionsI18n] = useState({})
     const [expandedQuestions, setExpandedQuestions] = useState(new Set())
+    const [selectedLocale, setSelectedLocale] = useState(null)
     const [showPreview, setShowPreview] = useState(false)
     const [linkedProductCount, setLinkedProductCount] = useState(0)
 
@@ -114,8 +126,8 @@ export default function EditTemplatePage() {
 
     // Track unsaved changes
     const hasChanges = useMemo(() => {
-        return name !== originalName || JSON.stringify(questions) !== JSON.stringify(originalQuestions)
-    }, [name, originalName, questions, originalQuestions])
+        return name !== originalName || JSON.stringify(questions) !== JSON.stringify(originalQuestions) || JSON.stringify(questionsI18n) !== JSON.stringify(originalQuestionsI18n)
+    }, [name, originalName, questions, originalQuestions, questionsI18n, originalQuestionsI18n])
 
     // Warn before leaving with unsaved changes
     useEffect(() => {
@@ -150,6 +162,8 @@ export default function EditTemplatePage() {
                 setName(foundTemplate.name || '')
                 setOriginalName(foundTemplate.name || '')
                 setLinkedProductCount(foundTemplate.linked_product_count || 0)
+                setQuestionsI18n(foundTemplate.questions_i18n || {})
+                setOriginalQuestionsI18n(JSON.parse(JSON.stringify(foundTemplate.questions_i18n || {})))
 
                 const q = (foundTemplate.questions || []).map(q => ({
                     ...q,
@@ -214,7 +228,8 @@ export default function EditTemplatePage() {
                 body: JSON.stringify({
                     id,
                     name,
-                    questions: processedQuestions
+                    questions: processedQuestions,
+                    questions_i18n: questionsI18n
                 })
             })
 
@@ -225,6 +240,7 @@ export default function EditTemplatePage() {
 
             setOriginalName(name)
             setOriginalQuestions(JSON.parse(JSON.stringify(processedQuestions)))
+            setOriginalQuestionsI18n(JSON.parse(JSON.stringify(questionsI18n)))
             setQuestions(processedQuestions)
             if (data.updatedProductCount > 0) {
                 setLinkedProductCount(data.updatedProductCount)
@@ -242,6 +258,7 @@ export default function EditTemplatePage() {
     const handleDiscard = () => {
         setName(originalName)
         setQuestions(JSON.parse(JSON.stringify(originalQuestions)))
+        setQuestionsI18n(JSON.parse(JSON.stringify(originalQuestionsI18n)))
         toast.info('Changes discarded')
     }
 
@@ -474,10 +491,28 @@ export default function EditTemplatePage() {
                     </Card>
 
                     {/* Questions Header */}
-                    <div className="flex items-center justify-between">
+                    <div className="flex items-center justify-between flex-wrap gap-2">
                         <div className="flex items-center gap-2">
                             <HelpCircleIcon className="w-4 h-4 text-muted-foreground" />
                             <h2 className="text-sm font-semibold">Questions ({questions.length})</h2>
+                            {Object.keys(questionsI18n).length > 0 && (
+                                <Select value={selectedLocale || '_none'} onValueChange={(v) => setSelectedLocale(v === '_none' ? null : v)}>
+                                    <SelectTrigger className="h-7 w-auto gap-1.5 text-xs border-blue-300 text-blue-600 [&>svg]:hidden px-2">
+                                        <GlobeIcon className="w-3.5 h-3.5 shrink-0" />
+                                        <SelectValue />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="_none">
+                                            <span className="text-muted-foreground">English (source)</span>
+                                        </SelectItem>
+                                        {Object.keys(questionsI18n).map((locale) => (
+                                            <SelectItem key={locale} value={locale}>
+                                                {LOCALE_NAMES[locale] || locale} <span className="text-muted-foreground ml-1">({locale})</span>
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                            )}
                         </div>
                         <div className="flex items-center gap-1">
                             {questions.length > 0 && (
@@ -491,6 +526,15 @@ export default function EditTemplatePage() {
                                     <Separator orientation="vertical" className="h-4 mx-1" />
                                 </>
                             )}
+                            <AITranslateQuestionsButton
+                                questions={questions.map(({ _dndId, ...q }) => ({
+                                    ...q,
+                                    ans: (q.ans || []).map(({ _dndId: _, ...a }) => a)
+                                }))}
+                                context="trade-in question template"
+                                onResult={(i18n) => setQuestionsI18n(i18n)}
+                                className="h-7"
+                            />
                             <Button variant="outline" size="sm" onClick={addQuestion} className="h-7">
                                 <PlusIcon className="w-3.5 h-3.5 mr-1" />
                                 Add Question
@@ -596,6 +640,12 @@ export default function EditTemplatePage() {
                                                                 onChange={(e) => updateQuestion(qIndex, 'title', e.target.value)}
                                                                 placeholder="Enter question text..."
                                                             />
+                                                            {selectedLocale && questionsI18n[selectedLocale]?.[qIndex]?.title && (
+                                                                <div className="flex items-start gap-1.5 mt-1">
+                                                                    <GlobeIcon className="w-3 h-3 text-blue-500 mt-0.5 shrink-0" />
+                                                                    <span className="text-xs text-blue-600 dark:text-blue-400">{questionsI18n[selectedLocale][qIndex].title}</span>
+                                                                </div>
+                                                            )}
                                                         </div>
                                                         <div className="space-y-1.5 sm:col-span-2">
                                                             <Label className="text-xs font-medium text-muted-foreground">Description (optional)</Label>
@@ -605,6 +655,12 @@ export default function EditTemplatePage() {
                                                                 placeholder="Helper text shown below the question..."
                                                                 className="text-sm"
                                                             />
+                                                            {selectedLocale && questionsI18n[selectedLocale]?.[qIndex]?.description && (
+                                                                <div className="flex items-start gap-1.5 mt-1">
+                                                                    <GlobeIcon className="w-3 h-3 text-blue-500 mt-0.5 shrink-0" />
+                                                                    <span className="text-xs text-blue-600 dark:text-blue-400">{questionsI18n[selectedLocale][qIndex].description}</span>
+                                                                </div>
+                                                            )}
                                                         </div>
                                                     </div>
 
@@ -719,6 +775,20 @@ export default function EditTemplatePage() {
                                                                             className="h-7 text-xs text-muted-foreground"
                                                                         />
                                                                     </div>
+                                                                    {selectedLocale && (() => {
+                                                                        const ta = questionsI18n[selectedLocale]?.[qIndex]?.ans?.[aIndex]
+                                                                        if (!ta?.content && !ta?.description) return null
+                                                                        return (
+                                                                            <div className="pl-6 flex items-start gap-1.5">
+                                                                                <GlobeIcon className="w-3 h-3 text-blue-500 mt-0.5 shrink-0" />
+                                                                                <div className="text-xs text-blue-600 dark:text-blue-400">
+                                                                                    {ta.content && <span>{ta.content}</span>}
+                                                                                    {ta.content && ta.description && <span className="mx-1 text-blue-400">·</span>}
+                                                                                    {ta.description && <span className="opacity-70">{ta.description}</span>}
+                                                                                </div>
+                                                                            </div>
+                                                                        )
+                                                                    })()}
                                                                     <div className="pl-6">
                                                                         <ImageUpload
                                                                             value={answer.img || ''}
@@ -784,15 +854,17 @@ export default function EditTemplatePage() {
                                         Add questions to see a preview
                                     </p>
                                 ) : (
-                                    questions.map((q, qi) => (
+                                    questions.map((q, qi) => {
+                                        const tq = selectedLocale ? questionsI18n[selectedLocale]?.[qi] : null
+                                        return (
                                         <div key={qi} className="space-y-2.5">
                                             <div>
                                                 <p className="text-sm font-medium">
-                                                    {q.title || 'Untitled question'}
+                                                    {tq?.title || q.title || 'Untitled question'}
                                                     {q.required !== false && <span className="text-red-500 ml-0.5">*</span>}
                                                 </p>
-                                                {q.description && (
-                                                    <p className="text-xs text-muted-foreground mt-0.5">{q.description}</p>
+                                                {(tq?.description || q.description) && (
+                                                    <p className="text-xs text-muted-foreground mt-0.5">{tq?.description || q.description}</p>
                                                 )}
                                                 {q.type === 'opposite_multiple' && (
                                                     <p className="text-xs text-amber-600 dark:text-amber-400 mt-0.5">Adjustments apply when unchecked</p>
@@ -802,7 +874,9 @@ export default function EditTemplatePage() {
                                                 <img src={q.img} alt="" className="w-full h-24 object-cover rounded-md" />
                                             )}
                                             <div className="space-y-1.5">
-                                                {(q.ans || []).map((a, ai) => (
+                                                {(q.ans || []).map((a, ai) => {
+                                                    const ta = tq?.ans?.[ai]
+                                                    return (
                                                     <div
                                                         key={ai}
                                                         className="flex items-center gap-2 rounded-lg border px-3 py-2 text-sm hover:bg-muted/50 cursor-pointer transition-colors"
@@ -812,9 +886,9 @@ export default function EditTemplatePage() {
                                                             (q.type === 'multiple' || q.type === 'opposite_multiple') ? 'rounded-sm' : 'rounded-full'
                                                         )} />
                                                         <div className="flex-1 min-w-0">
-                                                            <span className="text-sm">{a.content || 'Untitled answer'}</span>
-                                                            {a.description && (
-                                                                <p className="text-xs text-muted-foreground truncate">{a.description}</p>
+                                                            <span className="text-sm">{ta?.content || a.content || 'Untitled answer'}</span>
+                                                            {(ta?.description || a.description) && (
+                                                                <p className="text-xs text-muted-foreground truncate">{ta?.description || a.description}</p>
                                                             )}
                                                         </div>
                                                         {(a.persentage || a.fixed) && (
@@ -832,11 +906,13 @@ export default function EditTemplatePage() {
                                                             </div>
                                                         )}
                                                     </div>
-                                                ))}
+                                                    )
+                                                })}
                                             </div>
                                             {qi < questions.length - 1 && <Separator />}
                                         </div>
-                                    ))
+                                        )
+                                    })
                                 )}
                             </CardContent>
                         </Card>

@@ -21,6 +21,7 @@ import { openWindow } from "@/components/ui/windows"
 import { ImageUpload, uploadFiles, deleteFileFromBucket } from "@/components/admin/ImageUpload"
 import { Checkbox } from '@/components/ui/checkbox'
 import { CategorySelect } from '@/components/admin/CategorySelect'
+import { BrandSelect } from '@/components/admin/BrandSelect'
 import { toast } from 'sonner'
 import { AITranslateButton, AITranslateQuestionsButton, AIGenerateButton } from '@/components/admin/AIButton'
 import TranslationEditor from '@/components/admin/TranslationEditor'
@@ -33,7 +34,6 @@ export default function AddTradeinProductPage({defaultData={
     category: '',
     brand: '',
     series: '',
-    brand_img: '',
     imgs: [],
     base_date: '',
     depreciation_rate: '',
@@ -150,9 +150,6 @@ export default function AddTradeinProductPage({defaultData={
 
         try {
             // Upload images first
-            const uploadedBrandImg = formData.brand_img instanceof File
-                ? (await uploadFiles(formData.brand_img, 'tradein/brands'))[0]
-                : formData.brand_img
             const uploadedProductImgs = await uploadFiles(formData.imgs, 'tradein/products')
 
             // Upload question and answer images
@@ -191,7 +188,6 @@ export default function AddTradeinProductPage({defaultData={
                 },
                 body: JSON.stringify({
                     ...formData,
-                    brand_img: uploadedBrandImg || null,
                     imgs: uploadedProductImgs,
                     base_price: parseFloat(formData.base_price) || 0,
                     min_price: formData.min_price ? parseFloat(formData.min_price) : null,
@@ -221,7 +217,6 @@ export default function AddTradeinProductPage({defaultData={
                 category: '',
                 brand: '',
                 series: '',
-                brand_img: '',
                 imgs: [],
                 base_date: '',
                 depreciation_rate: '',
@@ -350,13 +345,7 @@ export default function AddTradeinProductPage({defaultData={
                             </div>
                             <div className="space-y-2">
                                 <Label htmlFor="brand">Brand *</Label>
-                                <Input
-                                    id="brand"
-                                    value={formData.brand}
-                                    onChange={(e) => handleInputChange('brand', e.target.value)}
-                                    placeholder="e.g., Apple"
-                                    required
-                                />
+                                <BrandSelect value={formData.brand} onChange={(val) => handleInputChange('brand', val)} />
                             </div>
                             <div className="space-y-2">
                                 <Label htmlFor="series">Series *</Label>
@@ -826,18 +815,6 @@ export default function AddTradeinProductPage({defaultData={
                                     No product-specific questions. Click "Add Question" to create one.
                                 </p>
                             )}
-                        </div>
-
-                        {/* Brand Image */}
-                        <div className="space-y-2">
-                            <ImageUpload
-                                value={formData.brand_img}
-                                onChange={(url) => handleInputChange('brand_img', url)}
-                                multiple={false}
-                                folder="tradein/brands"
-                                label="Brand Image"
-                                onDelete={deleteFileFromBucket}
-                            />
                         </div>
 
                         {/* Product Images */}

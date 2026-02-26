@@ -72,7 +72,7 @@ export async function POST(request) {
         }
 
         const body = await request.json()
-        const { name, questions = [] } = body
+        const { name, questions = [], questions_i18n = {} } = body
 
         if (!name) {
             return NextResponse.json({ error: 'Template name is required' }, { status: 400 })
@@ -82,7 +82,8 @@ export async function POST(request) {
             .from('trade_question_templates')
             .insert({
                 name,
-                questions
+                questions,
+                questions_i18n
             })
             .select()
             .single()
@@ -108,7 +109,7 @@ export async function PUT(request) {
         }
 
         const body = await request.json()
-        const { id, name, questions } = body
+        const { id, name, questions, questions_i18n } = body
 
         if (!id) {
             return NextResponse.json({ error: 'Template ID is required' }, { status: 400 })
@@ -119,6 +120,7 @@ export async function PUT(request) {
         const updateData = {}
         if (name !== undefined) updateData.name = name
         if (questions !== undefined) updateData.questions = questions
+        if (questions_i18n !== undefined) updateData.questions_i18n = questions_i18n
 
         const { data: template, error } = await supabase
             .from('trade_question_templates')
@@ -135,9 +137,12 @@ export async function PUT(request) {
         // Propagate question changes to all linked products
         let updatedProductCount = 0
         if (questions !== undefined) {
+            const propagateData = { questions }
+            if (questions_i18n !== undefined) propagateData.questions_i18n = questions_i18n
+
             const { data: updatedProducts, error: propagateError } = await supabase
                 .from('tradable_products')
-                .update({ questions })
+                .update(propagateData)
                 .eq('question_template_id', id)
                 .select('id')
 

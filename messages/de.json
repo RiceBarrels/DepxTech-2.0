@@ -815,13 +815,26 @@
       "errorLoadSettings": "Einstellungen konnten nicht geladen werden",
       "errorUpdateSetting": "Einstellung konnte nicht aktualisiert werden",
       "errorDeleteAccount": "Für die Kontolöschung wenden Sie sich bitte an den Support",
+      "pushPermissionDenied": "Push-Benachrichtigungsberechtigung wurde verweigert",
       "loadingSettings": "Einstellungen werden geladen...",
       "pleaseLogIn": "Bitte melden Sie sich an",
       "needLogIn": "Sie müssen angemeldet sein, um auf die Einstellungen zuzugreifen",
       "goToLogin": "Zur Anmeldung"
     },
     "inboxPage": {
-      "title": "Posteingang"
+      "title": "Posteingang",
+      "subtitle": "Ihre Benachrichtigungen und Aktualisierungen",
+      "loading": "Benachrichtigungen werden geladen...",
+      "empty": "Noch keine Benachrichtigungen",
+      "emptyDesc": "Hier sehen Sie Aktualisierungen zu Ihren Eintausch-Aktionen und Bestellungen",
+      "markAllRead": "Alle als gelesen markieren",
+      "loadMore": "Mehr laden",
+      "errorLoad": "Benachrichtigungen konnten nicht geladen werden",
+      "errorMarkRead": "Benachrichtigung konnte nicht aktualisiert werden",
+      "browseTradeIn": "Eintausch durchsuchen",
+      "pleaseLogIn": "Bitte anmelden",
+      "needLogIn": "Sie müssen angemeldet sein, um Ihren Posteingang anzuzeigen.",
+      "goToLogin": "Zur Anmeldung"
     },
     "membershipPage": {
       "title": "Mitgliedschaft"

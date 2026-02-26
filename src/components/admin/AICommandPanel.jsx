@@ -382,7 +382,7 @@ export function AICommandPanel({ products, onProductsChanged }) {
     const executeAction = async (action) => {
         let response
         switch (action.type) {
-            case 'add':
+            case 'add': {
                 response = await fetch('/api/admin/tradein', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -395,7 +395,19 @@ export function AICommandPanel({ products, onProductsChanged }) {
                         des: action.data.des || '',
                     }),
                 })
-                break
+                const addResult = await response.json()
+                if (!response.ok) throw new Error(addResult.error || 'Request failed')
+                // Fire-and-forget eBay price fetch for the new product
+                const newId = addResult.product?.id
+                if (newId) {
+                    fetch('/api/admin/tradein/ebay-price', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ ids: [newId] }),
+                    }).catch(() => {})
+                }
+                return
+            }
             case 'delete':
                 if (!action.data.id) throw new Error('Missing product ID')
                 response = await fetch(`/api/admin/tradein?id=${action.data.id}`, { method: 'DELETE' })

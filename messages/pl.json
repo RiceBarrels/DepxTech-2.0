@@ -815,13 +815,26 @@
       "errorLoadSettings": "Nie udało się załadować ustawień",
       "errorUpdateSetting": "Nie udało się zaktualizować ustawienia",
       "errorDeleteAccount": "Usunięcie konta wymaga kontaktu z pomocą techniczną",
+      "pushPermissionDenied": "Odmówiono uprawnienia do powiadomień push",
       "loadingSettings": "Ładowanie ustawień...",
       "pleaseLogIn": "Zaloguj się",
       "needLogIn": "Musisz być zalogowany, aby uzyskać dostęp do ustawień",
       "goToLogin": "Przejdź do logowania"
     },
     "inboxPage": {
-      "title": "Skrzynka odbiorcza"
+      "title": "Skrzynka odbiorcza",
+      "subtitle": "Twoje powiadomienia i aktualizacje",
+      "loading": "Ładowanie powiadomień...",
+      "empty": "Brak powiadomień",
+      "emptyDesc": "Tutaj pojawią się aktualizacje dotyczące Twoich wymian i zamówień",
+      "markAllRead": "Oznacz wszystkie jako przeczytane",
+      "loadMore": "Załaduj więcej",
+      "errorLoad": "Nie udało się załadować powiadomień",
+      "errorMarkRead": "Nie udało się zaktualizować powiadomienia",
+      "browseTradeIn": "Przeglądaj wymianę",
+      "pleaseLogIn": "Zaloguj się",
+      "needLogIn": "Musisz być zalogowany, aby zobaczyć skrzynkę odbiorczą.",
+      "goToLogin": "Przejdź do logowania"
     },
     "membershipPage": {
       "title": "Członkostwo"

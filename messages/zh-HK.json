@@ -815,13 +815,26 @@
       "errorLoadSettings": "載入設定失敗",
       "errorUpdateSetting": "更新設定失敗",
       "errorDeleteAccount": "刪除帳戶需聯繫客服",
+      "pushPermissionDenied": "推送通知權限被拒絕",
       "loadingSettings": "載入設定中...",
       "pleaseLogIn": "請登入",
       "needLogIn": "您需要登入才能存取設定",
       "goToLogin": "前往登入"
     },
     "inboxPage": {
-      "title": "收件匣"
+      "title": "收件匣",
+      "subtitle": "您的通知和更新",
+      "loading": "正在載入通知...",
+      "empty": "暫無通知",
+      "emptyDesc": "您的以舊換新和訂單更新將顯示在這裡",
+      "markAllRead": "全部標為已讀",
+      "loadMore": "載入更多",
+      "errorLoad": "載入通知失敗",
+      "errorMarkRead": "更新通知失敗",
+      "browseTradeIn": "瀏覽以舊換新",
+      "pleaseLogIn": "請登入",
+      "needLogIn": "您需要登入才能查看收件匣。",
+      "goToLogin": "前往登入"
     },
     "membershipPage": {
       "title": "會員"

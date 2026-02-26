@@ -1,7 +1,8 @@
 "use client"
 
 import { useAuth } from '@/lib/auth'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
+import { createClient } from '@/utils/supabase/client'
 import { Button } from '@/components/ui/button'
 import { ArrowRightLeftIcon, BadgeDollarSignIcon, ChevronRightIcon, InboxIcon, LogOutIcon, Package2Icon, PenIcon, SettingsIcon, TicketPercentIcon, UserIcon } from 'lucide-react'
 import { useTranslations } from 'next-intl'
@@ -22,11 +23,24 @@ export default function AccountPage() {
     config: { tension: 280, friction: 60 }
   })
 
+  const [unreadCount, setUnreadCount] = useState(0)
+
   useEffect(() => {
     if (!loading && !user) {
       router.push('/login')
     }
   }, [user, loading, router])
+
+  useEffect(() => {
+    if (!user) return
+    const supabase = createClient()
+    supabase
+      .from('notifications')
+      .select('id', { count: 'exact', head: true })
+      .eq('user_id', user.id)
+      .eq('read', false)
+      .then(({ count }) => setUnreadCount(count || 0))
+  }, [user])
 
   if (loading) {
     return null
@@ -109,7 +123,14 @@ export default function AccountPage() {
         <div className='flex flex-col justify-center items-center bg-accent/25 light:bg-accent rounded-4xl overflow-hidden border-1'>
           <TransitionLink href="/account/inbox" className="w-full">
             <Button variant="ghost" className='w-full py-4 px-6 sm:p-8 sm:px-8 justify-start gap-4 rounded-none'>
-              <div><InboxIcon strokeWidth={1.1} className='size-5'/></div>
+              <div className="relative">
+                <InboxIcon strokeWidth={1.1} className='size-5'/>
+                {unreadCount > 0 && (
+                  <span className="absolute -top-1.5 -right-1.5 bg-red-500 text-white text-[10px] font-bold rounded-full min-w-4 h-4 flex items-center justify-center px-1">
+                    {unreadCount > 9 ? '9+' : unreadCount}
+                  </span>
+                )}
+              </div>
               <span className='font-normal text-base flex-1 flex justify-start items-center'>{t('inbox')}</span>
               <div><ChevronRightIcon className='size-4 text-muted-foreground'/></div>
             </Button>

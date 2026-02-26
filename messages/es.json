@@ -815,13 +815,26 @@
       "errorLoadSettings": "Error al cargar la configuración",
       "errorUpdateSetting": "Error al actualizar la configuración",
       "errorDeleteAccount": "La eliminación de la cuenta requiere contactar a soporte",
+      "pushPermissionDenied": "Se denegó el permiso de notificaciones push",
       "loadingSettings": "Cargando configuración...",
       "pleaseLogIn": "Por favor, inicia sesión",
       "needLogIn": "Debes iniciar sesión para acceder a la configuración",
       "goToLogin": "Ir al inicio de sesión"
     },
     "inboxPage": {
-      "title": "Bandeja de entrada"
+      "title": "Bandeja de entrada",
+      "subtitle": "Tus notificaciones y actualizaciones",
+      "loading": "Cargando notificaciones...",
+      "empty": "Aún no hay notificaciones",
+      "emptyDesc": "Aquí verás las actualizaciones sobre tus intercambios y pedidos",
+      "markAllRead": "Marcar todo como leído",
+      "loadMore": "Cargar más",
+      "errorLoad": "Error al cargar las notificaciones",
+      "errorMarkRead": "Error al actualizar la notificación",
+      "browseTradeIn": "Explorar intercambios",
+      "pleaseLogIn": "Por favor, inicia sesión",
+      "needLogIn": "Debes iniciar sesión para ver tu bandeja de entrada.",
+      "goToLogin": "Ir al inicio de sesión"
     },
     "membershipPage": {
       "title": "Membresía"

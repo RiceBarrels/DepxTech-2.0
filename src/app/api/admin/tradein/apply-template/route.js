@@ -58,7 +58,8 @@ export async function POST(request) {
       .from('tradable_products')
       .update({
         question_template_id: templateId,
-        questions: template.questions || []
+        questions: template.questions || [],
+        questions_i18n: template.questions_i18n || {}
       })
       .in('id', productIds)
       .select('id')
