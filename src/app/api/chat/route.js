@@ -1,5 +1,6 @@
 import { supabaseAdmin } from '@/lib/supabase-admin'
 import { NextResponse } from 'next/server'
+import { notifyAdminsPush } from '@/lib/notify'
 
 export async function POST(request) {
   try {
@@ -40,6 +41,14 @@ export async function POST(request) {
       console.error('Error creating conversation:', error)
       return NextResponse.json({ error: error.message }, { status: 500 })
     }
+
+    // Notify admins about new support conversation (fire-and-forget)
+    notifyAdminsPush({
+      type: 'admin_chat',
+      title: 'New Support Conversation',
+      body: `${displayName || 'A customer'} started a support chat`,
+      url: `/admin/chat/${data.id}`,
+    })
 
     return NextResponse.json({ conversation: data })
   } catch (err) {

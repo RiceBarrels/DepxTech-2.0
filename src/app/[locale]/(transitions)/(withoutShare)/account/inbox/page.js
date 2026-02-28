@@ -12,9 +12,12 @@ import {
   CheckCheck,
   ArrowRightLeft,
   BellIcon,
+  ExternalLinkIcon,
+  MegaphoneIcon,
 } from "lucide-react"
 import { toast } from "sonner"
 import { TransitionLink } from "@/components/ui/pageTransitions"
+import { useTransitionRouter } from "@/components/ui/pageTransitions"
 import { useTranslations } from 'next-intl'
 
 function timeAgo(dateString) {
@@ -39,6 +42,7 @@ const statusConfig = {
 export default function InboxPage() {
   const t = useTranslations('account.inboxPage')
   const { user } = useAuth()
+  const router = useTransitionRouter()
   const [notifications, setNotifications] = useState([])
   const [loading, setLoading] = useState(true)
   const [hasMore, setHasMore] = useState(true)
@@ -186,18 +190,29 @@ export default function InboxPage() {
             const status = notif.data?.status
             const cfg = statusConfig[status] || statusConfig.pending
 
+            const notifUrl = notif.url || notif.data?.url
+
             return (
               <Card
                 key={notif.id}
                 className={`cursor-pointer transition-colors hover:bg-accent/50 ${!notif.read ? 'border-primary/30 bg-primary/2' : ''}`}
                 onClick={() => {
                   if (!notif.read) markAsRead([notif.id])
+                  if (notifUrl) {
+                    if (notifUrl.startsWith('http')) {
+                      window.open(notifUrl, '_blank')
+                    } else {
+                      router.push(notifUrl)
+                    }
+                  }
                 }}
               >
                 <CardContent className="flex items-start gap-4 py-4">
                   <div className="relative mt-1 shrink-0">
                     {notif.type === 'trade_status' ? (
                       <ArrowRightLeft className="h-5 w-5 text-muted-foreground" />
+                    ) : notif.type === 'admin_push' ? (
+                      <MegaphoneIcon className="h-5 w-5 text-muted-foreground" />
                     ) : (
                       <BellIcon className="h-5 w-5 text-muted-foreground" />
                     )}
@@ -218,18 +233,26 @@ export default function InboxPage() {
                     <p className="text-sm text-muted-foreground mt-1 line-clamp-2">
                       {notif.body}
                     </p>
-                    {status && (
-                      <div className="mt-2 flex items-center gap-2">
-                        <Badge className={cfg.className} variant={cfg.variant}>
-                          {cfg.label}
-                        </Badge>
-                        {notif.data?.estimated_value && (
-                          <span className="text-sm font-semibold text-green-600">
-                            ${Number(notif.data.estimated_value).toFixed(2)}
-                          </span>
-                        )}
-                      </div>
-                    )}
+                    <div className="mt-2 flex items-center gap-2">
+                      {status && (
+                        <>
+                          <Badge className={cfg.className} variant={cfg.variant}>
+                            {cfg.label}
+                          </Badge>
+                          {notif.data?.estimated_value && (
+                            <span className="text-sm font-semibold text-green-600">
+                              ${Number(notif.data.estimated_value).toFixed(2)}
+                            </span>
+                          )}
+                        </>
+                      )}
+                      {notifUrl && (
+                        <span className="text-xs text-blue-500 flex items-center gap-1">
+                          <ExternalLinkIcon className="h-3 w-3" />
+                          {t('viewDetails') || 'View details'}
+                        </span>
+                      )}
+                    </div>
                   </div>
                 </CardContent>
               </Card>

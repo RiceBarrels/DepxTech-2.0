@@ -831,6 +831,7 @@
       "loadMore": "載入更多",
       "errorLoad": "載入通知失敗",
       "errorMarkRead": "更新通知失敗",
+      "viewDetails": "查看詳情",
       "browseTradeIn": "瀏覽以舊換新",
       "pleaseLogIn": "請登入",
       "needLogIn": "您需要登入才能查看收件匣。",
@@ -896,6 +897,7 @@
       "offers": "優惠",
       "users": "使用者",
       "signOut": "登出",
+      "pushNotifications": "推送通知",
       "goBackHome": "返回首頁"
     },
     "dashboard": {

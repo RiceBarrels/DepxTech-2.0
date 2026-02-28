@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
-// Admin notification is now sent after shipping method selection
-// via /api/tradeins/quote/shipping
+import { notifyAdminsPush } from '@/lib/notify'
 
 // Create Supabase client with service role for public operations
 function createServiceRoleClient() {
@@ -176,6 +175,14 @@ export async function POST(request) {
         .update({ trades: (product.trades || 0) + 1 })
         .eq('id', productId)
     }
+
+    // Notify admins via push + inbox (fire-and-forget)
+    notifyAdminsPush({
+      type: 'admin_trade_in',
+      title: `New Trade-in: ${productTitle}`,
+      body: `${name} submitted a trade-in worth $${Number(estimatedValue).toFixed(2)}`,
+      url: '/admin/trade-quotes',
+    })
 
     return NextResponse.json({
       success: true,

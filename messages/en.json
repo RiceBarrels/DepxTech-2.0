@@ -887,6 +887,7 @@
       "loadMore": "Load more",
       "errorLoad": "Failed to load notifications",
       "errorMarkRead": "Failed to update notification",
+      "viewDetails": "View details",
       "browseTradeIn": "Browse Trade-In",
       "pleaseLogIn": "Please Log In",
       "needLogIn": "You need to be logged in to view your inbox.",
@@ -953,6 +954,7 @@
       "users": "Users",
       "signOut": "Sign Out",
       "blog": "Blog",
+      "pushNotifications": "Push Notifications",
       "goBackHome": "Go Back Home"
     },
     "dashboard": {

@@ -24,6 +24,7 @@ import {
   XIcon,
   ClipboardListIcon,
   FileTextIcon,
+  BellIcon,
 } from 'lucide-react'
 import { useState } from 'react'
 
@@ -36,6 +37,7 @@ const navItems = [
   { href: '/admin/blog', labelKey: 'blog', icon: FileTextIcon },
   { href: '/admin/offers', labelKey: 'offers', icon: TicketPercentIcon },
   { href: '/admin/users', labelKey: 'users', icon: UsersIcon },
+  { href: '/admin/push-notifications', labelKey: 'pushNotifications', icon: BellIcon },
 ]
 
 function NavLinks({ onNavigate }) {

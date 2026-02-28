@@ -1,5 +1,6 @@
 import { supabaseAdmin } from '@/lib/supabase-admin'
 import { NextResponse } from 'next/server'
+import { notifyAdminsPush } from '@/lib/notify'
 
 export async function GET(request, { params }) {
   const { id } = await params
@@ -57,6 +58,16 @@ export async function POST(request, { params }) {
       .from('chat_conversations')
       .update({ last_message_at: new Date().toISOString() })
       .eq('id', id)
+
+    // Notify admins when a customer sends a message (fire-and-forget)
+    if (senderType === 'customer') {
+      notifyAdminsPush({
+        type: 'admin_chat',
+        title: 'New Customer Support Message',
+        body: content.trim().length > 80 ? content.trim().slice(0, 80) + '...' : content.trim(),
+        url: `/admin/chat/${id}`,
+      })
+    }
 
     return NextResponse.json({ message })
   } catch (err) {

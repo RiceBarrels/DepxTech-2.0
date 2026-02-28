@@ -887,6 +887,7 @@
       "loadMore": "加载更多",
       "errorLoad": "加载通知失败",
       "errorMarkRead": "更新通知失败",
+      "viewDetails": "查看详情",
       "browseTradeIn": "浏览以旧换新",
       "pleaseLogIn": "请登录",
       "needLogIn": "您需要登录才能查看收件箱。",
@@ -952,6 +953,7 @@
       "offers": "优惠",
       "users": "用户",
       "signOut": "退出登录",
+      "pushNotifications": "推送通知",
       "goBackHome": "返回首页"
     },
     "dashboard": {

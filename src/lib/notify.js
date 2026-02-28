@@ -11,6 +11,48 @@ function createServiceRoleClient() {
 }
 
 /**
+ * Send push notification + inbox entry to all admin users (fire-and-forget).
+ */
+export function notifyAdminsPush({ type, title, body, url, data }) {
+    const supabase = createServiceRoleClient()
+
+    supabase
+        .from('profile_customer_readonly')
+        .select('id')
+        .eq('role', 'admin')
+        .then(({ data: admins, error }) => {
+            if (error || !admins?.length) return
+
+            for (const admin of admins) {
+                // In-app notification
+                supabase
+                    .from('notifications')
+                    .insert({
+                        user_id: admin.id,
+                        type: type || 'admin_alert',
+                        title,
+                        body,
+                        url: url || null,
+                        data: data || {},
+                    })
+                    .then(({ error: e }) => {
+                        if (e) console.error('[NotifyAdmin] Insert error:', e)
+                    })
+
+                // Web push
+                sendPushToUser({
+                    userId: admin.id,
+                    title,
+                    body,
+                    url: url || '/admin',
+                    tag: type || 'admin-alert',
+                })
+            }
+        })
+        .catch((err) => console.error('[NotifyAdmin] Failed:', err))
+}
+
+/**
  * Send a notification across all channels: inbox, push, email.
  * All fire-and-forget to avoid blocking the caller.
  */
