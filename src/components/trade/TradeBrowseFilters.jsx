@@ -1,7 +1,6 @@
 'use client'
 
 import { useRouter } from '@/i18n/navigation'
-import { useSearchParams } from 'next/navigation'
 import { useCallback, useTransition } from 'react'
 import {
   Select,
@@ -22,85 +21,47 @@ export default function TradeBrowseFilters({
   brands = [],
   seriesList = [],
   totalCount = 0,
+  categorySlug = '',
+  activeBrand = '',
 }) {
   const router = useRouter()
-  const searchParams = useSearchParams()
   const [isPending, startTransition] = useTransition()
   const t = useTranslations('trade.browse')
 
-  const activeCategory = searchParams.get('category') || ''
-  const activeBrand = searchParams.get('brand') || ''
-  const activeSeries = searchParams.get('series') || ''
-  const activeQuery = searchParams.get('q') || ''
-
   const activeFilters = [
-    activeCategory && { key: 'category', label: activeCategory },
+    categorySlug && { key: 'category', label: categorySlug },
     activeBrand && { key: 'brand', label: activeBrand },
-    activeSeries && { key: 'series', label: activeSeries },
   ].filter(Boolean)
 
-  const updateParam = useCallback((key, value) => {
-    const params = new URLSearchParams(searchParams.toString())
-
-    if (value && value !== 'all') {
-      params.set(key, value)
-    } else {
-      params.delete(key)
-    }
-
-    // Clear dependent filters when a parent changes
-    if (key === 'category') {
-      params.delete('brand')
-      params.delete('series')
-    }
-    if (key === 'brand') {
-      params.delete('series')
-    }
-
+  const navigateTo = useCallback((newCategorySlug, newBrand) => {
+    const parts = [newCategorySlug, newBrand ? encodeURIComponent(newBrand) : null].filter(Boolean)
+    const path = `/trade/browse${parts.length > 0 ? '/' + parts.join('/') : ''}`
     startTransition(() => {
-      router.push(`/trade/browse?${params.toString()}`, { scroll: false })
+      router.push(path, { scroll: false })
     })
-  }, [searchParams, router])
+  }, [router, startTransition])
 
   const clearAll = useCallback(() => {
     startTransition(() => {
       router.push('/trade/browse', { scroll: false })
     })
-  }, [router])
+  }, [router, startTransition])
 
   const removeFilter = useCallback((key) => {
-    updateParam(key, '')
-  }, [updateParam])
-
-  const handleSearch = useCallback((e) => {
-    if (e.key === 'Enter') {
-      updateParam('q', e.target.value.trim())
+    if (key === 'category') {
+      navigateTo(null, null)
+    } else if (key === 'brand') {
+      navigateTo(categorySlug, null)
     }
-  }, [updateParam])
+  }, [navigateTo, categorySlug])
 
   return (
     <div className="space-y-4">
       {/* Filter Bar */}
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-        {/* Search */}
-        <div className="relative flex-1 max-w-sm">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-          <Input
-            placeholder={t('searchPlaceholder')}
-            defaultValue={activeQuery}
-            onKeyDown={handleSearch}
-            onBlur={(e) => {
-              if (e.target.value !== activeQuery) {
-                updateParam('q', e.target.value.trim())
-              }
-            }}
-            className="pl-9 h-10"
-          />
-        </div>
-
         {/* Dropdowns */}
         <div className="flex items-center gap-2 flex-wrap">
-          <Select value={activeCategory || 'all'} onValueChange={(v) => updateParam('category', v)}>
+          <Select value={categorySlug || 'all'} onValueChange={(v) => navigateTo(v === 'all' ? null : v, null)}>
             <SelectTrigger className="h-10 w-[150px] text-sm">
               <SlidersHorizontal className="w-3.5 h-3.5 mr-1.5 text-muted-foreground" />
               <SelectValue placeholder={t('allCategories')} />
@@ -114,7 +75,7 @@ export default function TradeBrowseFilters({
           </Select>
 
           {brands.length > 0 && (
-            <Select value={activeBrand || 'all'} onValueChange={(v) => updateParam('brand', v)}>
+            <Select value={activeBrand || 'all'} onValueChange={(v) => navigateTo(categorySlug, v === 'all' ? null : v)}>
               <SelectTrigger className="h-10 w-[140px] text-sm">
                 <SelectValue placeholder={t('allBrands')} />
               </SelectTrigger>
@@ -122,20 +83,6 @@ export default function TradeBrowseFilters({
                 <SelectItem value="all">{t('allBrands')}</SelectItem>
                 {brands.map((b) => (
                   <SelectItem key={b} value={b}>{b}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          )}
-
-          {seriesList.length > 0 && (
-            <Select value={activeSeries || 'all'} onValueChange={(v) => updateParam('series', v)}>
-              <SelectTrigger className="h-10 w-[140px] text-sm">
-                <SelectValue placeholder={t('allSeries')} />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">{t('allSeries')}</SelectItem>
-                {seriesList.map((s) => (
-                  <SelectItem key={s} value={s}>{s}</SelectItem>
                 ))}
               </SelectContent>
             </Select>

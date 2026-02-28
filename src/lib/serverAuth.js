@@ -21,7 +21,7 @@ function createServiceRoleClient() {
 // Server-side admin role checking function for API routes
 export async function checkServerAdminRole(supabaseClient, userId) {
   try {
-    console.log('Server-side admin check for user ID:', userId)
+    // console.log('Server-side admin check for user ID:', userId)
     
     if (!userId) {
       return { isAdmin: false, error: 'No user ID provided' }
@@ -38,14 +38,14 @@ export async function checkServerAdminRole(supabaseClient, userId) {
       return { isAdmin: false, error: error.message }
     }
 
-    console.log('Server admin check - Profile data:', profileData)
+    // console.log('Server admin check - Profile data:', profileData)
 
     // Check if user has admin role
     const hasAdminRole = profileData && profileData.some(
       profile => profile.role === 'admin'
     )
 
-    console.log('Server admin check - Has admin role:', hasAdminRole)
+    // console.log('Server admin check - Has admin role:', hasAdminRole)
 
     return { 
       isAdmin: hasAdminRole, 
@@ -61,7 +61,7 @@ export async function checkServerAdminRole(supabaseClient, userId) {
 // Server-side function to verify admin access with session
 export async function verifyAdminAccess(request = null) {
   try {
-    console.log('=== Starting admin access verification ===')
+    // console.log('=== Starting admin access verification ===')
     
     // Create Supabase client with proper cookie handling
     const supabase = await createClient()
@@ -69,15 +69,15 @@ export async function verifyAdminAccess(request = null) {
     // Get the authenticated user (secure method)
     const { data: { user }, error: authError } = await supabase.auth.getUser()
 
-    console.log('Authenticated user details:', {
-      hasUser: !!user,
-      authError: authError,
-      userId: user?.id,
-      userEmail: user?.email
-    })
+    // console.log('Authenticated user details:', {
+    //   hasUser: !!user,
+    //   authError: authError,
+    //   userId: user?.id,
+    //   userEmail: user?.email
+    // })
 
     if (authError || !user) {
-      console.log('No authenticated user found')
+      // console.log('No authenticated user found')
       return {
         authorized: false,
         isAdmin: false,
@@ -87,7 +87,7 @@ export async function verifyAdminAccess(request = null) {
     }
 
     const userId = user.id
-    console.log('Verifying admin access for user:', userId)
+    // console.log('Verifying admin access for user:', userId)
 
     // Check if user has admin role
     const adminCheck = await checkServerAdminRole(supabase, userId)
@@ -137,8 +137,8 @@ export async function verifyAdminAccess(request = null) {
 // Save transaction to database
 export async function saveTransaction(userId, paymentIntentId, amount, cartItems, billingDetails, status) {
   try {
-    console.log('Saving transaction for user:', userId)
-    console.log('Payment intent ID:', paymentIntentId, 'Type:', typeof paymentIntentId)
+    // console.log('Saving transaction for user:', userId)
+    // console.log('Payment intent ID:', paymentIntentId, 'Type:', typeof paymentIntentId)
     
     const supabase = createServiceRoleClient()
     
@@ -154,7 +154,7 @@ export async function saveTransaction(userId, paymentIntentId, amount, cartItems
       updated_at: new Date().toISOString()
     }
 
-    console.log('Transaction object to insert:', transaction)
+    // console.log('Transaction object to insert:', transaction)
 
     // Insert transaction directly into transactions table
     const { data: insertedTransaction, error: insertError } = await supabase
@@ -174,7 +174,7 @@ export async function saveTransaction(userId, paymentIntentId, amount, cartItems
       return { success: false, error: insertError.message }
     }
 
-    console.log('Transaction saved successfully:', insertedTransaction.id)
+    // console.log('Transaction saved successfully:', insertedTransaction.id)
     return { 
       success: true, 
       transaction: insertedTransaction 
@@ -189,7 +189,7 @@ export async function saveTransaction(userId, paymentIntentId, amount, cartItems
 // Get user transactions
 export async function getUserTransactions(userId) {
   try {
-    console.log('Fetching transactions for user:', userId)
+    // console.log('Fetching transactions for user:', userId)
     
     const supabase = await createClient()
     
@@ -200,7 +200,7 @@ export async function getUserTransactions(userId) {
       .order('created_at', { ascending: false })
 
     if (error) {
-      console.error('Error fetching user transactions:', error)
+      // console.error('Error fetching user transactions:', error)
       return { success: false, error: error.message, transactions: [] }
     }
 
@@ -210,7 +210,7 @@ export async function getUserTransactions(userId) {
     }
 
   } catch (error) {
-    console.error('Error in getUserTransactions:', error)
+    // console.error('Error in getUserTransactions:', error)
     return { success: false, error: error.message, transactions: [] }
   }
 } 

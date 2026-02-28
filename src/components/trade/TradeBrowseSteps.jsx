@@ -1,10 +1,8 @@
 'use client'
 
-import Image from 'next/image'
-import { useRouter } from '@/i18n/navigation'
-import { useSearchParams } from 'next/navigation'
+import { useTransitionRouter } from '@/components/ui/pageTransitions'
+import { useParams } from 'next/navigation'
 import { useCallback, useTransition, useEffect, useState } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
 import { useTranslations } from 'next-intl'
 import { ChevronRight, X, SearchIcon } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
@@ -16,151 +14,81 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Input } from '@/components/ui/input'
-import TradeBrandCard from './TradeBrandCard'
-import { TradeProductCard } from './TradeCards'
-
-const sectionVariants = {
-  hidden: { opacity: 0, y: 16 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.35, ease: 'easeOut' } },
-  exit: { opacity: 0, y: -8, transition: { duration: 0.2 } },
-}
-
-const gridVariants = {
-  hidden: {},
-  visible: { transition: { staggerChildren: 0.04 } },
-}
-
-const itemVariants = {
-  hidden: { opacity: 0, y: 12 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.3 } },
-}
 
 export default function TradeBrowseSteps({
-  categoryData,
+  categoryName,
+  categorySlug,
   brand,
-  brands,
-  seriesList,
-  products,
+  seriesList = [],
   autoSkip,
+  children,
 }) {
-  const router = useRouter()
-  const searchParams = useSearchParams()
+  const router = useTransitionRouter()
+  const { locale } = useParams()
   const [isPending, startTransition] = useTransition()
   const t = useTranslations('trade.browse')
-
-  const category = categoryData?.name || null
-
-  const updateParam = useCallback((key, value) => {
-    const params = new URLSearchParams(searchParams.toString())
-
-    if (value) {
-      params.set(key, value)
-    } else {
-      params.delete(key)
-    }
-
-    // Clear downstream params
-    if (key === 'category') {
-      params.delete('brand')
-      params.delete('series')
-    }
-    if (key === 'brand') {
-      params.delete('series')
-    }
-
-    startTransition(() => {
-      router.replace(`/trade/browse?${params.toString()}`, { scroll: false })
-    })
-  }, [searchParams, router, startTransition])
-
-  // Auto-skip when only 1 option
-  useEffect(() => {
-    if (autoSkip.brand && !brand) {
-      updateParam('brand', autoSkip.brand)
-    }
-  }, [autoSkip.brand, brand, updateParam])
-
-  // Redirect to /trade if no category selected
-  useEffect(() => {
-    if (!categoryData) {
-      document.documentElement.classList.add('transition-fade')
-      document.documentElement.classList.remove('transition-slide')
-
-      startTransition(() => {
-        router.push('/trade')
-      })
-    }
-  }, [categoryData, router, startTransition])
 
   const [filterQuery, setFilterQuery] = useState('')
   const [selectedSeries, setSelectedSeries] = useState('all')
 
-  const showProducts = category && brand
-
-  // Filter products by search and series, default sort Z-A
-  const filteredProducts = (() => {
-    let result = products || []
-    if (selectedSeries && selectedSeries !== 'all') {
-      result = result.filter(p => p.series === selectedSeries)
-    }
-    if (filterQuery.trim()) {
-      const q = filterQuery.toLowerCase()
-      result = result.filter(p => p.title?.toLowerCase().includes(q))
-    }
-    return [...result].sort((a, b) => {
-      const ta = a.title || '', tb = b.title || ''
-      const na = /\d/.test(ta), nb = /\d/.test(tb)
-      if (na && !nb) return -1
-      if (!na && nb) return 1
-      return tb.localeCompare(ta, undefined, { numeric: true })
+  const navigateTo = useCallback((newCategorySlug, newBrand) => {
+    const parts = [newCategorySlug, newBrand ? encodeURIComponent(newBrand) : null].filter(Boolean)
+    const path = `/${locale}/trade/browse${parts.length > 0 ? '/' + parts.join('/') : ''}`
+    startTransition(() => {
+      router.push(path)
     })
-  })()
+  }, [router, startTransition, locale])
+
+  // Auto-skip when only 1 option
+  useEffect(() => {
+    if (autoSkip?.brand && !brand) {
+      navigateTo(categorySlug, autoSkip.brand)
+    }
+  }, [autoSkip?.brand, brand, navigateTo, categorySlug])
+
+  // Redirect to /trade if no category selected
+  useEffect(() => {
+    if (!categoryName) {
+      document.documentElement.classList.add('transition-fade')
+      document.documentElement.classList.remove('transition-slide')
+      startTransition(() => {
+        router.push(`/${locale}/trade`)
+      })
+    }
+  }, [categoryName, router, startTransition, locale])
+
+  // Client-side filtering: hide product cards via data attributes
+  useEffect(() => {
+    if (!brand) return
+    const container = document.getElementById('trade-product-grid')
+    if (!container) return
+
+    const cards = container.querySelectorAll('[data-product-card]')
+    const q = filterQuery.toLowerCase().trim()
+
+    cards.forEach((card) => {
+      const title = (card.getAttribute('data-title') || '').toLowerCase()
+      const series = card.getAttribute('data-series') || ''
+
+      const matchesQuery = !q || title.includes(q)
+      const matchesSeries = selectedSeries === 'all' || series === selectedSeries
+
+      card.style.display = matchesQuery && matchesSeries ? '' : 'none'
+    })
+  }, [filterQuery, selectedSeries, brand])
 
   return (
     <div className="space-y-6">
-      {/* Banner */}
-      {categoryData && (
-        <motion.div
-          initial={{ opacity: 0, y: -8 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.35 }}
-          className="relative overflow-hidden rounded-2xl bg-muted/60 border border-border"
-        >
-          <div className="flex items-center gap-4 sm:gap-6 px-5 sm:px-8 py-4 sm:py-5">
-            {categoryData.img && (
-              <div className="relative w-14 h-14 sm:w-20 sm:h-20 shrink-0">
-                <Image
-                  src={categoryData.img}
-                  alt={category}
-                  fill
-                  className="object-contain"
-                />
-              </div>
-            )}
-            <div className="min-w-0">
-              <h1 className="text-lg sm:text-2xl font-bold tracking-tight text-foreground truncate">
-                {categoryData.name}
-              </h1>
-              {categoryData.description && (
-                <p className="text-xs sm:text-sm text-muted-foreground mt-0.5 line-clamp-1">
-                  {categoryData.description}
-                </p>
-              )}
-            </div>
-          </div>
-        </motion.div>
-      )}
-
       {/* Breadcrumb */}
       <div className="flex items-center gap-2 flex-wrap">
-        {category && (
+        {categoryName && (
           <>
             <Badge
               variant="secondary"
               className="gap-1 pr-1 cursor-pointer hover:bg-muted"
-              onClick={() => updateParam('category', '')}
+              onClick={() => navigateTo(null, null)}
             >
-              {category}
+              {categoryName}
               <X className="w-3 h-3" />
             </Badge>
             {brand && <ChevronRight className="w-3.5 h-3.5 text-muted-foreground" />}
@@ -170,7 +98,7 @@ export default function TradeBrowseSteps({
           <Badge
             variant="secondary"
             className="gap-1 pr-1 cursor-pointer hover:bg-muted"
-            onClick={() => updateParam('brand', '')}
+            onClick={() => navigateTo(categorySlug, null)}
           >
             {brand}
             <X className="w-3 h-3" />
@@ -183,107 +111,37 @@ export default function TradeBrowseSteps({
         )}
       </div>
 
-      <AnimatePresence mode="wait">
-        {/* Step 1: Brand selection — card grid */}
-        {category && !brand && (
-          <motion.section
-            key="brand-step"
-            variants={sectionVariants}
-            initial="hidden"
-            animate="visible"
-            exit="exit"
-          >
-            <h2 className="text-xl font-bold mb-6">{t('selectBrand')}</h2>
-            <motion.div
-              className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4"
-              variants={gridVariants}
-              initial="hidden"
-              animate="visible"
-            >
-              {brands.map((b) => (
-                <motion.div key={b.name} variants={itemVariants}>
-                  <TradeBrandCard
-                    name={b.name}
-                    img={b.img}
-                    onClick={() => updateParam('brand', b.name)}
-                  />
-                </motion.div>
-              ))}
-            </motion.div>
-            {brands.length === 0 && (
-              <p className="text-muted-foreground text-center py-8">{t('noProductsFound')}</p>
-            )}
-          </motion.section>
-        )}
-
-        {/* Products grid */}
-        {showProducts && (
-          <motion.section
-            key="products-step"
-            variants={sectionVariants}
-            initial="hidden"
-            animate="visible"
-            exit="exit"
-          >
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-bold">{t('selectModel')}</h2>
-              <span className="text-sm text-muted-foreground">
-                {t('devicesFound', { count: filteredProducts.length })}
-              </span>
-            </div>
-
-            {/* Filters */}
-            {products.length > 0 && (
-              <div className="flex flex-col sm:flex-row gap-3 mb-4">
-                {/* Search bar */}
-                <div className="relative flex-1 max-w-sm">
-                  <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground pointer-events-none" />
-                  <Input
-                    type="text"
-                    value={filterQuery}
-                    onChange={(e) => setFilterQuery(e.target.value)}
-                    placeholder={t('searchPlaceholder')}
-                    className="h-9 pl-9 text-sm"
-                  />
-                </div>
-
-                {/* Series filter */}
-                {seriesList.length > 0 && (
-                  <Select value={selectedSeries} onValueChange={setSelectedSeries}>
-                    <SelectTrigger className="w-full sm:w-48 h-9 text-sm">
-                      <SelectValue placeholder={t('seriesLabel')} />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">{t('allSeries')}</SelectItem>
-                      {seriesList.map((s) => (
-                        <SelectItem key={s} value={s}>{s}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                )}
-              </div>
-            )}
-
-            {filteredProducts.length > 0 ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2 md:gap-4">
-                {filteredProducts.map((product, i) => (
-                  <TradeProductCard
-                    key={product.id}
-                    product={product}
-                    href={`/trade/product/${product.id}`}
-                    index={i}
-                  />
+      {/* Search & Series Filter (only when products are shown) */}
+      {categoryName && brand && (
+        <div className="flex flex-col sm:flex-row gap-3">
+          <div className="relative flex-1 max-w-sm">
+            <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground pointer-events-none" />
+            <Input
+              type="text"
+              value={filterQuery}
+              onChange={(e) => setFilterQuery(e.target.value)}
+              placeholder={t('searchPlaceholder')}
+              className="h-9 pl-9 text-sm"
+            />
+          </div>
+          {seriesList.length > 0 && (
+            <Select value={selectedSeries} onValueChange={setSelectedSeries}>
+              <SelectTrigger className="w-full sm:w-48 h-9 text-sm">
+                <SelectValue placeholder={t('seriesLabel')} />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">{t('allSeries')}</SelectItem>
+                {seriesList.map((s) => (
+                  <SelectItem key={s} value={s}>{s}</SelectItem>
                 ))}
-              </div>
-            ) : (
-              <div className="text-center py-12">
-                <p className="text-lg font-semibold text-foreground mb-1">{t('noProductsFound')}</p>
-                <p className="text-sm text-muted-foreground">{t('noProductsHint')}</p>
-              </div>
-            )}
-          </motion.section>
-        )}
-      </AnimatePresence>
+              </SelectContent>
+            </Select>
+          )}
+        </div>
+      )}
+
+      {/* Server-rendered content passed as children */}
+      {children}
     </div>
   )
 }

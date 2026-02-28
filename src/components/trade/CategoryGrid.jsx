@@ -16,7 +16,7 @@ export default async function CategoryGrid() {
         {(categories || []).map((cat) => (
           <TransitionLink
             key={cat.slug}
-            href={`/trade/browse?category=${cat.slug}`}
+            href={`/trade/browse/${cat.slug}`}
             className="group flex flex-col rounded-xl border border-border bg-card overflow-hidden hover:border-primary/40 hover:shadow-md transition-all duration-200"
           >
             <div className="aspect-square bg-muted p-5 sm:p-6 flex items-center justify-center">

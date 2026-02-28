@@ -93,7 +93,6 @@ export async function GET() {
 
       const uniqueCategories = new Set()
       const uniqueBrands = new Map()
-      const uniqueSeries = new Map()
 
       tradableProducts.forEach((p) => {
         if (p.category) uniqueCategories.add(p.category)
@@ -101,16 +100,12 @@ export async function GET() {
           const key = `${p.category}|${p.brand}`
           if (!uniqueBrands.has(key)) uniqueBrands.set(key, { category: p.category, brand: p.brand })
         }
-        if (p.category && p.brand && p.series) {
-          const key = `${p.category}|${p.brand}|${p.series}`
-          if (!uniqueSeries.has(key)) uniqueSeries.set(key, { category: p.category, brand: p.brand, series: p.series })
-        }
       })
 
       uniqueCategories.forEach((category) => {
         const slug = catSlugMap.get(category) || encodeURIComponent(category).toLowerCase()
         entries.push(
-          ...urlEntry(`/trade/browse?category=${slug}`, {
+          ...urlEntry(`/trade/browse/${slug}`, {
             lastModified: new Date(),
             changeFrequency: 'weekly',
             priority: 0.7,
@@ -121,18 +116,7 @@ export async function GET() {
       uniqueBrands.forEach(({ category, brand }) => {
         const slug = catSlugMap.get(category) || encodeURIComponent(category).toLowerCase()
         entries.push(
-          ...urlEntry(`/trade/browse?category=${slug}&brand=${encodeURIComponent(brand)}`, {
-            lastModified: new Date(),
-            changeFrequency: 'weekly',
-            priority: 0.6,
-          })
-        )
-      })
-
-      uniqueSeries.forEach(({ category, brand, series }) => {
-        const slug = catSlugMap.get(category) || encodeURIComponent(category).toLowerCase()
-        entries.push(
-          ...urlEntry(`/trade/browse?category=${slug}&brand=${encodeURIComponent(brand)}&series=${encodeURIComponent(series)}`, {
+          ...urlEntry(`/trade/browse/${slug}/${encodeURIComponent(brand)}`, {
             lastModified: new Date(),
             changeFrequency: 'weekly',
             priority: 0.6,

@@ -19,7 +19,7 @@ export async function CategoryGrid() {
 
   return (
     <section className="py-16 bg-white dark:bg-background/50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
         {/* Header */}
         <ScrollStagger staggerChildren={0.1} className="flex items-center justify-between mb-10">
           <ScrollReveal animation="left">
@@ -39,15 +39,15 @@ export async function CategoryGrid() {
         </ScrollStagger>
 
         {/* Categories Grid */}
-        <ScrollStagger staggerChildren={0.08} delayChildren={0.2} className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+        <ScrollStagger staggerChildren={0.08} delayChildren={0.2} className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-2">
           {(categories || []).map((cat) => (
             <ScrollReveal key={cat.slug} animation="z">
               <Link
-                href={`/trade/browse?category=${cat.slug}`}
-                className="relative group block p-2 h-full w-full"
+                href={`/trade/browse/${cat.slug}`}
+                className="relative group block h-full w-full"
               >
                 <div className="relative z-20 flex flex-col gap-4 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/30 h-full transition-all group-hover:border-primary/50 group-hover:shadow-xl group-hover:shadow-primary/5">
-                  <div className="w-full aspect-square rounded-xl bg-slate-100 dark:bg-slate-700 mb-2 flex items-center justify-center overflow-hidden">
+                  <div className="w-full aspect-square rounded-xl mb-2 flex items-center justify-center overflow-hidden">
                     <div className="relative w-32 h-32 transition-transform group-hover:scale-110 duration-300">
                       {cat.img ? (
                         <Image

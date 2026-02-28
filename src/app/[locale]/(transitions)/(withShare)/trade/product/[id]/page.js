@@ -107,8 +107,8 @@ export default async function TradeProductPage({ params }) {
       <TradeProductStructuredData product={product} depreciatedPrice={depreciatedPrice} />
       <BreadcrumbStructuredData items={[
         { name: 'Trade-In', url: `${baseUrl}/trade` },
-        { name: product.category, url: `${baseUrl}/trade/browse?category=${product._categorySlug || encodeURIComponent(product.category).toLowerCase()}` },
-        { name: product.brand, url: `${baseUrl}/trade/browse?category=${product._categorySlug || encodeURIComponent(product.category).toLowerCase()}&brand=${encodeURIComponent(product.brand)}` },
+        { name: product.category, url: `${baseUrl}/trade/browse/${product._categorySlug || encodeURIComponent(product.category).toLowerCase()}` },
+        { name: product.brand, url: `${baseUrl}/trade/browse/${product._categorySlug || encodeURIComponent(product.category).toLowerCase()}/${encodeURIComponent(product.brand)}` },
         { name: product.title, url: `${baseUrl}/trade/product/${product.id}` },
       ]} />
       {/* Hero Section */}

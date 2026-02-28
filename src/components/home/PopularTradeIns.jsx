@@ -5,10 +5,10 @@ import { ScrollStagger, ScrollReveal } from '@/components/ui/scroll-animation'
 import { getTranslations } from 'next-intl/server'
 
 const deviceData = [
-  { key: 'device1', image: '/stockImg/iphone_17_pro_max.png', href: '/trade/browse?category=smartphones' },
-  { key: 'device2', image: '/stockImg/macbook_pro.png', href: '/trade/browse?category=laptops' },
-  { key: 'device3', image: '/stockImg/ipad_pro.png', href: '/trade/browse?category=tablets' },
-  { key: 'device4', image: '/stockImg/apple_watch.png', href: '/trade/browse?category=wearables' },
+  { key: 'device1', image: '/stockImg/iphone_17_pro_max.png', href: '/trade/browse/smartphones' },
+  { key: 'device2', image: '/stockImg/macbook_pro.png', href: '/trade/browse/laptops' },
+  { key: 'device3', image: '/stockImg/ipad_pro.png', href: '/trade/browse/tablets' },
+  { key: 'device4', image: '/stockImg/apple_watch.png', href: '/trade/browse/wearables' },
 ]
 
 export async function PopularTradeIns() {
@@ -42,12 +42,12 @@ export async function PopularTradeIns() {
         </ScrollStagger>
 
         {/* Devices Grid */}
-        <ScrollStagger staggerChildren={0.1} delayChildren={0.15} className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+        <ScrollStagger staggerChildren={0.1} delayChildren={0.15} className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
           {devices.map((device) => (
             <ScrollReveal key={device.key} animation="z">
               <Link href={device.href} className="group block">
                 <div className="flex flex-col gap-4 p-4 sm:p-6 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/30 transition-all group-hover:border-primary/50 group-hover:shadow-xl group-hover:shadow-primary/5">
-                  <div className="w-full aspect-square rounded-xl bg-slate-100 dark:bg-slate-700 flex items-center justify-center overflow-hidden">
+                  <div className="w-full aspect-square rounded-xl flex items-center justify-center overflow-hidden">
                     <div className="relative w-32 h-32 transition-transform group-hover:scale-110 duration-300">
                       <Image
                         src={device.image}
