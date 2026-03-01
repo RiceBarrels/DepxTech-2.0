@@ -16,6 +16,7 @@ import { routing } from '@/i18n/routing';
 import { ViewTransitions } from 'next-view-transitions'
 import OnlyUSDialog from "@/components/OnlyUSDialog";
 import PushPrompt from "@/components/PushPrompt";
+import { Analytics } from "@vercel/analytics/next"
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -159,6 +160,7 @@ export default async function LocaleLayout({ children, params }) {
             </ThemeProvider>
           </AuthProvider>
         </PasswordWall>
+        <Analytics />
       </body>
     </html>
     </ViewTransitions>

@@ -46,6 +46,21 @@ export default async function TradePage() {
       <TradeHero />
       <CategoryGrid />
 
+      {/* Can't find your device? */}
+      <section className="w-full max-w-7xl px-4 -mt-4 mb-2">
+        <TransitionLink href="/trade/custom" className="block">
+          <div className="flex items-center justify-between gap-4 p-4 sm:p-5 rounded-xl border border-dashed border-primary/30 bg-primary/5 hover:bg-primary/10 hover:border-primary/50 transition-all">
+            <div>
+              <h3 className="font-semibold text-foreground text-sm sm:text-base">{t('cantFindDevice')}</h3>
+              <p className="text-xs sm:text-sm text-muted-foreground mt-0.5">{t('cantFindDeviceDesc')}</p>
+            </div>
+            <Button variant="outline" size="sm" className="shrink-0 gap-1">
+              {t('cantFindDeviceCta')}
+            </Button>
+          </div>
+        </TransitionLink>
+      </section>
+
       {/* Featured Devices */}
       {featuredProducts.length > 0 && (
         <section className="w-full max-w-7xl py-12 sm:py-16 px-4">

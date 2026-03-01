@@ -145,6 +145,23 @@ export default async function TradeBrowsePage({ params }) {
     products = (data || []).map((p) => resolveTradeProduct(p, locale))
   }
 
+  // Calculate max trade-in value across all products
+  const maxTradeValue = products.reduce((max, p) => {
+    const val = calculateUpToValue(p)
+    return val > max ? val : max
+  }, 0)
+
+  // Fetch brand logo when brand is selected
+  let brandImg = null
+  if (brand) {
+    const { data: brandRow } = await supabaseAdmin
+      .from('brands')
+      .select('img')
+      .eq('name', brand)
+      .single()
+    brandImg = brandRow?.img || null
+  }
+
   // Sort products: numeric titles first, then Z-A
   const sortedProducts = [...products].sort((a, b) => {
     const ta = a.title || '', tb = b.title || ''
@@ -216,26 +233,36 @@ export default async function TradeBrowsePage({ params }) {
         {categoryData && (
           <div className="relative overflow-hidden rounded-2xl bg-muted/60 border border-border mb-6">
             <div className="flex items-center gap-4 sm:gap-6 px-5 sm:px-8 py-4 sm:py-5">
-              {categoryData.img && (
+              {(brand ? brandImg : categoryData.img) && (
                 <div className="relative w-14 h-14 sm:w-20 sm:h-20 shrink-0">
                   <Image
-                    src={categoryData.img}
-                    alt={categoryName}
+                    src={brand ? brandImg : categoryData.img}
+                    alt={brand || categoryName}
                     fill
                     className="object-contain"
                   />
                 </div>
               )}
-              <div className="min-w-0">
-                <h1 className="text-lg sm:text-2xl font-bold tracking-tight text-foreground truncate">
-                  {categoryData.name}
+              <div className="min-w-0 flex-1">
+                <h1 className="text-lg sm:text-2xl font-bold tracking-tight text-foreground">
+                  {brand
+                    ? t('bannerBrandTitle', { brand, category: categoryName })
+                    : categoryData.name}
                 </h1>
-                {categoryData.description && (
-                  <p className="text-xs sm:text-sm text-muted-foreground mt-0.5 line-clamp-1">
-                    {categoryData.description}
-                  </p>
-                )}
+                <p className="text-xs sm:text-sm text-muted-foreground mt-0.5 line-clamp-1">
+                  {brand && maxTradeValue > 0
+                    ? t('bannerBrandSubtitle', { value: maxTradeValue.toFixed(0) })
+                    : categoryData.description || t('subtitle')}
+                </p>
               </div>
+              {brand && maxTradeValue > 0 && (
+                <div className="hidden sm:flex flex-col items-end shrink-0">
+                  <span className="text-xs text-muted-foreground">{t('upTo')}</span>
+                  <span className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">
+                    ${maxTradeValue.toFixed(0)}
+                  </span>
+                </div>
+              )}
             </div>
           </div>
         )}
