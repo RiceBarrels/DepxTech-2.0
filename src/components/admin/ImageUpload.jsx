@@ -232,13 +232,13 @@ export function ImageUpload({
         <div className="space-y-2 mt-4">
           {multiple && Array.isArray(value) ? (
             value.map((item, index) => (
-              <div key={index} className="flex items-center gap-2 p-2 border rounded">
-                <img 
-                  src={getPreviewUrl(item)} 
-                  alt={`Preview ${index + 1}`} 
-                  className="w-16 h-16 object-cover rounded"
+              <div key={index} className="flex items-center gap-2 p-2 border rounded min-w-0 overflow-hidden">
+                <img
+                  src={getPreviewUrl(item)}
+                  alt={`Preview ${index + 1}`}
+                  className="w-16 h-16 object-cover rounded shrink-0"
                 />
-                <span className="flex-1 text-sm truncate">{getDisplayName(item)}</span>
+                <span className="flex-1 text-sm truncate min-w-0">{getDisplayName(item)}</span>
                 {isFile(item) && (
                   <span className="text-xs text-blue-600">(New - will upload on save)</span>
                 )}
@@ -252,13 +252,13 @@ export function ImageUpload({
               </div>
             ))
           ) : (
-            <div className="flex items-center gap-2 p-2 border rounded">
-              <img 
-                src={getPreviewUrl(value)} 
-                alt="Preview" 
-                className="w-16 h-16 object-cover rounded"
+            <div className="flex items-center gap-2 p-2 border rounded min-w-0 overflow-hidden">
+              <img
+                src={getPreviewUrl(value)}
+                alt="Preview"
+                className="w-16 h-16 object-cover rounded shrink-0"
               />
-              <span className="flex-1 text-sm truncate">{getDisplayName(value)}</span>
+              <span className="flex-1 text-sm truncate min-w-0">{getDisplayName(value)}</span>
               {isFile(value) && (
                 <span className="text-xs text-blue-600">(New - will upload on save)</span>
               )}

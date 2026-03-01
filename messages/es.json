@@ -117,6 +117,29 @@
       "subscribing": "Suscribiendo...",
       "success": "¡Suscripción exitosa!",
       "successDesc": "Recibirás actualizaciones de precios de intercambio en tu bandeja de entrada."
+    },
+    "testimonials": {
+      "heading": "Lo que dicen nuestros clientes",
+      "subheading": "Miles de clientes satisfechos han intercambiado sus dispositivos con nosotros",
+      "review1Quote": "Obtuve $380 por mi viejo iPhone 13 — mucho más de lo que esperaba. Todo el proceso tomó menos de una semana desde la cotización hasta el pago.",
+      "review1Name": "Sarah M.",
+      "review1Device": "iPhone 13 Pro",
+      "review2Quote": "Al principio era escéptico, pero DepxTech lo hizo muy fácil. Etiqueta de envío gratuita, inspección rápida, y el pago fue exactamente lo que me cotizaron.",
+      "review2Name": "James L.",
+      "review2Device": "MacBook Air M1",
+      "review3Quote": "La mejor experiencia de intercambio que he tenido. El enfoque ecológico es un gran plus. Definitivamente lo usaré de nuevo en mi próxima actualización.",
+      "review3Name": "Emily R.",
+      "review3Device": "iPad Pro 11\"",
+      "review4Quote": "Envié mi Galaxy S22 y me pagaron en 48 horas. La cotización fue justa y el proceso no podría haber sido más sencillo. Ya lo recomendé a amigos.",
+      "review4Name": "Marcus T.",
+      "review4Device": "Galaxy S22 Ultra",
+      "review5Quote": "Intercambié un portátil roto que pensaba que no valía nada. ¡DepxTech me dio $120! Excelente servicio al cliente y respuesta rápida.",
+      "review5Name": "Jessica H.",
+      "review5Device": "HP Spectre x360",
+      "review6Quote": "He usado DepxTech dos veces — para mi vieja Switch y un MacBook. Ambas veces la experiencia fue impecable. Precios justos, sin complicaciones.",
+      "review6Name": "Ryan P.",
+      "review6Device": "Nintendo Switch + MacBook Pro",
+      "moreReviews": "Lee más opiniones en"
     }
   },
   "footer": {
@@ -537,6 +560,40 @@
     "ctaHeading": "¿Listo para comenzar?",
     "ctaSubheading": "Obtén una cotización instantánea para tu dispositivo en solo unos clics.",
     "ctaButton": "Obtén tu cotización"
+  },
+  "about": {
+    "badge": "Sobre DepxTech",
+    "heading": "Haciendo la compra de tech simple, justa y verde",
+    "subheading": "Empezamos con una idea simple: vender tus viejos dispositivos debería ser fácil, transparente y bueno para el planeta.",
+    "storyTitle": "Nuestra historia",
+    "storyP1": "DepxTech nació de la frustración. Vimos millones de dispositivos perfectamente funcionales acumulando polvo en cajones — mientras millones más terminaban en vertederos cada año. Las opciones existantes eran lentas, confusas y ofrecían precios injustos. Sabíamos que tenía que haber una forma mejor.",
+    "storyP2": "Así que creamos DepxTech — una plataforma donde cualquiera puede vender sus viejos dispositivos en minutos, obtener una cotización justa al instante y recibir el pago rápidamente. Sin comisiones ocultas, sin ofertas ridículas, sin esperar semanas. Solo un proceso simple y honesto de principio a fin.",
+    "storyP3": "Hoy, hemos ayudado a miles de clientes a convertir sus dispositivos en efectivo mientras evitamos que miles de aparatos terminen en vertederos. Cada compra importa — para tu bolsillo y para el planeta. Y apenas estamos comenzando.",
+    "stat1Label": "Dispositivos reciclados",
+    "stat2Label": "Clientes satisfechos",
+    "stat3Label": "Emisiones CO₂ ahorradas",
+    "stat4Label": "Tiempo promedio de pago",
+    "valuesTitle": "Lo que defendemos",
+    "valuesSubtitle": "Estos valores fundamentales guían cada decisión que tomamos y cada interacción con nuestros clientes.",
+    "value1Title": "Sostenibilidad primero",
+    "value1Desc": "Cada dispositivo que aceptamos recibe una segunda vida. Colaboramos con recicladores certificados para garantizar cero residuos en vertederos.",
+    "value2Title": "Transparencia total",
+    "value2Desc": "Sin comisiones ocultas, sin sorpresas. Nuestras cotizaciones instantáneas se basan en datos de mercado reales, y siempre honramos el precio ofrecido.",
+    "value3Title": "Velocidad y simplicidad",
+    "value3Desc": "Cotización en segundos, envío gratuito y pago en 24 horas tras la inspección. Respetamos tu tiempo.",
+    "value4Title": "Calidad garantizada",
+    "value4Desc": "Cada dispositivo reacondicionado pasa pruebas rigurosas. Respaldamos nuestros productos con garantía y devoluciones sin complicaciones.",
+    "diffTitle": "¿Por qué DepxTech?",
+    "diffSubtitle": "Esto es lo que nos hace diferentes.",
+    "diff1Title": "Mejores precios del mercado",
+    "diff1Desc": "Nuestras cotizaciones se basan en datos de mercado en tiempo real. Ofrecemos consistentemente mejores precios que la competencia.",
+    "diff2Title": "Compromiso cero residuos",
+    "diff2Desc": "El 99% de los dispositivos que recibimos se reacondicionan o reciclan responsablemente. Nada va al vertedero.",
+    "diff3Title": "Obsesionados con el cliente",
+    "diff3Desc": "Miles de reseñas de 5 estrellas en eBay y Jawa. Nuestros clientes vuelven porque cumplimos cada promesa.",
+    "ctaTitle": "¿Listo para vender?",
+    "ctaDesc": "Únete a miles de clientes satisfechos que han convertido sus viejos dispositivos en efectivo. Obtén tu cotización gratuita hoy.",
+    "ctaButton": "Comenzar la venta"
   },
   "sustainability": {
     "badge": "Nuestro compromiso con el planeta",
@@ -1057,7 +1114,8 @@
       "cancel": "Cancelar",
       "prev": "Anterior",
       "save": "Guardar",
-      "saving": "Guardando..."
+      "saving": "Guardando...",
+      "fetchBackmarketPrices": "Obtener precios de BackMarket"
     },
     "users": {
       "title": "Usuarios",
@@ -1442,7 +1500,9 @@
     "privacyTitle": "Política de privacidad",
     "privacyDescription": "Política de privacidad de DepxTech - Conoce cómo recopilamos, usamos y protegemos tu información personal.",
     "membershipTitle": "Beneficios de la membresía Premium | DepxTech",
-    "membershipDescription": "Únete a nuestro programa exclusivo de membresía con envío gratuito, regalos mensuales, entrega rápida y ofertas sorpresa semanales."
+    "membershipDescription": "Únete a nuestro programa exclusivo de membresía con envío gratuito, regalos mensuales, entrega rápida y ofertas sorpresa semanales.",
+    "aboutTitle": "Sobre nosotros | DepxTech",
+    "aboutDescription": "Conoce la misión de DepxTech — hacer que la compra de dispositivos sea simple, rápida y ecológica. Nuestra historia, valores y compromiso con la sostenibilidad."
   },
   "trade": {
     "hero": {

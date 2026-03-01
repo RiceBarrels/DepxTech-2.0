@@ -117,6 +117,29 @@
       "subscribing": "Inscription en cours...",
       "success": "Inscription réussie !",
       "successDesc": "Vous recevrez les mises à jour des prix de reprise dans votre boîte de réception."
+    },
+    "testimonials": {
+      "heading": "Ce que disent nos clients",
+      "subheading": "Des milliers de clients satisfaits ont échangé leurs appareils avec nous",
+      "review1Quote": "J'ai obtenu 380$ pour mon ancien iPhone 13 — bien plus que ce que j'espérais. Le processus entier a pris moins d'une semaine, du devis au paiement.",
+      "review1Name": "Sarah M.",
+      "review1Device": "iPhone 13 Pro",
+      "review2Quote": "J'étais sceptique au début, mais DepxTech a rendu les choses tellement simples. Étiquette d'expédition gratuite, inspection rapide, et le paiement correspondait exactement au devis.",
+      "review2Name": "James L.",
+      "review2Device": "MacBook Air M1",
+      "review3Quote": "La meilleure expérience de reprise que j'aie jamais eue. L'approche éco-responsable est un énorme bonus. Je l'utiliserai certainement à nouveau pour ma prochaine mise à niveau.",
+      "review3Name": "Emily R.",
+      "review3Device": "iPad Pro 11\"",
+      "review4Quote": "J'ai envoyé mon Galaxy S22 et j'ai été payé en 48 heures. L'estimation était juste et le processus on ne peut plus simple. Déjà recommandé à des amis.",
+      "review4Name": "Marcus T.",
+      "review4Device": "Galaxy S22 Ultra",
+      "review5Quote": "J'ai échangé un ordinateur portable cassé que je pensais sans valeur. DepxTech m'a quand même donné 120$ ! Excellent service client et traitement rapide.",
+      "review5Name": "Jessica H.",
+      "review5Device": "HP Spectre x360",
+      "review6Quote": "J'ai utilisé DepxTech deux fois — pour ma vieille Switch et un MacBook. Les deux fois, l'expérience était impeccable. Prix justes, sans tracas.",
+      "review6Name": "Ryan P.",
+      "review6Device": "Nintendo Switch + MacBook Pro",
+      "moreReviews": "Lire plus d'avis sur"
     }
   },
   "footer": {
@@ -537,6 +560,40 @@
     "ctaHeading": "Prêt à commencer ?",
     "ctaSubheading": "Obtenez un devis instantané pour votre appareil en quelques clics.",
     "ctaButton": "Obtenir votre devis"
+  },
+  "about": {
+    "badge": "À propos de DepxTech",
+    "heading": "Rendre la reprise tech simple, équitable et verte",
+    "subheading": "Tout a commencé par une idée simple : la reprise de vos anciens appareils devrait être facile, transparente et bonne pour la planète.",
+    "storyTitle": "Notre histoire",
+    "storyP1": "DepxTech est né d'une frustration. Nous avons vu des millions d'appareils parfaitement fonctionnels dormir dans des tiroirs — tandis que des millions d'autres finissaient en décharge chaque année. Les options existantes étaient lentes, confuses et proposaient des prix injustes. Nous savions qu'il devait y avoir une meilleure façon.",
+    "storyP2": "Nous avons donc créé DepxTech — une plateforme où chacun peut revendre ses anciens appareils en quelques minutes, obtenir un devis instantané et équitable, et être payé rapidement. Pas de frais cachés, pas d'offres dérisoires, pas d'attente de semaines. Juste un processus simple et honnête du début à la fin.",
+    "storyP3": "Aujourd'hui, nous avons aidé des milliers de clients à transformer leurs appareils inutilisés en argent tout en évitant que des milliers d'appareils ne finissent en décharge. Chaque reprise compte — pour votre portefeuille et pour la planète. Et nous ne faisons que commencer.",
+    "stat1Label": "Appareils recyclés",
+    "stat2Label": "Clients satisfaits",
+    "stat3Label": "Émissions CO₂ économisées",
+    "stat4Label": "Délai moyen de paiement",
+    "valuesTitle": "Ce en quoi nous croyons",
+    "valuesSubtitle": "Ces valeurs fondamentales guident chacune de nos décisions et chaque interaction avec nos clients.",
+    "value1Title": "Durabilité avant tout",
+    "value1Desc": "Chaque appareil que nous acceptons reçoit une seconde vie. Nous collaborons avec des recycleurs certifiés pour garantir zéro déchet en décharge.",
+    "value2Title": "Transparence totale",
+    "value2Desc": "Pas de frais cachés, pas de surprises. Nos devis instantanés sont basés sur des données de marché réelles, et nous honorons toujours le prix proposé.",
+    "value3Title": "Rapidité et simplicité",
+    "value3Desc": "Obtenez un devis en secondes, expédiez gratuitement et recevez le paiement sous 24 heures après inspection. Nous respectons votre temps.",
+    "value4Title": "Qualité garantie",
+    "value4Desc": "Chaque appareil reconditionné passe des tests rigoureux. Nous garantissons nos produits avec une garantie et des retours sans tracas.",
+    "diffTitle": "Pourquoi DepxTech ?",
+    "diffSubtitle": "Voici ce qui nous distingue des autres.",
+    "diff1Title": "Meilleurs prix du marché",
+    "diff1Desc": "Nos devis s'appuient sur des données de marché en temps réel. Nous proposons systématiquement des prix supérieurs à la concurrence.",
+    "diff2Title": "Engagement zéro déchet",
+    "diff2Desc": "99% des appareils que nous recevons sont reconditionnés ou recyclés de manière responsable. Rien ne finit en décharge.",
+    "diff3Title": "Obsédés par le client",
+    "diff3Desc": "Des milliers d'avis 5 étoiles sur eBay et Jawa. Nos clients reviennent parce que nous tenons chaque promesse.",
+    "ctaTitle": "Prêt à revendre ?",
+    "ctaDesc": "Rejoignez des milliers de clients satisfaits qui ont transformé leurs anciens appareils en argent. Obtenez votre devis gratuit aujourd'hui.",
+    "ctaButton": "Commencer la reprise"
   },
   "sustainability": {
     "badge": "Notre engagement pour la planète",
@@ -1057,7 +1114,8 @@
       "cancel": "Annuler",
       "prev": "Préc.",
       "save": "Enregistrer",
-      "saving": "Enregistrement..."
+      "saving": "Enregistrement...",
+      "fetchBackmarketPrices": "Récupérer les prix BackMarket"
     },
     "users": {
       "title": "Utilisateurs",
@@ -1442,7 +1500,9 @@
     "privacyTitle": "Politique de confidentialité",
     "privacyDescription": "Politique de confidentialité DepxTech - Découvrez comment nous collectons, utilisons et protégeons vos informations personnelles.",
     "membershipTitle": "Avantages de l'abonnement Premium | DepxTech",
-    "membershipDescription": "Rejoignez notre programme d'abonnement exclusif avec livraison gratuite, cadeaux mensuels, livraison rapide et offres surprises hebdomadaires."
+    "membershipDescription": "Rejoignez notre programme d'abonnement exclusif avec livraison gratuite, cadeaux mensuels, livraison rapide et offres surprises hebdomadaires.",
+    "aboutTitle": "À propos | DepxTech",
+    "aboutDescription": "Découvrez la mission de DepxTech — rendre la reprise d'appareils simple, rapide et écologique. Notre histoire, nos valeurs et notre engagement pour la durabilité."
   },
   "trade": {
     "hero": {

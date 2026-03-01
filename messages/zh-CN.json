@@ -129,7 +129,17 @@
       "review2Device": "MacBook Air M1",
       "review3Quote": "我体验过最好的回收服务。环保理念是额外加分项。下次换新一定还用。",
       "review3Name": "Emily R.",
-      "review3Device": "iPad Pro 11\""
+      "review3Device": "iPad Pro 11\"",
+      "review4Quote": "寄了我的Galaxy S22，48小时内就收到了付款。报价公道，流程再简单不过了。已经推荐给朋友了。",
+      "review4Name": "Marcus T.",
+      "review4Device": "Galaxy S22 Ultra",
+      "review5Quote": "我以为坏了的笔记本电脑已经一文不值了，没想到DepxTech还给了我$120！客服很好，处理速度很快。",
+      "review5Name": "Jessica H.",
+      "review5Device": "HP Spectre x360",
+      "review6Quote": "已经用了两次DepxTech——一次是旧Switch，一次是MacBook。两次体验都非常完美。价格公道，毫无麻烦。",
+      "review6Name": "Ryan P.",
+      "review6Device": "Nintendo Switch + MacBook Pro",
+      "moreReviews": "在以下平台查看更多评价"
     },
     "popularTradeIns": {
       "heading": "热门回收设备",
@@ -593,6 +603,40 @@
     "ctaHeading": "准备开始？",
     "ctaSubheading": "只需几次点击，即可获取设备的即时报价。",
     "ctaButton": "获取报价"
+  },
+  "about": {
+    "badge": "关于DepxTech",
+    "heading": "让科技回收变得简单、公平、绿色",
+    "subheading": "我们从一个简单的想法出发：回收旧电子产品应该简单、透明，而且有益于地球。",
+    "storyTitle": "我们的故事",
+    "storyP1": "DepxTech的诞生源于一种不满。我们看到数百万台完好的设备躺在抽屉里吃灰——而更多设备每年被丢进垃圾填埋场。现有的回收方案不仅慢，还让人困惑，价格也不公道。我们知道一定有更好的方式。",
+    "storyP2": "于是我们创建了DepxTech——一个让任何人都能在几分钟内回收旧电子产品、获得即时公平报价、快速收到付款的平台。没有隐藏费用，没有低价收购，也不需要等待数周才能收到支票。从头到尾，只有简单和诚信。",
+    "storyP3": "如今，我们已经帮助数千名客户将闲置设备变现，同时避免数千台设备进入垃圾填埋场。每一次回收都很重要——对你的钱包和地球都是如此。而我们才刚刚开始。",
+    "stat1Label": "已回收设备",
+    "stat2Label": "满意客户",
+    "stat3Label": "减少的CO₂排放",
+    "stat4Label": "平均付款时间",
+    "valuesTitle": "我们的信念",
+    "valuesSubtitle": "这些核心价值观指导着我们做出的每一个决定以及与客户的每一次互动。",
+    "value1Title": "可持续优先",
+    "value1Desc": "我们接收的每台设备都会获得第二次生命。我们与认证回收商合作，确保零垃圾填埋并尽量减少环境影响。",
+    "value2Title": "完全透明",
+    "value2Desc": "没有隐藏费用，没有意外。我们的即时报价基于真实市场数据，并且始终兑现承诺的价格。",
+    "value3Title": "速度与简洁",
+    "value3Desc": "几秒钟内获得报价，免费寄送，验收后24小时内收到付款。我们尊重您的时间。",
+    "value4Title": "品质保证",
+    "value4Desc": "每台翻新设备都经过严格测试。我们以保修和无忧退货支持我们的产品。",
+    "diffTitle": "为什么选择DepxTech？",
+    "diffSubtitle": "以下是我们与其他平台的不同之处。",
+    "diff1Title": "最佳市场价格",
+    "diff1Desc": "我们的报价由实时市场数据驱动，持续提供高于竞争对手的回收价。",
+    "diff2Title": "零废弃承诺",
+    "diff2Desc": "我们收到的99%的设备都会被翻新或负责任地回收。没有任何东西会进入垃圾填埋场。",
+    "diff3Title": "客户至上",
+    "diff3Desc": "在eBay和Jawa上拥有数千条五星好评。客户回头是因为我们兑现了每一个承诺。",
+    "ctaTitle": "准备好回收了吗？",
+    "ctaDesc": "加入数千名满意客户的行列，将旧设备变现。立即获取免费即时报价。",
+    "ctaButton": "开始回收"
   },
   "sustainability": {
     "badge": "我们对地球的承诺",
@@ -1115,7 +1159,8 @@
       "cancel": "取消",
       "prev": "上一个",
       "save": "保存",
-      "saving": "保存中..."
+      "saving": "保存中...",
+      "fetchBackmarketPrices": "获取 BackMarket 价格"
     },
     "users": {
       "title": "用户",
@@ -1500,7 +1545,9 @@
     "privacyTitle": "隐私政策",
     "privacyDescription": "DepxTech 隐私政策 - 了解我们如何收集、使用和保护您的个人信息。",
     "membershipTitle": "高级会员权益 | DepxTech",
-    "membershipDescription": "加入我们的专属会员计划，享受免费配送、每月礼品、快速送达和每周惊喜优惠。"
+    "membershipDescription": "加入我们的专属会员计划，享受免费配送、每月礼品、快速送达和每周惊喜优惠。",
+    "aboutTitle": "关于我们 | DepxTech",
+    "aboutDescription": "了解DepxTech的使命——让电子产品回收变得简单、快速、环保。我们的故事、价值观和对可持续发展的承诺。"
   },
   "trade": {
     "hero": {

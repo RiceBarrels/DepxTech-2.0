@@ -62,6 +62,8 @@ export default function CommissionPage() {
     // Edit dialog
     const [editConfig, setEditConfig] = useState(null)
     const [editTiers, setEditTiers] = useState([])
+    const [editBmTiers, setEditBmTiers] = useState([])
+    const [editTab, setEditTab] = useState('ebay') // 'ebay' | 'backmarket'
     const [saving, setSaving] = useState(false)
 
     const fetchConfigs = useCallback(async () => {
@@ -144,22 +146,30 @@ export default function CommissionPage() {
 
     const handleSave = async () => {
         if (!editConfig) return
-        // Validate tiers
+        // Validate eBay tiers
         for (const tier of editTiers) {
             if (!tier.maxPrice || tier.percentage == null || tier.fixedFee == null) {
-                toast.error('All tier fields are required')
+                toast.error('All eBay tier fields are required')
+                return
+            }
+        }
+        // Validate BM tiers (only if any exist)
+        for (const tier of editBmTiers) {
+            if (!tier.maxPrice || tier.percentage == null || tier.fixedFee == null) {
+                toast.error('All BackMarket tier fields are required')
                 return
             }
         }
         // Sort by maxPrice
         const sorted = [...editTiers].sort((a, b) => a.maxPrice - b.maxPrice)
+        const sortedBm = [...editBmTiers].sort((a, b) => a.maxPrice - b.maxPrice)
 
         setSaving(true)
         try {
             const res = await fetch('/api/admin/tradein/commission', {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ id: editConfig.id, tiers: sorted }),
+                body: JSON.stringify({ id: editConfig.id, tiers: sorted, backmarket_tiers: sortedBm }),
             })
             const data = await res.json()
             if (!res.ok) throw new Error(data.error)
@@ -176,19 +186,26 @@ export default function CommissionPage() {
     const openEdit = (config) => {
         setEditConfig(config)
         setEditTiers(config.tiers.map(t => ({ ...t })))
+        setEditBmTiers((config.backmarket_tiers || []).map(t => ({ ...t })))
+        setEditTab('ebay')
     }
 
+    // Active tier list based on tab
+    const activeTiers = editTab === 'ebay' ? editTiers : editBmTiers
+    const setActiveTiers = editTab === 'ebay' ? setEditTiers : setEditBmTiers
+
     const addTierRow = () => {
-        const lastMax = editTiers.length > 0 ? editTiers[editTiers.length - 1].maxPrice : 0
-        setEditTiers(prev => [...prev, { maxPrice: lastMax + 100, percentage: 0.20, fixedFee: 10 }])
+        const tiers = activeTiers
+        const lastMax = tiers.length > 0 ? tiers[tiers.length - 1].maxPrice : 0
+        setActiveTiers(prev => [...prev, { maxPrice: lastMax + 100, percentage: 0.20, fixedFee: 10 }])
     }
 
     const removeTierRow = (index) => {
-        setEditTiers(prev => prev.filter((_, i) => i !== index))
+        setActiveTiers(prev => prev.filter((_, i) => i !== index))
     }
 
     const updateTierRow = (index, field, value) => {
-        setEditTiers(prev => prev.map((t, i) => i === index ? { ...t, [field]: parseFloat(value) || 0 } : t))
+        setActiveTiers(prev => prev.map((t, i) => i === index ? { ...t, [field]: parseFloat(value) || 0 } : t))
     }
 
     const getScopeLabel = (config) => {
@@ -299,7 +316,9 @@ export default function CommissionPage() {
                                     </div>
 
                                     <p className="text-[10px] text-muted-foreground/50">
-                                        {tiers.length} tier{tiers.length !== 1 ? 's' : ''} · Updated {new Date(config.updated_at).toLocaleDateString()}
+                                        eBay: {tiers.length} tier{tiers.length !== 1 ? 's' : ''}
+                                        {(config.backmarket_tiers?.length > 0) && ` · BM: ${config.backmarket_tiers.length} tier${config.backmarket_tiers.length !== 1 ? 's' : ''}`}
+                                        {' '}· Updated {new Date(config.updated_at).toLocaleDateString()}
                                     </p>
                                 </CardContent>
                             </Card>
@@ -363,6 +382,22 @@ export default function CommissionPage() {
                         </DialogDescription>
                     </DialogHeader>
 
+                    {/* Tab Switcher */}
+                    <div className="flex gap-1 p-1 bg-muted rounded-lg">
+                        <button
+                            className={`flex-1 text-sm font-medium px-3 py-1.5 rounded-md transition-colors ${editTab === 'ebay' ? 'bg-background shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}
+                            onClick={() => setEditTab('ebay')}
+                        >
+                            eBay Tiers ({editTiers.length})
+                        </button>
+                        <button
+                            className={`flex-1 text-sm font-medium px-3 py-1.5 rounded-md transition-colors ${editTab === 'backmarket' ? 'bg-background shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}
+                            onClick={() => setEditTab('backmarket')}
+                        >
+                            BackMarket Tiers ({editBmTiers.length})
+                        </button>
+                    </div>
+
                     <div className="space-y-3 max-h-[50vh] overflow-y-auto">
                         {/* Header */}
                         <div className="grid grid-cols-[1fr_1fr_1fr_36px] gap-2 text-xs font-medium text-muted-foreground px-1">
@@ -372,7 +407,11 @@ export default function CommissionPage() {
                             <span></span>
                         </div>
 
-                        {editTiers.map((tier, i) => (
+                        {activeTiers.length === 0 ? (
+                            <p className="text-sm text-muted-foreground text-center py-4">
+                                No {editTab === 'backmarket' ? 'BackMarket' : 'eBay'} tiers configured. Add a row below.
+                            </p>
+                        ) : activeTiers.map((tier, i) => (
                             <div key={i} className="grid grid-cols-[1fr_1fr_1fr_36px] gap-2 items-center">
                                 <Input
                                     type="number"
@@ -404,7 +443,7 @@ export default function CommissionPage() {
                                     size="icon"
                                     className="h-9 w-9 text-muted-foreground hover:text-red-500"
                                     onClick={() => removeTierRow(i)}
-                                    disabled={editTiers.length <= 1}
+                                    disabled={activeTiers.length <= 1 && editTab === 'ebay'}
                                 >
                                     <TrashIcon className="w-3.5 h-3.5" />
                                 </Button>

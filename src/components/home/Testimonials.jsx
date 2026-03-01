@@ -1,4 +1,4 @@
-import { Star } from 'lucide-react'
+import { Star, ExternalLink } from 'lucide-react'
 import { ScrollStagger, ScrollReveal } from '@/components/ui/scroll-animation'
 import { getTranslations } from 'next-intl/server'
 
@@ -9,6 +9,9 @@ export async function Testimonials() {
     { quote: t('review1Quote'), name: t('review1Name'), device: t('review1Device') },
     { quote: t('review2Quote'), name: t('review2Name'), device: t('review2Device') },
     { quote: t('review3Quote'), name: t('review3Name'), device: t('review3Device') },
+    { quote: t('review4Quote'), name: t('review4Name'), device: t('review4Device') },
+    { quote: t('review5Quote'), name: t('review5Name'), device: t('review5Device') },
+    { quote: t('review6Quote'), name: t('review6Name'), device: t('review6Device') },
   ]
 
   return (
@@ -55,6 +58,32 @@ export async function Testimonials() {
             </ScrollReveal>
           ))}
         </ScrollStagger>
+
+        {/* Links to external review platforms */}
+        <ScrollReveal animation="blur">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-10">
+            <p className="text-sm text-slate-500">{t('moreReviews')}</p>
+            <div className="flex items-center gap-4">
+              <a
+                href="https://www.ebay.com/str/depxtech?_tab=feedback"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:text-primary/80 transition-colors"
+              >
+                eBay <ExternalLink className="size-3.5" />
+              </a>
+              <span className="text-slate-300 dark:text-slate-600">|</span>
+              <a
+                href="https://www.jawa.gg/sp/197528/depxtech/reviews"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:text-primary/80 transition-colors"
+              >
+                Jawa <ExternalLink className="size-3.5" />
+              </a>
+            </div>
+          </div>
+        </ScrollReveal>
       </div>
     </section>
   )

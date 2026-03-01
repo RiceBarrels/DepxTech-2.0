@@ -129,7 +129,17 @@
       "review2Device": "MacBook Air M1",
       "review3Quote": "Best trade-in experience I've ever had. The eco-friendly approach is a huge bonus. Will definitely use again for my next upgrade.",
       "review3Name": "Emily R.",
-      "review3Device": "iPad Pro 11\""
+      "review3Device": "iPad Pro 11\"",
+      "review4Quote": "Sent in my Galaxy S22 and got paid within 48 hours. The quote was fair and the process couldn't have been simpler. Already recommended to friends.",
+      "review4Name": "Marcus T.",
+      "review4Device": "Galaxy S22 Ultra",
+      "review5Quote": "Traded in a broken laptop I thought was worthless. DepxTech still gave me $120 for it! Great customer service and fast turnaround.",
+      "review5Name": "Jessica H.",
+      "review5Device": "HP Spectre x360",
+      "review6Quote": "Used DepxTech twice now — once for my old Switch and once for a MacBook. Both times the experience was flawless. Fair prices, no hassle.",
+      "review6Name": "Ryan P.",
+      "review6Device": "Nintendo Switch + MacBook Pro",
+      "moreReviews": "Read more reviews on"
     },
     "popularTradeIns": {
       "heading": "Top Trade-In Devices",
@@ -593,6 +603,40 @@
     "ctaHeading": "Ready to Start?",
     "ctaSubheading": "Get an instant quote for your device in just a few clicks.",
     "ctaButton": "Get Your Quote"
+  },
+  "about": {
+    "badge": "About DepxTech",
+    "heading": "Making Tech Trade-Ins Simple, Fair, and Green",
+    "subheading": "We started with a simple idea: trading in your old electronics should be easy, transparent, and good for the planet.",
+    "storyTitle": "Our Story",
+    "storyP1": "DepxTech was born out of frustration. We saw millions of perfectly good devices sitting in drawers, collecting dust — while millions more ended up in landfills every year. The existing trade-in options were slow, confusing, and offered unfair prices. We knew there had to be a better way.",
+    "storyP2": "So we built DepxTech — a platform where anyone can trade in their old electronics in minutes, get a fair instant quote, and receive payment fast. No hidden fees, no lowball offers, no waiting weeks for a check. Just a simple, honest process from start to finish.",
+    "storyP3": "Today, we've helped thousands of customers turn their unused tech into cash while keeping thousands of devices out of landfills. Every trade-in matters — for your wallet and for the planet. And we're just getting started.",
+    "stat1Label": "Devices Recycled",
+    "stat2Label": "Happy Customers",
+    "stat3Label": "CO₂ Emissions Saved",
+    "stat4Label": "Average Payout Time",
+    "valuesTitle": "What We Stand For",
+    "valuesSubtitle": "These core values guide every decision we make and every interaction we have with our customers.",
+    "value1Title": "Sustainability First",
+    "value1Desc": "Every device we accept gets a second life. We partner with certified recyclers to ensure zero landfill waste and minimize environmental impact.",
+    "value2Title": "Total Transparency",
+    "value2Desc": "No hidden fees, no surprises. Our instant quotes are based on real market data, and we always honor the price we offer.",
+    "value3Title": "Speed & Simplicity",
+    "value3Desc": "Get a quote in seconds, ship for free, and receive payment within 24 hours of inspection. We respect your time.",
+    "value4Title": "Quality Guaranteed",
+    "value4Desc": "Every refurbished device goes through rigorous testing. We stand behind our products with warranties and hassle-free returns.",
+    "diffTitle": "Why DepxTech?",
+    "diffSubtitle": "Here's what makes us different from the rest.",
+    "diff1Title": "Best Market Prices",
+    "diff1Desc": "Our quotes are powered by real-time market data. We consistently offer higher payouts than competitors.",
+    "diff2Title": "Zero Waste Commitment",
+    "diff2Desc": "99% of devices we receive are refurbished or responsibly recycled. Nothing goes to a landfill.",
+    "diff3Title": "Customer Obsessed",
+    "diff3Desc": "Thousands of 5-star reviews across eBay and Jawa. Our customers come back because we deliver on every promise.",
+    "ctaTitle": "Ready to Trade In?",
+    "ctaDesc": "Join thousands of happy customers who've turned their old tech into cash. Get your free instant quote today.",
+    "ctaButton": "Start Your Trade-In"
   },
   "sustainability": {
     "badge": "Our Commitment to the Planet",
@@ -1135,7 +1179,8 @@
         "allComplete": "All approved actions completed",
         "summary": "AI: {summary}",
         "analyzing": "Analyzing command..."
-      }
+      },
+      "fetchBackmarketPrices": "Fetch BackMarket Prices"
     },
     "users": {
       "title": "Users",
@@ -1558,7 +1603,9 @@
     "privacyTitle": "Privacy Policy",
     "privacyDescription": "DepxTech Privacy Policy - Learn how we collect, use, and protect your personal information.",
     "membershipTitle": "Premium Membership Benefits | DepxTech",
-    "membershipDescription": "Join our exclusive membership program with free shipping, monthly gifts, fast delivery, and weekly surprise offers."
+    "membershipDescription": "Join our exclusive membership program with free shipping, monthly gifts, fast delivery, and weekly surprise offers.",
+    "aboutTitle": "About Us | DepxTech",
+    "aboutDescription": "Learn about DepxTech's mission to make electronics trade-in easy, fast, and eco-friendly. Our story, values, and commitment to sustainability."
   },
   "trade": {
     "hero": {

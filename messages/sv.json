@@ -117,6 +117,29 @@
       "subscribing": "Prenumererar...",
       "success": "Prenumeration lyckades!",
       "successDesc": "Du kommer att få uppdateringar om inbytespriser i din inkorg."
+    },
+    "testimonials": {
+      "heading": "Vad våra kunder säger",
+      "subheading": "Tusentals nöjda kunder har bytt in sina enheter hos oss",
+      "review1Quote": "Fick $380 för min gamla iPhone 13 — mycket mer än jag förväntade mig. Hela processen tog mindre än en vecka från offert till betalning.",
+      "review1Name": "Sarah M.",
+      "review1Device": "iPhone 13 Pro",
+      "review2Quote": "Jag var skeptisk i början, men DepxTech gjorde det så enkelt. Gratis fraktetikett, snabb inspektion och utbetalningen var exakt vad de offererade.",
+      "review2Name": "James L.",
+      "review2Device": "MacBook Air M1",
+      "review3Quote": "Bästa inbytesupplevelsen jag någonsin haft. Det miljövänliga tillvägagångssättet är en enorm bonus. Kommer definitivt att använda igen vid nästa uppgradering.",
+      "review3Name": "Emily R.",
+      "review3Device": "iPad Pro 11\"",
+      "review4Quote": "Skickade in min Galaxy S22 och fick betalt inom 48 timmar. Erbjudandet var rättvist och processen kunde inte ha varit enklare. Har redan rekommenderat till vänner.",
+      "review4Name": "Marcus T.",
+      "review4Device": "Galaxy S22 Ultra",
+      "review5Quote": "Lämnade in en trasig laptop som jag trodde var värdelös. DepxTech gav mig ändå $120! Utmärkt kundservice och snabb hantering.",
+      "review5Name": "Jessica H.",
+      "review5Device": "HP Spectre x360",
+      "review6Quote": "Har använt DepxTech två gånger — för min gamla Switch och en MacBook. Båda gångerna var upplevelsen felfri. Rättvisa priser, inget krångel.",
+      "review6Name": "Ryan P.",
+      "review6Device": "Nintendo Switch + MacBook Pro",
+      "moreReviews": "Läs fler omdömen på"
     }
   },
   "footer": {
@@ -537,6 +560,40 @@
     "ctaHeading": "Redo att börja?",
     "ctaSubheading": "Få en offert för din enhet med bara några klick.",
     "ctaButton": "Få din offert"
+  },
+  "about": {
+    "badge": "Om DepxTech",
+    "heading": "Gör teknikinköp enkelt, rättvist och grönt",
+    "subheading": "Vi började med en enkel idé: att sälja gammal elektronik borde vara enkelt, transparent och bra för planeten.",
+    "storyTitle": "Vår historia",
+    "storyP1": "DepxTech föddes ur frustration. Vi såg miljontals perfekt fungerande enheter samla damm i lådor — medan miljontals fler hamnade på soptippen varje år. Befintliga alternativ var långsamma, förvirrande och erbjöd orättvisa priser. Vi visste att det måste finnas ett bättre sätt.",
+    "storyP2": "Så vi byggde DepxTech — en plattform där vem som helst kan sälja sina gamla enheter på minuter, få ett omedelbart rättvist pris och snabbt få betalt. Inga dolda avgifter, inga låga bud, ingen väntan i veckor. Bara en enkel, ärlig process från början till slut.",
+    "storyP3": "Idag har vi hjälpt tusentals kunder att förvandla oanvända enheter till pengar och räddat tusentals apparater från soptippen. Varje inköp räknas — för din plånbok och för planeten. Och vi har bara börjat.",
+    "stat1Label": "Återvunna enheter",
+    "stat2Label": "Nöjda kunder",
+    "stat3Label": "Sparade CO₂-utsläpp",
+    "stat4Label": "Genomsnittlig utbetalningstid",
+    "valuesTitle": "Vad vi står för",
+    "valuesSubtitle": "Dessa kärnvärden styr varje beslut vi fattar och varje interaktion med våra kunder.",
+    "value1Title": "Hållbarhet först",
+    "value1Desc": "Varje enhet vi tar emot får ett andra liv. Vi samarbetar med certifierade återvinnare för att säkerställa noll deponiavfall.",
+    "value2Title": "Total transparens",
+    "value2Desc": "Inga dolda avgifter, inga överraskningar. Våra omedelbara bud baseras på verkliga marknadsdata, och vi håller alltid det erbjudna priset.",
+    "value3Title": "Snabbhet och enkelhet",
+    "value3Desc": "Bud på sekunder, gratis frakt, betalning inom 24 timmar efter inspektion. Vi respekterar din tid.",
+    "value4Title": "Kvalitet garanterad",
+    "value4Desc": "Varje renoverad enhet genomgår rigorösa tester. Vi backar upp våra produkter med garanti och problemfria returer.",
+    "diffTitle": "Varför DepxTech?",
+    "diffSubtitle": "Här är vad som gör oss annorlunda.",
+    "diff1Title": "Bästa marknadspriser",
+    "diff1Desc": "Våra bud drivs av realtidsmarknadsdata. Vi erbjuder konsekvent högre priser än konkurrenterna.",
+    "diff2Title": "Noll-avfall-löfte",
+    "diff2Desc": "99% av enheterna vi tar emot renoveras eller återvinns ansvarsfullt. Inget hamnar på soptippen.",
+    "diff3Title": "Kundfokuserade",
+    "diff3Desc": "Tusentals 5-stjärniga omdömen på eBay och Jawa. Våra kunder återkommer eftersom vi håller varje löfte.",
+    "ctaTitle": "Redo att sälja?",
+    "ctaDesc": "Gå med tusentals nöjda kunder som har förvandlat sina gamla enheter till pengar. Få ditt gratis omedelbara bud idag.",
+    "ctaButton": "Börja din försäljning"
   },
   "sustainability": {
     "badge": "Vårt åtagande för planeten",
@@ -1057,7 +1114,8 @@
       "cancel": "Avbryt",
       "prev": "Föreg",
       "save": "Spara",
-      "saving": "Sparar..."
+      "saving": "Sparar...",
+      "fetchBackmarketPrices": "Hämta BackMarket-priser"
     },
     "users": {
       "title": "Användare",
@@ -1426,7 +1484,9 @@
     "privacyTitle": "Integritetspolicy",
     "privacyDescription": "DepxTech Integritetspolicy – Läs om hur vi samlar in, använder och skyddar din personliga information.",
     "membershipTitle": "Premiummedlemsförmåner | DepxTech",
-    "membershipDescription": "Gå med i vårt exklusiva medlemsprogram med fri frakt, månatliga gåvor, snabb leverans och överraskande veckoebjudanden."
+    "membershipDescription": "Gå med i vårt exklusiva medlemsprogram med fri frakt, månatliga gåvor, snabb leverans och överraskande veckoebjudanden.",
+    "aboutTitle": "Om oss | DepxTech",
+    "aboutDescription": "Lär dig om DepxTechs uppdrag — att göra inköp av elektronik enkelt, snabbt och miljövänligt. Vår historia, värderingar och engagemang för hållbarhet."
   },
   "trade": {
     "hero": {

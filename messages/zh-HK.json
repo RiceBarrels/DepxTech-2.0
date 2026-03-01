@@ -117,6 +117,29 @@
       "subscribing": "訂閱中...",
       "success": "訂閱成功！",
       "successDesc": "您將在收件匣中收到回收變現價格更新。"
+    },
+    "testimonials": {
+      "heading": "用戶好評",
+      "subheading": "數千名滿意客戶已透過我們回收變現裝置",
+      "review1Quote": "舊 iPhone 13 賣咗 $380，比我預期嘅高好多。由報價到收款唔到一個禮拜。",
+      "review1Name": "Sarah M.",
+      "review1Device": "iPhone 13 Pro",
+      "review2Quote": "一開始我仲有啲懷疑，但 DepxTech 令一切變得超簡單。免費快遞標籤、快速檢測，報價都非常準確。",
+      "review2Name": "James L.",
+      "review2Device": "MacBook Air M1",
+      "review3Quote": "我體驗過最好嘅回收服務。環保理念係額外加分項。下次換新一定仲會用。",
+      "review3Name": "Emily R.",
+      "review3Device": "iPad Pro 11\"",
+      "review4Quote": "寄咗我嘅Galaxy S22，48小時內就收到付款。報價公道，流程再簡單不過。已經推薦俾朋友喇。",
+      "review4Name": "Marcus T.",
+      "review4Device": "Galaxy S22 Ultra",
+      "review5Quote": "我以為壞咗嘅手提電腦已經冇價值，點知DepxTech仲俾咗$120！客服好好，處理速度好快。",
+      "review5Name": "Jessica H.",
+      "review5Device": "HP Spectre x360",
+      "review6Quote": "已經用咗兩次DepxTech——一次係舊Switch，一次係MacBook。兩次體驗都非常完美。價格公道，完全冇麻煩。",
+      "review6Name": "Ryan P.",
+      "review6Device": "Nintendo Switch + MacBook Pro",
+      "moreReviews": "喺以下平台查看更多評價"
     }
   },
   "footer": {
@@ -537,6 +560,40 @@
     "ctaHeading": "準備好開始了嗎？",
     "ctaSubheading": "只需幾次點擊，即可取得您裝置的即時報價。",
     "ctaButton": "取得您的報價"
+  },
+  "about": {
+    "badge": "關於DepxTech",
+    "heading": "令科技回收變得簡單、公平、環保",
+    "subheading": "我哋從一個簡單嘅想法出發：回收舊電子產品應該簡單、透明，而且有益於地球。",
+    "storyTitle": "我哋嘅故事",
+    "storyP1": "DepxTech嘅誕生源於一種不滿。我哋見到數百萬部完好嘅設備躺喺抽屜度——而更多設備每年被丟去堆填區。現有嘅回收方案唔淨止慢，仲令人困惑，價格亦都唔公道。我哋知道一定有更好嘅方式。",
+    "storyP2": "於是我哋創建咗DepxTech——一個令任何人都可以喺幾分鐘內回收舊電子產品、攞到即時公平報價、快速收到付款嘅平台。冇隱藏費用，冇低價收購，亦都唔使等幾個星期先收到支票。由頭到尾，只有簡單同誠信。",
+    "storyP3": "而家，我哋已經幫助數千名客戶將閒置設備變現，同時避免數千部設備進入堆填區。每一次回收都好重要——對你嘅錢包同地球都係咁。而我哋先啱啱開始。",
+    "stat1Label": "已回收設備",
+    "stat2Label": "滿意客戶",
+    "stat3Label": "減少嘅CO₂排放",
+    "stat4Label": "平均付款時間",
+    "valuesTitle": "我哋嘅信念",
+    "valuesSubtitle": "呢啲核心價值觀指導住我哋做出嘅每一個決定同埋與客戶嘅每一次互動。",
+    "value1Title": "可持續優先",
+    "value1Desc": "我哋接收嘅每部設備都會獲得第二次生命。我哋同認證回收商合作，確保零堆填同盡量減少環境影響。",
+    "value2Title": "完全透明",
+    "value2Desc": "冇隱藏費用，冇意外。我哋嘅即時報價基於真實市場數據，並且始終兌現承諾嘅價格。",
+    "value3Title": "速度與簡潔",
+    "value3Desc": "幾秒鐘內攞到報價，免費寄送，驗收後24小時內收到付款。我哋尊重你嘅時間。",
+    "value4Title": "品質保證",
+    "value4Desc": "每部翻新設備都經過嚴格測試。我哋以保修同無憂退貨支持我哋嘅產品。",
+    "diffTitle": "點解揀DepxTech？",
+    "diffSubtitle": "以下係我哋同其他平台嘅唔同之處。",
+    "diff1Title": "最佳市場價格",
+    "diff1Desc": "我哋嘅報價由實時市場數據驅動，持續提供高過競爭對手嘅回收價。",
+    "diff2Title": "零廢棄承諾",
+    "diff2Desc": "我哋收到嘅99%設備都會被翻新或負責任咁回收。冇嘢會進入堆填區。",
+    "diff3Title": "客戶至上",
+    "diff3Desc": "喺eBay同Jawa上有數千條五星好評。客戶回頭係因為我哋兌現咗每一個承諾。",
+    "ctaTitle": "準備好回收了嗎？",
+    "ctaDesc": "加入數千名滿意客戶嘅行列，將舊設備變現。立即獲取免費即時報價。",
+    "ctaButton": "開始回收"
   },
   "sustainability": {
     "badge": "我們對地球的承諾",
@@ -1059,7 +1116,8 @@
       "cancel": "取消",
       "prev": "上一個",
       "save": "儲存",
-      "saving": "儲存中..."
+      "saving": "儲存中...",
+      "fetchBackmarketPrices": "獲取 BackMarket 價格"
     },
     "users": {
       "title": "使用者",
@@ -1428,7 +1486,9 @@
     "privacyTitle": "隱私政策",
     "privacyDescription": "DepxTech 隱私政策 - 了解我們如何收集、使用和保護您的個人資訊。",
     "membershipTitle": "高級會員權益 | DepxTech",
-    "membershipDescription": "加入我們的專屬會員計劃，享受免費配送、每月禮品、快速送達和每週驚喜優惠。"
+    "membershipDescription": "加入我們的專屬會員計劃，享受免費配送、每月禮品、快速送達和每週驚喜優惠。",
+    "aboutTitle": "關於我們 | DepxTech",
+    "aboutDescription": "了解DepxTech嘅使命——令電子產品回收變得簡單、快速、環保。我哋嘅故事、價值觀同對可持續發展嘅承諾。"
   },
   "trade": {
     "hero": {

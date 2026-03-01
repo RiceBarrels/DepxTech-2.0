@@ -162,10 +162,10 @@ export default function Nav({layers = 3}) {
                                         <img
                                             src={profileData.avatar}
                                             alt="Profile"
-                                            className="size-7 rounded-full object-cover border border-border hover:border-primary transition-colors"
+                                            className="size-8 rounded-full object-cover border border-border hover:border-primary transition-colors"
                                         />
                                     ) : (
-                                        <div className="size-7 rounded-full bg-muted flex items-center justify-center border border-border hover:border-primary transition-colors">
+                                        <div className="size-8 rounded-full bg-muted flex items-center justify-center border border-border hover:border-primary transition-colors">
                                             <UserIcon className="size-3.5 text-muted-foreground" />
                                         </div>
                                     )}

@@ -117,6 +117,29 @@
       "subscribing": "Iscrizione in corso...",
       "success": "Iscrizione completata con successo!",
       "successDesc": "Riceverai aggiornamenti sui prezzi di permuta nella tua casella di posta."
+    },
+    "testimonials": {
+      "heading": "Cosa dicono i nostri clienti",
+      "subheading": "Migliaia di clienti soddisfatti hanno permutato i loro dispositivi con noi",
+      "review1Quote": "Ho ricevuto $380 per il mio vecchio iPhone 13 — molto più di quanto mi aspettassi. L'intero processo ha richiesto meno di una settimana dal preventivo al pagamento.",
+      "review1Name": "Sarah M.",
+      "review1Device": "iPhone 13 Pro",
+      "review2Quote": "All'inizio ero scettico, ma DepxTech ha reso tutto così facile. Etichetta di spedizione gratuita, ispezione rapida e il pagamento era esattamente quello che mi avevano preventivato.",
+      "review2Name": "James L.",
+      "review2Device": "MacBook Air M1",
+      "review3Quote": "La migliore esperienza di permuta che abbia mai avuto. L'approccio ecologico è un grande vantaggio. Lo userò sicuramente di nuovo per il mio prossimo aggiornamento.",
+      "review3Name": "Emily R.",
+      "review3Device": "iPad Pro 11\"",
+      "review4Quote": "Ho inviato il mio Galaxy S22 e sono stato pagato entro 48 ore. Il preventivo era giusto e il processo non poteva essere più semplice. L'ho già consigliato ad amici.",
+      "review4Name": "Marcus T.",
+      "review4Device": "Galaxy S22 Ultra",
+      "review5Quote": "Ho scambiato un portatile rotto che pensavo fosse senza valore. DepxTech mi ha comunque dato $120! Ottimo servizio clienti e tempi rapidi.",
+      "review5Name": "Jessica H.",
+      "review5Device": "HP Spectre x360",
+      "review6Quote": "Ho usato DepxTech due volte — per la mia vecchia Switch e un MacBook. Entrambe le volte l'esperienza è stata impeccabile. Prezzi giusti, senza problemi.",
+      "review6Name": "Ryan P.",
+      "review6Device": "Nintendo Switch + MacBook Pro",
+      "moreReviews": "Leggi altre recensioni su"
     }
   },
   "footer": {
@@ -537,6 +560,40 @@
     "ctaHeading": "Pronto per iniziare?",
     "ctaSubheading": "Ottieni un preventivo immediato per il tuo dispositivo in pochi clic.",
     "ctaButton": "Ottieni il tuo preventivo"
+  },
+  "about": {
+    "badge": "Chi è DepxTech",
+    "heading": "Rendere il ritiro tech semplice, equo e verde",
+    "subheading": "Siamo partiti da un'idea semplice: vendere i vecchi dispositivi dovrebbe essere facile, trasparente e buono per il pianeta.",
+    "storyTitle": "La nostra storia",
+    "storyP1": "DepxTech è nato dalla frustrazione. Abbiamo visto milioni di dispositivi perfettamente funzionanti raccogliere polvere nei cassetti — mentre milioni di altri finivano in discarica ogni anno. Le opzioni esistenti erano lente, confuse e offrivano prezzi ingiusti. Sapevamo che doveva esserci un modo migliore.",
+    "storyP2": "Così abbiamo creato DepxTech — una piattaforma dove chiunque può vendere i propri vecchi dispositivi in pochi minuti, ottenere un preventivo istantaneo ed equo e ricevere il pagamento rapidamente. Nessuna commissione nascosta, nessuna offerta al ribasso, nessuna attesa di settimane. Solo un processo semplice e onesto dall'inizio alla fine.",
+    "storyP3": "Oggi abbiamo aiutato migliaia di clienti a trasformare i loro dispositivi inutilizzati in denaro, evitando che migliaia di apparecchi finissero in discarica. Ogni ritiro conta — per il tuo portafoglio e per il pianeta. E siamo solo all'inizio.",
+    "stat1Label": "Dispositivi riciclati",
+    "stat2Label": "Clienti soddisfatti",
+    "stat3Label": "Emissioni CO₂ risparmiate",
+    "stat4Label": "Tempo medio di pagamento",
+    "valuesTitle": "I nostri valori",
+    "valuesSubtitle": "Questi valori fondamentali guidano ogni nostra decisione e ogni interazione con i clienti.",
+    "value1Title": "Sostenibilità prima di tutto",
+    "value1Desc": "Ogni dispositivo che accettiamo riceve una seconda vita. Collaboriamo con riciclatori certificati per garantire zero rifiuti in discarica.",
+    "value2Title": "Trasparenza totale",
+    "value2Desc": "Nessuna commissione nascosta, nessuna sorpresa. I nostri preventivi istantanei si basano su dati di mercato reali e onoriamo sempre il prezzo offerto.",
+    "value3Title": "Velocità e semplicità",
+    "value3Desc": "Preventivo in secondi, spedizione gratuita e pagamento entro 24 ore dall'ispezione. Rispettiamo il tuo tempo.",
+    "value4Title": "Qualità garantita",
+    "value4Desc": "Ogni dispositivo ricondizionato supera test rigorosi. Garantiamo i nostri prodotti con garanzia e resi senza problemi.",
+    "diffTitle": "Perché DepxTech?",
+    "diffSubtitle": "Ecco cosa ci rende diversi dagli altri.",
+    "diff1Title": "Migliori prezzi di mercato",
+    "diff1Desc": "I nostri preventivi si basano su dati di mercato in tempo reale. Offriamo costantemente prezzi più alti della concorrenza.",
+    "diff2Title": "Impegno zero rifiuti",
+    "diff2Desc": "Il 99% dei dispositivi che riceviamo viene ricondizionato o riciclato responsabilmente. Niente finisce in discarica.",
+    "diff3Title": "Ossessionati dal cliente",
+    "diff3Desc": "Migliaia di recensioni a 5 stelle su eBay e Jawa. I nostri clienti tornano perché manteniamo ogni promessa.",
+    "ctaTitle": "Pronto a vendere?",
+    "ctaDesc": "Unisciti a migliaia di clienti soddisfatti che hanno trasformato i loro vecchi dispositivi in denaro. Ottieni il tuo preventivo gratuito oggi.",
+    "ctaButton": "Inizia il ritiro"
   },
   "sustainability": {
     "badge": "Il nostro impegno per il pianeta",
@@ -1057,7 +1114,8 @@
       "cancel": "Annulla",
       "prev": "Prec",
       "save": "Salva",
-      "saving": "Salvataggio..."
+      "saving": "Salvataggio...",
+      "fetchBackmarketPrices": "Ottieni prezzi BackMarket"
     },
     "users": {
       "title": "Utenti",
@@ -1426,7 +1484,9 @@
     "privacyTitle": "Informativa sulla privacy",
     "privacyDescription": "Informativa sulla privacy DepxTech - Scopri come raccogliamo, utilizziamo e proteggiamo le tue informazioni personali.",
     "membershipTitle": "Vantaggi dell'abbonamento Premium | DepxTech",
-    "membershipDescription": "Unisciti al nostro programma di abbonamento esclusivo con spedizione gratuita, regali mensili, consegna rapida e offerte settimanali a sorpresa."
+    "membershipDescription": "Unisciti al nostro programma di abbonamento esclusivo con spedizione gratuita, regali mensili, consegna rapida e offerte settimanali a sorpresa.",
+    "aboutTitle": "Chi siamo | DepxTech",
+    "aboutDescription": "Scopri la missione di DepxTech — rendere il ritiro dei dispositivi semplice, veloce ed ecologico. La nostra storia, i nostri valori e il nostro impegno per la sostenibilità."
   },
   "trade": {
     "hero": {

@@ -117,6 +117,29 @@
       "subscribing": "Bezig met abonneren...",
       "success": "Succesvol geabonneerd!",
       "successDesc": "U ontvangt inruilprijsupdates in uw inbox."
+    },
+    "testimonials": {
+      "heading": "Wat onze klanten zeggen",
+      "subheading": "Duizenden tevreden klanten hebben hun apparaten bij ons ingeruild",
+      "review1Quote": "Ik kreeg $380 voor mijn oude iPhone 13 — veel meer dan verwacht. Het hele proces duurde minder dan een week van offerte tot betaling.",
+      "review1Name": "Sarah M.",
+      "review1Device": "iPhone 13 Pro",
+      "review2Quote": "Ik was eerst sceptisch, maar DepxTech maakte het zo makkelijk. Gratis verzendlabel, snelle inspectie en de uitbetaling was precies wat ze hadden geoffreerd.",
+      "review2Name": "James L.",
+      "review2Device": "MacBook Air M1",
+      "review3Quote": "De beste inruilervaring die ik ooit heb gehad. De milieuvriendelijke aanpak is een enorme bonus. Gebruik ik zeker opnieuw bij mijn volgende upgrade.",
+      "review3Name": "Emily R.",
+      "review3Device": "iPad Pro 11\"",
+      "review4Quote": "Mijn Galaxy S22 opgestuurd en binnen 48 uur betaald gekregen. Het bod was eerlijk en het proces kon niet eenvoudiger. Al aanbevolen aan vrienden.",
+      "review4Name": "Marcus T.",
+      "review4Device": "Galaxy S22 Ultra",
+      "review5Quote": "Ik ruilde een kapotte laptop in waarvan ik dacht dat hij waardeloos was. DepxTech gaf me toch $120! Geweldige klantenservice en snelle afhandeling.",
+      "review5Name": "Jessica H.",
+      "review5Device": "HP Spectre x360",
+      "review6Quote": "Heb DepxTech twee keer gebruikt — voor mijn oude Switch en een MacBook. Beide keren was de ervaring vlekkeloos. Eerlijke prijzen, geen gedoe.",
+      "review6Name": "Ryan P.",
+      "review6Device": "Nintendo Switch + MacBook Pro",
+      "moreReviews": "Lees meer beoordelingen op"
     }
   },
   "footer": {
@@ -537,6 +560,40 @@
     "ctaHeading": "Klaar om te beginnen?",
     "ctaSubheading": "Ontvang in slechts een paar klikken een directe offerte voor uw apparaat.",
     "ctaButton": "Ontvang uw offerte"
+  },
+  "about": {
+    "badge": "Over DepxTech",
+    "heading": "Tech-inkoop eenvoudig, eerlijk en groen maken",
+    "subheading": "We begonnen met een simpel idee: het verkopen van oude elektronica moet makkelijk, transparant en goed voor de planeet zijn.",
+    "storyTitle": "Ons verhaal",
+    "storyP1": "DepxTech ontstond uit frustratie. We zagen miljoenen perfect werkende apparaten stof verzamelen in laden — terwijl miljoenen andere elk jaar op de stortplaats belandden. De bestaande opties waren traag, verwarrend en boden oneerlijke prijzen. We wisten dat er een betere manier moest zijn.",
+    "storyP2": "Dus bouwden we DepxTech — een platform waar iedereen oude elektronica in minuten kan verkopen, een eerlijk direct bod krijgt en snel betaald wordt. Geen verborgen kosten, geen belachelijk lage biedingen, geen weken wachten. Gewoon een simpel, eerlijk proces van begin tot eind.",
+    "storyP3": "Vandaag hebben we duizenden klanten geholpen hun ongebruikte apparaten in geld om te zetten en duizenden apparaten van de stortplaats gered. Elke inkoop telt — voor je portemonnee en voor de planeet. En we zijn nog maar net begonnen.",
+    "stat1Label": "Gerecyclede apparaten",
+    "stat2Label": "Tevreden klanten",
+    "stat3Label": "Bespaarde CO₂-uitstoot",
+    "stat4Label": "Gemiddelde uitbetalingstijd",
+    "valuesTitle": "Waar we voor staan",
+    "valuesSubtitle": "Deze kernwaarden sturen elke beslissing en elke interactie met onze klanten.",
+    "value1Title": "Duurzaamheid eerst",
+    "value1Desc": "Elk apparaat dat we accepteren krijgt een tweede leven. We werken samen met gecertificeerde recyclers om nul stortplaatsafval te garanderen.",
+    "value2Title": "Volledige transparantie",
+    "value2Desc": "Geen verborgen kosten, geen verrassingen. Onze directe biedingen zijn gebaseerd op echte marktgegevens, en we komen altijd ons bod na.",
+    "value3Title": "Snelheid & eenvoud",
+    "value3Desc": "Bod in seconden, gratis verzending, betaling binnen 24 uur na inspectie. We respecteren je tijd.",
+    "value4Title": "Kwaliteit gegarandeerd",
+    "value4Desc": "Elk refurbished apparaat ondergaat strenge tests. We staan achter onze producten met garantie en probleemloze retourzendingen.",
+    "diffTitle": "Waarom DepxTech?",
+    "diffSubtitle": "Dit is wat ons anders maakt.",
+    "diff1Title": "Beste marktprijzen",
+    "diff1Desc": "Onze biedingen zijn gebaseerd op real-time marktgegevens. We bieden consistent hogere prijzen dan de concurrentie.",
+    "diff2Title": "Nul-afval belofte",
+    "diff2Desc": "99% van de apparaten die we ontvangen wordt refurbished of verantwoord gerecycled. Niets gaat naar de stortplaats.",
+    "diff3Title": "Klantgericht",
+    "diff3Desc": "Duizenden 5-sterrenbeoordelingen op eBay en Jawa. Onze klanten komen terug omdat we elke belofte nakomen.",
+    "ctaTitle": "Klaar om te verkopen?",
+    "ctaDesc": "Sluit je aan bij duizenden tevreden klanten die hun oude apparaten in geld hebben omgezet. Krijg vandaag je gratis direct bod.",
+    "ctaButton": "Start je verkoop"
   },
   "sustainability": {
     "badge": "Ons commitment aan de planeet",
@@ -1057,7 +1114,8 @@
       "cancel": "Annuleren",
       "prev": "Vorige",
       "save": "Opslaan",
-      "saving": "Bezig met opslaan..."
+      "saving": "Bezig met opslaan...",
+      "fetchBackmarketPrices": "BackMarket-prijzen ophalen"
     },
     "users": {
       "title": "Gebruikers",
@@ -1426,7 +1484,9 @@
     "privacyTitle": "Privacybeleid",
     "privacyDescription": "DepxTech privacybeleid - Ontdek hoe wij uw persoonlijke gegevens verzamelen, gebruiken en beschermen.",
     "membershipTitle": "Premium-lidmaatschapsvoordelen | DepxTech",
-    "membershipDescription": "Word lid van ons exclusieve lidmaatschapsprogramma met gratis verzending, maandelijkse cadeaus, snelle bezorging en wekelijkse verrassingsaanbiedingen."
+    "membershipDescription": "Word lid van ons exclusieve lidmaatschapsprogramma met gratis verzending, maandelijkse cadeaus, snelle bezorging en wekelijkse verrassingsaanbiedingen.",
+    "aboutTitle": "Over ons | DepxTech",
+    "aboutDescription": "Ontdek de missie van DepxTech — elektronica-inkoop eenvoudig, snel en milieuvriendelijk maken. Ons verhaal, waarden en toewijding aan duurzaamheid."
   },
   "trade": {
     "hero": {

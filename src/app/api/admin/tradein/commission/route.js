@@ -46,20 +46,25 @@ export async function POST(request) {
       return NextResponse.json({ error: adminVerification.error }, { status: adminVerification.status })
     }
 
-    const { brand, category, tiers } = await request.json()
+    const { brand, category, tiers, backmarket_tiers } = await request.json()
 
     if (!Array.isArray(tiers) || tiers.length === 0) {
       return NextResponse.json({ error: 'Tiers array is required' }, { status: 400 })
     }
 
     const supabase = createServiceRoleClient()
+    const insertData = {
+      brand: brand || null,
+      category: category || null,
+      tiers,
+    }
+    if (Array.isArray(backmarket_tiers)) {
+      insertData.backmarket_tiers = backmarket_tiers
+    }
+
     const { data, error } = await supabase
       .from('commission_tiers')
-      .insert({
-        brand: brand || null,
-        category: category || null,
-        tiers,
-      })
+      .insert(insertData)
       .select()
       .single()
 
@@ -85,7 +90,7 @@ export async function PUT(request) {
       return NextResponse.json({ error: adminVerification.error }, { status: adminVerification.status })
     }
 
-    const { id, tiers } = await request.json()
+    const { id, tiers, backmarket_tiers } = await request.json()
 
     if (!id) {
       return NextResponse.json({ error: 'Tier ID is required' }, { status: 400 })
@@ -96,9 +101,14 @@ export async function PUT(request) {
     }
 
     const supabase = createServiceRoleClient()
+    const updateData = { tiers, updated_at: new Date().toISOString() }
+    if (Array.isArray(backmarket_tiers)) {
+      updateData.backmarket_tiers = backmarket_tiers
+    }
+
     const { data, error } = await supabase
       .from('commission_tiers')
-      .update({ tiers, updated_at: new Date().toISOString() })
+      .update(updateData)
       .eq('id', id)
       .select()
       .single()

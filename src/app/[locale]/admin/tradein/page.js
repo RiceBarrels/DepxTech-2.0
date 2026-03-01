@@ -104,6 +104,8 @@ export default function TradeinManagePage() {
     const [importing, setImporting] = useState(false)
     const [fetchingPrices, setFetchingPrices] = useState(false)
     const [priceProgress, setPriceProgress] = useState({ done: 0, total: 0 })
+    const [fetchingBmPrices, setFetchingBmPrices] = useState(false)
+    const [bmPriceProgress, setBmPriceProgress] = useState({ done: 0, total: 0 })
     const fileInputRef = useRef(null)
 
     // View mode from localStorage
@@ -687,6 +689,76 @@ export default function TradeinManagePage() {
         }
     }
 
+    const handleFetchBackmarketPrices = async () => {
+        if (selectedIds.size === 0) return
+
+        setFetchingBmPrices(true)
+        const total = selectedIds.size
+        setBmPriceProgress({ done: 0, total })
+        try {
+            const response = await fetch('/api/admin/tradein/backmarket-price', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ ids: Array.from(selectedIds) })
+            })
+
+            if (!response.ok) {
+                let errMsg = 'Failed to fetch Back Market prices'
+                try {
+                    const data = await response.json()
+                    errMsg = data.error || errMsg
+                } catch {}
+                throw new Error(errMsg)
+            }
+
+            const reader = response.body.getReader()
+            const decoder = new TextDecoder()
+            let buffer = ''
+            let summary = null
+            let processed = 0
+
+            while (true) {
+                const { done, value } = await reader.read()
+                if (done) break
+                buffer += decoder.decode(value, { stream: true })
+                const lines = buffer.split('\n')
+                buffer = lines.pop() || ''
+
+                for (const line of lines) {
+                    if (!line.trim()) continue
+                    try {
+                        const result = JSON.parse(line)
+                        if (result.done) {
+                            summary = result
+                            continue
+                        }
+                        processed++
+                        setBmPriceProgress({ done: processed, total })
+                        if (result.success) {
+                            setProducts(prev => prev.map(p =>
+                                p.id === result.id
+                                    ? { ...p, base_price: result.bm_price, base_date: new Date().toISOString().split('T')[0] }
+                                    : p
+                            ))
+                            toast.success(`${result.title}: $${result.bm_price}`, { duration: 3000 })
+                        } else {
+                            toast.warning(`${result.title}: ${result.reason}`, { duration: 4000 })
+                        }
+                    } catch {}
+                }
+            }
+
+            if (summary) {
+                toast.success(`Done — updated ${summary.updated} of ${summary.updated + summary.failed} products`, { duration: 5000 })
+            }
+        } catch (err) {
+            toast.error('Error: ' + err.message)
+        } finally {
+            setFetchingBmPrices(false)
+            setBmPriceProgress({ done: 0, total: 0 })
+        }
+    }
+
     const handleBulkApplyTemplate = async (templateId) => {
         if (selectedIds.size === 0) return
 
@@ -1031,7 +1103,7 @@ export default function TradeinManagePage() {
                         {applyingTemplate ? t('applyingTemplate') : t('applyTemplate')}
                     </Button>
                     <div className="flex flex-col gap-1.5">
-                        <Button variant="outline" size="sm" onClick={handleFetchEbayPrices} disabled={fetchingPrices}>
+                        <Button variant="outline" size="sm" onClick={handleFetchEbayPrices} disabled={fetchingPrices || fetchingBmPrices}>
                             {fetchingPrices ? <LoaderIcon className="w-4 h-4 mr-1.5 animate-spin" /> : <DollarSignIcon className="w-4 h-4 mr-1.5" />}
                             {fetchingPrices && priceProgress.total > 0
                                 ? `${priceProgress.done}/${priceProgress.total}`
@@ -1042,6 +1114,22 @@ export default function TradeinManagePage() {
                                 <div
                                     className="h-full bg-primary rounded-full transition-all duration-300 ease-out"
                                     style={{ width: `${(priceProgress.done / priceProgress.total) * 100}%` }}
+                                />
+                            </div>
+                        )}
+                    </div>
+                    <div className="flex flex-col gap-1.5">
+                        <Button variant="outline" size="sm" onClick={handleFetchBackmarketPrices} disabled={fetchingBmPrices || fetchingPrices}>
+                            {fetchingBmPrices ? <LoaderIcon className="w-4 h-4 mr-1.5 animate-spin" /> : <DollarSignIcon className="w-4 h-4 mr-1.5" />}
+                            {fetchingBmPrices && bmPriceProgress.total > 0
+                                ? `${bmPriceProgress.done}/${bmPriceProgress.total}`
+                                : fetchingBmPrices ? t('fetching') : t('fetchBackmarketPrices')}
+                        </Button>
+                        {fetchingBmPrices && bmPriceProgress.total > 0 && (
+                            <div className="w-full h-1.5 bg-muted rounded-full overflow-hidden">
+                                <div
+                                    className="h-full bg-emerald-500 rounded-full transition-all duration-300 ease-out"
+                                    style={{ width: `${(bmPriceProgress.done / bmPriceProgress.total) * 100}%` }}
                                 />
                             </div>
                         )}

@@ -117,6 +117,29 @@
       "subscribing": "登録中...",
       "success": "登録が完了しました！",
       "successDesc": "買取価格の最新情報をメールでお届けします。"
+    },
+    "testimonials": {
+      "heading": "お客様の声",
+      "subheading": "数千人のお客様が満足してデバイスを買取に出しています",
+      "review1Quote": "古いiPhone 13が$380になりました——予想以上の金額です。見積もりから支払いまで1週間もかかりませんでした。",
+      "review1Name": "Sarah M.",
+      "review1Device": "iPhone 13 Pro",
+      "review2Quote": "最初は半信半疑でしたが、DepxTechは本当に簡単でした。送料無料ラベル、迅速な検品、見積もり通りの支払い。",
+      "review2Name": "James L.",
+      "review2Device": "MacBook Air M1",
+      "review3Quote": "今までで最高の買取体験でした。エコフレンドリーな取り組みも大きなプラスポイントです。次のアップグレード時も必ず利用します。",
+      "review3Name": "Emily R.",
+      "review3Device": "iPad Pro 11\"",
+      "review4Quote": "Galaxy S22を送って48時間以内に支払いを受けました。見積もりは適正で、手続きもこれ以上ないほど簡単でした。すでに友人にも勧めています。",
+      "review4Name": "Marcus T.",
+      "review4Device": "Galaxy S22 Ultra",
+      "review5Quote": "壊れたノートPCは価値がないと思っていましたが、DepxTechは$120もくれました！カスタマーサービスも素晴らしく、対応も迅速でした。",
+      "review5Name": "Jessica H.",
+      "review5Device": "HP Spectre x360",
+      "review6Quote": "DepxTechを2回利用しました——SwitchとMacBook。どちらも完璧な体験でした。適正価格で手間なし。",
+      "review6Name": "Ryan P.",
+      "review6Device": "Nintendo Switch + MacBook Pro",
+      "moreReviews": "他のプラットフォームでレビューを見る"
     }
   },
   "footer": {
@@ -537,6 +560,40 @@
     "ctaHeading": "始めてみますか？",
     "ctaSubheading": "数クリックでデバイスの見積もりを即座に取得できます。",
     "ctaButton": "見積もりを取得"
+  },
+  "about": {
+    "badge": "DepxTechについて",
+    "heading": "テクノロジーの買取をシンプル、公正、グリーンに",
+    "subheading": "シンプルなアイデアから始まりました：古い電子機器の買取は簡単で、透明で、地球に優しいものであるべきだと。",
+    "storyTitle": "私たちのストーリー",
+    "storyP1": "DepxTechは不満から生まれました。何百万台もの完璧に使える端末が引き出しの中で眠り、さらに何百万台もが毎年埋立地に捨てられている。既存の買取サービスは遅く、わかりにくく、不当な価格でした。もっと良い方法があるはずだと確信しました。",
+    "storyP2": "そこで私たちはDepxTechを作りました——誰でも数分で古い電子機器を買い取りに出し、即座に公正な見積もりを受け取り、迅速に支払いを受けられるプラットフォームです。隠れた手数料も、不当な買い叩きも、何週間も待つこともありません。最初から最後まで、シンプルで誠実なプロセスです。",
+    "storyP3": "現在、何千人ものお客様が不要な機器を現金に変え、何千台もの端末を埋立地から救うお手伝いをしてきました。すべての買取が重要です——あなたのお財布にも、地球にも。そして私たちはまだ始まったばかりです。",
+    "stat1Label": "リサイクル端末数",
+    "stat2Label": "満足したお客様",
+    "stat3Label": "削減したCO₂排出量",
+    "stat4Label": "平均支払い時間",
+    "valuesTitle": "私たちの信念",
+    "valuesSubtitle": "これらの核心的な価値観が、私たちのすべての意思決定とお客様との対話を導いています。",
+    "value1Title": "サステナビリティ第一",
+    "value1Desc": "受け入れたすべての端末に第二の人生を与えます。認定リサイクル業者と提携し、埋立ゼロと環境負荷の最小化を確保しています。",
+    "value2Title": "完全な透明性",
+    "value2Desc": "隠れた手数料も、サプライズもありません。即時見積もりは実際の市場データに基づき、提示した価格は必ず守ります。",
+    "value3Title": "スピードとシンプルさ",
+    "value3Desc": "数秒で見積もり、送料無料、検査後24時間以内にお支払い。あなたの時間を大切にします。",
+    "value4Title": "品質保証",
+    "value4Desc": "すべてのリファービッシュ端末は厳格なテストを受けます。保証と手間のかからない返品でサポートします。",
+    "diffTitle": "なぜDepxTech？",
+    "diffSubtitle": "他のサービスとの違いはこちらです。",
+    "diff1Title": "最高の市場価格",
+    "diff1Desc": "リアルタイムの市場データで見積もりを算出。競合より高い買取価格を常に提供しています。",
+    "diff2Title": "ゼロ・ウェイストの約束",
+    "diff2Desc": "受け取った端末の99%がリファービッシュまたは責任あるリサイクルへ。埋立地に送られるものはありません。",
+    "diff3Title": "お客様第一",
+    "diff3Desc": "eBayとJawaで数千件の5つ星レビュー。お客様がリピートするのは、すべての約束を守るからです。",
+    "ctaTitle": "買取の準備はできましたか？",
+    "ctaDesc": "何千人もの満足したお客様に加わり、不要な機器を現金に。今すぐ無料の即時見積もりを取得。",
+    "ctaButton": "買取を始める"
   },
   "sustainability": {
     "badge": "地球への取り組み",
@@ -1057,7 +1114,8 @@
       "cancel": "キャンセル",
       "prev": "前へ",
       "save": "保存",
-      "saving": "保存中..."
+      "saving": "保存中...",
+      "fetchBackmarketPrices": "BackMarket価格を取得"
     },
     "users": {
       "title": "ユーザー",
@@ -1426,7 +1484,9 @@
     "privacyTitle": "プライバシーポリシー",
     "privacyDescription": "DepxTechのプライバシーポリシー - お客様の個人情報の収集、使用、保護方法について。",
     "membershipTitle": "プレミアムメンバーシップ特典 | DepxTech",
-    "membershipDescription": "送料無料、毎月のギフト、迅速な配送、毎週のサプライズ特典付き限定メンバーシッププログラムに参加しましょう。"
+    "membershipDescription": "送料無料、毎月のギフト、迅速な配送、毎週のサプライズ特典付き限定メンバーシッププログラムに参加しましょう。",
+    "aboutTitle": "私たちについて | DepxTech",
+    "aboutDescription": "DepxTechの使命を知る——電子機器の買取をシンプルに、迅速に、エコフレンドリーに。私たちのストーリー、価値観、サステナビリティへの取り組み。"
   },
   "trade": {
     "hero": {

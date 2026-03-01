@@ -117,6 +117,29 @@
       "subscribing": "Wird abonniert...",
       "success": "Erfolgreich abonniert!",
       "successDesc": "Sie erhalten Eintauschpreis-Updates in Ihrem Posteingang."
+    },
+    "testimonials": {
+      "heading": "Was unsere Kunden sagen",
+      "subheading": "Tausende zufriedene Kunden haben ihre Geräte bei uns eingetauscht",
+      "review1Quote": "Ich habe 380$ für mein altes iPhone 13 bekommen — viel mehr als erwartet. Der gesamte Prozess dauerte weniger als eine Woche vom Angebot bis zur Auszahlung.",
+      "review1Name": "Sarah M.",
+      "review1Device": "iPhone 13 Pro",
+      "review2Quote": "Anfangs war ich skeptisch, aber DepxTech hat es so einfach gemacht. Kostenloses Versandetikett, schnelle Prüfung, und die Auszahlung entsprach genau dem Angebot.",
+      "review2Name": "James L.",
+      "review2Device": "MacBook Air M1",
+      "review3Quote": "Die beste Eintausch-Erfahrung, die ich je hatte. Der umweltfreundliche Ansatz ist ein riesiger Bonus. Werde es beim nächsten Upgrade definitiv wieder nutzen.",
+      "review3Name": "Emily R.",
+      "review3Device": "iPad Pro 11\"",
+      "review4Quote": "Habe mein Galaxy S22 eingeschickt und innerhalb von 48 Stunden die Zahlung erhalten. Das Angebot war fair und der Prozess denkbar einfach. Bereits Freunden empfohlen.",
+      "review4Name": "Marcus T.",
+      "review4Device": "Galaxy S22 Ultra",
+      "review5Quote": "Ich dachte, mein kaputtes Laptop sei wertlos. DepxTech hat mir trotzdem 120$ dafür gegeben! Toller Kundenservice und schnelle Abwicklung.",
+      "review5Name": "Jessica H.",
+      "review5Device": "HP Spectre x360",
+      "review6Quote": "Habe DepxTech zweimal genutzt — für meine alte Switch und ein MacBook. Beide Male war die Erfahrung einwandfrei. Faire Preise, kein Aufwand.",
+      "review6Name": "Ryan P.",
+      "review6Device": "Nintendo Switch + MacBook Pro",
+      "moreReviews": "Mehr Bewertungen lesen auf"
     }
   },
   "footer": {
@@ -537,6 +560,40 @@
     "ctaHeading": "Bereit loszulegen?",
     "ctaSubheading": "Erhalten Sie in wenigen Klicks ein Sofortangebot für Ihr Gerät.",
     "ctaButton": "Angebot erhalten"
+  },
+  "about": {
+    "badge": "Über DepxTech",
+    "heading": "Technik-Ankauf einfach, fair und grün",
+    "subheading": "Wir begannen mit einer einfachen Idee: Der Verkauf alter Elektronik sollte einfach, transparent und gut für den Planeten sein.",
+    "storyTitle": "Unsere Geschichte",
+    "storyP1": "DepxTech entstand aus Frustration. Wir sahen Millionen perfekt funktionierender Geräte in Schubladen verstauben — während Millionen weitere jedes Jahr auf Deponien landeten. Die bestehenden Ankauf-Optionen waren langsam, verwirrend und boten unfaire Preise. Wir wussten, dass es einen besseren Weg geben muss.",
+    "storyP2": "Also haben wir DepxTech gebaut — eine Plattform, auf der jeder seine alten Elektronikgeräte in Minuten verkaufen, ein sofortiges faires Angebot erhalten und schnell bezahlt werden kann. Keine versteckten Gebühren, keine Niedrigpreisangebote, kein wochelanges Warten. Nur ein einfacher, ehrlicher Prozess von Anfang bis Ende.",
+    "storyP3": "Heute haben wir Tausenden von Kunden geholfen, ihre ungenutzten Geräte zu Geld zu machen und gleichzeitig Tausende von Geräten vor der Deponie bewahrt. Jeder Ankauf zählt — für Ihren Geldbeutel und für den Planeten. Und wir fangen gerade erst an.",
+    "stat1Label": "Recycelte Geräte",
+    "stat2Label": "Zufriedene Kunden",
+    "stat3Label": "Eingesparte CO₂-Emissionen",
+    "stat4Label": "Durchschnittliche Auszahlungszeit",
+    "valuesTitle": "Wofür wir stehen",
+    "valuesSubtitle": "Diese Kernwerte leiten jede Entscheidung und jede Interaktion mit unseren Kunden.",
+    "value1Title": "Nachhaltigkeit zuerst",
+    "value1Desc": "Jedes Gerät, das wir annehmen, bekommt ein zweites Leben. Wir arbeiten mit zertifizierten Recyclern zusammen, um Null-Deponie-Abfall zu gewährleisten.",
+    "value2Title": "Volle Transparenz",
+    "value2Desc": "Keine versteckten Gebühren, keine Überraschungen. Unsere Sofort-Angebote basieren auf echten Marktdaten, und wir halten immer den angebotenen Preis.",
+    "value3Title": "Geschwindigkeit & Einfachheit",
+    "value3Desc": "Angebot in Sekunden, kostenloser Versand, Zahlung innerhalb von 24 Stunden nach Prüfung. Wir respektieren Ihre Zeit.",
+    "value4Title": "Qualität garantiert",
+    "value4Desc": "Jedes aufbereitete Gerät durchläuft strenge Tests. Wir stehen mit Garantie und unkomplizierter Rückgabe hinter unseren Produkten.",
+    "diffTitle": "Warum DepxTech?",
+    "diffSubtitle": "Das unterscheidet uns von anderen.",
+    "diff1Title": "Beste Marktpreise",
+    "diff1Desc": "Unsere Angebote basieren auf Echtzeit-Marktdaten. Wir bieten konstant höhere Ankaufspreise als die Konkurrenz.",
+    "diff2Title": "Null-Abfall-Versprechen",
+    "diff2Desc": "99% der Geräte, die wir erhalten, werden aufbereitet oder verantwortungsvoll recycelt. Nichts landet auf der Deponie.",
+    "diff3Title": "Kundenbesessen",
+    "diff3Desc": "Tausende 5-Sterne-Bewertungen auf eBay und Jawa. Unsere Kunden kommen wieder, weil wir jedes Versprechen halten.",
+    "ctaTitle": "Bereit zum Verkaufen?",
+    "ctaDesc": "Schließen Sie sich Tausenden zufriedener Kunden an und machen Sie Ihre alten Geräte zu Geld. Holen Sie sich heute Ihr kostenloses Sofort-Angebot.",
+    "ctaButton": "Ankauf starten"
   },
   "sustainability": {
     "badge": "Unser Engagement für den Planeten",
@@ -1057,7 +1114,8 @@
       "cancel": "Abbrechen",
       "prev": "Zurück",
       "save": "Speichern",
-      "saving": "Wird gespeichert..."
+      "saving": "Wird gespeichert...",
+      "fetchBackmarketPrices": "BackMarket-Preise abrufen"
     },
     "users": {
       "title": "Benutzer",
@@ -1426,7 +1484,9 @@
     "privacyTitle": "Datenschutzrichtlinie",
     "privacyDescription": "DepxTech Datenschutzrichtlinie – Erfahren Sie, wie wir Ihre persönlichen Daten erfassen, nutzen und schützen.",
     "membershipTitle": "Premium-Mitgliedschaftsvorteile | DepxTech",
-    "membershipDescription": "Treten Sie unserem exklusiven Mitgliedschaftsprogramm bei mit kostenlosem Versand, monatlichen Geschenken, schneller Lieferung und wöchentlichen Überraschungsangeboten."
+    "membershipDescription": "Treten Sie unserem exklusiven Mitgliedschaftsprogramm bei mit kostenlosem Versand, monatlichen Geschenken, schneller Lieferung und wöchentlichen Überraschungsangeboten.",
+    "aboutTitle": "Über uns | DepxTech",
+    "aboutDescription": "Erfahren Sie mehr über DepxTechs Mission — Elektronik-Ankauf einfach, schnell und umweltfreundlich. Unsere Geschichte, Werte und unser Engagement für Nachhaltigkeit."
   },
   "trade": {
     "hero": {

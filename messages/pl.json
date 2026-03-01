@@ -117,6 +117,29 @@
       "subscribing": "Subskrybowanie...",
       "success": "Pomyślnie zapisano!",
       "successDesc": "Będziesz otrzymywać aktualizacje cen wymiany na swoją skrzynkę."
+    },
+    "testimonials": {
+      "heading": "Co mówią nasi klienci",
+      "subheading": "Tysiące zadowolonych klientów wymieniło u nas swoje urządzenia",
+      "review1Quote": "Dostałem $380 za mojego starego iPhone'a 13 — znacznie więcej niż oczekiwałem. Cały proces zajął mniej niż tydzień od wyceny do wypłaty.",
+      "review1Name": "Sarah M.",
+      "review1Device": "iPhone 13 Pro",
+      "review2Quote": "Na początku byłem sceptyczny, ale DepxTech sprawił, że było to takie proste. Darmowa etykieta wysyłkowa, szybka inspekcja, a wypłata była dokładnie taka, jak wycenili.",
+      "review2Name": "James L.",
+      "review2Device": "MacBook Air M1",
+      "review3Quote": "Najlepsza wymiana, jakiej kiedykolwiek doświadczyłem. Ekologiczne podejście to ogromny plus. Na pewno skorzystam ponownie przy następnej wymianie.",
+      "review3Name": "Emily R.",
+      "review3Device": "iPad Pro 11\"",
+      "review4Quote": "Wysłałem mojego Galaxy S22 i otrzymałem zapłatę w ciągu 48 godzin. Wycena była uczciwa, a proces nie mógł być prostszy. Już poleciłem znajomym.",
+      "review4Name": "Marcus T.",
+      "review4Device": "Galaxy S22 Ultra",
+      "review5Quote": "Oddałem zepsuty laptop, który uważałem za bezwartościowy. DepxTech i tak dał mi $120! Świetna obsługa klienta i szybka realizacja.",
+      "review5Name": "Jessica H.",
+      "review5Device": "HP Spectre x360",
+      "review6Quote": "Korzystałem z DepxTech dwa razy — za starego Switcha i MacBooka. Za każdym razem doświadczenie było bezbłędne. Uczciwe ceny, zero kłopotów.",
+      "review6Name": "Ryan P.",
+      "review6Device": "Nintendo Switch + MacBook Pro",
+      "moreReviews": "Przeczytaj więcej opinii na"
     }
   },
   "footer": {
@@ -537,6 +560,40 @@
     "ctaHeading": "Gotowy, aby zacząć?",
     "ctaSubheading": "Uzyskaj natychmiastową wycenę swojego urządzenia w kilka kliknięć.",
     "ctaButton": "Uzyskaj wycenę"
+  },
+  "about": {
+    "badge": "O DepxTech",
+    "heading": "Skup elektroniki — prosto, uczciwie i ekologicznie",
+    "subheading": "Zaczęliśmy od prostego pomysłu: sprzedaż starej elektroniki powinna być łatwa, przejrzysta i dobra dla planety.",
+    "storyTitle": "Nasza historia",
+    "storyP1": "DepxTech narodził się z frustracji. Widzieliśmy miliony sprawnych urządzeń zbierających kurz w szufladach — podczas gdy kolejne miliony trafiały na wysypiska każdego roku. Istniejące opcje były powolne, mylące i oferowały nieuczciwe ceny. Wiedzieliśmy, że musi być lepszy sposób.",
+    "storyP2": "Dlatego stworzyliśmy DepxTech — platformę, na której każdy może sprzedać stare urządzenia w kilka minut, otrzymać natychmiastową uczciwą wycenę i szybko zostać wypłaconym. Bez ukrytych opłat, bez zaniżonych ofert, bez czekania tygodniami. Tylko prosty, uczciwy proces od początku do końca.",
+    "storyP3": "Dziś pomogliśmy tysiącom klientów zamienić nieużywane urządzenia na gotówkę, ratując tysiące sprzętów przed wysypiskiem. Każdy skup się liczy — dla Twojego portfela i dla planety. A my dopiero zaczynamy.",
+    "stat1Label": "Zrecyklingowanych urządzeń",
+    "stat2Label": "Zadowolonych klientów",
+    "stat3Label": "Zaoszczędzone emisje CO₂",
+    "stat4Label": "Średni czas wypłaty",
+    "valuesTitle": "W co wierzymy",
+    "valuesSubtitle": "Te podstawowe wartości kierują każdą naszą decyzją i każdą interakcją z klientami.",
+    "value1Title": "Zrównoważony rozwój przede wszystkim",
+    "value1Desc": "Każde przyjęte urządzenie dostaje drugie życie. Współpracujemy z certyfikowanymi recyklerami, aby zapewnić zero odpadów na wysypiskach.",
+    "value2Title": "Pełna przejrzystość",
+    "value2Desc": "Bez ukrytych opłat, bez niespodzianek. Nasze natychmiastowe wyceny bazują na rzeczywistych danych rynkowych i zawsze honorujemy zaproponowaną cenę.",
+    "value3Title": "Szybkość i prostota",
+    "value3Desc": "Wycena w sekundy, darmowa wysyłka, wypłata w ciągu 24 godzin od inspekcji. Szanujemy Twój czas.",
+    "value4Title": "Gwarancja jakości",
+    "value4Desc": "Każde odnowione urządzenie przechodzi rygorystyczne testy. Stoimy za naszymi produktami z gwarancją i bezproblemowymi zwrotami.",
+    "diffTitle": "Dlaczego DepxTech?",
+    "diffSubtitle": "Oto, co nas wyróżnia.",
+    "diff1Title": "Najlepsze ceny rynkowe",
+    "diff1Desc": "Nasze wyceny bazują na danych rynkowych w czasie rzeczywistym. Konsekwentnie oferujemy wyższe ceny niż konkurencja.",
+    "diff2Title": "Zobowiązanie zero odpadów",
+    "diff2Desc": "99% otrzymanych urządzeń jest odnawianych lub odpowiedzialnie recyklingowanych. Nic nie trafia na wysypisko.",
+    "diff3Title": "Zafascynowani klientem",
+    "diff3Desc": "Tysiące 5-gwiazdkowych opinii na eBay i Jawa. Klienci wracają, bo dotrzymujemy każdej obietnicy.",
+    "ctaTitle": "Gotowy do sprzedaży?",
+    "ctaDesc": "Dołącz do tysięcy zadowolonych klientów, którzy zamienili stare urządzenia na gotówkę. Uzyskaj darmową natychmiastową wycenę już dziś.",
+    "ctaButton": "Rozpocznij sprzedaż"
   },
   "sustainability": {
     "badge": "Nasze zobowiązanie wobec planety",
@@ -1057,7 +1114,8 @@
       "cancel": "Anuluj",
       "prev": "Poprzedni",
       "save": "Zapisz",
-      "saving": "Zapisywanie..."
+      "saving": "Zapisywanie...",
+      "fetchBackmarketPrices": "Pobierz ceny BackMarket"
     },
     "users": {
       "title": "Użytkownicy",
@@ -1426,7 +1484,9 @@
     "privacyTitle": "Polityka prywatności",
     "privacyDescription": "Polityka prywatności DepxTech — dowiedz się, jak zbieramy, wykorzystujemy i chronimy Twoje dane osobowe.",
     "membershipTitle": "Korzyści członkostwa Premium | DepxTech",
-    "membershipDescription": "Dołącz do naszego ekskluzywnego programu członkowskiego z darmową wysyłką, miesięcznymi prezentami, szybką dostawą i cotygodniowymi niespodziankami."
+    "membershipDescription": "Dołącz do naszego ekskluzywnego programu członkowskiego z darmową wysyłką, miesięcznymi prezentami, szybką dostawą i cotygodniowymi niespodziankami.",
+    "aboutTitle": "O nas | DepxTech",
+    "aboutDescription": "Poznaj misję DepxTech — uczynienie skupu elektroniki prostym, szybkim i ekologicznym. Nasza historia, wartości i zaangażowanie w zrównoważony rozwój."
   },
   "trade": {
     "hero": {
