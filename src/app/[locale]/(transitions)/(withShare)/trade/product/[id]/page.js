@@ -121,7 +121,6 @@ export default async function TradeProductPage({ params }) {
                 <div className="relative w-full max-w-md mx-auto">
                   <div
                     className="aspect-square rounded-2xl bg-slate-100 dark:bg-slate-700/50 p-6 lg:p-8"
-                    style={{ viewTransitionName: `product-image-${product.id}` }}
                   >
                     <div className="relative w-full h-full">
                       <Image
@@ -145,7 +144,6 @@ export default async function TradeProductPage({ params }) {
                 </Badge>
                 <h1
                   className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white leading-tight"
-                  style={{ viewTransitionName: `product-title-${product.id}` }}
                 >
                   {product.title}
                 </h1>

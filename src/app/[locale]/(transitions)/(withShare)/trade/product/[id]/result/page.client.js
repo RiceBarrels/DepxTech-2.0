@@ -369,7 +369,6 @@ export default function TradeResultPageClient({ product }) {
             {product.imgs && product.imgs.length > 0 && (
               <div
                 className="relative w-full aspect-square rounded-2xl bg-slate-100 dark:bg-slate-700/50 p-8"
-                style={{ viewTransitionName: `product-image-${product.id}` }}
               >
                 <div className="relative w-full h-full">
                   <Image
@@ -384,7 +383,6 @@ export default function TradeResultPageClient({ product }) {
             <div className="mt-4 text-center">
               <h2
                 className="font-bold text-lg text-foreground"
-                style={{ viewTransitionName: `product-title-${product.id}` }}
               >
                 {product.title}
               </h2>
@@ -408,7 +406,6 @@ export default function TradeResultPageClient({ product }) {
               ? "bg-orange-50 dark:bg-orange-950/30 border-orange-200 dark:border-orange-800"
               : "bg-emerald-50 dark:bg-emerald-950/30 border-emerald-200 dark:border-emerald-800"
           )}
-          style={{ viewTransitionName: `price-display-${product.id}` }}
         >
           <p className={cn(
             "text-xs font-medium mb-1",
