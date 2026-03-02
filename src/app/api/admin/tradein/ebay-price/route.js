@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { verifyAdminAccess } from '@/lib/serverAuth'
-import { createClient } from '@supabase/supabase-js'
+import { supabaseAdmin } from '@/lib/supabase-admin'
 
 const DEFAULT_TIERS = [
   { maxPrice: 100, percentage: 0.31, fixedFee: 7 },
@@ -17,18 +17,6 @@ const DEFAULT_TIERS = [
 
 const EBAY_SCRAPER_API = process.env.EBAY_SCRAPER_API || 'https://rb-ebay-scraper-api.onrender.com'
 
-function createServiceRoleClient() {
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-  const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE
-
-  if (!supabaseUrl || !supabaseServiceRoleKey) {
-    throw new Error('Missing Supabase environment variables')
-  }
-
-  return createClient(supabaseUrl, supabaseServiceRoleKey, {
-    auth: { autoRefreshToken: false, persistSession: false }
-  })
-}
 
 async function fetchMedianEbayPrice(query) {
   // Strip parenthetical info like "(2019, A10)" from the title for cleaner searches
@@ -99,7 +87,7 @@ export async function POST(request) {
       return NextResponse.json({ error: 'Product IDs are required' }, { status: 400 })
     }
 
-    const supabase = createServiceRoleClient()
+    const supabase = supabaseAdmin
 
     // Fetch all selected products with brand and category for tier matching
     const { data: products, error: fetchError } = await supabase

@@ -4,11 +4,11 @@ import { useState } from 'react'
 import { createClient } from '@/utils/supabase/client'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { ArrowLeftIcon, LogInIcon } from 'lucide-react'
+import { ArrowLeftIcon, ArrowRightIcon, LogInIcon } from 'lucide-react'
 import { TransitionLink, useTransitionRouter } from '@/components/ui/pageTransitions'
 import { Separator } from '@/components/ui/separator'
 import { useTranslations } from 'next-intl'
+import { cn } from '@/lib/utils'
 
 export default function LoginPage() {
   const t = useTranslations('auth.login')
@@ -16,6 +16,7 @@ export default function LoginPage() {
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [mobileStep, setMobileStep] = useState(0) // 0: email, 1: password
   const router = useTransitionRouter()
 
   const handleLogin = async (e) => {
@@ -60,6 +61,15 @@ export default function LoginPage() {
     }
   }
 
+  const handleMobileNext = () => {
+    if (!email) {
+      setError('Please enter your email')
+      return
+    }
+    setError('')
+    setMobileStep(1)
+  }
+
   return (
     <div className="flex flex-col py-4 px-4 gap-2 w-full justify-between items-center">
 
@@ -82,14 +92,14 @@ export default function LoginPage() {
             <Separator orientation="horizontal"/>
           </div>
           <div className="w-full flex flex-col p-4 pt-2 md:p-12">
-            <div className="space-y-4 w-full p-2 md:p-4">
-              {error && (
-                <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-md text-sm">
-                  {error}
-                </div>
-              )}
+            {error && (
+              <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-md text-sm mx-2 md:mx-4 mb-2">
+                {error}
+              </div>
+            )}
 
-              {/* OAuth Sign-In Buttons */}
+            {/* OAuth – hidden on mobile step 1+ */}
+            <div className={cn("space-y-4 w-full p-2 md:p-4", mobileStep > 0 && "max-md:hidden")}>
               <div className="space-y-3">
                 <Button
                   type="button"
@@ -132,7 +142,20 @@ export default function LoginPage() {
             </div>
 
             <form onSubmit={handleLogin} className="space-y-4 w-full p-2 md:p-4">
-              <div>
+              {/* Mobile: back to email step */}
+              {mobileStep > 0 && (
+                <button
+                  type="button"
+                  onClick={() => { setMobileStep(0); setError('') }}
+                  className="md:hidden flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  <ArrowLeftIcon className="size-3.5" />
+                  {email}
+                </button>
+              )}
+
+              {/* Email – hidden on mobile step 1 */}
+              <div className={cn(mobileStep > 0 && "max-md:hidden")}>
                 <label htmlFor="email" className="block font-medium mb-1">
                   {t('emailLabel')}
                 </label>
@@ -149,7 +172,18 @@ export default function LoginPage() {
                 />
               </div>
 
-              <div>
+              {/* Mobile: Continue button (step 0 only) */}
+              <Button
+                type="button"
+                onClick={handleMobileNext}
+                className={cn("w-full", mobileStep > 0 ? "hidden" : "md:hidden")}
+              >
+                Continue
+                <ArrowRightIcon className="size-4 ml-2" />
+              </Button>
+
+              {/* Password – hidden on mobile step 0 */}
+              <div className={cn(mobileStep === 0 && "max-md:hidden")}>
                 <label htmlFor="password" className="block font-medium mb-1">
                   {t('passwordLabel')}
                 </label>
@@ -166,15 +200,16 @@ export default function LoginPage() {
                 />
               </div>
 
+              {/* Submit – hidden on mobile step 0 */}
               <Button
                 type="submit"
                 disabled={loading}
-                className="w-full"
+                className={cn("w-full", mobileStep === 0 && "max-md:hidden")}
               >
                 {loading ? t('buttonLoading') : t('button')}
               </Button>
 
-              <div className="flex items-center justify-between text-sm">
+              <div className={cn("flex items-center justify-between text-sm", mobileStep === 0 && "max-md:hidden")}>
                 <TransitionLink href="/forgot-password" className="text-primary underline">
                   {t('forgotPassword')}
                 </TransitionLink>

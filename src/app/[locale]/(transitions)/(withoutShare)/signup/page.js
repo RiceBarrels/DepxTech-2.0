@@ -6,8 +6,9 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { TransitionLink, useTransitionRouter } from '@/components/ui/pageTransitions'
 import { Separator } from '@/components/ui/separator'
-import { UserPlusIcon, MailIcon, KeyIcon, CheckCircleIcon, Loader2Icon, ArrowLeftIcon, EyeIcon, EyeOffIcon } from 'lucide-react'
+import { UserPlusIcon, MailIcon, KeyIcon, CheckCircleIcon, Loader2Icon, ArrowLeftIcon, ArrowRightIcon, EyeIcon, EyeOffIcon } from 'lucide-react'
 import { useTranslations } from 'next-intl'
+import { cn } from '@/lib/utils'
 
 export default function SignupPage() {
   const t = useTranslations('auth.signup')
@@ -23,6 +24,7 @@ export default function SignupPage() {
   const [error, setError] = useState('')
   const [message, setMessage] = useState('')
   const [step, setStep] = useState(1) // 1: info, 2: verify code
+  const [mobileStep, setMobileStep] = useState(0) // 0: email, 1: names, 2: passwords
   const [resendCooldown, setResendCooldown] = useState(0)
   const router = useTransitionRouter()
 
@@ -234,6 +236,23 @@ export default function SignupPage() {
     }
   }
 
+  const handleMobileNext = () => {
+    setError('')
+    if (mobileStep === 0) {
+      if (!email) {
+        setError('Please enter your email')
+        return
+      }
+      setMobileStep(1)
+    } else if (mobileStep === 1) {
+      if (!firstName.trim() || !lastName.trim()) {
+        setError(t('nameRequired'))
+        return
+      }
+      setMobileStep(2)
+    }
+  }
+
   const handleBack = () => {
     setStep(1)
     setVerificationCode('')
@@ -277,20 +296,20 @@ export default function SignupPage() {
             {step === 1 ? (
               // Step 1: Account Information
               <>
-                <div className="space-y-4 w-full p-2 md:p-4">
-                  {error && (
-                    <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-md text-sm">
-                      {error}
-                    </div>
-                  )}
+                {error && (
+                  <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-md text-sm mx-2 md:mx-4 mb-2">
+                    {error}
+                  </div>
+                )}
 
-                  {message && (
-                    <div className="bg-green-50 border border-green-200 text-green-600 px-4 py-3 rounded-md text-sm">
-                      {message}
-                    </div>
-                  )}
+                {message && (
+                  <div className="bg-green-50 border border-green-200 text-green-600 px-4 py-3 rounded-md text-sm mx-2 md:mx-4 mb-2">
+                    {message}
+                  </div>
+                )}
 
-                  {/* OAuth Sign-Up Buttons */}
+                {/* OAuth – hidden on mobile step 1+ */}
+                <div className={cn("space-y-4 w-full p-2 md:p-4", mobileStep > 0 && "max-md:hidden")}>
                   <div className="space-y-3">
                     <Button
                       type="button"
@@ -333,138 +352,178 @@ export default function SignupPage() {
                 </div>
 
                 <form onSubmit={handleSignup} className="space-y-4 w-full p-2 md:p-4">
-                  <div>
+                  {/* Mobile: back button */}
+                  {mobileStep > 0 && (
+                    <button
+                      type="button"
+                      onClick={() => { setMobileStep(s => s - 1); setError('') }}
+                      className="md:hidden flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+                    >
+                      <ArrowLeftIcon className="size-3.5" />
+                      {mobileStep === 1 ? email : `${firstName} ${lastName}`}
+                    </button>
+                  )}
+
+                  {/* Email – mobile step 0 only */}
+                  <div className={cn(mobileStep > 0 && "max-md:hidden")}>
                     <label htmlFor="email" className="block font-medium mb-1">
                       {t('emailLabel')}
                     </label>
-                  <Input
-                    id="email"
-                    type="email"
-                    name="email"
-                    autoComplete="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                    placeholder={t('emailPlaceholder')}
-                    className="w-full"
-                  />
-                </div>
-
-                <div className='flex gap-2'>
-                  <div className='flex-1'>
-                    <label htmlFor="firstName" className="block font-medium mb-1">
-                      {t('firstNameLabel')}
-                    </label>
                     <Input
-                      id="firstName"
-                      type="text"
-                      name="firstName"
-                      autoComplete="given-name"
-                      value={firstName}
-                      onChange={(e) => setFirstName(e.target.value)}
+                      id="email"
+                      type="email"
+                      name="email"
+                      autoComplete="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
                       required
-                      placeholder={t('firstNamePlaceholder')}
+                      placeholder={t('emailPlaceholder')}
                       className="w-full"
                     />
                   </div>
 
-                  <div className='flex-1'>
-                    <label htmlFor="lastName" className="block font-medium mb-1">
-                      {t('lastNameLabel')}
-                    </label>
-                    <Input
-                      id="lastName"
-                      type="text"
-                      name="lastName"
-                      autoComplete="family-name"
-                      value={lastName}
-                      onChange={(e) => setLastName(e.target.value)}
-                      required
-                      placeholder={t('lastNamePlaceholder')}
-                      className="w-full"
-                    />
+                  {/* Mobile: Continue (step 0 → 1) */}
+                  <Button
+                    type="button"
+                    onClick={handleMobileNext}
+                    className={cn("w-full", mobileStep !== 0 ? "hidden" : "md:hidden")}
+                  >
+                    Continue
+                    <ArrowRightIcon className="size-4 ml-2" />
+                  </Button>
+
+                  {/* Names – mobile step 1 only */}
+                  <div className={cn(mobileStep !== 1 && "max-md:hidden")}>
+                    <div className='flex gap-2'>
+                      <div className='flex-1'>
+                        <label htmlFor="firstName" className="block font-medium mb-1">
+                          {t('firstNameLabel')}
+                        </label>
+                        <Input
+                          id="firstName"
+                          type="text"
+                          name="firstName"
+                          autoComplete="given-name"
+                          value={firstName}
+                          onChange={(e) => setFirstName(e.target.value)}
+                          required
+                          placeholder={t('firstNamePlaceholder')}
+                          className="w-full"
+                        />
+                      </div>
+
+                      <div className='flex-1'>
+                        <label htmlFor="lastName" className="block font-medium mb-1">
+                          {t('lastNameLabel')}
+                        </label>
+                        <Input
+                          id="lastName"
+                          type="text"
+                          name="lastName"
+                          autoComplete="family-name"
+                          value={lastName}
+                          onChange={(e) => setLastName(e.target.value)}
+                          required
+                          placeholder={t('lastNamePlaceholder')}
+                          className="w-full"
+                        />
+                      </div>
+                    </div>
                   </div>
-                </div>
 
-                <div>
-                  <label htmlFor="password" className="block font-medium mb-1">
-                    {t('passwordLabel')}
-                  </label>
-                  <div className="relative">
-                    <Input
-                      id="password"
-                      type={showPassword ? "text" : "password"}
-                      name="password"
-                      autoComplete="new-password"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      required
-                      placeholder={t('passwordPlaceholder')}
-                      className="w-full pr-10"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                      tabIndex={-1}
-                    >
-                      {showPassword ? <EyeOffIcon className="size-4" /> : <EyeIcon className="size-4" />}
-                    </button>
+                  {/* Mobile: Continue (step 1 → 2) */}
+                  <Button
+                    type="button"
+                    onClick={handleMobileNext}
+                    className={cn("w-full", mobileStep !== 1 ? "hidden" : "md:hidden")}
+                  >
+                    Continue
+                    <ArrowRightIcon className="size-4 ml-2" />
+                  </Button>
+
+                  {/* Passwords – mobile step 2 only */}
+                  <div className={cn("space-y-4", mobileStep < 2 && "max-md:hidden")}>
+                    <div>
+                      <label htmlFor="password" className="block font-medium mb-1">
+                        {t('passwordLabel')}
+                      </label>
+                      <div className="relative">
+                        <Input
+                          id="password"
+                          type={showPassword ? "text" : "password"}
+                          name="password"
+                          autoComplete="new-password"
+                          value={password}
+                          onChange={(e) => setPassword(e.target.value)}
+                          required
+                          placeholder={t('passwordPlaceholder')}
+                          className="w-full pr-10"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowPassword(!showPassword)}
+                          className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                          tabIndex={-1}
+                        >
+                          {showPassword ? <EyeOffIcon className="size-4" /> : <EyeIcon className="size-4" />}
+                        </button>
+                      </div>
+                    </div>
+
+                    <div>
+                      <label htmlFor="confirmPassword" className="block font-medium mb-1">
+                        {t('confirmPasswordLabel')}
+                      </label>
+                      <div className="relative">
+                        <Input
+                          id="confirmPassword"
+                          type={showPassword ? "text" : "password"}
+                          name="confirmPassword"
+                          autoComplete="new-password"
+                          value={confirmPassword}
+                          onChange={(e) => setConfirmPassword(e.target.value)}
+                          required
+                          placeholder={t('confirmPasswordPlaceholder')}
+                          className="w-full pr-10"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowPassword(!showPassword)}
+                          className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                          tabIndex={-1}
+                        >
+                          {showPassword ? <EyeOffIcon className="size-4" /> : <EyeIcon className="size-4" />}
+                        </button>
+                      </div>
+                    </div>
                   </div>
-                </div>
 
-                <div>
-                  <label htmlFor="confirmPassword" className="block font-medium mb-1">
-                    {t('confirmPasswordLabel')}
-                  </label>
-                  <div className="relative">
-                    <Input
-                      id="confirmPassword"
-                      type={showPassword ? "text" : "password"}
-                      name="confirmPassword"
-                      autoComplete="new-password"
-                      value={confirmPassword}
-                      onChange={(e) => setConfirmPassword(e.target.value)}
-                      required
-                      placeholder={t('confirmPasswordPlaceholder')}
-                      className="w-full pr-10"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                      tabIndex={-1}
-                    >
-                      {showPassword ? <EyeOffIcon className="size-4" /> : <EyeIcon className="size-4" />}
-                    </button>
+                  {/* Submit – hidden on mobile steps 0,1 */}
+                  <Button
+                    type="submit"
+                    disabled={loading}
+                    className={cn("w-full", mobileStep < 2 && "max-md:hidden")}
+                  >
+                    {loading ? (
+                      <>
+                        <Loader2Icon className="w-4 h-4 mr-2 animate-spin" />
+                        {t('buttonLoading')}
+                      </>
+                    ) : (
+                      t('button')
+                    )}
+                  </Button>
+
+                  <div className={cn("text-center text-sm", mobileStep < 2 && "max-md:hidden")}>
+                    <span className="text-muted-foreground">
+                      {t('haveAccount', { default: 'Already have an account?' })}{' '}
+                      <TransitionLink href="/login" className="text-primary underline font-medium">
+                        {t('signIn')}
+                      </TransitionLink>
+                    </span>
                   </div>
-                </div>
-
-                <Button
-                  type="submit"
-                  disabled={loading}
-                  className="w-full"
-                >
-                  {loading ? (
-                    <>
-                      <Loader2Icon className="w-4 h-4 mr-2 animate-spin" />
-                      {t('buttonLoading')}
-                    </>
-                  ) : (
-                    t('button')
-                  )}
-                </Button>
-
-                <div className="text-center text-sm">
-                  <span className="text-muted-foreground">
-                    {t('haveAccount', { default: 'Already have an account?' })}{' '}
-                    <TransitionLink href="/login" className="text-primary underline font-medium">
-                      {t('signIn')}
-                    </TransitionLink>
-                  </span>
-                </div>
-              </form>
-            </>
+                </form>
+              </>
             ) : (
               // Step 2: Verification Code
               <form onSubmit={handleVerifyCode} className="space-y-4 w-full p-2 md:p-4">

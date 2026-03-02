@@ -1,19 +1,7 @@
 import { NextResponse } from 'next/server'
 import { verifyAdminAccess } from '@/lib/serverAuth'
-import { createClient } from '@supabase/supabase-js'
+import { supabaseAdmin } from '@/lib/supabase-admin'
 
-function createServiceRoleClient() {
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-  const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE
-
-  if (!supabaseUrl || !supabaseServiceRoleKey) {
-    throw new Error('Missing Supabase environment variables')
-  }
-
-  return createClient(supabaseUrl, supabaseServiceRoleKey, {
-    auth: { autoRefreshToken: false, persistSession: false },
-  })
-}
 
 export async function GET(request) {
   try {
@@ -25,7 +13,7 @@ export async function GET(request) {
       )
     }
 
-    const supabase = createServiceRoleClient()
+    const supabase = supabaseAdmin
     const { searchParams } = new URL(request.url)
     const id = searchParams.get('id')
     const slug = searchParams.get('slug')
@@ -94,7 +82,7 @@ export async function POST(request) {
       return NextResponse.json({ error: 'Slug is required' }, { status: 400 })
     }
 
-    const supabase = createServiceRoleClient()
+    const supabase = supabaseAdmin
 
     const insertData = {
       title: body.title,
@@ -149,7 +137,7 @@ export async function PUT(request) {
       return NextResponse.json({ error: 'Post ID is required' }, { status: 400 })
     }
 
-    const supabase = createServiceRoleClient()
+    const supabase = supabaseAdmin
 
     const updateData = {
       title: body.title,
@@ -206,7 +194,7 @@ export async function DELETE(request) {
       return NextResponse.json({ error: 'Post ID is required' }, { status: 400 })
     }
 
-    const supabase = createServiceRoleClient()
+    const supabase = supabaseAdmin
 
     // Get the post first to clean up cover image
     const { data: post } = await supabase

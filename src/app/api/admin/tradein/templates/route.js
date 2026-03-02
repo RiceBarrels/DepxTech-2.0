@@ -1,23 +1,7 @@
-import { createClient } from '@supabase/supabase-js'
+import { supabaseAdmin } from '@/lib/supabase-admin'
 import { NextResponse } from 'next/server'
 import { verifyAdminAccess } from '@/lib/serverAuth'
 
-// Create Supabase client with service role for admin operations
-function createServiceRoleClient() {
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-    const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE
-
-    if (!supabaseUrl || !supabaseServiceRoleKey) {
-        throw new Error('Missing Supabase environment variables')
-    }
-
-    return createClient(supabaseUrl, supabaseServiceRoleKey, {
-        auth: {
-            autoRefreshToken: false,
-            persistSession: false
-        }
-    })
-}
 
 // GET - Fetch all question templates
 export async function GET(request) {
@@ -27,7 +11,7 @@ export async function GET(request) {
             return NextResponse.json({ error: adminVerification.error }, { status: adminVerification.status })
         }
 
-        const supabase = createServiceRoleClient()
+        const supabase = supabaseAdmin
 
         const { data: templates, error } = await supabase
             .from('trade_question_templates')
@@ -78,7 +62,7 @@ export async function POST(request) {
             return NextResponse.json({ error: 'Template name is required' }, { status: 400 })
         }
 
-        const { data: template, error } = await createServiceRoleClient()
+        const { data: template, error } = await supabaseAdmin
             .from('trade_question_templates')
             .insert({
                 name,
@@ -115,7 +99,7 @@ export async function PUT(request) {
             return NextResponse.json({ error: 'Template ID is required' }, { status: 400 })
         }
 
-        const supabase = createServiceRoleClient()
+        const supabase = supabaseAdmin
 
         const updateData = {}
         if (name !== undefined) updateData.name = name
@@ -175,7 +159,7 @@ export async function DELETE(request) {
             return NextResponse.json({ error: 'Template ID is required' }, { status: 400 })
         }
 
-        const { error } = await createServiceRoleClient()
+        const { error } = await supabaseAdmin
             .from('trade_question_templates')
             .delete()
             .eq('id', id)

@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { verifyAdminAccess } from '@/lib/serverAuth'
-import { createClient } from '@supabase/supabase-js'
+import { supabaseAdmin } from '@/lib/supabase-admin'
 
 const BACKMARKET_BASE = 'https://www.backmarket.com/en-us'
 
@@ -8,19 +8,6 @@ const BACKMARKET_BASE = 'https://www.backmarket.com/en-us'
 const SCRAPER_API_KEY = process.env.SCRAPER_API_KEY
 const SCRAPER_API_URL = 'https://api.scraperapi.com'
 
-
-function createServiceRoleClient() {
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-  const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE
-
-  if (!supabaseUrl || !supabaseServiceRoleKey) {
-    throw new Error('Missing Supabase environment variables')
-  }
-
-  return createClient(supabaseUrl, supabaseServiceRoleKey, {
-    auth: { autoRefreshToken: false, persistSession: false }
-  })
-}
 
 /**
  * Fetch a URL through ScraperAPI to bypass Cloudflare bot protection.
@@ -452,7 +439,7 @@ export async function POST(request) {
       return NextResponse.json({ error: 'Product IDs are required' }, { status: 400 })
     }
 
-    const supabase = createServiceRoleClient()
+    const supabase = supabaseAdmin
 
     const { data: products, error: fetchError } = await supabase
       .from('tradable_products')

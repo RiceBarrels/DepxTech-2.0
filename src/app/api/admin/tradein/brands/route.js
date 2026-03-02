@@ -1,23 +1,11 @@
 import { NextResponse } from 'next/server'
 import { verifyAdminAccess } from '@/lib/serverAuth'
-import { createClient } from '@supabase/supabase-js'
+import { supabaseAdmin } from '@/lib/supabase-admin'
 
-function createServiceRoleClient() {
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-  const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE
-
-  if (!supabaseUrl || !supabaseServiceRoleKey) {
-    throw new Error('Missing Supabase environment variables')
-  }
-
-  return createClient(supabaseUrl, supabaseServiceRoleKey, {
-    auth: { autoRefreshToken: false, persistSession: false }
-  })
-}
 
 export async function GET() {
   try {
-    const supabase = createServiceRoleClient()
+    const supabase = supabaseAdmin
     const { data, error } = await supabase
       .from('brands')
       .select('*')
@@ -46,7 +34,7 @@ export async function POST(request) {
       return NextResponse.json({ error: 'Brand name is required' }, { status: 400 })
     }
 
-    const supabase = createServiceRoleClient()
+    const supabase = supabaseAdmin
     const { data, error } = await supabase
       .from('brands')
       .insert({ name: name.trim(), img: img || null })
@@ -83,7 +71,7 @@ export async function PUT(request) {
     if (name !== undefined) updateData.name = name.trim()
     if (img !== undefined) updateData.img = img || null
 
-    const supabase = createServiceRoleClient()
+    const supabase = supabaseAdmin
     const { data, error } = await supabase
       .from('brands')
       .update(updateData)
@@ -118,7 +106,7 @@ export async function DELETE(request) {
       return NextResponse.json({ error: 'Brand ID is required' }, { status: 400 })
     }
 
-    const supabase = createServiceRoleClient()
+    const supabase = supabaseAdmin
     const { error } = await supabase
       .from('brands')
       .delete()

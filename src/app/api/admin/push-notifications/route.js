@@ -1,20 +1,8 @@
 import { NextResponse } from 'next/server'
 import { verifyAdminAccess } from '@/lib/serverAuth'
-import { createClient } from '@supabase/supabase-js'
+import { supabaseAdmin } from '@/lib/supabase-admin'
 import { sendPushToUser } from '@/lib/push'
 
-function createServiceRoleClient() {
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-  const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE
-
-  if (!supabaseUrl || !supabaseServiceRoleKey) {
-    throw new Error('Missing Supabase environment variables')
-  }
-
-  return createClient(supabaseUrl, supabaseServiceRoleKey, {
-    auth: { autoRefreshToken: false, persistSession: false },
-  })
-}
 
 // GET: List all admin push notifications
 export async function GET(request) {
@@ -24,7 +12,7 @@ export async function GET(request) {
       return NextResponse.json({ error: adminVerification.error }, { status: adminVerification.status })
     }
 
-    const supabase = createServiceRoleClient()
+    const supabase = supabaseAdmin
 
     const { data, error } = await supabase
       .from('admin_push_notifications')
@@ -58,7 +46,7 @@ export async function POST(request) {
       return NextResponse.json({ error: 'Title and body are required' }, { status: 400 })
     }
 
-    const supabase = createServiceRoleClient()
+    const supabase = supabaseAdmin
 
     // 1) Get all users with push subscriptions
     const { data: allUsers, error: usersError } = await supabase
@@ -145,7 +133,7 @@ export async function DELETE(request) {
       return NextResponse.json({ error: 'Notification ID is required' }, { status: 400 })
     }
 
-    const supabase = createServiceRoleClient()
+    const supabase = supabaseAdmin
 
     const { error } = await supabase
       .from('admin_push_notifications')

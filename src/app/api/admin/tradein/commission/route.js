@@ -1,19 +1,7 @@
 import { NextResponse } from 'next/server'
 import { verifyAdminAccess } from '@/lib/serverAuth'
-import { createClient } from '@supabase/supabase-js'
+import { supabaseAdmin } from '@/lib/supabase-admin'
 
-function createServiceRoleClient() {
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-  const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE
-
-  if (!supabaseUrl || !supabaseServiceRoleKey) {
-    throw new Error('Missing Supabase environment variables')
-  }
-
-  return createClient(supabaseUrl, supabaseServiceRoleKey, {
-    auth: { autoRefreshToken: false, persistSession: false }
-  })
-}
 
 export async function GET(request) {
   try {
@@ -22,7 +10,7 @@ export async function GET(request) {
       return NextResponse.json({ error: adminVerification.error }, { status: adminVerification.status })
     }
 
-    const supabase = createServiceRoleClient()
+    const supabase = supabaseAdmin
     const { data, error } = await supabase
       .from('commission_tiers')
       .select('*')
@@ -52,7 +40,7 @@ export async function POST(request) {
       return NextResponse.json({ error: 'Tiers array is required' }, { status: 400 })
     }
 
-    const supabase = createServiceRoleClient()
+    const supabase = supabaseAdmin
     const insertData = {
       brand: brand || null,
       category: category || null,
@@ -100,7 +88,7 @@ export async function PUT(request) {
       return NextResponse.json({ error: 'Tiers array is required' }, { status: 400 })
     }
 
-    const supabase = createServiceRoleClient()
+    const supabase = supabaseAdmin
     const updateData = { tiers, updated_at: new Date().toISOString() }
     if (Array.isArray(backmarket_tiers)) {
       updateData.backmarket_tiers = backmarket_tiers
@@ -139,7 +127,7 @@ export async function DELETE(request) {
       return NextResponse.json({ error: 'Tier ID is required' }, { status: 400 })
     }
 
-    const supabase = createServiceRoleClient()
+    const supabase = supabaseAdmin
 
     // Prevent deleting the global default
     const { data: existing } = await supabase

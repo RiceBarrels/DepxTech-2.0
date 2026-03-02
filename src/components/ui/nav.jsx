@@ -33,11 +33,25 @@ export default function Nav({layers = 3}) {
     const { user, profileData, loading } = useAuth();
 
     const [drawerOpen, setDrawerOpen] = useState(false)
+    const [scrolled, setScrolled] = useState(false)
 
     // Close drawer on route change
     useEffect(() => {
         setDrawerOpen(false)
     }, [pathname])
+
+    // Hide layers 2+3 on scroll
+    useEffect(() => {
+        let lastY = window.scrollY
+        const onScroll = () => {
+            const y = window.scrollY
+            if (y > 40 && y > lastY) setScrolled(true)
+            else if (y < lastY) setScrolled(false)
+            lastY = y
+        }
+        window.addEventListener('scroll', onScroll, { passive: true })
+        return () => window.removeEventListener('scroll', onScroll)
+    }, [])
 
     // Helper function to check if a path is active
     const isActive = (path) => {
@@ -183,98 +197,110 @@ export default function Nav({layers = 3}) {
                         </div>
                     </div>
                 </div>
-                {/* Second Layer - Trade-in Categories */}
-                {layers > 1 && (
-                    <div className="w-full h-10 px-4 flex items-center">
-                        <div className="flex items-center gap-5 max-w-7xl mx-auto w-full overflow-x-auto">
-                            <TransitionLink
-                                href="/trade?category=smartphones"
-                                className={cn(
-                                    "text-xs font-medium hover:text-primary transition-colors whitespace-nowrap flex items-center gap-1",
-                                    pathname.includes("smartphones") ? "text-primary" : "text-muted-foreground"
-                                )}
-                            >
-                                <SmartphoneIcon className="size-3" />
-                                {t('categories.smartphones')}
-                            </TransitionLink>
-                            <TransitionLink
-                                href="/trade?category=laptops"
-                                className={cn(
-                                    "text-xs font-medium hover:text-primary transition-colors whitespace-nowrap flex items-center gap-1",
-                                    pathname.includes("laptops") ? "text-primary" : "text-muted-foreground"
-                                )}
-                            >
-                                <LaptopIcon className="size-3" />
-                                {t('categories.laptops')}
-                            </TransitionLink>
-                            <TransitionLink
-                                href="/trade?category=tablets"
-                                className={cn(
-                                    "text-xs font-medium hover:text-primary transition-colors whitespace-nowrap flex items-center gap-1",
-                                    pathname.includes("tablets") ? "text-primary" : "text-muted-foreground"
-                                )}
-                            >
-                                <TabletIcon className="size-3" />
-                                {t('categories.tablets')}
-                            </TransitionLink>
-                            <TransitionLink
-                                href="/trade?category=gaming"
-                                className={cn(
-                                    "text-xs font-medium hover:text-primary transition-colors whitespace-nowrap flex items-center gap-1",
-                                    pathname.includes("gaming") ? "text-primary" : "text-muted-foreground"
-                                )}
-                            >
-                                <GamepadIcon className="size-3" />
-                                {t('categories.gamingConsoles')}
-                            </TransitionLink>
-                            <TransitionLink
-                                href="/trade?category=audio"
-                                className={cn(
-                                    "text-xs font-medium hover:text-primary transition-colors whitespace-nowrap flex items-center gap-1",
-                                    pathname.includes("audio") ? "text-primary" : "text-muted-foreground"
-                                )}
-                            >
-                                <HeadphonesIcon className="size-3" />
-                                {t('categories.audioDevices')}
-                            </TransitionLink>
-                            <TransitionLink
-                                href="/trade?category=wearables"
-                                className={cn(
-                                    "text-xs font-medium hover:text-primary transition-colors whitespace-nowrap flex items-center gap-1",
-                                    pathname.includes("wearables") ? "text-primary" : "text-muted-foreground"
-                                )}
-                            >
-                                <WatchIcon className="size-3" />
-                                {t('categories.wearables')}
-                            </TransitionLink>
+                {/* Layers 2+3 – collapse on scroll */}
+                <div
+                    className="grid"
+                    style={{
+                        gridTemplateRows: scrolled ? '0fr' : '1fr',
+                        opacity: scrolled ? 0 : 1,
+                        transition: 'grid-template-rows 300ms ease, opacity 200ms ease',
+                    }}
+                >
+                <div className="overflow-hidden">
+                    {/* Second Layer - Trade-in Categories */}
+                    {layers > 1 && (
+                        <div className="w-full h-10 px-4 flex items-center">
+                            <div className="flex items-center gap-5 max-w-7xl mx-auto w-full overflow-x-auto">
+                                <TransitionLink
+                                    href="/trade?category=smartphones"
+                                    className={cn(
+                                        "text-xs font-medium hover:text-primary transition-colors whitespace-nowrap flex items-center gap-1",
+                                        pathname.includes("smartphones") ? "text-primary" : "text-muted-foreground"
+                                    )}
+                                >
+                                    <SmartphoneIcon className="size-3" />
+                                    {t('categories.smartphones')}
+                                </TransitionLink>
+                                <TransitionLink
+                                    href="/trade?category=laptops"
+                                    className={cn(
+                                        "text-xs font-medium hover:text-primary transition-colors whitespace-nowrap flex items-center gap-1",
+                                        pathname.includes("laptops") ? "text-primary" : "text-muted-foreground"
+                                    )}
+                                >
+                                    <LaptopIcon className="size-3" />
+                                    {t('categories.laptops')}
+                                </TransitionLink>
+                                <TransitionLink
+                                    href="/trade?category=tablets"
+                                    className={cn(
+                                        "text-xs font-medium hover:text-primary transition-colors whitespace-nowrap flex items-center gap-1",
+                                        pathname.includes("tablets") ? "text-primary" : "text-muted-foreground"
+                                    )}
+                                >
+                                    <TabletIcon className="size-3" />
+                                    {t('categories.tablets')}
+                                </TransitionLink>
+                                <TransitionLink
+                                    href="/trade?category=gaming"
+                                    className={cn(
+                                        "text-xs font-medium hover:text-primary transition-colors whitespace-nowrap flex items-center gap-1",
+                                        pathname.includes("gaming") ? "text-primary" : "text-muted-foreground"
+                                    )}
+                                >
+                                    <GamepadIcon className="size-3" />
+                                    {t('categories.gamingConsoles')}
+                                </TransitionLink>
+                                <TransitionLink
+                                    href="/trade?category=audio"
+                                    className={cn(
+                                        "text-xs font-medium hover:text-primary transition-colors whitespace-nowrap flex items-center gap-1",
+                                        pathname.includes("audio") ? "text-primary" : "text-muted-foreground"
+                                    )}
+                                >
+                                    <HeadphonesIcon className="size-3" />
+                                    {t('categories.audioDevices')}
+                                </TransitionLink>
+                                <TransitionLink
+                                    href="/trade?category=wearables"
+                                    className={cn(
+                                        "text-xs font-medium hover:text-primary transition-colors whitespace-nowrap flex items-center gap-1",
+                                        pathname.includes("wearables") ? "text-primary" : "text-muted-foreground"
+                                    )}
+                                >
+                                    <WatchIcon className="size-3" />
+                                    {t('categories.wearables')}
+                                </TransitionLink>
+                            </div>
                         </div>
-                    </div>
-                )}
+                    )}
 
-                {/* Third Layer - Secondary Links */}
-                {layers > 2 && (
-                    <div className="w-full h-8 px-4 flex items-center shadow-[0_24px_36px_var(--background)]">
-                        <div className="flex items-center gap-4 max-w-7xl mx-auto w-full text-xs text-muted-foreground">
-                            <TransitionLink href="/warranty" className="hover:text-foreground transition-colors flex items-center gap-1">
-                                <ShieldCheckIcon className="size-3" />
-                                {t('warranty')}
-                            </TransitionLink>
-                            <TransitionLink href="/shipping" className="hover:text-foreground transition-colors flex items-center gap-1">
-                                <TruckIcon className="size-3" />
-                                {t('freeShipping')}
-                            </TransitionLink>
-                            <TransitionLink href="/returns" className="hover:text-foreground transition-colors flex items-center gap-1">
-                                <RotateCcwIcon className="size-3" />
-                                {t('returns')}
-                            </TransitionLink>
-                            <div className="ml-auto">
-                                <div>
-                                    <LanguageSwitcher variant="compact" />
+                    {/* Third Layer - Secondary Links */}
+                    {layers > 2 && (
+                        <div className="w-full h-8 px-4 flex items-center shadow-[0_24px_36px_var(--background)]">
+                            <div className="flex items-center gap-4 max-w-7xl mx-auto w-full text-xs text-muted-foreground">
+                                <TransitionLink href="/warranty" className="hover:text-foreground transition-colors flex items-center gap-1">
+                                    <ShieldCheckIcon className="size-3" />
+                                    {t('warranty')}
+                                </TransitionLink>
+                                <TransitionLink href="/shipping" className="hover:text-foreground transition-colors flex items-center gap-1">
+                                    <TruckIcon className="size-3" />
+                                    {t('freeShipping')}
+                                </TransitionLink>
+                                <TransitionLink href="/returns" className="hover:text-foreground transition-colors flex items-center gap-1">
+                                    <RotateCcwIcon className="size-3" />
+                                    {t('returns')}
+                                </TransitionLink>
+                                <div className="ml-auto">
+                                    <div>
+                                        <LanguageSwitcher variant="compact" />
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                )}
+                    )}
+                </div>
+                </div>
             </nav>
 
             {/* ── Mobile Top Header (two layers) ── */}
@@ -322,10 +348,21 @@ export default function Nav({layers = 3}) {
                     </div>
                 </div>
 
-                {/* Layer 2: Search bar */}
+                {/* Layer 2: Search bar – collapse on scroll */}
                 {layers > 1 && (
-                    <div className="px-3 pb-2  shadow-[0_24px_36px_var(--background)]">
-                        <NavSearch className="w-full" />
+                    <div
+                        className="grid"
+                        style={{
+                            gridTemplateRows: scrolled ? '0fr' : '1fr',
+                            opacity: scrolled ? 0 : 1,
+                            transition: 'grid-template-rows 300ms ease, opacity 200ms ease',
+                        }}
+                    >
+                        <div className="overflow-hidden">
+                            <div className="px-3 pb-2 shadow-[0_24px_36px_var(--background)]">
+                                <NavSearch className="w-full" />
+                            </div>
+                        </div>
                     </div>
                 )}
             </nav>
@@ -333,16 +370,11 @@ export default function Nav({layers = 3}) {
             {/* ── Mobile Drawer Menu ── */}
             <Drawer open={drawerOpen} onOpenChange={setDrawerOpen} direction="right">
                 <DrawerContent
-                    className="h-full w-[280px] ml-auto rounded-none"
+                    className="h-full w-[280px] ml-auto border-none rounded-xl"
                     showCloseButton={false}
                 >
                     <DrawerHeader className="flex items-center justify-between px-4 py-3 border-b border-border">
-                        <DrawerTitle className="font-bold text-lg">Menu</DrawerTitle>
-                        <DrawerClose asChild>
-                            <button className="p-1.5 rounded-md hover:bg-muted transition-colors" aria-label="Close menu">
-                                <XIcon className="size-5" />
-                            </button>
-                        </DrawerClose>
+                        <DrawerTitle>DepxTech</DrawerTitle>
                     </DrawerHeader>
 
                     <div className="flex-1 overflow-y-auto py-2">
@@ -369,7 +401,7 @@ export default function Nav({layers = 3}) {
                             ))}
                         </div>
 
-                        <Separator className="my-2" />
+                        <Separator className="m-2" />
 
                         {/* Categories */}
                         <div className="px-2">
@@ -390,7 +422,7 @@ export default function Nav({layers = 3}) {
                             ))}
                         </div>
 
-                        <Separator className="my-2" />
+                        <Separator className="m-2" />
 
                         {/* Secondary links */}
                         <div className="px-2">
@@ -420,7 +452,7 @@ export default function Nav({layers = 3}) {
                             </TransitionLink>
                         </div>
 
-                        <Separator className="my-2" />
+                        <Separator className="m-2" />
 
                         {/* Language + Theme */}
                         <div className="px-5 py-2 flex items-center justify-between">
