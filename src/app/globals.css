@@ -717,56 +717,35 @@ body {
   }
 }
 
-/*
-/* iOS Native Enhancements */
-@supports (-webkit-touch-callout: none) {
-  /* Prevent overscroll/rubber banding on body */
-  /* html,
-  body {
-    overscroll-behavior: none;
-    -webkit-overflow-scrolling: touch;
-    position: fixed;
-    overflow: hidden;
-    width: 100%;
-    height: 100%;
-  } */
-
-  /* Main scrollable container */
-  /* body > * {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-  } */
-
-  /* Safe area support */
-  /* :root {
+/* ── PWA Standalone Mode Enhancements ── */
+/* Applied when running as installed PWA on any platform */
+@media (display-mode: standalone) {
+  /* Safe area CSS variables */
+  :root {
     --safe-area-inset-top: env(safe-area-inset-top, 0px);
     --safe-area-inset-right: env(safe-area-inset-right, 0px);
     --safe-area-inset-bottom: env(safe-area-inset-bottom, 0px);
     --safe-area-inset-left: env(safe-area-inset-left, 0px);
-  } */
+  }
 
-  /* Native-style momentum scrolling */
-  /* * {
-    -webkit-overflow-scrolling: touch;
-  } */
-
-  /* Disable pull-to-refresh on specific elements */
-  /* .no-pull-to-refresh {
+  /* Prevent pull-to-refresh and overscroll bounce */
+  html,
+  body {
     overscroll-behavior-y: contain;
-  } */
+  }
 
-  /* Better tap highlight */
-  /* * {
+  /* Remove tap highlight for native feel */
+  * {
     -webkit-tap-highlight-color: transparent;
-  } */
+  }
 
-  /* Smooth button press feedback */
-  /* button,
+  /* Native momentum scrolling */
+  * {
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Smooth button/link press feedback */
+  button,
   [role="button"],
   a {
     -webkit-touch-callout: none;
@@ -779,15 +758,58 @@ body {
   a:active {
     opacity: 0.7;
     transition: opacity 0s;
-  } */
+  }
 
-  /* Prevent double-tap zoom on inputs */
-  /* input,
+  /* Prevent double-tap zoom on form elements */
+  input,
   textarea,
   select {
     font-size: 16px;
     touch-action: manipulation;
-  } */
+  }
+
+  /* Disable text selection on non-input elements for native feel */
+  body {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+
+  input,
+  textarea,
+  [contenteditable="true"],
+  p,
+  span,
+  h1, h2, h3, h4, h5, h6 {
+    -webkit-user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+    user-select: text;
+  }
+}
+
+/* iOS-specific standalone PWA enhancements */
+@supports (-webkit-touch-callout: none) {
+  @media (display-mode: standalone) {
+    /* Fixed body with inner scroll for iOS standalone */
+    html {
+      height: 100%;
+      overflow: hidden;
+    }
+
+    body {
+      height: 100%;
+      overflow: hidden;
+      /* Bottom safe area padding for home indicator */
+      padding-bottom: env(safe-area-inset-bottom, 0px);
+    }
+  }
+}
+
+/* JS-based standalone class for edge cases (iOS navigator.standalone) */
+html.pwa-standalone {
+  --pwa-bottom-inset: env(safe-area-inset-bottom, 0px);
 }
 
 /* Enable view transitions on mobile */

@@ -58,7 +58,7 @@ export async function generateMetadata({ params }) {
     publisher: 'DepxTech',
     formatDetection: { email: false, address: false, telephone: false },
     manifest: '/manifest.webmanifest',
-    appleWebApp: { capable: true, statusBarStyle: 'default', title: 'DepxTech' },
+    appleWebApp: { capable: true, statusBarStyle: 'black-translucent', title: 'DepxTech' },
     icons: {
       icon: [
         { url: '/favicon.ico', sizes: '32x32', type: 'image/x-icon' },
@@ -127,6 +127,10 @@ export default async function LocaleLayout({ children, params }) {
             };
           }
         `}} />
+        {/* PWA: prevent phone number/email auto-detection */}
+        <meta name="format-detection" content="telephone=no" />
+        {/* PWA: full-screen on Android Chrome */}
+        <meta name="mobile-web-app-capable" content="yes" />
         <OrganizationStructuredData />
         <WebSiteStructuredData />
 
@@ -137,7 +141,7 @@ export default async function LocaleLayout({ children, params }) {
         />
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-background overflow-y-hidden`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-background overflow-y-hidden h-dvh`}
       >
         <PasswordWall>
           <AuthProvider>

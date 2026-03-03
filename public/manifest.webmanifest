@@ -81,5 +81,21 @@
   },
   "edge_side_panel": {
     "preferred_width": 400
-  }
+  },
+  "screenshots": [
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "DepxTech - Trade in your devices"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "DepxTech - Premium Electronics Store"
+    }
+  ]
 }

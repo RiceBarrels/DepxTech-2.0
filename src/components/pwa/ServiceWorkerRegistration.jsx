@@ -42,6 +42,16 @@ export default function ServiceWorkerRegistration() {
     localStorage.setItem('pwa-install-dismissed', Date.now().toString())
   }, [])
 
+  // Add 'pwa-standalone' class to <html> when running as installed PWA
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches
+      || window.navigator.standalone === true
+    if (isStandalone) {
+      document.documentElement.classList.add('pwa-standalone')
+    }
+  }, [])
+
   useEffect(() => {
     if (typeof window === 'undefined') return
 
