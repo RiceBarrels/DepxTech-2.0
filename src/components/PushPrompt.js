@@ -15,11 +15,13 @@ import { useAuth } from "@/lib/auth"
 import { subscribeToPush } from "@/lib/pushClient"
 import { toast } from "sonner"
 import { useTranslations } from "next-intl"
+import { useWebHaptics } from "web-haptics/react"
 
 const LS_KEY = "isNotificationAllowed"
 
 export default function PushPrompt() {
   const { user } = useAuth()
+  const { trigger } = useWebHaptics()
   const t = useTranslations("trade.product")
   const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -61,12 +63,14 @@ export default function PushPrompt() {
     try {
       const sub = await subscribeToPush()
       if (sub) {
+        trigger('success')
         localStorage.setItem(LS_KEY, "true")
         toast.success(t("pushEnabled"))
       } else {
         localStorage.setItem(LS_KEY, "false")
       }
     } catch {
+      trigger('error')
       toast.error(t("pushFailed"))
       localStorage.setItem(LS_KEY, "false")
     } finally {

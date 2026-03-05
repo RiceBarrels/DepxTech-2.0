@@ -8,6 +8,7 @@ import { TransitionLink, useTransitionRouter } from '@/components/ui/pageTransit
 import { Separator } from '@/components/ui/separator'
 import { ArrowLeftIcon, MailIcon, KeyIcon, LockIcon, CheckCircleIcon, Loader2Icon, EyeIcon, EyeOffIcon } from 'lucide-react'
 import { useTranslations } from 'next-intl'
+import { useWebHaptics } from 'web-haptics/react'
 
 export default function ForgotPasswordPage() {
   const t = useTranslations('auth.forgotPassword')
@@ -24,6 +25,7 @@ export default function ForgotPasswordPage() {
   const [step, setStep] = useState(1) // 1: email, 2: verify code, 3: new password
   const [resendCooldown, setResendCooldown] = useState(0)
   const router = useTransitionRouter()
+  const { trigger } = useWebHaptics()
 
   // Start cooldown timer for resend button
   const startCooldown = () => {
@@ -57,12 +59,14 @@ export default function ForgotPasswordPage() {
       })
 
       if (error) {
+        trigger('error')
         if (error.message.includes('User not found') || error.message.includes('Invalid login credentials')) {
           setError(t('noAccount'))
         } else {
           setError(error.message)
         }
       } else {
+        trigger('success')
         setMessage(t('codeSent'))
         setStep(2)
         startCooldown()
@@ -96,8 +100,10 @@ export default function ForgotPasswordPage() {
       })
 
       if (error) {
+        trigger('error')
         setError(error.message)
       } else {
+        trigger('success')
         setMessage(t('codeVerified'))
         setStep(3)
       }
@@ -158,8 +164,10 @@ export default function ForgotPasswordPage() {
       })
 
       if (error) {
+        trigger('error')
         setError(error.message)
       } else {
+        trigger('success')
         setMessage(t('passwordUpdated'))
         setTimeout(async () => {
           await router.push('/login')
@@ -190,8 +198,10 @@ export default function ForgotPasswordPage() {
       })
 
       if (error) {
+        trigger('error')
         setError(error.message)
       } else {
+        trigger('success')
         setMessage(t('newCodeSent'))
         startCooldown()
       }
@@ -409,14 +419,14 @@ export default function ForgotPasswordPage() {
                   placeholder={t('newPasswordPlaceholder')}
                   className="w-full pr-10"
                 />
-                <button
+                <Button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
                   tabIndex={-1}
                 >
                   {showPassword ? <EyeOffIcon className="size-4" /> : <EyeIcon className="size-4" />}
-                </button>
+                </Button>
               </div>
             </div>
 
@@ -436,14 +446,14 @@ export default function ForgotPasswordPage() {
                   placeholder={t('confirmPasswordPlaceholder')}
                   className="w-full pr-10"
                 />
-                <button
+                <Button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
                   tabIndex={-1}
                 >
                   {showPassword ? <EyeOffIcon className="size-4" /> : <EyeIcon className="size-4" />}
-                </button>
+                </Button>
               </div>
             </div>
 

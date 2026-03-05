@@ -20,8 +20,8 @@ import {
     DrawerContent,
     DrawerHeader,
     DrawerTitle,
-    DrawerClose,
 } from "./drawer";
+import { useWebHaptics } from "web-haptics/react";
 
 export default function Nav({layers = 3}) {
     const router = useTransitionRouter();
@@ -31,6 +31,7 @@ export default function Nav({layers = 3}) {
     const navRef = useRef(null);
     const safeArea = useSafeArea();
     const { user, profileData, loading } = useAuth();
+    const { trigger } = useWebHaptics();
 
     const [drawerOpen, setDrawerOpen] = useState(false)
     const [scrolled, setScrolled] = useState(false)
@@ -339,11 +340,18 @@ export default function Nav({layers = 3}) {
                         ) : null}
 
                         <Button
-                            onClick={() => setDrawerOpen(true)}
+                            onClick={() => {
+                                setDrawerOpen(true);
+                                trigger([
+                                    { duration: 150, intensity: 1 },
+                                    { delay: 50, duration: 50, intensity: 1 },
+                                ])
+                            }}
                             className="p-2 -mr-2 text-foreground"
                             variant="ghost"
                             size="icon"
                             aria-label="Open menu"
+                            doHaptic={false}
                         >
                             <MenuIcon className="size-5" />
                         </Button>

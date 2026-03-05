@@ -43,6 +43,7 @@ import { motion } from 'framer-motion'
 import { useTransitionRouter, TransitionLink } from '@/components/ui/pageTransitions'
 import Image from 'next/image'
 import { createClient } from '@supabase/supabase-js'
+import { useWebHaptics } from 'web-haptics/react'
 
 function getSupabaseClient() {
   return createClient(
@@ -53,6 +54,7 @@ function getSupabaseClient() {
 
 export default function CustomTradeInForm({ categories }) {
   const { user } = useAuth()
+  const { trigger } = useWebHaptics()
   const t = useTranslations('trade.custom')
   const tProduct = useTranslations('trade.product')
   const router = useTransitionRouter()
@@ -201,9 +203,11 @@ export default function CustomTradeInForm({ categories }) {
       const data = await res.json()
       if (!res.ok) throw new Error(data.error || 'Failed to submit')
 
+      trigger('success')
       setSubmitted(true)
       toast.success(t('successToast'))
     } catch (error) {
+      trigger('error')
       console.error('Error submitting custom trade-in:', error)
       toast.error(error.message || t('errorSubmit'))
     } finally {
@@ -364,13 +368,13 @@ export default function CustomTradeInForm({ categories }) {
                 {photoUrls.map((url, i) => (
                   <div key={i} className="relative w-20 h-20 rounded-lg overflow-hidden border border-border group">
                     <Image src={url} alt={`Photo ${i + 1}`} fill className="object-cover" />
-                    <button
+                    <Button
                       type="button"
                       onClick={() => removePhoto(i)}
                       className="absolute top-1 right-1 w-5 h-5 bg-black/60 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
                     >
                       <X className="w-3 h-3 text-white" />
-                    </button>
+                    </Button>
                   </div>
                 ))}
               </div>

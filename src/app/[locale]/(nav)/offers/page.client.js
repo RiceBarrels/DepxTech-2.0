@@ -9,10 +9,12 @@ import Image from 'next/image'
 import { toast } from 'sonner'
 import { useAuth } from '@/lib/auth'
 import { useTransitionRouter } from '@/components/ui/pageTransitions'
+import { useWebHaptics } from 'web-haptics/react'
 
 export default function OffersPageClient({ initialOffers }) {
   const { user } = useAuth()
   const router = useTransitionRouter()
+  const { trigger } = useWebHaptics()
   const [offers, setOffers] = useState(initialOffers || [])
   const [appliedOffers, setAppliedOffers] = useState([])
   const [applyingOffer, setApplyingOffer] = useState(null)
@@ -49,6 +51,7 @@ export default function OffersPageClient({ initialOffers }) {
 
   const copyCode = (code) => {
     navigator.clipboard.writeText(code)
+    trigger('success')
     toast.success('Promo code copied to clipboard!')
   }
 
@@ -76,6 +79,7 @@ export default function OffersPageClient({ initialOffers }) {
       localStorage.setItem('appliedOffers', JSON.stringify(newAppliedOffers))
     }
 
+    trigger('success')
     toast.success('Offer applied! View your cart to see the discount.')
     setApplyingOffer(null)
   }
@@ -88,6 +92,7 @@ export default function OffersPageClient({ initialOffers }) {
       localStorage.setItem('appliedOffers', JSON.stringify(newAppliedOffers))
     }
     
+    trigger('light')
     toast.success('Offer removed')
   }
 

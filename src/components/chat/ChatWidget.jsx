@@ -15,6 +15,7 @@ import {
   subscribeToConversationStatus,
 } from '@/lib/chat'
 import { TopSafeArea } from '../safe-area'
+import { useWebHaptics } from 'web-haptics/react'
 
 const SESSION_KEY = 'depxtech-chat-session'
 
@@ -42,6 +43,7 @@ function clearSession() {
 export function ChatWidget({ onClose }) {
   const t = useTranslations('chat')
   const { user } = useAuth()
+  const { trigger } = useWebHaptics()
   const [phase, setPhase] = useState('loading') // loading | form | chatting
   const [conversationId, setConversationId] = useState(null)
   const [conversationStatus, setConversationStatus] = useState('open')
@@ -181,7 +183,9 @@ export function ChatWidget({ onClose }) {
         senderId: user?.id || null,
         content,
       })
+      trigger('light')
     } catch (err) {
+      trigger('error')
       console.error('Failed to send message:', err)
       setInput(content)
     } finally {

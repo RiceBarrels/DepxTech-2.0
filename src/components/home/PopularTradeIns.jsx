@@ -3,6 +3,7 @@ import { Link } from '@/i18n/navigation'
 import { ArrowRight } from 'lucide-react'
 import { ScrollStagger, ScrollReveal } from '@/components/ui/scroll-animation'
 import { getTranslations } from 'next-intl/server'
+import { TransitionLink } from '../ui/pageTransitions'
 
 const deviceData = [
   { key: 'device1', image: '/stockImg/iphone_17_pro_max.png', href: '/trade/browse/smartphones' },
@@ -32,12 +33,12 @@ export async function PopularTradeIns() {
             </div>
           </ScrollReveal>
           <ScrollReveal animation="right">
-            <Link
+            <TransitionLink
               href="/trade/browse"
               className="text-primary font-semibold flex items-center gap-1 hover:underline"
             >
               {t('viewAll')} <ArrowRight className="w-4 h-4" />
-            </Link>
+            </TransitionLink>
           </ScrollReveal>
         </ScrollStagger>
 
@@ -45,7 +46,7 @@ export async function PopularTradeIns() {
         <ScrollStagger staggerChildren={0.1} delayChildren={0.15} className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
           {devices.map((device) => (
             <ScrollReveal key={device.key} animation="z">
-              <Link href={device.href} className="group block">
+              <TransitionLink href={device.href} className="group block">
                 <div className="flex flex-col gap-4 p-4 sm:p-6 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/30 transition-all group-hover:border-primary/50 group-hover:shadow-xl group-hover:shadow-primary/5">
                   <div className="w-full aspect-square rounded-xl flex items-center justify-center overflow-hidden">
                     <div className="relative w-32 h-32 transition-transform group-hover:scale-110 duration-300">
@@ -67,7 +68,7 @@ export async function PopularTradeIns() {
                     </p>
                   </div>
                 </div>
-              </Link>
+              </TransitionLink>
             </ScrollReveal>
           ))}
         </ScrollStagger>

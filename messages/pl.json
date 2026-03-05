@@ -1738,7 +1738,11 @@
       "pushDialogEnable": "Włącz powiadomienia",
       "pushDialogSkip": "Może później",
       "pushEnabled": "Powiadomienia włączone! Będziemy Cię informować.",
-      "pushFailed": "Nie udało się włączyć powiadomień. Spróbuj ponownie później."
+      "pushFailed": "Nie udało się włączyć powiadomień. Spróbuj ponownie później.",
+      "savedAddresses": "Zapisane",
+      "newAddress": "Nowy adres",
+      "default": "Domyślny",
+      "saveToAddressBook": "Zapisz w książce adresowej"
     }
   }
 }

@@ -1747,7 +1747,11 @@
       "pushDialogEnable": "Benachrichtigungen aktivieren",
       "pushDialogSkip": "Vielleicht später",
       "pushEnabled": "Benachrichtigungen aktiviert! Wir halten dich auf dem Laufenden.",
-      "pushFailed": "Benachrichtigungen konnten nicht aktiviert werden. Bitte versuche es später."
+      "pushFailed": "Benachrichtigungen konnten nicht aktiviert werden. Bitte versuche es später.",
+      "savedAddresses": "Gespeichert",
+      "newAddress": "Neue Adresse",
+      "default": "Standard",
+      "saveToAddressBook": "In Adressbuch speichern"
     }
   }
 }

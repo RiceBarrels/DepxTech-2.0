@@ -251,13 +251,13 @@ export default function AddProductPage({defaultData={
                                 {formData.category.map((cat, index) => (
                                     <Badge key={index} variant="secondary" className="flex items-center gap-1">
                                         {cat}
-                                        <button
+                                        <Button
                                             type="button"
                                             onClick={() => removeCategory(cat)}
                                             className="ml-1 hover:text-red-600"
                                         >
                                             <XIcon className="w-3 h-3" />
-                                        </button>
+                                        </Button>
                                     </Badge>
                                 ))}
                             </div>
@@ -291,13 +291,13 @@ export default function AddProductPage({defaultData={
                                         className="flex-1"
                                     />
                                     {formData.variant_data.length > 1 && (
-                                        <button
+                                        <Button
                                             type="button"
                                             onClick={() => removeVariant(index)}
                                             className="text-red-600 hover:text-red-800"
                                         >
                                             <XIcon className="w-4 h-4" />
-                                        </button>
+                                        </Button>
                                     )}
                                 </div>
                             ))}

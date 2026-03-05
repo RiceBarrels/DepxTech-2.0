@@ -4,12 +4,14 @@ import { useState, useEffect } from 'react'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { useWebHaptics } from 'web-haptics/react'
 
 export default function PasswordWall({ children }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [isChecking, setIsChecking] = useState(true)
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
+  const { trigger } = useWebHaptics()
 
   // Check if user is already authenticated on mount
   useEffect(() => {
@@ -45,14 +47,17 @@ export default function PasswordWall({ children }) {
       const data = await response.json()
 
       if (data.success) {
+        trigger('success')
         // Cookie is set by the server, just update state
         setIsAuthenticated(true)
         setPassword('')
       } else {
+        trigger('error')
         setError(data.error || 'Incorrect password. Please try again.')
         setPassword('')
       }
     } catch (error) {
+      trigger('error')
       setError('An error occurred. Please try again.')
       setPassword('')
     }

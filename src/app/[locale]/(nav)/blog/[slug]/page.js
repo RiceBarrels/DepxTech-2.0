@@ -101,10 +101,10 @@ export default async function BlogPostPage({ params }) {
                 </Link>
               </div>
             </div>
-            <button className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-200 text-sm font-semibold border border-slate-200 dark:border-slate-600 hover:border-primary hover:text-primary transition-all shadow-sm">
+            <Button variant="outline" className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-200 text-sm font-semibold border border-slate-200 dark:border-slate-600 hover:border-primary hover:text-primary transition-all shadow-sm">
               <Share2 className="size-4" />
               {t('shareArticle')}
-            </button>
+            </Button>
           </div>
         </div>
       </div>

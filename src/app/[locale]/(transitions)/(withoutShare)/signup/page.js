@@ -362,14 +362,14 @@ export default function SignupPage() {
                 <form onSubmit={handleSignup} className="space-y-4 w-full p-2 md:p-4">
                   {/* Mobile: back button */}
                   {mobileStep > 0 && (
-                    <button
+                    <Button
                       type="button"
                       onClick={() => { setMobileStep(s => s - 1); setError('') }}
                       className="md:hidden flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
                     >
                       <ArrowLeftIcon className="size-3.5" />
                       {mobileStep === 1 ? email : `${firstName} ${lastName}`}
-                    </button>
+                    </Button>
                   )}
 
                   {/* Email – mobile step 0 only */}
@@ -467,14 +467,14 @@ export default function SignupPage() {
                           placeholder={t('passwordPlaceholder')}
                           className="w-full pr-10"
                         />
-                        <button
+                        <Button
                           type="button"
                           onClick={() => setShowPassword(!showPassword)}
                           className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
                           tabIndex={-1}
                         >
                           {showPassword ? <EyeOffIcon className="size-4" /> : <EyeIcon className="size-4" />}
-                        </button>
+                        </Button>
                       </div>
                     </div>
 
@@ -494,14 +494,14 @@ export default function SignupPage() {
                           placeholder={t('confirmPasswordPlaceholder')}
                           className="w-full pr-10"
                         />
-                        <button
+                        <Button
                           type="button"
                           onClick={() => setShowPassword(!showPassword)}
                           className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
                           tabIndex={-1}
                         >
                           {showPassword ? <EyeOffIcon className="size-4" /> : <EyeIcon className="size-4" />}
-                        </button>
+                        </Button>
                       </div>
                     </div>
                   </div>

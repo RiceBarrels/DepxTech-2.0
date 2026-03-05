@@ -80,7 +80,7 @@ export default function LoginPage() {
     <div className="flex flex-col py-4 px-4 gap-2 w-full justify-between items-center">
 
       <div className='flex-1 flex flex-col justify-center items-center max-w-256 w-full'>
-        <div className="flex flex-col md:flex-row w-full md:h-144 items-center m-4 md:m-8 border rounded-2xl md:rounded-4xl">
+        <div className="flex flex-col md:flex-row w-full md:h-144 items-center m-0 md:m-8 md:border rounded-2xl md:rounded-4xl">
           <div className="w-full flex flex-col md:h-100 p-6 pb-4 md:p-12 gap-3 md:gap-5">
             <h1 className="text-xl md:text-2xl font-black">DepxTech</h1>
             <h2 className="text-2xl md:text-4xl font-bold flex items-center gap-3 md:gap-4">
@@ -150,14 +150,15 @@ export default function LoginPage() {
             <form onSubmit={handleLogin} className="space-y-4 w-full p-2 md:p-4">
               {/* Mobile: back to email step */}
               {mobileStep > 0 && (
-                <button
+                <Button
                   type="button"
+                  variant="ghost"
                   onClick={() => { trigger('selection'); setMobileStep(0); setError('') }}
                   className="md:hidden flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
                 >
                   <ArrowLeftIcon className="size-3.5" />
                   {email}
-                </button>
+                </Button>
               )}
 
               {/* Email – hidden on mobile step 1 */}

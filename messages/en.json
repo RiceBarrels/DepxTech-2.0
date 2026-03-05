@@ -1865,7 +1865,11 @@
       "pushDialogEnable": "Enable Notifications",
       "pushDialogSkip": "Maybe Later",
       "pushEnabled": "Notifications enabled! We'll keep you updated.",
-      "pushFailed": "Could not enable notifications. Please try again later."
+      "pushFailed": "Could not enable notifications. Please try again later.",
+      "savedAddresses": "Saved",
+      "newAddress": "New Address",
+      "default": "Default",
+      "saveToAddressBook": "Save to my address book"
     },
     "testimonials": {
       "heading": "Trusted by Thousands",

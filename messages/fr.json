@@ -1763,7 +1763,11 @@
       "pushDialogEnable": "Activer les notifications",
       "pushDialogSkip": "Plus tard",
       "pushEnabled": "Notifications activées ! Nous vous tiendrons informé.",
-      "pushFailed": "Impossible d'activer les notifications. Veuillez réessayer."
+      "pushFailed": "Impossible d'activer les notifications. Veuillez réessayer.",
+      "savedAddresses": "Enregistrées",
+      "newAddress": "Nouvelle adresse",
+      "default": "Par défaut",
+      "saveToAddressBook": "Enregistrer dans mon carnet d'adresses"
     }
   }
 }

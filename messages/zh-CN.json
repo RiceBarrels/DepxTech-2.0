@@ -1808,7 +1808,11 @@
       "pushDialogEnable": "开启通知",
       "pushDialogSkip": "以后再说",
       "pushEnabled": "通知已开启！我们会及时通知您。",
-      "pushFailed": "无法开启通知，请稍后重试。"
+      "pushFailed": "无法开启通知，请稍后重试。",
+      "savedAddresses": "已保存",
+      "newAddress": "新地址",
+      "default": "默认",
+      "saveToAddressBook": "保存到地址簿"
     },
     "testimonials": {
       "heading": "值得信赖",

@@ -4,6 +4,7 @@ import { ArrowRight, LayoutGridIcon } from 'lucide-react'
 import { ScrollStagger, ScrollReveal } from '@/components/ui/scroll-animation'
 import { getTranslations } from 'next-intl/server'
 import { supabaseAdmin } from '@/lib/supabase-admin'
+import { TransitionLink } from '../ui/pageTransitions'
 
 export async function CategoryGrid() {
   const t = await getTranslations('home.categories')
@@ -29,12 +30,12 @@ export async function CategoryGrid() {
             </div>
           </ScrollReveal>
           <ScrollReveal animation="right">
-            <Link
+            <TransitionLink
               href="/trade"
               className="text-primary font-semibold flex items-center gap-1 hover:underline"
             >
               {tCommon('viewAll')} <ArrowRight className="w-4 h-4" />
-            </Link>
+            </TransitionLink>
           </ScrollReveal>
         </ScrollStagger>
 
@@ -42,7 +43,7 @@ export async function CategoryGrid() {
         <ScrollStagger staggerChildren={0.08} delayChildren={0.2} className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-2">
           {(categories || []).map((cat) => (
             <ScrollReveal key={cat.slug} animation="z">
-              <Link
+              <TransitionLink
                 href={`/trade/browse/${cat.slug}`}
                 className="relative group block h-full w-full"
               >
@@ -69,7 +70,7 @@ export async function CategoryGrid() {
                     )}
                   </div>
                 </div>
-              </Link>
+              </TransitionLink>
             </ScrollReveal>
           ))}
         </ScrollStagger>

@@ -43,6 +43,7 @@ function Button({
   size,
   asChild = false,
   disabled = false,
+  doHaptic = true,
   onClick,
   ...props
 }) {
@@ -50,9 +51,11 @@ function Button({
   const { trigger } = useWebHaptics()
 
   const handleClick = React.useCallback((e) => {
-    trigger('light')
+    if (doHaptic) {
+      trigger('light')
+    }
     onClick?.(e)
-  }, [trigger, onClick])
+  }, [trigger, onClick, doHaptic])
 
   return (
     <Comp

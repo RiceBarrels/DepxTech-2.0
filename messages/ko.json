@@ -1738,7 +1738,11 @@
       "pushDialogEnable": "알림 활성화",
       "pushDialogSkip": "나중에",
       "pushEnabled": "알림이 활성화되었습니다! 최신 정보를 알려드리겠습니다.",
-      "pushFailed": "알림을 활성화할 수 없습니다. 나중에 다시 시도해 주세요."
+      "pushFailed": "알림을 활성화할 수 없습니다. 나중에 다시 시도해 주세요.",
+      "savedAddresses": "저장됨",
+      "newAddress": "새 주소",
+      "default": "기본값",
+      "saveToAddressBook": "주소록에 저장"
     }
   }
 }

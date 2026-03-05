@@ -118,7 +118,7 @@ export async function Footer(){
             </footer>
 
             {/* Mobile Footer - Accordion */}
-            <footer className="sm:hidden mb-24 mx-4 flex flex-col gap-4">
+            <footer className="sm:hidden my-24 mx-4 flex flex-col gap-4">
                 <h1 className="text-2xl font-bold">DepxTech</h1>
                 <p className="text-sm text-muted-foreground">
                     {t('description')}

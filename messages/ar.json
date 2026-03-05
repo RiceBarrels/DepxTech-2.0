@@ -1604,7 +1604,11 @@
       "pushDialogEnable": "تفعيل الإشعارات",
       "pushDialogSkip": "ربما لاحقاً",
       "pushEnabled": "تم تفعيل الإشعارات! سنبقيك على اطلاع.",
-      "pushFailed": "تعذر تفعيل الإشعارات. يرجى المحاولة لاحقاً."
+      "pushFailed": "تعذر تفعيل الإشعارات. يرجى المحاولة لاحقاً.",
+      "savedAddresses": "المحفوظة",
+      "newAddress": "عنوان جديد",
+      "default": "الافتراضي",
+      "saveToAddressBook": "حفظ في دفتر العناوين"
     }
   },
   "tradeHowItWorks": {

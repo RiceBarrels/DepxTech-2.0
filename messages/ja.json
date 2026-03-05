@@ -1747,7 +1747,11 @@
       "pushDialogEnable": "通知を有効にする",
       "pushDialogSkip": "あとで",
       "pushEnabled": "通知が有効になりました！最新情報をお届けします。",
-      "pushFailed": "通知を有効にできませんでした。後でもう一度お試しください。"
+      "pushFailed": "通知を有効にできませんでした。後でもう一度お試しください。",
+      "savedAddresses": "保存済み",
+      "newAddress": "新しい住所",
+      "default": "デフォルト",
+      "saveToAddressBook": "アドレス帳に保存"
     }
   },
   "homeBanner": {

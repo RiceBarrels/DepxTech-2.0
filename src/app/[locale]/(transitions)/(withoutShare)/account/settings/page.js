@@ -39,11 +39,13 @@ import { useTransitionRouter } from "@/components/ui/pageTransitions"
 import { useTranslations } from 'next-intl'
 import { LanguageSwitcher } from "@/components/ui/language-switcher"
 import { subscribeToPush, unsubscribeFromPush } from "@/lib/pushClient"
+import { useWebHaptics } from "web-haptics/react"
 
 export default function SettingsPage() {
     const t = useTranslations('account.settingsPage')
     const { user, loading: authLoading, signOut } = useAuth()
     const router = useTransitionRouter()
+    const { trigger } = useWebHaptics()
 
     const THEME_OPTIONS = [
         { value: 'system', label: t('themeSystem'), icon: MonitorIcon, description: t('themeSystemDesc') },
@@ -120,8 +122,10 @@ export default function SettingsPage() {
                 applyTheme(value)
             }
 
+            trigger('success')
             toast.success(t('settingUpdated'))
         } catch (error) {
+            trigger('error')
             console.error('Error updating setting:', error)
             // Revert on error
             fetchSettings()
@@ -293,7 +297,7 @@ export default function SettingsPage() {
                                     const Icon = option.icon
                                     const isSelected = settings.theme === option.value
                                     return (
-                                        <button
+                                        <Button
                                             key={option.value}
                                             onClick={() => updateSetting('theme', option.value)}
                                             className={`relative flex flex-col items-center gap-2 p-4 rounded-lg border-2 transition-all ${
@@ -311,7 +315,7 @@ export default function SettingsPage() {
                                             <span className={`text-sm font-medium ${isSelected ? 'text-primary' : ''}`}>
                                                 {option.label}
                                             </span>
-                                        </button>
+                                        </Button>
                                     )
                                 })}
                             </div>

@@ -3,6 +3,7 @@
 import * as React from "react"
 import * as AccordionPrimitive from "@radix-ui/react-accordion"
 import { ChevronDown } from "lucide-react"
+import { useWebHaptics } from "web-haptics/react";
 
 import { cn } from "@/lib/utils"
 
@@ -16,10 +17,13 @@ const AccordionItem = React.forwardRef(({ className, ...props }, ref) => (
 ))
 AccordionItem.displayName = "AccordionItem"
 
-const AccordionTrigger = React.forwardRef(({ className, children, ...props }, ref) => (
+const AccordionTrigger = React.forwardRef(({ className, children, ...props }, ref) => {
+  const { trigger } = useWebHaptics()
+  return (
   <AccordionPrimitive.Header className="flex hover:bg-accent active:bg-accent focus:bg-accent px-4">
     <AccordionPrimitive.Trigger
       ref={ref}
+      onClick={() => trigger('light')}
       className={cn(
         "flex flex-1 items-center justify-between py-4 font-medium transition-all hover:underline [&[data-state=open]>svg]:rotate-180",
         className
@@ -29,7 +33,8 @@ const AccordionTrigger = React.forwardRef(({ className, children, ...props }, re
       <ChevronDown className="h-4 w-4 shrink-0 transition-transform duration-200" />
     </AccordionPrimitive.Trigger>
   </AccordionPrimitive.Header>
-))
+  )
+})
 AccordionTrigger.displayName = AccordionPrimitive.Trigger.displayName
 
 const AccordionContent = React.forwardRef(({ className, children, ...props }, ref) => (

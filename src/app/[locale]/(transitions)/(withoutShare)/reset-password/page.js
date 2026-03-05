@@ -8,6 +8,7 @@ import { TransitionLink, useTransitionRouter } from '@/components/ui/pageTransit
 import { Separator } from '@/components/ui/separator'
 import { LockIcon, EyeIcon, EyeOffIcon } from 'lucide-react'
 import { useTranslations } from 'next-intl'
+import { useWebHaptics } from 'web-haptics/react'
 
 export default function ResetPasswordPage() {
   const t = useTranslations('auth.resetPassword')
@@ -21,6 +22,7 @@ export default function ResetPasswordPage() {
   const [message, setMessage] = useState('')
   const [isValidSession, setIsValidSession] = useState(false)
   const router = useTransitionRouter()
+  const { trigger } = useWebHaptics()
 
   useEffect(() => {
     const checkSession = async () => {
@@ -87,8 +89,10 @@ export default function ResetPasswordPage() {
       })
 
       if (error) {
+        trigger('error')
         setError(error.message)
       } else {
+        trigger('success')
         setMessage(t('passwordUpdated'))
         setTimeout(async () => {
           await router.push('/login')
@@ -192,14 +196,13 @@ export default function ResetPasswordPage() {
                     placeholder={t('newPasswordPlaceholder')}
                     className="w-full pr-10"
                   />
-                  <button
-                    type="button"
+                  <Button
                     onClick={() => setShowPassword(!showPassword)}
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
                     tabIndex={-1}
                   >
                     {showPassword ? <EyeOffIcon className="size-4" /> : <EyeIcon className="size-4" />}
-                  </button>
+                  </Button>
                 </div>
               </div>
 
@@ -219,14 +222,13 @@ export default function ResetPasswordPage() {
                     placeholder={t('confirmPasswordPlaceholder')}
                     className="w-full pr-10"
                   />
-                  <button
-                    type="button"
+                  <Button
                     onClick={() => setShowPassword(!showPassword)}
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
                     tabIndex={-1}
                   >
                     {showPassword ? <EyeOffIcon className="size-4" /> : <EyeIcon className="size-4" />}
-                  </button>
+                  </Button>
                 </div>
               </div>
 

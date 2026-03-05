@@ -1763,7 +1763,11 @@
       "pushDialogEnable": "Activar notificaciones",
       "pushDialogSkip": "Quizás después",
       "pushEnabled": "¡Notificaciones activadas! Te mantendremos informado.",
-      "pushFailed": "No se pudieron activar las notificaciones. Inténtalo más tarde."
+      "pushFailed": "No se pudieron activar las notificaciones. Inténtalo más tarde.",
+      "savedAddresses": "Guardadas",
+      "newAddress": "Nueva dirección",
+      "default": "Predeterminada",
+      "saveToAddressBook": "Guardar en mi libreta de direcciones"
     }
   },
   "homeBanner": {

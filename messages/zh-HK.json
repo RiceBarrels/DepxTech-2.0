@@ -1749,7 +1749,11 @@
       "pushDialogEnable": "開啟通知",
       "pushDialogSkip": "稍後再說",
       "pushEnabled": "通知已開啟！我們會及時通知您。",
-      "pushFailed": "無法開啟通知，請稍後重試。"
+      "pushFailed": "無法開啟通知，請稍後重試。",
+      "savedAddresses": "已儲存",
+      "newAddress": "新地址",
+      "default": "預設",
+      "saveToAddressBook": "儲存到地址簿"
     }
   }
 }
