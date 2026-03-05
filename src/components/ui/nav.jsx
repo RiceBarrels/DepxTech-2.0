@@ -477,12 +477,12 @@ export default function Nav({layers = 3}) {
             </Drawer>
 
             {/* ── PWA Bottom Tab Bar ── */}
-            {isPwaMode && (
+            {isPwaMode && layers !== 1 && (
                 <nav
-                    className="fixed bottom-0 left-0 right-0 sm:hidden z-50 backdrop-blur-md border-t border-border bg-background pb-4"
-                    style={{ paddingBottom: `${safeArea.bottom}px` }}
+                    className="fixed bottom-0 left-0 right-0 sm:hidden z-[999] backdrop-blur-md border-t border-border bg-background pb-3"
+                    // style={{ paddingBottom: `${safeArea.bottom}px` }}
                 >
-                    <div className="flex items-stretch h-14">
+                    <div className="flex items-stretch h-14 bg-background">
                         {[
                             { href: "/", icon: HomeIcon, label: t('home') },
                             { href: "/trade", icon: ArrowRightLeftIcon, label: t('tradeIn') },

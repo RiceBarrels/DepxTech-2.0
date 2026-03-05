@@ -47,7 +47,7 @@ export async function CategoryGrid() {
                 href={`/trade/browse/${cat.slug}`}
                 className="relative group block h-full w-full"
               >
-                <div className="relative z-20 flex flex-col gap-4 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/30 h-full transition-all group-hover:border-primary/50 group-hover:shadow-xl group-hover:shadow-primary/5">
+                <div className="relative flex flex-col gap-4 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/30 h-full transition-all group-hover:border-primary/50 group-hover:shadow-xl group-hover:shadow-primary/5">
                   <div className="w-full aspect-square rounded-xl mb-2 flex items-center justify-center overflow-hidden">
                     <div className="relative w-32 h-32 transition-transform group-hover:scale-110 duration-300">
                       {cat.img ? (
