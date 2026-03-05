@@ -5,9 +5,11 @@ import { MessageCircle, X } from 'lucide-react'
 import { AnimatePresence } from 'framer-motion'
 import { ChatWidget } from '@/components/chat/ChatWidget'
 import { Button } from './button'
+import { useWebHaptics } from 'web-haptics/react'
 
 export function FloatingChat() {
   const [open, setOpen] = useState(false)
+  const { trigger } = useWebHaptics()
 
   return (
     <div className="fixed bottom-36 sm:bottom-20 right-4 z-40 flex flex-col items-end gap-3">
@@ -16,7 +18,7 @@ export function FloatingChat() {
       </AnimatePresence>
 
       <Button
-        onClick={() => setOpen(!open)}
+        onClick={() => { trigger('light'); setOpen(!open) }}
         aria-label="Chat support"
         className="size-12 rounded-full bg-primary text-primary-foreground shadow-lg flex items-center justify-center hover:bg-primary/90 transition-colors"
       >

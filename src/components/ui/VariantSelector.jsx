@@ -2,9 +2,11 @@
 
 import { useState } from "react"
 import { Badge } from '@/components/ui/badge'
+import { useWebHaptics } from 'web-haptics/react'
 
 export function VariantSelector({ variants = [] }) {
     const [selectedVariant, setSelectedVariant] = useState(null)
+    const { trigger } = useWebHaptics()
 
     return (
         <div>
@@ -18,7 +20,7 @@ export function VariantSelector({ variants = [] }) {
                         <Badge
                             variant={selectedVariant === index ? "default" : "outline"}
                             className="cursor-pointer"
-                            onClick={() => setSelectedVariant(selectedVariant === index ? null : index)}
+                            onClick={() => { trigger('selection'); setSelectedVariant(selectedVariant === index ? null : index) }}
                         >
                             {variant.variant_title}
                         </Badge>

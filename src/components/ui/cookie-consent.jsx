@@ -5,12 +5,14 @@ import { Button } from '@/components/ui/button'
 import { Link } from '@/i18n/navigation'
 import { useTranslations } from 'next-intl'
 import { motion, AnimatePresence } from 'framer-motion'
+import { useWebHaptics } from 'web-haptics/react'
 
 const STORAGE_KEY = 'depxtech-cookie-consent'
 
 export function CookieConsent() {
   const t = useTranslations('cookieConsent')
   const [show, setShow] = useState(false)
+  const { trigger } = useWebHaptics()
 
   useEffect(() => {
     const accepted = localStorage.getItem(STORAGE_KEY)
@@ -21,6 +23,7 @@ export function CookieConsent() {
   }, [])
 
   const accept = () => {
+    trigger('success')
     localStorage.setItem(STORAGE_KEY, 'true')
     setShow(false)
   }

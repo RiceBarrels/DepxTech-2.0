@@ -42,6 +42,7 @@ import {
 } from "lucide-react"
 import { toast } from "sonner"
 import { TransitionLink } from "@/components/ui/pageTransitions"
+import { useWebHaptics } from 'web-haptics/react'
 
 const ADDRESS_LABELS = [
     { value: 'Home', label: 'Home', icon: HomeIcon },
@@ -83,6 +84,7 @@ export default function AddressPage() {
     const [formData, setFormData] = useState(emptyAddress)
     const [validating, setValidating] = useState(false)
     const [validationResult, setValidationResult] = useState(null)
+    const { trigger } = useWebHaptics()
 
     useEffect(() => {
         if (user) {
@@ -174,11 +176,14 @@ export default function AddressPage() {
             setValidationResult(data)
 
             if (data.is_valid) {
+                trigger('success')
                 toast.success(t('addressVerifiedToast'))
             } else {
+                trigger('warning')
                 toast.warning(t('addressMayHaveIssuesToast'))
             }
         } catch (error) {
+            trigger('error')
             console.error('Error validating address:', error)
             toast.error(t('failedValidateAddress'))
         } finally {
@@ -251,6 +256,7 @@ export default function AddressPage() {
                     .eq('id', editingAddress.id)
 
                 if (error) throw error
+                trigger('success')
                 toast.success(t('addressUpdated'))
             } else {
                 // Create new address
@@ -264,12 +270,14 @@ export default function AddressPage() {
                     .insert(addressData)
 
                 if (error) throw error
+                trigger('success')
                 toast.success(t('addressAdded'))
             }
 
             handleCloseDialog()
             fetchAddresses()
         } catch (error) {
+            trigger('error')
             console.error('Error saving address:', error)
             toast.error(t('failedSaveAddress'))
         } finally {
@@ -286,9 +294,11 @@ export default function AddressPage() {
                 .eq('id', addressId)
 
             if (error) throw error
+            trigger('success')
             toast.success(t('defaultUpdated'))
             fetchAddresses()
         } catch (error) {
+            trigger('error')
             console.error('Error setting default address:', error)
             toast.error(t('failedSetDefault'))
         }
@@ -305,11 +315,13 @@ export default function AddressPage() {
                 .eq('id', addressToDelete.id)
 
             if (error) throw error
+            trigger('success')
             toast.success(t('addressDeleted'))
             setDeleteDialogOpen(false)
             setAddressToDelete(null)
             fetchAddresses()
         } catch (error) {
+            trigger('error')
             console.error('Error deleting address:', error)
             toast.error(t('failedDeleteAddress'))
         }

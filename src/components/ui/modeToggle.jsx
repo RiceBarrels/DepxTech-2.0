@@ -11,9 +11,11 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { useWebHaptics } from 'web-haptics/react'
 
 export function ModeToggle() {
   const { theme, setTheme } = useTheme()
+  const { trigger } = useWebHaptics()
 
   return (
     <DropdownMenu>
@@ -26,25 +28,25 @@ export function ModeToggle() {
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-40">
         <DropdownMenuItem 
-          onClick={() => setTheme("light")} 
+          onClick={() => { trigger('selection'); setTheme("light") }}
           className="flex items-center gap-3 cursor-pointer"
         >
-          <SunIcon className="h-4 w-4" /> 
+          <SunIcon className="h-4 w-4" />
           <span>Light</span>
-          <div className="flex-1" /> 
+          <div className="flex-1" />
           {theme === "light" && <CheckIcon className="h-4 w-4" />}
         </DropdownMenuItem>
-        <DropdownMenuItem 
-          onClick={() => setTheme("dark")} 
+        <DropdownMenuItem
+          onClick={() => { trigger('selection'); setTheme("dark") }}
           className="flex items-center gap-3 cursor-pointer"
         >
-          <MoonIcon className="h-4 w-4" /> 
+          <MoonIcon className="h-4 w-4" />
           <span>Dark</span>
-          <div className="flex-1" /> 
+          <div className="flex-1" />
           {theme === "dark" && <CheckIcon className="h-4 w-4" />}
         </DropdownMenuItem>
-        <DropdownMenuItem 
-          onClick={() => setTheme("system")} 
+        <DropdownMenuItem
+          onClick={() => { trigger('selection'); setTheme("system") }}
           className="flex items-center gap-3 cursor-pointer"
         >
           <MonitorIcon className="h-4 w-4" /> 

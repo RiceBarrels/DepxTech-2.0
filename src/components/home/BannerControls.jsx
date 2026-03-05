@@ -3,20 +3,23 @@
 import { useState, useEffect, useCallback } from 'react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { useWebHaptics } from 'web-haptics/react'
 
 const AUTOPLAY_MS = 5000
 
 export function BannerControls({ count }) {
   const [current, setCurrent] = useState(0)
   const [paused, setPaused] = useState(false)
+  const { trigger } = useWebHaptics()
 
   const scrollTo = useCallback((index) => {
+    trigger('light')
     const scroller = document.getElementById('banner-scroller')
     if (!scroller) return
     const width = scroller.offsetWidth
     scroller.scrollTo({ left: width * index, behavior: 'smooth' })
     setCurrent(index)
-  }, [])
+  }, [trigger])
 
   const next = useCallback(() => {
     scrollTo(current >= count - 1 ? 0 : current + 1)

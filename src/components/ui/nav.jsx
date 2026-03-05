@@ -22,6 +22,7 @@ import {
     DrawerTitle,
 } from "./drawer";
 import { useWebHaptics } from "web-haptics/react";
+import { isPWA } from "@/lib/isPWA";
 
 export default function Nav({layers = 3}) {
     const router = useTransitionRouter();
@@ -35,6 +36,12 @@ export default function Nav({layers = 3}) {
 
     const [drawerOpen, setDrawerOpen] = useState(false)
     const [scrolled, setScrolled] = useState(false)
+    const [isPwaMode, setIsPwaMode] = useState(false)
+
+    // Detect PWA mode on mount
+    useEffect(() => {
+        setIsPwaMode(isPWA())
+    }, [])
 
     // Close drawer on route change
     useEffect(() => {
@@ -468,6 +475,39 @@ export default function Nav({layers = 3}) {
                     </div>
                 </DrawerContent>
             </Drawer>
+
+            {/* ── PWA Bottom Tab Bar ── */}
+            {isPwaMode && (
+                <nav
+                    className="fixed bottom-0 left-0 right-0 sm:hidden z-50 bg-background/95 backdrop-blur-md border-t border-border"
+                    style={{ paddingBottom: `${safeArea.bottom}px` }}
+                >
+                    <div className="flex items-stretch h-14">
+                        {[
+                            { href: "/", icon: HomeIcon, label: t('home') },
+                            { href: "/trade", icon: ArrowRightLeftIcon, label: t('tradeIn') },
+                            { href: "/cart", icon: ShoppingCartIcon, label: tCommon('cart') || 'Cart' },
+                            { href: "/account", icon: UserIcon, label: tCommon('account') || 'Account' },
+                        ].map(({ href, icon: Icon, label }) => {
+                            const active = isActive(href)
+                            return (
+                                <TransitionLink
+                                    key={href}
+                                    href={href}
+                                    onClick={() => trigger('selection')}
+                                    className={cn(
+                                        "flex-1 flex flex-col items-center justify-center gap-0.5 transition-colors",
+                                        active ? "text-primary" : "text-muted-foreground"
+                                    )}
+                                >
+                                    <Icon className={cn("size-5", active && "stroke-[2.5px]")} />
+                                    <span className="text-[10px] font-medium">{label}</span>
+                                </TransitionLink>
+                            )
+                        })}
+                    </div>
+                </nav>
+            )}
         </>
     )
 }

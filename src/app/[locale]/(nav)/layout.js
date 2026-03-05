@@ -3,6 +3,7 @@ import { BackToTop } from "@/components/ui/back-to-top";
 import { FloatingChat } from "@/components/ui/floating-chat";
 import { ScrollProgress } from "@/components/ui/scroll-progress";
 import { Footer } from "@/components/ui/footer";
+import { ConditionalFooter } from "@/components/ui/conditional-footer";
 
 export default function NavLayout({ children }) {
   return (
@@ -16,7 +17,9 @@ export default function NavLayout({ children }) {
         <div className="min-h-screen">
           <Nav />
           {children}
-          <Footer />
+          <ConditionalFooter>
+            <Footer />
+          </ConditionalFooter>
         </div>
       </div>
       <BackToTop />
