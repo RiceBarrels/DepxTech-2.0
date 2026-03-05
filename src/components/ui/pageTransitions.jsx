@@ -6,6 +6,7 @@ import { useEffect } from "react";
 import { Link } from 'next-view-transitions';
 import { useParams } from 'next/navigation';
 import { useTransitionRouter as useNextViewTransitionRouter } from 'next-view-transitions';
+import { useWebHaptics } from "web-haptics/react";
 
 // Check if a route is in the transitions group (no nav)
 export function isTransitionRoute(pathname) {
@@ -65,6 +66,7 @@ export function TransitionLink({
   const pathname = usePathname();
   const params = useParams();
   const locale = params?.locale;
+  const { trigger } = useWebHaptics();
 
   // Add locale prefix to href if needed
   const localizedHref = typeof href === 'string' && locale && !href.startsWith(`/${locale}`) && !href.startsWith('http')
@@ -102,6 +104,8 @@ export function TransitionLink({
       e.preventDefault();
       return;
     }
+
+    trigger('light');
 
     // Call custom onClick handler if provided (for mobile nav state updates, etc.)
     if (props.onClick) {

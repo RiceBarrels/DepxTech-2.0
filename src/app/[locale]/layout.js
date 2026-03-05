@@ -16,6 +16,7 @@ import { routing } from '@/i18n/routing';
 import { ViewTransitions } from 'next-view-transitions'
 import OnlyUSDialog from "@/components/OnlyUSDialog";
 import PushPrompt from "@/components/PushPrompt";
+import HapticPageLoad from "@/components/ui/hapticPageLoad";
 import { Analytics } from "@vercel/analytics/next"
 
 const geistSans = Geist({
@@ -148,6 +149,7 @@ export default async function LocaleLayout({ children, params }) {
             >
               <NextIntlClientProvider messages={messages}>
                 <DisableLinkContextMenu />
+                <HapticPageLoad />
                 {children}
                 <WindowsLayer />
                 <AdminUI/>

@@ -9,6 +9,7 @@ import { Separator } from '@/components/ui/separator'
 import { UserPlusIcon, MailIcon, KeyIcon, CheckCircleIcon, Loader2Icon, ArrowLeftIcon, ArrowRightIcon, EyeIcon, EyeOffIcon } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { cn } from '@/lib/utils'
+import { useWebHaptics } from 'web-haptics/react'
 
 export default function SignupPage() {
   const t = useTranslations('auth.signup')
@@ -27,6 +28,7 @@ export default function SignupPage() {
   const [mobileStep, setMobileStep] = useState(0) // 0: email, 1: names, 2: passwords
   const [resendCooldown, setResendCooldown] = useState(0)
   const router = useTransitionRouter()
+  const { trigger } = useWebHaptics()
 
   // Start cooldown timer for resend button
   const startCooldown = () => {
@@ -137,11 +139,13 @@ export default function SignupPage() {
         setMessage(t('verificationSent'))
       }
 
+      trigger('success')
       setStep(2)
       startCooldown()
     } catch (err) {
       console.error('Signup error:', err)
       setError('An unexpected error occurred')
+      trigger('error')
     } finally {
       setLoading(false)
     }
@@ -175,6 +179,7 @@ export default function SignupPage() {
       }
 
       setMessage(t('emailVerified'))
+      trigger('success')
 
       // Redirect to home page after successful verification
       setTimeout(async () => {
@@ -183,6 +188,7 @@ export default function SignupPage() {
     } catch (err) {
       console.error('Verification error:', err)
       setError('An unexpected error occurred')
+      trigger('error')
     } finally {
       setLoading(false)
     }
@@ -241,12 +247,14 @@ export default function SignupPage() {
     if (mobileStep === 0) {
       if (!email) {
         setError('Please enter your email')
+        trigger('error')
         return
       }
       setMobileStep(1)
     } else if (mobileStep === 1) {
       if (!firstName.trim() || !lastName.trim()) {
         setError(t('nameRequired'))
+        trigger('error')
         return
       }
       setMobileStep(2)

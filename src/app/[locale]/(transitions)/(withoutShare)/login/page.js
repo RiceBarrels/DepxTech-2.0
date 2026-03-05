@@ -9,6 +9,7 @@ import { TransitionLink, useTransitionRouter } from '@/components/ui/pageTransit
 import { Separator } from '@/components/ui/separator'
 import { useTranslations } from 'next-intl'
 import { cn } from '@/lib/utils'
+import { useWebHaptics } from 'web-haptics/react'
 
 export default function LoginPage() {
   const t = useTranslations('auth.login')
@@ -18,6 +19,7 @@ export default function LoginPage() {
   const [error, setError] = useState('')
   const [mobileStep, setMobileStep] = useState(0) // 0: email, 1: password
   const router = useTransitionRouter()
+  const { trigger } = useWebHaptics()
 
   const handleLogin = async (e) => {
     e.preventDefault()
@@ -33,11 +35,14 @@ export default function LoginPage() {
 
       if (error) {
         setError(error.message)
+        trigger('error')
       } else {
+        trigger('success')
         await router.push('/')
       }
     } catch (err) {
       setError('An unexpected error occurred')
+      trigger('error')
     } finally {
       setLoading(false)
     }
@@ -64,6 +69,7 @@ export default function LoginPage() {
   const handleMobileNext = () => {
     if (!email) {
       setError('Please enter your email')
+      trigger('error')
       return
     }
     setError('')
@@ -146,7 +152,7 @@ export default function LoginPage() {
               {mobileStep > 0 && (
                 <button
                   type="button"
-                  onClick={() => { setMobileStep(0); setError('') }}
+                  onClick={() => { trigger('selection'); setMobileStep(0); setError('') }}
                   className="md:hidden flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
                 >
                   <ArrowLeftIcon className="size-3.5" />

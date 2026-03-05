@@ -1,11 +1,22 @@
+"use client"
+
 import * as React from "react"
 import { cn } from "@/lib/utils"
+import { useWebHaptics } from "web-haptics/react"
 
 function Input({
   className,
   type,
+  onFocus,
   ...props
 }) {
+  const { trigger } = useWebHaptics()
+
+  const handleFocus = React.useCallback((e) => {
+    trigger('selection')
+    onFocus?.(e)
+  }, [trigger, onFocus])
+
   return (
     <input
       type={type}
@@ -16,6 +27,7 @@ function Input({
         "aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive",
         className
       )}
+      onFocus={handleFocus}
       {...props} />
   );
 }

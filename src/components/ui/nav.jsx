@@ -338,13 +338,15 @@ export default function Nav({layers = 3}) {
                             </TransitionLink>
                         ) : null}
 
-                        <button
+                        <Button
                             onClick={() => setDrawerOpen(true)}
                             className="p-2 -mr-2 text-foreground"
+                            variant="ghost"
+                            size="icon"
                             aria-label="Open menu"
                         >
                             <MenuIcon className="size-5" />
-                        </button>
+                        </Button>
                     </div>
                 </div>
 
