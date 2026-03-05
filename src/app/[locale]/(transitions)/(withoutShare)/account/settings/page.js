@@ -4,6 +4,7 @@ import { useEffect, useState } from "react"
 import { useAuth } from "@/lib/auth"
 import { createClient } from "@/utils/supabase/client"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Skeleton } from "@/components/ui/skeleton"
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
@@ -27,7 +28,7 @@ import {
     ShieldIcon,
     TrashIcon,
     ArrowLeftIcon,
-    Loader2,
+
     SunIcon,
     MoonIcon,
     MonitorIcon,
@@ -175,10 +176,70 @@ export default function SettingsPage() {
 
     if (loading) {
         return (
-            <div className="container mx-auto px-4 py-8">
-                <div className="flex items-center justify-center py-12">
-                    <Loader2 className="h-8 w-8 animate-spin" />
-                    <span className="ml-2">{t('loadingSettings')}</span>
+            <div className="container mx-auto px-4 py-8 max-w-2xl">
+                <div className="mb-6">
+                    <Skeleton className="h-9 w-40 rounded-lg" />
+                    <Skeleton className="h-5 w-64 rounded-lg mt-2" />
+                </div>
+                <div className="space-y-6">
+                    {/* Notifications skeleton */}
+                    <Card>
+                        <CardHeader>
+                            <Skeleton className="h-6 w-36 rounded-lg" />
+                            <Skeleton className="h-4 w-56 rounded-lg" />
+                        </CardHeader>
+                        <CardContent className="space-y-6">
+                            {[1, 2, 3].map(i => (
+                                <div key={i} className="flex items-center justify-between">
+                                    <div className="flex items-center gap-3">
+                                        <Skeleton className="h-5 w-5 rounded-full" />
+                                        <div>
+                                            <Skeleton className="h-4 w-32 rounded-lg" />
+                                            <Skeleton className="h-3 w-48 rounded-lg mt-1.5" />
+                                        </div>
+                                    </div>
+                                    <Skeleton className="h-6 w-11 rounded-full" />
+                                </div>
+                            ))}
+                        </CardContent>
+                    </Card>
+                    {/* Appearance skeleton */}
+                    <Card>
+                        <CardHeader>
+                            <Skeleton className="h-6 w-32 rounded-lg" />
+                            <Skeleton className="h-4 w-48 rounded-lg" />
+                        </CardHeader>
+                        <CardContent className="space-y-6">
+                            <div className="grid grid-cols-3 gap-3">
+                                {[1, 2, 3].map(i => (
+                                    <Skeleton key={i} className="h-20 rounded-lg" />
+                                ))}
+                            </div>
+                            <Separator />
+                            <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-3">
+                                    <Skeleton className="h-5 w-5 rounded-full" />
+                                    <div>
+                                        <Skeleton className="h-4 w-24 rounded-lg" />
+                                        <Skeleton className="h-3 w-40 rounded-lg mt-1.5" />
+                                    </div>
+                                </div>
+                                <Skeleton className="h-9 w-24 rounded-lg" />
+                            </div>
+                        </CardContent>
+                    </Card>
+                    {/* Privacy skeleton */}
+                    <Card>
+                        <CardHeader>
+                            <Skeleton className="h-6 w-40 rounded-lg" />
+                            <Skeleton className="h-4 w-52 rounded-lg" />
+                        </CardHeader>
+                        <CardContent className="space-y-4">
+                            {[1, 2, 3, 4].map(i => (
+                                <Skeleton key={i} className="h-10 w-full rounded-lg" />
+                            ))}
+                        </CardContent>
+                    </Card>
                 </div>
             </div>
         )

@@ -29,6 +29,10 @@ function SectionDivider() {
 export default function HomePage() {
   return (
     <main className="bg-background">
+      {/* <div className='bg-background sticky top-0 z-50'>
+        <div className="text-2xl font-bold px-4 pt-6 pb-0">Home Page</div>
+        <div className="text-base text-muted-foreground px-4 pb-4 shadow-[0_6px_12px_0_var(--background)]">DepxTech - Trade-In & Resale Platform</div>
+      </div> */}
       {/* Promotional Banner */}
       <HomeBanner />
 

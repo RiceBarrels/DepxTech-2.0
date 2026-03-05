@@ -7,11 +7,10 @@ import { ConditionalFooter } from "@/components/ui/conditional-footer";
 
 export default function NavLayout({ children }) {
   return (
-    <div className="w-screen h-[100vh] flex flex-col items-center justify-center">
+    <div className="w-screen h-screen flex flex-col items-center justify-center overflow-hidden">
       <ScrollProgress />
       <div
         className="flex-1 overflow-y-auto w-full overflow-x-hidden bg-background"
-        
       >
         {/* <TopSafeArea extraPX={0} /> */}
         <Nav />

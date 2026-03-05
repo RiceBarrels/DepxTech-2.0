@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from "react"
 import { useAuth } from "@/lib/auth"
 import { createClient } from "@/utils/supabase/client"
 import { Card, CardContent } from "@/components/ui/card"
+import { Skeleton } from "@/components/ui/skeleton"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import {
@@ -169,9 +170,25 @@ export default function InboxPage() {
       </div>
 
       {loading ? (
-        <div className="flex items-center justify-center py-8">
-          <Loader2 className="h-8 w-8 animate-spin" />
-          <span className="ml-2">{t('loading')}</span>
+        <div className="space-y-2">
+          {[1, 2, 3, 4, 5].map(i => (
+            <Card key={i}>
+              <CardContent className="flex items-start gap-4 py-4">
+                <Skeleton className="h-5 w-5 rounded-full mt-1 shrink-0" />
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-start justify-between gap-2">
+                    <Skeleton className="h-4 w-48 rounded-lg" />
+                    <Skeleton className="h-3 w-14 rounded-lg shrink-0" />
+                  </div>
+                  <Skeleton className="h-3 w-full rounded-lg mt-2" />
+                  <Skeleton className="h-3 w-2/3 rounded-lg mt-1" />
+                  <div className="mt-2 flex items-center gap-2">
+                    <Skeleton className="h-5 w-16 rounded-full" />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
         </div>
       ) : notifications.length === 0 ? (
         <Card>

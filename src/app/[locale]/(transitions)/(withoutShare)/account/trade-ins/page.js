@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react"
 import { useAuth } from "@/lib/auth"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Skeleton } from "@/components/ui/skeleton"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
@@ -231,9 +232,50 @@ export default function MyTradeInsPage() {
       </div>
 
       {loading ? (
-        <div className="flex items-center justify-center py-8">
-          <Loader2 className="h-8 w-8 animate-spin" />
-          <span className="ml-2">{t('loading')}</span>
+        <div className="space-y-6">
+          {[1, 2, 3].map(i => (
+            <Card key={i} className="overflow-hidden">
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <Skeleton className="h-6 w-44 rounded-lg" />
+                    <Skeleton className="h-4 w-32 rounded-lg mt-2" />
+                  </div>
+                  <div className="text-right">
+                    <Skeleton className="h-5 w-20 rounded-full ml-auto" />
+                    <Skeleton className="h-6 w-16 rounded-lg mt-2 ml-auto" />
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent>
+                {/* Progress tracker skeleton */}
+                <div className="mb-4">
+                  <div className="flex items-center gap-1 w-full">
+                    {[1, 2, 3].map(j => (
+                      <div key={j} className="flex items-center flex-1 gap-1">
+                        <Skeleton className="w-7 h-7 rounded-full shrink-0" />
+                        {j < 3 && <Skeleton className="h-0.5 flex-1 rounded-full" />}
+                      </div>
+                    ))}
+                  </div>
+                  <Skeleton className="h-4 w-48 rounded-lg mt-3" />
+                </div>
+                <Separator className="my-4" />
+                {/* Condition skeleton */}
+                <div className="space-y-2">
+                  {[1, 2, 3].map(j => (
+                    <Skeleton key={j} className="h-4 w-full rounded-lg" />
+                  ))}
+                </div>
+                {/* Price breakdown skeleton */}
+                <div className="mt-4 flex flex-wrap gap-x-6 gap-y-2">
+                  <Skeleton className="h-4 w-28 rounded-lg" />
+                  <Skeleton className="h-4 w-32 rounded-lg" />
+                  <Skeleton className="h-4 w-24 rounded-lg" />
+                </div>
+              </CardContent>
+            </Card>
+          ))}
         </div>
       ) : quotes.length === 0 ? (
         <Card>

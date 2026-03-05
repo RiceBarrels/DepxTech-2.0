@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react"
 import { useAuth } from "@/lib/auth"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Skeleton } from "@/components/ui/skeleton"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
@@ -123,9 +124,48 @@ export default function OrdersPage() {
             </div>
 
             {loading ? (
-                <div className="flex items-center justify-center py-8">
-                    <Loader2 className="h-8 w-8 animate-spin" />
-                    <span className="ml-2">{t('loading')}</span>
+                <div className="space-y-6">
+                    {[1, 2, 3].map(i => (
+                        <Card key={i} className="overflow-hidden">
+                            <CardHeader>
+                                <div className="flex items-center justify-between">
+                                    <div>
+                                        <Skeleton className="h-6 w-48 rounded-lg" />
+                                        <Skeleton className="h-4 w-36 rounded-lg mt-2" />
+                                    </div>
+                                    <div className="text-right">
+                                        <Skeleton className="h-5 w-20 rounded-full ml-auto" />
+                                        <Skeleton className="h-6 w-16 rounded-lg mt-2 ml-auto" />
+                                    </div>
+                                </div>
+                            </CardHeader>
+                            <CardContent>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div>
+                                        <Skeleton className="h-4 w-28 rounded-lg mb-3" />
+                                        <div className="space-y-2">
+                                            {[1, 2].map(j => (
+                                                <Skeleton key={j} className="h-14 w-full rounded-lg" />
+                                            ))}
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <Skeleton className="h-4 w-28 rounded-lg mb-3" />
+                                        <div className="space-y-2">
+                                            <Skeleton className="h-4 w-40 rounded-lg" />
+                                            <Skeleton className="h-4 w-52 rounded-lg" />
+                                            <Skeleton className="h-4 w-36 rounded-lg" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <Separator className="my-4" />
+                                <div className="flex items-center justify-between">
+                                    <Skeleton className="h-3 w-48 rounded-lg" />
+                                    <Skeleton className="h-3 w-32 rounded-lg" />
+                                </div>
+                            </CardContent>
+                        </Card>
+                    ))}
                 </div>
             ) : transactions.length === 0 ? (
                 <Card>

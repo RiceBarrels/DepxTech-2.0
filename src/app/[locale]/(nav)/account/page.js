@@ -104,7 +104,7 @@ export default function AccountPage() {
 
           <div className='h-14'><Separator orientation="vertical"/></div>
 
-          <TransitionLink href="/offers" className="flex-4">
+          <TransitionLink href="/account/offers" className="flex-4">
             <Button variant="ghost" className="flex flex-col gap-1 items-center h-20 rounded-none w-full">
               <TicketPercentIcon strokeWidth={1.1} className='size-5'/>
               <span className='text-xs font-light'>{t('offers')}</span>
