@@ -311,8 +311,8 @@ export default function Nav({layers = 3}) {
                 </div>
             </nav>
 
-            {/* ── Mobile Top Header (two layers) ── */}
-            <nav
+            {/* ── Mobile Top Header (two layers) — hidden in PWA mode ── */}
+            {!isPwaMode && <nav
                 className="sticky top-0 left-0 right-0 bg-background/95 backdrop-blur-md flex sm:hidden flex-col z-100 gap-2"
                 style={{
                     viewTransitionName: 'nav-bar-mobile',
@@ -382,7 +382,7 @@ export default function Nav({layers = 3}) {
                         </div>
                     </div>
                 )}
-            </nav>
+            </nav>}
 
             {/* ── Mobile Drawer Menu ── */}
             <Drawer open={drawerOpen} onOpenChange={setDrawerOpen} direction="right">
@@ -479,7 +479,7 @@ export default function Nav({layers = 3}) {
             {/* ── PWA Bottom Tab Bar ── */}
             {isPwaMode && (
                 <nav
-                    className="fixed bottom-0 left-0 right-0 sm:hidden z-50 bg-background/95 backdrop-blur-md border-t border-border"
+                    className="fixed bottom-0 left-0 right-0 sm:hidden z-50 backdrop-blur-md border-t border-border bg-background pb-4"
                     style={{ paddingBottom: `${safeArea.bottom}px` }}
                 >
                     <div className="flex items-stretch h-14">
