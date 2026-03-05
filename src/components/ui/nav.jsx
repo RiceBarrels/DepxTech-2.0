@@ -372,16 +372,16 @@ export default function Nav({layers = 3}) {
             {/* ── Mobile Drawer Menu ── */}
             <Drawer open={drawerOpen} onOpenChange={setDrawerOpen} direction="right">
                 <DrawerContent
-                    className="h-full w-[280px] ml-auto border-none rounded-xl"
+                    className="h-full w-[280px] ml-auto border-none rounded-xl rounded-r-none p-2"
                     showCloseButton={false}
                 >
-                    <DrawerHeader className="flex items-center justify-between px-4 py-3 border-b border-border">
+                    <DrawerHeader className="flex items-center justify-between px-4 py-3">
                         <DrawerTitle>DepxTech</DrawerTitle>
                     </DrawerHeader>
 
-                    <div className="flex-1 overflow-y-auto py-2">
+                    <div className="flex-1 overflow-y-auto overflow-x-hidden py-2 flex flex-col gap-4 rounded-lg">
                         {/* Main links */}
-                        <div className="px-2">
+                        <div className="">
                             {mobileNavLinks.map(({ href, icon: Icon, label }) => (
                                 <TransitionLink
                                     key={href}
@@ -403,10 +403,8 @@ export default function Nav({layers = 3}) {
                             ))}
                         </div>
 
-                        <Separator className="m-2" />
-
                         {/* Categories */}
-                        <div className="px-2">
+                        <div className="">
                             <p className="px-3 py-1.5 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
                                 {t('tradeIn')}
                             </p>
@@ -424,10 +422,8 @@ export default function Nav({layers = 3}) {
                             ))}
                         </div>
 
-                        <Separator className="m-2" />
-
                         {/* Secondary links */}
-                        <div className="px-2">
+                        <div className="">
                             <TransitionLink
                                 href="/trade/sustainability"
                                 onClick={() => setDrawerOpen(false)}
@@ -457,7 +453,7 @@ export default function Nav({layers = 3}) {
                         <Separator className="m-2" />
 
                         {/* Language + Theme */}
-                        <div className="px-5 py-2 flex items-center justify-between">
+                        <div className="py-2 flex items-center justify-between">
                             <LanguageSwitcher variant="compact" />
                             <ModeToggle />
                         </div>

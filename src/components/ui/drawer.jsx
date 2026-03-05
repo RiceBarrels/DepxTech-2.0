@@ -6,6 +6,7 @@ import { Drawer as DrawerPrimitive } from "vaul"
 import { cn } from "@/lib/utils"
 import { XIcon } from "lucide-react";
 import { Button } from "./button";
+import { useWebHaptics } from "web-haptics/react";
 
 function Drawer({
   ...props
@@ -35,9 +36,14 @@ function DrawerOverlay({
   className,
   ...props
 }) {
+  const { trigger } = useWebHaptics()
+  
   return (
     <DrawerPrimitive.Overlay
       data-slot="drawer-overlay"
+      onClick={() => {
+        trigger('selection')
+      }}
       className={cn(
         "data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 z-50 backdrop-blur-md bg-foreground/5",
         className

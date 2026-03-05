@@ -8,6 +8,7 @@ function Input({
   className,
   type,
   onFocus,
+  onBlur,
   ...props
 }) {
   const { trigger } = useWebHaptics()
@@ -16,6 +17,11 @@ function Input({
     trigger('selection')
     onFocus?.(e)
   }, [trigger, onFocus])
+
+  const handleBlur = React.useCallback((e) => {
+    trigger('selection')
+    onBlur?.(e)
+  }, [trigger, onBlur])
 
   return (
     <input
@@ -28,6 +34,7 @@ function Input({
         className
       )}
       onFocus={handleFocus}
+      onBlur={handleBlur}
       {...props} />
   );
 }
