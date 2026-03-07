@@ -52,7 +52,10 @@ function Button({
 
   const handleClick = React.useCallback((e) => {
     if (doHaptic) {
-      trigger('light')
+      trigger([
+        { duration: 30 },
+        { delay: 60, duration: 40, intensity: 1 },
+      ])
     }
     onClick?.(e)
   }, [trigger, onClick, doHaptic])

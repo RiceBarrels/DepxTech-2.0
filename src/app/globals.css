@@ -907,10 +907,12 @@ body {
 /* Ensure nav stays on top during view transitions */
 ::view-transition-old(*){
   z-index: 0;
+  /* mix-blend-mode: plus-lighter */
 }
 /* Ensure nav stays on top during view transitions */
 ::view-transition-new(*) {
   z-index: 1;
+  /* mix-blend-mode: plus-lighter */
 }
 
 /* Nav should be below transition pages */
@@ -920,16 +922,17 @@ nav[class*="fixed"] {
   isolation: isolate;
 }
 
-/* Nav bar view transition - stays below transition pages */
+/* Nav bar view transition - always on top */
 ::view-transition-group(nav-bar),
 ::view-transition-group(nav-bar-mobile),
+::view-transition-group(pwa-tab-bar),
 ::view-transition-group(route-controller) {
-  z-index: 10 !important;
+  z-index: 20 !important;
 }
 
-/* Transition pages should be above nav */
+/* Transition pages should be below nav */
 [data-route-group="transitions"] {
-  z-index: 20 !important;
+  z-index: 10 !important;
   position: relative;
 }
 
@@ -937,10 +940,12 @@ nav[class*="fixed"] {
 ::view-transition-new(nav-bar),
 ::view-transition-old(nav-bar-mobile),
 ::view-transition-new(nav-bar-mobile),
+::view-transition-old(pwa-tab-bar),
+::view-transition-new(pwa-tab-bar),
 ::view-transition-old(route-controller),
 ::view-transition-new(route-controller)
  {
-  /* mix-blend-mode: normal; Prevents blending issues */
+  mix-blend-mode: normal;
 }
 
 @keyframes slide-out-fade {

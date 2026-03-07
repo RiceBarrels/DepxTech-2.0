@@ -10,11 +10,11 @@ export default function NavLayout({ children }) {
     <div className="w-screen h-screen flex flex-col items-center justify-center overflow-hidden">
       <ScrollProgress />
       <div
-        className="flex-1 overflow-y-auto w-full overflow-x-hidden bg-background"
+        className="flex-1 overflow-y-auto w-full overflow-x-hidden"
       >
         {/* <TopSafeArea extraPX={0} /> */}
         <Nav />
-        <div className="min-h-screen" style={{ viewTransitionName: 'transition-page' }}>
+        <div className="min-h-screen bg-background" style={{ viewTransitionName: 'transition-page' }}>
           {children}
           <ConditionalFooter>
             <Footer />

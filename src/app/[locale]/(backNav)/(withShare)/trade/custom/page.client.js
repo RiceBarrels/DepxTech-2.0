@@ -44,6 +44,7 @@ import { useTransitionRouter, TransitionLink } from '@/components/ui/pageTransit
 import Image from 'next/image'
 import { createClient } from '@supabase/supabase-js'
 import { useWebHaptics } from 'web-haptics/react'
+import { Textarea } from "@/components/ui/textarea"
 
 function getSupabaseClient() {
   return createClient(
@@ -265,16 +266,6 @@ export default function CustomTradeInForm({ categories }) {
 
   return (
     <div>
-      {/* Back button */}
-      <Button
-        type="button"
-        variant="ghost"
-        onClick={() => router.back()}
-        className="gap-1.5 mb-4 -ml-2"
-      >
-        <ChevronLeft className="w-4 h-4" />
-        {tProduct('back')}
-      </Button>
 
       {/* Header */}
       <div className="mb-6">
@@ -345,9 +336,9 @@ export default function CustomTradeInForm({ categories }) {
             </Label>
             <div className="relative">
               <FileTextIcon className="absolute left-3 top-3 w-4 h-4 text-muted-foreground" />
-              <textarea
+              <Textarea
                 id="conditionDesc"
-                className="w-full min-h-[100px] pl-9 px-3 py-2.5 border border-input rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-ring focus:border-ring bg-background text-sm"
+                className="pl-9"
                 value={formData.conditionDesc}
                 onChange={(e) => handleInputChange('conditionDesc', e.target.value)}
                 placeholder={t('conditionDescPlaceholder')}
@@ -511,9 +502,9 @@ export default function CustomTradeInForm({ categories }) {
               </Label>
               <div className="relative">
                 <MessageSquareIcon className="absolute left-3 top-3 w-4 h-4 text-muted-foreground" />
-                <textarea
+                <Textarea
                   id="notes"
-                  className="w-full min-h-[80px] pl-9 px-3 py-2.5 border border-input rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-ring focus:border-ring bg-background text-sm"
+                  className="pl-9"
                   value={formData.notes}
                   onChange={(e) => handleInputChange('notes', e.target.value)}
                   placeholder={tProduct('notesPlaceholder')}

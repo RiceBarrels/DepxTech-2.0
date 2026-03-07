@@ -22,6 +22,7 @@ import {
     DrawerTitle,
 } from "./drawer";
 import { useWebHaptics } from "web-haptics/react";
+import { motion } from "framer-motion";
 import { isPWA } from "@/lib/isPWA";
 
 export default function Nav({layers = 3}) {
@@ -47,6 +48,15 @@ export default function Nav({layers = 3}) {
     useEffect(() => {
         setDrawerOpen(false)
     }, [pathname])
+
+    useEffect(() => {
+        if(!drawerOpen) {
+            trigger([
+                { duration: 100, intensity: 1 },
+                { delay: 120, duration: 30, intensity: 1 },
+            ])
+        }
+    }, [drawerOpen])
 
     // Hide layers 2+3 on scroll
     useEffect(() => {
@@ -350,8 +360,8 @@ export default function Nav({layers = 3}) {
                             onClick={() => {
                                 setDrawerOpen(true);
                                 trigger([
-                                    { duration: 150, intensity: 1 },
-                                    { delay: 50, duration: 50, intensity: 1 },
+                                    { duration: 100, intensity: 1 },
+                                    { delay: 120, duration: 30, intensity: 1 },
                                 ])
                             }}
                             className="p-2 -mr-2 text-foreground"
@@ -387,7 +397,7 @@ export default function Nav({layers = 3}) {
             {/* ── Mobile Drawer Menu ── */}
             <Drawer open={drawerOpen} onOpenChange={setDrawerOpen} direction="right">
                 <DrawerContent
-                    className="h-full w-[280px] ml-auto border-none rounded-xl rounded-r-none p-2"
+                    className="h-full w-[280px] ml-auto border-none rounded-xl rounded-r-none p-2 shadow-2xl z-101"
                     showCloseButton={false}
                 >
                     <DrawerHeader className="flex items-center justify-between px-4 py-3">
@@ -479,30 +489,46 @@ export default function Nav({layers = 3}) {
             {/* ── PWA Bottom Tab Bar ── */}
             {isPwaMode && layers !== 1 && (
                 <nav
-                    className="fixed bottom-0 left-0 right-0 sm:hidden z-[999] backdrop-blur-md border-t border-border bg-background pb-3"
-                    // style={{ paddingBottom: `${safeArea.bottom}px` }}
+                    className="fixed bottom-4 left-6 right-6 sm:hidden z-999 backdrop-blur-lg bg-primary/10 rounded-2xl border-t border-l border-primary/20 shadow p-1"
+                    style={{ viewTransitionName: 'pwa-tab-bar' }}
                 >
-                    <div className="flex items-stretch h-14 bg-background">
+                    <div className="flex items-stretch h-12 gap-1">
                         {[
                             { href: "/", icon: HomeIcon, label: t('home') },
                             { href: "/trade", icon: ArrowRightLeftIcon, label: t('tradeIn') },
                             { href: "/cart", icon: ShoppingCartIcon, label: tCommon('cart') || 'Cart' },
-                            { href: "/account", icon: UserIcon, label: tCommon('account') || 'Account' },
+                            { href: user ? "/account" : "/login", icon: UserIcon, label: tCommon('account') || 'Account' },
                         ].map(({ href, icon: Icon, label }) => {
                             const active = isActive(href)
                             return (
-                                <TransitionLink
+                                <motion.button
                                     key={href}
-                                    href={href}
-                                    onClick={() => trigger('selection')}
+                                    whileTap={{ scale: 0.9 }}
+                                    transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                                    onClick={() => {
+                                        trigger([
+                                            { duration: 30 },
+                                            { delay: 60, duration: 40, intensity: 1 },
+                                        ])
+                                        setTimeout(() => {
+                                            router.push(href)
+                                        }, 100)
+                                    }}
                                     className={cn(
-                                        "flex-1 flex flex-col items-center justify-center gap-0.5 transition-colors",
-                                        active ? "text-primary" : "text-muted-foreground"
+                                        "flex-1 flex flex-col items-center justify-center gap-0.5 rounded-2xl relative",
+                                        active ? "text-primary" : "text-foreground"
                                     )}
                                 >
-                                    <Icon className={cn("size-5", active && "stroke-[2.5px]")} />
-                                    <span className="text-[10px] font-medium">{label}</span>
-                                </TransitionLink>
+                                    {active && (
+                                        <motion.div
+                                            layoutId="pwa-tab-active"
+                                            className="absolute inset-0 bg-gray-300/20 dark:bg-gray-200/10 rounded-2xl"
+                                            transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                                        />
+                                    )}
+                                    <Icon className={cn("size-5 relative z-10", active && "stroke-[2.5px]")} />
+                                    <span className="text-[10px] font-medium relative z-10">{label}</span>
+                                </motion.button>
                             )
                         })}
                     </div>

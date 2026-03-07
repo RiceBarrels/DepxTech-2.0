@@ -105,7 +105,9 @@ export function TransitionLink({
       return;
     }
 
-    trigger('light');
+    trigger([
+      { duration: 35 },
+    ], { intensity: 1 })
 
     // Call custom onClick handler if provided (for mobile nav state updates, etc.)
     if (props.onClick) {

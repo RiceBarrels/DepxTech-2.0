@@ -18,6 +18,7 @@
     "getYourQuote": "見積もりを取得",
     "readyToTradeIn": "買取に出しますか？",
     "offers": "特典",
+    "cart": "カート",
     "status": {
       "pending": "保留中",
       "approved": "承認済み",
