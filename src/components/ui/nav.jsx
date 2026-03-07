@@ -303,6 +303,9 @@ export default function Nav({layers = 3}) {
                                     <WatchIcon className="size-3" />
                                     {t('categories.wearables')}
                                 </TransitionLink>
+                                <div className="ml-auto">
+                                    <LanguageSwitcher variant="compact" />
+                                </div>
                             </div>
                         </div>
                     )}
@@ -323,11 +326,6 @@ export default function Nav({layers = 3}) {
                                     <RotateCcwIcon className="size-3" />
                                     {t('returns')}
                                 </TransitionLink>
-                                <div className="ml-auto">
-                                    <div>
-                                        <LanguageSwitcher variant="compact" />
-                                    </div>
-                                </div>
                             </div>
                         </div>
                     )}

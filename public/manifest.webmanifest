@@ -3,10 +3,10 @@
   "short_name": "DepxTech",
   "description": "Latest tech, best prices, premium quality electronics. Discover smartphones, laptops, headphones, gaming gear, smart home devices and accessories. Trade in your old devices for credit.",
   "id": "/",
-  "start_url": "/",
+  "start_url": "/?source=pwa",
   "scope": "/",
   "display": "standalone",
-  "display_override": ["standalone", "minimal-ui"],
+  "display_override": ["window-controls-overlay", "tabbed", "standalone", "minimal-ui"],
   "orientation": "any",
   "background_color": "#ffffff",
   "theme_color": "#0f172a",
@@ -74,6 +74,38 @@
       "icons": [{"src": "/icon-192.png", "sizes": "192x192"}]
     }
   ],
+  "screenshots": [
+    {
+      "src": "/screenshots/desktop-home.png",
+      "sizes": "1920x1080",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "DepxTech homepage on desktop"
+    },
+    {
+      "src": "/screenshots/desktop-trade.png",
+      "sizes": "1920x1080",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Trade-in your devices on desktop"
+    },
+    {
+      "src": "/screenshots/mobile-home.png",
+      "sizes": "1080x1920",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "DepxTech homepage on mobile"
+    },
+    {
+      "src": "/screenshots/mobile-trade.png",
+      "sizes": "1080x1920",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Trade-in your devices on mobile"
+    }
+  ],
+  "iarc_rating_id": "",
+  "related_applications": [],
   "prefer_related_applications": false,
   "handle_links": "preferred",
   "launch_handler": {
@@ -81,5 +113,48 @@
   },
   "edge_side_panel": {
     "preferred_width": 400
-  }
+  },
+  "scope_extensions": [
+    { "origin": "https://*.depxtech.com" }
+  ],
+  "file_handlers": [
+    {
+      "action": "/trade",
+      "accept": {
+        "image/*": [".png", ".jpg", ".jpeg", ".webp", ".heic"]
+      }
+    }
+  ],
+  "protocol_handlers": [
+    {
+      "protocol": "web+depxtech",
+      "url": "/%s"
+    }
+  ],
+  "share_target": {
+    "action": "/trade",
+    "method": "POST",
+    "enctype": "multipart/form-data",
+    "params": {
+      "title": "title",
+      "text": "text",
+      "url": "url",
+      "files": [
+        {
+          "name": "images",
+          "accept": ["image/*"]
+        }
+      ]
+    }
+  },
+  "widgets": [
+    {
+      "name": "Trade-in Quote",
+      "description": "Check your trade-in quote status",
+      "tag": "trade-status",
+      "ms_ac_template": "/widgets/trade-status.json",
+      "icons": [{"src": "/icon-192.png", "sizes": "192x192"}],
+      "screenshots": [{"src": "/screenshots/widget-trade.png", "sizes": "600x400"}]
+    }
+  ]
 }
