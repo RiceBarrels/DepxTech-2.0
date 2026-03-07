@@ -33,7 +33,19 @@ import {
     AlertCircleIcon,
     GripVerticalIcon,
     GlobeIcon,
+    GitBranchIcon,
+    CornerDownRightIcon,
+    ExternalLinkIcon,
+    ImportIcon,
 } from 'lucide-react'
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+    DropdownMenuLabel,
+} from "@/components/ui/dropdown-menu"
 import { toast } from 'sonner'
 import { ImageUpload, uploadFiles, deleteFileFromBucket } from "@/components/admin/ImageUpload"
 import { AITranslateQuestionsButton } from '@/components/admin/AIButton'
@@ -82,6 +94,10 @@ export default function EditTemplatePage() {
     const [selectedLocale, setSelectedLocale] = useState(null)
     const [showPreview, setShowPreview] = useState(false)
     const [linkedProductCount, setLinkedProductCount] = useState(0)
+    const [parentTemplateId, setParentTemplateId] = useState(null)
+    const [originalParentTemplateId, setOriginalParentTemplateId] = useState(null)
+    const [allTemplates, setAllTemplates] = useState([])
+    const [childTemplates, setChildTemplates] = useState([])
 
     // DnD sensors
     const sensors = useSensors(
@@ -126,8 +142,8 @@ export default function EditTemplatePage() {
 
     // Track unsaved changes
     const hasChanges = useMemo(() => {
-        return name !== originalName || JSON.stringify(questions) !== JSON.stringify(originalQuestions) || JSON.stringify(questionsI18n) !== JSON.stringify(originalQuestionsI18n)
-    }, [name, originalName, questions, originalQuestions, questionsI18n, originalQuestionsI18n])
+        return name !== originalName || parentTemplateId !== originalParentTemplateId || JSON.stringify(questions) !== JSON.stringify(originalQuestions) || JSON.stringify(questionsI18n) !== JSON.stringify(originalQuestionsI18n)
+    }, [name, originalName, parentTemplateId, originalParentTemplateId, questions, originalQuestions, questionsI18n, originalQuestionsI18n])
 
     // Warn before leaving with unsaved changes
     useEffect(() => {
@@ -146,14 +162,17 @@ export default function EditTemplatePage() {
         async function fetchTemplate() {
             try {
                 setLoading(true)
-                const response = await fetch(`/api/admin/tradein/templates?id=${id}&withCounts=true`)
+                const response = await fetch(`/api/admin/tradein/templates?withCounts=true`)
                 const data = await response.json()
 
                 if (!response.ok) {
                     throw new Error(data.error || 'Failed to fetch template')
                 }
 
-                const foundTemplate = data.templates?.find(t => t.id === id)
+                const allTmpls = data.templates || []
+                setAllTemplates(allTmpls)
+
+                const foundTemplate = allTmpls.find(t => t.id === id)
                 if (!foundTemplate) {
                     throw new Error('Template not found')
                 }
@@ -162,6 +181,9 @@ export default function EditTemplatePage() {
                 setName(foundTemplate.name || '')
                 setOriginalName(foundTemplate.name || '')
                 setLinkedProductCount(foundTemplate.linked_product_count || 0)
+                setParentTemplateId(foundTemplate.parent_template_id || null)
+                setOriginalParentTemplateId(foundTemplate.parent_template_id || null)
+                setChildTemplates(allTmpls.filter(t => t.parent_template_id === id))
                 setQuestionsI18n(foundTemplate.questions_i18n || {})
                 setOriginalQuestionsI18n(JSON.parse(JSON.stringify(foundTemplate.questions_i18n || {})))
 
@@ -229,7 +251,8 @@ export default function EditTemplatePage() {
                     id,
                     name,
                     questions: processedQuestions,
-                    questions_i18n: questionsI18n
+                    questions_i18n: questionsI18n,
+                    parent_template_id: parentTemplateId
                 })
             })
 
@@ -239,12 +262,18 @@ export default function EditTemplatePage() {
             }
 
             setOriginalName(name)
+            setOriginalParentTemplateId(parentTemplateId)
             setOriginalQuestions(JSON.parse(JSON.stringify(processedQuestions)))
             setOriginalQuestionsI18n(JSON.parse(JSON.stringify(questionsI18n)))
             setQuestions(processedQuestions)
+            const parts = []
+            if (data.updatedChildCount > 0) parts.push(`${data.updatedChildCount} child template${data.updatedChildCount !== 1 ? 's' : ''}`)
             if (data.updatedProductCount > 0) {
                 setLinkedProductCount(data.updatedProductCount)
-                toast.success(`Template saved! ${data.updatedProductCount} linked product${data.updatedProductCount !== 1 ? 's' : ''} updated.`)
+                parts.push(`${data.updatedProductCount} product${data.updatedProductCount !== 1 ? 's' : ''}`)
+            }
+            if (parts.length > 0) {
+                toast.success(`Template saved! Synced ${parts.join(' and ')}.`)
             } else {
                 toast.success('Template saved successfully')
             }
@@ -257,6 +286,7 @@ export default function EditTemplatePage() {
 
     const handleDiscard = () => {
         setName(originalName)
+        setParentTemplateId(originalParentTemplateId)
         setQuestions(JSON.parse(JSON.stringify(originalQuestions)))
         setQuestionsI18n(JSON.parse(JSON.stringify(originalQuestionsI18n)))
         toast.info('Changes discarded')
@@ -328,6 +358,28 @@ export default function EditTemplatePage() {
     const expandAll = () => setExpandedQuestions(new Set(questions.map((_, i) => i)))
     const collapseAll = () => setExpandedQuestions(new Set())
 
+    // Import questions from another template
+    const importFromTemplate = (templateId) => {
+        const source = allTemplates.find(t => t.id === templateId)
+        if (!source || !source.questions?.length) {
+            toast.error('Template has no questions to import')
+            return
+        }
+        const imported = source.questions.map(q => ({
+            ...JSON.parse(JSON.stringify(q)),
+            _dndId: genId(),
+            ans: (q.ans || []).map(a => ({ ...a, _dndId: genId() }))
+        }))
+        const startIndex = questions.length
+        setQuestions(prev => [...prev, ...imported])
+        setExpandedQuestions(prev => {
+            const next = new Set(prev)
+            imported.forEach((_, i) => next.add(startIndex + i))
+            return next
+        })
+        toast.success(`Imported ${imported.length} question${imported.length !== 1 ? 's' : ''} from "${source.name}"`)
+    }
+
     // ── Answer operations ──────────────────────────────
     const addAnswer = (qIndex) => {
         setQuestions(prev => {
@@ -366,6 +418,25 @@ export default function EditTemplatePage() {
             return updated
         })
     }
+
+    // ── Question origin lookup ────────────────────────
+    // Build a map: question title → list of template names that contain it
+    const questionOriginMap = useMemo(() => {
+        const map = {}
+        const normalize = (t) => (t || '').trim().toLowerCase().replace(/[:：\s]+$/g, '')
+        questions.forEach(q => {
+            const key = normalize(q.title)
+            if (!key) return
+            const sources = []
+            allTemplates.forEach(tmpl => {
+                if (tmpl.id === id) return
+                const has = (tmpl.questions || []).some(tq => normalize(tq.title) === key)
+                if (has) sources.push({ id: tmpl.id, name: tmpl.name, isParent: tmpl.id === parentTemplateId })
+            })
+            map[key] = sources
+        })
+        return map
+    }, [questions, allTemplates, parentTemplateId, id])
 
     // ── Loading state ──────────────────────────────────
     if (loading) {
@@ -474,9 +545,9 @@ export default function EditTemplatePage() {
             )}>
                 {/* ── Editor Column ── */}
                 <div className="flex flex-col gap-4">
-                    {/* Template Name */}
+                    {/* Template Name + Parent */}
                     <Card>
-                        <CardContent className="pt-5 pb-5">
+                        <CardContent className="pt-5 pb-5 space-y-4">
                             <div className="space-y-2">
                                 <Label htmlFor="name" className="text-sm font-medium">Template Name</Label>
                                 <Input
@@ -487,6 +558,57 @@ export default function EditTemplatePage() {
                                     className="text-base"
                                 />
                             </div>
+                            <div className="space-y-2">
+                                <Label className="text-sm font-medium flex items-center gap-1.5">
+                                    <CornerDownRightIcon className="w-3.5 h-3.5" />
+                                    Parent Template
+                                </Label>
+                                <Select
+                                    value={parentTemplateId || '_none'}
+                                    onValueChange={(v) => setParentTemplateId(v === '_none' ? null : v)}
+                                >
+                                    <SelectTrigger className="w-full">
+                                        <SelectValue placeholder="No parent template" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="_none">
+                                            <span className="text-muted-foreground">None</span>
+                                        </SelectItem>
+                                        {allTemplates
+                                            .filter(t => t.id !== id)
+                                            .map(t => (
+                                                <SelectItem key={t.id} value={t.id}>
+                                                    {t.name}
+                                                </SelectItem>
+                                            ))
+                                        }
+                                    </SelectContent>
+                                </Select>
+                                <p className="text-xs text-muted-foreground">
+                                    Link this template to a parent for organizational grouping.
+                                </p>
+                            </div>
+                            {childTemplates.length > 0 && (
+                                <div className="space-y-2">
+                                    <Label className="text-sm font-medium flex items-center gap-1.5">
+                                        <GitBranchIcon className="w-3.5 h-3.5" />
+                                        Child Templates ({childTemplates.length})
+                                    </Label>
+                                    <div className="flex flex-wrap gap-1.5">
+                                        {childTemplates.map(ct => (
+                                            <Badge
+                                                key={ct.id}
+                                                variant="outline"
+                                                className="text-xs cursor-pointer hover:bg-muted transition-colors text-emerald-600 border-emerald-200 dark:text-emerald-400 dark:border-emerald-800"
+                                                onClick={() => router.push(`/admin/tradein/templates/${ct.id}`)}
+                                            >
+                                                {ct.name}
+                                                <ExternalLinkIcon className="w-3 h-3 ml-1" />
+                                            </Badge>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
                         </CardContent>
                     </Card>
 
@@ -535,6 +657,45 @@ export default function EditTemplatePage() {
                                 onResult={(i18n) => setQuestionsI18n(i18n)}
                                 className="h-7"
                             />
+                            <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                    <Button variant="outline" size="sm" className="h-7">
+                                        <ImportIcon className="w-3.5 h-3.5 mr-1" />
+                                        Import
+                                    </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end" className="max-h-64 overflow-y-auto">
+                                    <DropdownMenuLabel className="text-xs">Import questions from</DropdownMenuLabel>
+                                    <DropdownMenuSeparator />
+                                    {parentTemplateId && (() => {
+                                        const parent = allTemplates.find(t => t.id === parentTemplateId)
+                                        if (!parent) return null
+                                        return (
+                                            <>
+                                                <DropdownMenuItem onClick={() => importFromTemplate(parentTemplateId)}>
+                                                    <CornerDownRightIcon className="w-3.5 h-3.5 mr-2 text-violet-500" />
+                                                    <span className="font-medium">{parent.name}</span>
+                                                    <Badge variant="secondary" className="ml-auto text-[10px] h-4 px-1">
+                                                        {parent.questions?.length || 0}
+                                                    </Badge>
+                                                </DropdownMenuItem>
+                                                <DropdownMenuSeparator />
+                                            </>
+                                        )
+                                    })()}
+                                    {allTemplates
+                                        .filter(t => t.id !== id && t.id !== parentTemplateId && t.questions?.length > 0)
+                                        .map(t => (
+                                            <DropdownMenuItem key={t.id} onClick={() => importFromTemplate(t.id)}>
+                                                {t.name}
+                                                <Badge variant="secondary" className="ml-auto text-[10px] h-4 px-1">
+                                                    {t.questions?.length || 0}
+                                                </Badge>
+                                            </DropdownMenuItem>
+                                        ))
+                                    }
+                                </DropdownMenuContent>
+                            </DropdownMenu>
                             <Button variant="outline" size="sm" onClick={addQuestion} className="h-7">
                                 <PlusIcon className="w-3.5 h-3.5 mr-1" />
                                 Add Question
@@ -607,6 +768,28 @@ export default function EditTemplatePage() {
                                                 <Badge variant="outline" className="text-[10px] h-5 px-1.5">
                                                     {question.ans?.length || 0} ans
                                                 </Badge>
+                                                {(() => {
+                                                    const key = (question.title || '').trim().toLowerCase().replace(/[:：\s]+$/g, '')
+                                                    const sources = questionOriginMap[key]
+                                                    if (!sources?.length) return null
+                                                    const parentSource = sources.find(s => s.isParent)
+                                                    const siblingCount = sources.filter(s => !s.isParent).length
+                                                    return (
+                                                        <>
+                                                            {parentSource && (
+                                                                <Badge variant="outline" className="text-[10px] h-5 px-1.5 text-violet-600 border-violet-300 dark:text-violet-400 dark:border-violet-700">
+                                                                    <CornerDownRightIcon className="w-2.5 h-2.5 mr-0.5" />
+                                                                    {parentSource.name}
+                                                                </Badge>
+                                                            )}
+                                                            {siblingCount > 0 && (
+                                                                <Badge variant="outline" className="text-[10px] h-5 px-1.5 text-sky-600 border-sky-300 dark:text-sky-400 dark:border-sky-700">
+                                                                    +{siblingCount}
+                                                                </Badge>
+                                                            )}
+                                                        </>
+                                                    )
+                                                })()}
                                             </div>
                                             {/* Action buttons on collapsed row */}
                                             <div className="flex items-center gap-0.5 shrink-0 ml-1" onClick={(e) => e.stopPropagation()}>

@@ -32,7 +32,9 @@ import {
     CopyIcon,
     HelpCircleIcon,
     LoaderIcon,
-    CheckIcon
+    CheckIcon,
+    GitBranchIcon,
+    CornerDownRightIcon,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { toast } from 'sonner'
@@ -72,6 +74,15 @@ export default function TemplatesPage() {
             setLoading(false)
         }
     }
+
+    // Build lookup maps for parent/child relationships
+    const templateNameMap = Object.fromEntries(templates.map(t => [t.id, t.name]))
+    const childCountMap = {}
+    templates.forEach(t => {
+        if (t.parent_template_id) {
+            childCountMap[t.parent_template_id] = (childCountMap[t.parent_template_id] || 0) + 1
+        }
+    })
 
     // Filter templates
     const filteredTemplates = templates.filter(template => {
@@ -306,6 +317,18 @@ export default function TemplatesPage() {
                                                     {(template.linked_product_count || 0) > 0 && (
                                                         <Badge variant="outline" className="text-xs text-blue-600 border-blue-200 dark:text-blue-400 dark:border-blue-800">
                                                             {template.linked_product_count} product{template.linked_product_count !== 1 ? 's' : ''} linked
+                                                        </Badge>
+                                                    )}
+                                                    {template.parent_template_id && templateNameMap[template.parent_template_id] && (
+                                                        <Badge variant="outline" className="text-xs text-violet-600 border-violet-200 dark:text-violet-400 dark:border-violet-800">
+                                                            <CornerDownRightIcon className="w-3 h-3 mr-1" />
+                                                            {templateNameMap[template.parent_template_id]}
+                                                        </Badge>
+                                                    )}
+                                                    {(childCountMap[template.id] || 0) > 0 && (
+                                                        <Badge variant="outline" className="text-xs text-emerald-600 border-emerald-200 dark:text-emerald-400 dark:border-emerald-800">
+                                                            <GitBranchIcon className="w-3 h-3 mr-1" />
+                                                            {childCountMap[template.id]} child{childCountMap[template.id] !== 1 ? 'ren' : ''}
                                                         </Badge>
                                                     )}
                                                 </div>
