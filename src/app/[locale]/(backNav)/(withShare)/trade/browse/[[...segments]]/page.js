@@ -108,6 +108,7 @@ export default async function TradeBrowsePage({ params }) {
       .from('tradable_products')
       .select('brand')
       .eq('category', categoryName)
+      .is('variant_of', null)
     const brandNames = [...new Set((productBrands || []).map(r => r.brand).filter(Boolean))]
 
     const { data: brandRows } = await supabaseAdmin
@@ -129,6 +130,7 @@ export default async function TradeBrowsePage({ params }) {
       .select('series')
       .eq('category', categoryName)
       .eq('brand', brand)
+      .is('variant_of', null)
     seriesList = [...new Set((data || []).map((r) => r.series).filter(Boolean))].sort()
   }
 
@@ -140,6 +142,7 @@ export default async function TradeBrowsePage({ params }) {
       .select('id, title, title_i18n, base_price, imgs, des, des_i18n, brand, category, series, views, questions')
       .eq('category', categoryName)
       .eq('brand', brand)
+      .is('variant_of', null)
       .order('base_price', { ascending: false })
 
     products = (data || []).map((p) => resolveTradeProduct(p, locale))

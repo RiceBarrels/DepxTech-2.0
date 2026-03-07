@@ -279,7 +279,8 @@ export default function TradeinManagePage() {
             depreciation_rate: product.depreciation_rate?.toString() || '',
             is_featured: product.is_featured || false,
             questions: normalizeQuestions(product.questions),
-            question_template_id: product.question_template_id || null
+            question_template_id: product.question_template_id || null,
+            variant_of: product.variant_of || null
         })
         setShowCopySelect(false)
         setShowTemplateSelect(false)
@@ -389,7 +390,8 @@ export default function TradeinManagePage() {
                     depreciation_rate: parseFloat(editFormData.depreciation_rate) || 0,
                     is_featured: editFormData.is_featured || false,
                     questions: processedQuestions,
-                    question_template_id: editFormData.question_template_id
+                    question_template_id: editFormData.question_template_id,
+                    variant_of: editFormData.variant_of
                 })
             })
 

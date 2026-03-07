@@ -79,6 +79,19 @@ export default async function TradeProductPage({ params }) {
   // Resolve i18n fields based on locale
   const product = resolveTradeProduct(rawProduct, locale)
 
+  // Fetch variant siblings (other variants of the same base product, or variants of this product)
+  let variants = []
+  const baseId = rawProduct.variant_of || rawProduct.id
+  const { data: variantRows } = await supabaseAdmin
+    .from('tradable_products')
+    .select('id, title, title_i18n, base_price, imgs')
+    .or(`id.eq.${baseId},variant_of.eq.${baseId}`)
+    .order('base_price', { ascending: true })
+
+  if (variantRows && variantRows.length > 1) {
+    variants = variantRows.map(v => resolveTradeProduct(v, locale))
+  }
+
   // Lookup category slug for URLs
   if (product.category) {
     const { data: catRow } = await supabaseAdmin
@@ -151,6 +164,25 @@ export default async function TradeProductPage({ params }) {
                   <p className="text-slate-500 dark:text-slate-400 mt-2 text-sm">{product.des}</p>
                 )}
               </div>
+
+              {/* Variant Selector */}
+              {variants.length > 0 && (
+                <div className="flex flex-wrap gap-2">
+                  {variants.map((v) => (
+                    <TransitionLink
+                      key={v.id}
+                      href={`/trade/product/${v.id}`}
+                      className={`px-3 py-1.5 rounded-lg border text-sm font-medium transition-colors ${
+                        v.id === id
+                          ? 'border-primary bg-primary/10 text-primary'
+                          : 'border-border bg-card text-muted-foreground hover:border-primary/40 hover:text-foreground'
+                      }`}
+                    >
+                      {v.title}
+                    </TransitionLink>
+                  ))}
+                </div>
+              )}
 
               {/* Price Display */}
               <div className="bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800 rounded-xl p-5">

@@ -34,6 +34,7 @@ import {
     PlusIcon,
     TrashIcon,
     MoreHorizontalIcon,
+    CopyIcon,
     LoaderIcon,
     PercentIcon,
     GlobeIcon,
@@ -141,6 +142,27 @@ export default function CommissionPage() {
             toast.error(err.message || 'Failed to delete')
         } finally {
             setDeleting(null)
+        }
+    }
+
+    const handleDuplicate = async (config) => {
+        try {
+            const res = await fetch('/api/admin/tradein/commission', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    brand: config.brand || null,
+                    category: config.category || null,
+                    tiers: config.tiers || [],
+                    backmarket_tiers: config.backmarket_tiers || [],
+                }),
+            })
+            const data = await res.json()
+            if (!res.ok) throw new Error(data.error)
+            setConfigs(prev => [...prev, data.tier])
+            toast.success('Commission tier duplicated')
+        } catch (err) {
+            toast.error(err.message || 'Failed to duplicate')
         }
     }
 
@@ -285,6 +307,9 @@ export default function CommissionPage() {
                                             <DropdownMenuContent align="end">
                                                 <DropdownMenuItem onClick={(e) => { e.stopPropagation(); openEdit(config) }}>
                                                     Edit Tiers
+                                                </DropdownMenuItem>
+                                                <DropdownMenuItem onClick={(e) => { e.stopPropagation(); handleDuplicate(config) }}>
+                                                    <CopyIcon className="w-4 h-4 mr-2" />Duplicate
                                                 </DropdownMenuItem>
                                                 {!isGlobal(config) && (
                                                     <>

@@ -71,6 +71,7 @@ export async function GET() {
     const { data: tradableProducts, error } = await supabaseAdmin
       .from('tradable_products')
       .select('id, created_at, category, brand, series')
+      .is('variant_of', null)
       .limit(10000)
 
     if (!error && tradableProducts) {

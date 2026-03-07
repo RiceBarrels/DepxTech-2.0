@@ -20,6 +20,7 @@ export async function GET(request) {
         const { data: products, error } = await supabase
             .from('tradable_products')
             .select('id, title, brand, series, category, base_price, imgs')
+            .is('variant_of', null)
             .or(`title.ilike.${searchTerm},brand.ilike.${searchTerm},series.ilike.${searchTerm},category.ilike.${searchTerm},title.ilike.${fuzzyTerm},brand.ilike.${fuzzyTerm},series.ilike.${fuzzyTerm}`)
             .order('base_price', { ascending: false })
             .limit(limit)

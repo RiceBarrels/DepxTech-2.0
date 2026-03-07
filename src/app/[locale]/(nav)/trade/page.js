@@ -30,6 +30,7 @@ export default async function TradePage() {
   const { data: featured } = await supabaseAdmin
     .from('tradable_products')
     .select('id, title, base_price, imgs, des, brand, category')
+    .is('variant_of', null)
     .order('views', { ascending: false })
     .limit(6)
 

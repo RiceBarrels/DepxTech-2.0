@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
 import { Label } from '@/components/ui/label'
-import { ArrowLeftIcon, SaveIcon, LoaderIcon, EditIcon, ArrowRightLeftIcon, CalendarIcon, StarIcon, PlusIcon, TrashIcon, HelpCircleIcon, CopyIcon, CheckIcon, ImageIcon, FileTextIcon, XIcon } from 'lucide-react'
+import { ArrowLeftIcon, SaveIcon, LoaderIcon, EditIcon, ArrowRightLeftIcon, CalendarIcon, StarIcon, PlusIcon, TrashIcon, HelpCircleIcon, CopyIcon, CheckIcon, ImageIcon, FileTextIcon, XIcon, GitBranchIcon } from 'lucide-react'
 import {
     Select,
     SelectContent,
@@ -63,10 +63,13 @@ export default function EditTradeinProductPage() {
     const [loadingProducts, setLoadingProducts] = useState(false)
     const [showCopySelect, setShowCopySelect] = useState(false)
 
-    // Fetch other products with questions
-    const fetchOtherProducts = async () => {
-        if (otherProducts.length > 0) {
-            setShowCopySelect(true)
+    // All products (for variant selector & copy)
+    const [allProducts, setAllProducts] = useState([])
+
+    // Fetch other products
+    const fetchOtherProducts = async ({ showCopy = true } = {}) => {
+        if (allProducts.length > 0) {
+            if (showCopy) setShowCopySelect(true)
             return
         }
         setLoadingProducts(true)
@@ -74,12 +77,10 @@ export default function EditTradeinProductPage() {
             const response = await fetch('/api/admin/tradein')
             const data = await response.json()
             if (data.products) {
-                // Filter products that have questions and are not the current product
-                const productsWithQuestions = data.products.filter(
-                    p => p.id !== id && p.questions && p.questions.length > 0
-                )
-                setOtherProducts(productsWithQuestions)
-                setShowCopySelect(true)
+                const filtered = data.products.filter(p => p.id !== id)
+                setAllProducts(filtered)
+                setOtherProducts(filtered.filter(p => p.questions && p.questions.length > 0))
+                if (showCopy) setShowCopySelect(true)
             }
         } catch (error) {
             toast.error('Failed to fetch products')
@@ -87,6 +88,11 @@ export default function EditTradeinProductPage() {
             setLoadingProducts(false)
         }
     }
+
+    // Auto-load products for variant selector
+    useEffect(() => {
+        fetchOtherProducts({ showCopy: false })
+    }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
     const copyQuestionsFromProduct = (productId) => {
         const sourceProduct = otherProducts.find(p => p.id === productId)
@@ -156,6 +162,7 @@ export default function EditTradeinProductPage() {
         is_featured: false,
         questions: [],
         question_template_id: null,
+        variant_of: null,
         title_i18n: {},
         des_i18n: {},
         questions_i18n: {},
@@ -193,6 +200,7 @@ export default function EditTradeinProductPage() {
                     is_featured: foundProduct.is_featured || false,
                     questions: normalizeQuestions(foundProduct.questions),
                     question_template_id: foundProduct.question_template_id || null,
+                    variant_of: foundProduct.variant_of || null,
                     title_i18n: foundProduct.title_i18n || {},
                     des_i18n: foundProduct.des_i18n || {},
                     questions_i18n: foundProduct.questions_i18n || {},
@@ -286,7 +294,8 @@ export default function EditTradeinProductPage() {
                     depreciation_rate: parseFloat(formData.depreciation_rate) || 0,
                     is_featured: formData.is_featured || false,
                     questions: processedQuestions,
-                    question_template_id: formData.question_template_id
+                    question_template_id: formData.question_template_id,
+                    variant_of: formData.variant_of
                 })
             })
 
@@ -454,6 +463,33 @@ export default function EditTradeinProductPage() {
                                     required
                                 />
                             </div>
+                        </div>
+
+                        {/* Variant Of */}
+                        <div className="space-y-2">
+                            <Label className="flex items-center gap-1.5">
+                                <GitBranchIcon className="w-4 h-4" />
+                                Variant Of
+                            </Label>
+                            <Select
+                                value={formData.variant_of || '_none'}
+                                onValueChange={(val) => handleInputChange('variant_of', val === '_none' ? null : val)}
+                            >
+                                <SelectTrigger>
+                                    <SelectValue placeholder="None (standalone product)" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="_none">None (standalone product)</SelectItem>
+                                    {allProducts.map(p => (
+                                        <SelectItem key={p.id} value={p.id}>
+                                            {p.title}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                            <p className="text-xs text-muted-foreground">
+                                Link this product as a variant of another (e.g. Mac Mini M2 Pro → Mac Mini M2)
+                            </p>
                         </div>
 
                         {/* Pricing Section */}

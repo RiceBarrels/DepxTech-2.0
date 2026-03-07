@@ -23,6 +23,7 @@ import {
     StarIcon,
     FileTextIcon,
     CopyIcon,
+    GitBranchIcon,
 } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { toast } from 'sonner'
@@ -181,6 +182,30 @@ export function ProductEditPanel({
                             <StarIcon className="w-4 h-4 text-yellow-500" />
                             {t('featured')}
                         </Label>
+                    </div>
+
+                    {/* Variant Of */}
+                    <div className="space-y-1.5">
+                        <Label className="flex items-center gap-1.5 text-sm">
+                            <GitBranchIcon className="w-3.5 h-3.5" />
+                            Variant Of
+                        </Label>
+                        <Select
+                            value={editFormData.variant_of || '_none'}
+                            onValueChange={(val) => handleEditInputChange('variant_of', val === '_none' ? null : val)}
+                        >
+                            <SelectTrigger className="h-9">
+                                <SelectValue placeholder="None" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="_none">None</SelectItem>
+                                {products.filter(p => p.id !== editingProduct.id).map(p => (
+                                    <SelectItem key={p.id} value={p.id}>
+                                        {p.title}
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
                     </div>
 
                     {/* Questions */}

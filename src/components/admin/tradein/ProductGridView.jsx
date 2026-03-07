@@ -18,6 +18,7 @@ import {
     CopyIcon,
     EyeIcon,
     ImageIcon,
+    GitBranchIcon,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import Image from 'next/image'
@@ -177,6 +178,12 @@ export function ProductGridView({
                                                             onClick={() => openEditPanel(product)}
                                                         >
                                                             <PlusIcon className="w-2.5 h-2.5 mr-0.5" />Template
+                                                        </Badge>
+                                                    )}
+                                                    {/* Variant badge */}
+                                                    {product.variant_of && (
+                                                        <Badge variant="outline" className="text-[10px] h-4 px-1 bg-violet-50 text-violet-600 border-violet-200 dark:bg-violet-950/30 dark:text-violet-400 dark:border-violet-800">
+                                                            <GitBranchIcon className="w-2.5 h-2.5 mr-0.5" />Variant
                                                         </Badge>
                                                     )}
                                                 </div>

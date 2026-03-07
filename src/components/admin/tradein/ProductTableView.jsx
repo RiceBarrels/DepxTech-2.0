@@ -19,6 +19,7 @@ import {
     CopyIcon,
     EyeIcon,
     ImageIcon,
+    GitBranchIcon,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import Image from 'next/image'
@@ -153,6 +154,11 @@ export function ProductTableView({
                                                             {product.question_template_id && (
                                                                 <Badge variant="outline" className="text-[10px] h-4 px-1 bg-blue-50 text-blue-600 border-blue-200 dark:bg-blue-950/30 dark:text-blue-400 dark:border-blue-800 flex-shrink-0 cursor-pointer" onClick={(e) => { e.stopPropagation(); openEditPanel(product) }}>
                                                                     <FileTextIcon className="w-2.5 h-2.5 mr-0.5" />T
+                                                                </Badge>
+                                                            )}
+                                                            {product.variant_of && (
+                                                                <Badge variant="outline" className="text-[10px] h-4 px-1 bg-violet-50 text-violet-600 border-violet-200 dark:bg-violet-950/30 dark:text-violet-400 dark:border-violet-800 flex-shrink-0">
+                                                                    <GitBranchIcon className="w-2.5 h-2.5 mr-0.5" />V
                                                                 </Badge>
                                                             )}
                                                         </div>
