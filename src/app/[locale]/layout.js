@@ -139,7 +139,7 @@ export default async function LocaleLayout({ children, params }) {
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-background overflow-y-hidden`}
       >
-        <PasswordWall>
+        {/* <PasswordWall> */}
           <AuthProvider>
             <ThemeProvider
               attribute="class"
@@ -159,7 +159,7 @@ export default async function LocaleLayout({ children, params }) {
               </NextIntlClientProvider>
             </ThemeProvider>
           </AuthProvider>
-        </PasswordWall>
+        {/* </PasswordWall> */}
         <Analytics />
       </body>
     </html>

@@ -37,6 +37,7 @@ export default function Nav({layers = 3}) {
 
     const [drawerOpen, setDrawerOpen] = useState(false)
     const [scrolled, setScrolled] = useState(false)
+    const [isFixed, setIsFixed] = useState(false)
     const [isPwaMode, setIsPwaMode] = useState(false)
 
     // Detect PWA mode on mount
@@ -58,17 +59,17 @@ export default function Nav({layers = 3}) {
         }
     }, [drawerOpen])
 
-    // Hide layers 2+3 on scroll
+    // Hide layers 2+3 + toggle fixed styling on scroll
     useEffect(() => {
-        let lastY = window.scrollY
+        const el = document.getElementById('scrollable-content')
+        if (!el) return
         const onScroll = () => {
-            const y = window.scrollY
-            if (y > 40 && y > lastY) setScrolled(true)
-            else if (y < lastY) setScrolled(false)
-            lastY = y
+            const y = el.scrollTop
+            setScrolled(y > 1)
+            setIsFixed(y > 1)
         }
-        window.addEventListener('scroll', onScroll, { passive: true })
-        return () => window.removeEventListener('scroll', onScroll)
+        el.addEventListener('scroll', onScroll, { passive: true })
+        return () => el.removeEventListener('scroll', onScroll)
     }, [])
 
     // Helper function to check if a path is active
@@ -101,8 +102,21 @@ export default function Nav({layers = 3}) {
     return (
         <>
             {/* ── Desktop Navigation ── */}
-            <nav
-                className="hidden sm:flex flex-col sticky top-0 left-0 w-full bg-background/95 backdrop-blur-md z-100"
+            <motion.nav
+                animate={{
+                    marginLeft: isFixed ? 16 : 0,
+                    marginRight: isFixed ? 16 : 0,
+                    marginTop: isFixed ? 16 : 0,
+                    marginBottom: isFixed ? 16 : 0,
+                    borderRadius: isFixed ? 32 : 0,
+                }}
+                transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                className={cn(
+                    "hidden sm:flex flex-col z-100 backdrop-blur-lg sticky top-0",
+                    isFixed
+                        ? "border-t border-l border-primary/20 shadow bg-primary/10 top-2"
+                        : ""
+                )}
                 style={{
                     viewTransitionName: 'nav-bar',
                     paddingTop: `${safeArea.top}px`
@@ -319,11 +333,24 @@ export default function Nav({layers = 3}) {
                     )}
                 </div>
                 </div>
-            </nav>
+            </motion.nav>
 
             {/* ── Mobile Top Header (two layers) — hidden in PWA mode ── */}
-            {!isPwaMode && <nav
-                className="sticky top-0 left-0 right-0 bg-background/95 backdrop-blur-md flex sm:hidden flex-col z-100 gap-2"
+            {!isPwaMode && <motion.nav
+                animate={{
+                    marginLeft: isFixed ? 16 : 0,
+                    marginRight: isFixed ? 16 : 0,
+                    marginTop: isFixed ? 16 : 0,
+                    marginBottom: isFixed ? 16 : 0,
+                    borderRadius: isFixed ? 24 : 0,
+                }}
+                transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                className={cn(
+                    "flex sm:hidden flex-col z-100 gap-2 backdrop-blur-lg sticky top-0",
+                    isFixed
+                        ? "border-l border-t border-primary/20 shadow bg-primary/10 top-2"
+                        : ""
+                )}
                 style={{
                     viewTransitionName: 'nav-bar-mobile',
                     paddingTop: `${safeArea.top}px`,
@@ -392,7 +419,7 @@ export default function Nav({layers = 3}) {
                         </div>
                     </div>
                 )}
-            </nav>}
+            </motion.nav>}
 
             {/* ── Mobile Drawer Menu ── */}
             <Drawer open={drawerOpen} onOpenChange={setDrawerOpen} direction="right">
@@ -487,7 +514,7 @@ export default function Nav({layers = 3}) {
             </Drawer>
 
             {/* ── PWA Bottom Tab Bar ── */}
-            {isPwaMode && layers !== 1 && (
+            {isPwaMode && (
                 <nav
                     className="fixed bottom-4 left-6 right-6 sm:hidden z-999 backdrop-blur-lg bg-primary/10 rounded-2xl border-t border-l border-primary/20 shadow p-1"
                     style={{ viewTransitionName: 'pwa-tab-bar' }}

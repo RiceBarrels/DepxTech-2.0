@@ -235,9 +235,9 @@ export default async function TradeProductPage({ params }) {
       <div className="lg:hidden h-24" />
 
       {/* Mobile Fixed Bottom CTA */}
-      <div className="lg:hidden fixed bottom-0 left-0 right-0 p-4 bg-background/95 backdrop-blur-lg border-t border-border z-50">
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 p-4 bg-background/95 backdrop-blur-lg border-t border-border z-50 [@media(display-mode:standalone)]:pb-20">
         <TransitionLink href={`/trade/product/${id}/start`} className="block">
-          <Button size="lg" className="w-full py-6 text-lg gap-2">
+          <Button size="lg" className="w-full gap-2">
             {t('startTradeIn')} <ChevronRight className="w-5 h-5" />
           </Button>
         </TransitionLink>

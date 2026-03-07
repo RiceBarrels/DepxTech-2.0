@@ -11,6 +11,7 @@ export default function NavLayout({ children }) {
       <ScrollProgress />
       <div
         className="flex-1 overflow-y-auto w-full overflow-x-hidden"
+        id="scrollable-content"
       >
         {/* <TopSafeArea extraPX={0} /> */}
         <Nav />

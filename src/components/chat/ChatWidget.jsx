@@ -218,20 +218,20 @@ export function ChatWidget({ onClose }) {
       animate={{ opacity: 1, scale: 1, y: 0 }}
       exit={{ opacity: 0, scale: 0.95, y: 10 }}
       transition={{ duration: 0.2 }}
-      className="bg-background border shadow-2xl flex flex-col overflow-hidden
+      className="bg-background sm:border shadow-2xl flex flex-col overflow-hidden
         fixed inset-0 h-screen sm:static sm:w-96 sm:h-auto sm:max-h-[70vh] sm:rounded-2xl"
     >
       {/* Header */}
-      <div className="flex flex-col items-center justify-between px-4 py-3 border-b bg-primary text-primary-foreground">
+      <div className="flex flex-col items-center justify-between px-4 py-3 border-b">
         <TopSafeArea extraPX={0} />
-        <div className="flex items-center justify-center">
+        <div className="flex items-center justify-between w-full">
           <div className="flex items-center gap-2">
             <div className="size-2 rounded-full bg-green-400 animate-pulse" />
             <span className="font-semibold text-sm">
               {t('adminTitle')}
             </span>
           </div>
-          <Button variant="ghost" onClick={onClose} className="hover:opacity-70 transition-opacity">
+          <Button variant="ghost" onClick={onClose} size="icon" className="hover:opacity-70 transition-opacity">
             <X className="size-4" />
           </Button>
         </div>
@@ -264,7 +264,7 @@ export function ChatWidget({ onClose }) {
       {phase === 'chatting' && (
         <>
           {/* Messages */}
-          <div className="flex-1 overflow-y-auto p-3 space-y-2 min-h-0" style={{ minHeight: 200 }}>
+          <div className="flex-1 overflow-y-auto p-3 pb-0 space-y-2 min-h-0" style={{ minHeight: 200 }}>
             {messages.length === 0 && (
               <p className="text-xs text-muted-foreground text-center py-8">
                 {t('noMessages')}

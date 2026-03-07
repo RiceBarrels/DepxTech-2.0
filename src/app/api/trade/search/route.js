@@ -12,12 +12,15 @@ export async function GET(request) {
 
     try {
         // Search across title, brand, series, and category
+        // Exact substring match
         const searchTerm = `%${query}%`
+        // Fuzzy pattern: "samsng" -> "%s%a%m%s%n%g%" catches typos with missing/swapped chars
+        const fuzzyTerm = `%${query.split('').join('%')}%`
 
         const { data: products, error } = await supabase
             .from('tradable_products')
             .select('id, title, brand, series, category, base_price, imgs')
-            .or(`title.ilike.${searchTerm},brand.ilike.${searchTerm},series.ilike.${searchTerm},category.ilike.${searchTerm}`)
+            .or(`title.ilike.${searchTerm},brand.ilike.${searchTerm},series.ilike.${searchTerm},category.ilike.${searchTerm},title.ilike.${fuzzyTerm},brand.ilike.${fuzzyTerm},series.ilike.${fuzzyTerm}`)
             .order('base_price', { ascending: false })
             .limit(limit)
 
