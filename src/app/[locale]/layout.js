@@ -17,6 +17,7 @@ import { ViewTransitions } from 'next-view-transitions'
 import OnlyUSDialog from "@/components/OnlyUSDialog";
 import PushPrompt from "@/components/PushPrompt";
 import { Analytics } from "@vercel/analytics/next"
+import { SpeedInsights } from "@vercel/speed-insights/next"
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -161,6 +162,7 @@ export default async function LocaleLayout({ children, params }) {
           </AuthProvider>
         {/* </PasswordWall> */}
         <Analytics />
+        <SpeedInsights />
       </body>
     </html>
     </ViewTransitions>
