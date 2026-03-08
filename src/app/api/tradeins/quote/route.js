@@ -48,7 +48,9 @@ export async function POST(request) {
       state,
       zipCode,
       notes,
-      userId
+      userId,
+      paymentMethod,
+      paymentHandle,
     } = body
 
     const isCustom = !productId && customDevice
@@ -100,7 +102,9 @@ export async function POST(request) {
       base_price: basePrice || null,
       depreciation: depreciation || null,
       // For custom trade-ins, store device info in condition as JSON
-      condition: isCustom ? JSON.stringify(customDevice) : (condition || null)
+      condition: isCustom ? JSON.stringify(customDevice) : (condition || null),
+      payment_method: paymentMethod || null,
+      payment_handle: paymentHandle || null,
     }
 
     // Try to insert into trade_quotes table

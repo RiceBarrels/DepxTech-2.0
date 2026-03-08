@@ -1717,6 +1717,7 @@
       "quoteSubmittedDesc": "Nous examinerons votre demande et vous contacterons sous 24 heures.",
       "estimatedValue": "Votre valeur estimée",
       "finalValueNote": "Valeur finale confirmée après inspection",
+      "total": "Total",
       "whatsNext": "Quelle est la suite ?",
       "step1": "Vérifiez votre e-mail pour la confirmation",
       "step2": "Nous vous enverrons une étiquette d'expédition prépayée",
@@ -1768,7 +1769,26 @@
       "savedAddresses": "Enregistrées",
       "newAddress": "Nouvelle adresse",
       "default": "Par défaut",
-      "saveToAddressBook": "Enregistrer dans mon carnet d'adresses"
+      "saveToAddressBook": "Enregistrer dans mon carnet d'adresses",
+      "choosePaymentMethod": "Choose Payment Method",
+      "choosePaymentMethodDesc": "How would you like to receive your payment?",
+      "paymentMethodLabel": "Payment Method",
+      "paymentHandleLabel": "Payment Account",
+      "paymentHandle": "{method} username / email / address",
+      "paypalPlaceholder": "PayPal email address",
+      "zellePlaceholder": "Zelle email or phone number",
+      "cashappPlaceholder": "$cashtag or phone number",
+      "venmoPlaceholder": "@username or phone number",
+      "bitcoinPlaceholder": "Bitcoin wallet address",
+      "errorPaymentRequired": "Please select a payment method",
+      "errorPaymentHandleRequired": "Please enter your payment account info",
+      "tosAgree": "I have read and agree to the",
+      "tosLink": "Terms of Service",
+      "tosDialogTitle": "Terms of Service",
+      "tosDialogDesc": "Please read and scroll to the bottom to accept.",
+      "tosScrollHint": "Scroll to the bottom to accept",
+      "tosAcceptButton": "I Accept",
+      "errorTosRequired": "Please accept the Terms of Service"
     }
   }
 }

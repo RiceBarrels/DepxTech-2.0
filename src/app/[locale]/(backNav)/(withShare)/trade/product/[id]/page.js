@@ -47,6 +47,28 @@ export async function generateMetadata({ params }) {
   }
 }
 
+// Calculate maximum trade-in value based on best possible answers
+function calculateUpToValue(product) {
+  const basePrice = Number(product.base_price) || 0
+  const questions = product.questions || []
+  if (questions.length === 0) return basePrice
+
+  const totalPercentage = questions.reduce((total, question) => {
+    const answers = question.ans || []
+    if (answers.length === 0) return total
+    if (question.type === 'opposite_multiple') return total
+    const maxPercentage = answers.reduce((max, answer) => {
+      const percentStr = (answer.persentage || '').trim()
+      if (percentStr === '') return max
+      const percent = parseFloat(percentStr.replace('+', ''))
+      return isNaN(percent) ? max : Math.max(max, percent)
+    }, 0)
+    return total + maxPercentage
+  }, 0)
+
+  return basePrice + (basePrice * totalPercentage / 100)
+}
+
 // Calculate depreciation based on admin-set depreciation rate
 function calculateDepreciation(depreciationRate, t) {
   const rate = Number(depreciationRate) || 0
@@ -108,10 +130,10 @@ export default async function TradeProductPage({ params }) {
     .update({ views: (product.views || 0) + 1 })
     .eq('id', id)
 
-  // Calculate base price with depreciation
-  const basePrice = Number(product.base_price) || 0
+  // Calculate "up to" price with best answers + depreciation
+  const upToValue = calculateUpToValue(rawProduct)
   const depreciation = calculateDepreciation(product.depreciation_rate, t)
-  const depreciatedPrice = basePrice * (depreciation.multiplier / 100)
+  const depreciatedPrice = upToValue * (depreciation.multiplier / 100)
 
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://depxtech.com'
 

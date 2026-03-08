@@ -1692,6 +1692,7 @@
       "quoteSubmittedDesc": "Vi granskar din förfrågan och kontaktar dig inom 24 timmar.",
       "estimatedValue": "Ditt uppskattade värde",
       "finalValueNote": "Slutligt värde bekräftas efter inspektion",
+      "total": "Totalt",
       "whatsNext": "Vad händer nu?",
       "step1": "Kontrollera din e-post för bekräftelse",
       "step2": "Vi skickar dig en förbetald fraktetikett",
@@ -1743,7 +1744,26 @@
       "savedAddresses": "Sparade",
       "newAddress": "Ny adress",
       "default": "Standard",
-      "saveToAddressBook": "Spara i adressboken"
+      "saveToAddressBook": "Spara i adressboken",
+      "choosePaymentMethod": "Choose Payment Method",
+      "choosePaymentMethodDesc": "How would you like to receive your payment?",
+      "paymentMethodLabel": "Payment Method",
+      "paymentHandleLabel": "Payment Account",
+      "paymentHandle": "{method} username / email / address",
+      "paypalPlaceholder": "PayPal email address",
+      "zellePlaceholder": "Zelle email or phone number",
+      "cashappPlaceholder": "$cashtag or phone number",
+      "venmoPlaceholder": "@username or phone number",
+      "bitcoinPlaceholder": "Bitcoin wallet address",
+      "errorPaymentRequired": "Please select a payment method",
+      "errorPaymentHandleRequired": "Please enter your payment account info",
+      "tosAgree": "I have read and agree to the",
+      "tosLink": "Terms of Service",
+      "tosDialogTitle": "Terms of Service",
+      "tosDialogDesc": "Please read and scroll to the bottom to accept.",
+      "tosScrollHint": "Scroll to the bottom to accept",
+      "tosAcceptButton": "I Accept",
+      "errorTosRequired": "Please accept the Terms of Service"
     }
   }
 }

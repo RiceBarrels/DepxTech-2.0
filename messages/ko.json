@@ -1692,6 +1692,7 @@
       "quoteSubmittedDesc": "요청을 검토하고 24시간 이내에 연락드리겠습니다.",
       "estimatedValue": "예상 가치",
       "finalValueNote": "최종 가치는 검수 후 확정됩니다",
+      "total": "합계",
       "whatsNext": "다음 단계는요?",
       "step1": "이메일에서 확인 메일을 확인하세요",
       "step2": "선불 배송 라벨을 보내드립니다",
@@ -1743,7 +1744,26 @@
       "savedAddresses": "저장됨",
       "newAddress": "새 주소",
       "default": "기본값",
-      "saveToAddressBook": "주소록에 저장"
+      "saveToAddressBook": "주소록에 저장",
+      "choosePaymentMethod": "Choose Payment Method",
+      "choosePaymentMethodDesc": "How would you like to receive your payment?",
+      "paymentMethodLabel": "Payment Method",
+      "paymentHandleLabel": "Payment Account",
+      "paymentHandle": "{method} username / email / address",
+      "paypalPlaceholder": "PayPal email address",
+      "zellePlaceholder": "Zelle email or phone number",
+      "cashappPlaceholder": "$cashtag or phone number",
+      "venmoPlaceholder": "@username or phone number",
+      "bitcoinPlaceholder": "Bitcoin wallet address",
+      "errorPaymentRequired": "Please select a payment method",
+      "errorPaymentHandleRequired": "Please enter your payment account info",
+      "tosAgree": "I have read and agree to the",
+      "tosLink": "Terms of Service",
+      "tosDialogTitle": "Terms of Service",
+      "tosDialogDesc": "Please read and scroll to the bottom to accept.",
+      "tosScrollHint": "Scroll to the bottom to accept",
+      "tosAcceptButton": "I Accept",
+      "errorTosRequired": "Please accept the Terms of Service"
     }
   }
 }

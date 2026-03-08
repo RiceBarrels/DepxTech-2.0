@@ -1692,6 +1692,7 @@
       "quoteSubmittedDesc": "Wij beoordelen uw verzoek en nemen binnen 24 uur contact met u op.",
       "estimatedValue": "Uw geschatte waarde",
       "finalValueNote": "Definitieve waarde bevestigd na inspectie",
+      "total": "Totaal",
       "whatsNext": "Wat nu?",
       "step1": "Controleer uw e-mail voor bevestiging",
       "step2": "Wij sturen u een vooraf betaald verzendlabel",
@@ -1743,7 +1744,26 @@
       "savedAddresses": "Opgeslagen",
       "newAddress": "Nieuw adres",
       "default": "Standaard",
-      "saveToAddressBook": "Opslaan in adresboek"
+      "saveToAddressBook": "Opslaan in adresboek",
+      "choosePaymentMethod": "Choose Payment Method",
+      "choosePaymentMethodDesc": "How would you like to receive your payment?",
+      "paymentMethodLabel": "Payment Method",
+      "paymentHandleLabel": "Payment Account",
+      "paymentHandle": "{method} username / email / address",
+      "paypalPlaceholder": "PayPal email address",
+      "zellePlaceholder": "Zelle email or phone number",
+      "cashappPlaceholder": "$cashtag or phone number",
+      "venmoPlaceholder": "@username or phone number",
+      "bitcoinPlaceholder": "Bitcoin wallet address",
+      "errorPaymentRequired": "Please select a payment method",
+      "errorPaymentHandleRequired": "Please enter your payment account info",
+      "tosAgree": "I have read and agree to the",
+      "tosLink": "Terms of Service",
+      "tosDialogTitle": "Terms of Service",
+      "tosDialogDesc": "Please read and scroll to the bottom to accept.",
+      "tosScrollHint": "Scroll to the bottom to accept",
+      "tosAcceptButton": "I Accept",
+      "errorTosRequired": "Please accept the Terms of Service"
     }
   }
 }

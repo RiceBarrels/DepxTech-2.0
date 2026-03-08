@@ -1703,6 +1703,7 @@
       "quoteSubmittedDesc": "我們將在 24 小時內審核並聯繫您。",
       "estimatedValue": "您的預估價值",
       "finalValueNote": "最終價格在檢驗後確認",
+      "total": "總計",
       "whatsNext": "接下來？",
       "step1": "查看信箱中的確認資訊",
       "step2": "我們將傳送預付運費標籤",
@@ -1754,7 +1755,26 @@
       "savedAddresses": "已儲存",
       "newAddress": "新地址",
       "default": "預設",
-      "saveToAddressBook": "儲存到地址簿"
+      "saveToAddressBook": "儲存到地址簿",
+      "choosePaymentMethod": "Choose Payment Method",
+      "choosePaymentMethodDesc": "How would you like to receive your payment?",
+      "paymentMethodLabel": "Payment Method",
+      "paymentHandleLabel": "Payment Account",
+      "paymentHandle": "{method} username / email / address",
+      "paypalPlaceholder": "PayPal email address",
+      "zellePlaceholder": "Zelle email or phone number",
+      "cashappPlaceholder": "$cashtag or phone number",
+      "venmoPlaceholder": "@username or phone number",
+      "bitcoinPlaceholder": "Bitcoin wallet address",
+      "errorPaymentRequired": "Please select a payment method",
+      "errorPaymentHandleRequired": "Please enter your payment account info",
+      "tosAgree": "I have read and agree to the",
+      "tosLink": "Terms of Service",
+      "tosDialogTitle": "Terms of Service",
+      "tosDialogDesc": "Please read and scroll to the bottom to accept.",
+      "tosScrollHint": "Scroll to the bottom to accept",
+      "tosAcceptButton": "I Accept",
+      "errorTosRequired": "Please accept the Terms of Service"
     }
   }
 }

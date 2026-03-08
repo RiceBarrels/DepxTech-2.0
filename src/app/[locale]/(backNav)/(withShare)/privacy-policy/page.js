@@ -89,7 +89,7 @@ export default function PrivacyPolicy() {
                     <div className="pl-6">
                         <p>Email: support@depxtech.com</p>
                         <p>Phone: Available Mon-Sun 8-22 EDT(NY)</p>
-                        <p>Address: DepxTech Inc.</p>
+                        <p>Address: DepxTech Corp.</p>
                     </div>
                 </section>
             </div>

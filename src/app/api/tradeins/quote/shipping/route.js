@@ -34,6 +34,8 @@ export async function PUT(request) {
       customerPhone,
       estimatedValue,
       notes,
+      paymentMethod,
+      paymentHandle,
     } = body
 
     if (!quoteId || !shippingMethod) {
@@ -83,6 +85,8 @@ export async function PUT(request) {
         estimatedValue: estimatedValue || 0,
         notes,
         shippingMethod,
+        paymentMethod,
+        paymentHandle,
       }),
     })
 

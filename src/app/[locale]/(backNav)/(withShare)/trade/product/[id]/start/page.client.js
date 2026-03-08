@@ -28,6 +28,7 @@ import {
   ArrowLeft,
   AlertTriangle,
   MapPinIcon,
+  WalletIcon,
 } from 'lucide-react'
 import { toast } from 'sonner'
 import { useTranslations } from 'next-intl'
@@ -37,6 +38,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { TransitionLink } from '@/components/ui/pageTransitions'
 import { useWebHaptics } from "web-haptics/react"
 import Image from 'next/image'
+import TermsOfServiceContent from '@/components/legal/TermsOfServiceContent'
 
 // ── Helpers ──────────────────────────
 const parsePercentage = (value) => {
@@ -95,6 +97,8 @@ export default function TradeProductStartClient({ product, questions, basePrice,
   })
   const [submitting, setSubmitting] = useState(false)
   const [shippingMethod, setShippingMethod] = useState(null)
+  const [paymentMethod, setPaymentMethod] = useState(null)
+  const [paymentHandle, setPaymentHandle] = useState('')
   const [confirmOpen, setConfirmOpen] = useState(false)
   const [animatedPrice, setAnimatedPrice] = useState(0)
   const [savedAddresses, setSavedAddresses] = useState([])
@@ -102,6 +106,10 @@ export default function TradeProductStartClient({ product, questions, basePrice,
   const [addressMode, setAddressMode] = useState('saved') // 'saved' | 'new'
   const [loadingAddresses, setLoadingAddresses] = useState(false)
   const [saveNewAddress, setSaveNewAddress] = useState(true)
+  const [tosAccepted, setTosAccepted] = useState(false)
+  const [tosDialogOpen, setTosDialogOpen] = useState(false)
+  const [tosScrolledToBottom, setTosScrolledToBottom] = useState(false)
+  const tosScrollRef = useRef(null)
 
   const totalSteps = questions?.length || 1
 
@@ -411,6 +419,21 @@ export default function TradeProductStartClient({ product, questions, basePrice,
       toast.error(t('errorShippingRequired'))
       return
     }
+    if (!paymentMethod) {
+      trigger('warning')
+      toast.error(t('errorPaymentRequired'))
+      return
+    }
+    if (!paymentHandle.trim()) {
+      trigger('warning')
+      toast.error(t('errorPaymentHandleRequired'))
+      return
+    }
+    if (!tosAccepted) {
+      trigger('warning')
+      toast.error(t('errorTosRequired'))
+      return
+    }
 
     trigger('nudge')
     setConfirmOpen(true)
@@ -443,7 +466,9 @@ export default function TradeProductStartClient({ product, questions, basePrice,
           state: formData.state,
           zipCode: formData.zipCode,
           notes: formData.notes || null,
-          userId: user?.id || null
+          userId: user?.id || null,
+          paymentMethod,
+          paymentHandle: paymentHandle.trim(),
         })
       })
 
@@ -470,6 +495,8 @@ export default function TradeProductStartClient({ product, questions, basePrice,
             customerZipCode: formData.zipCode,
             estimatedValue: calculatedQuote.value,
             notes: formData.notes || null,
+            paymentMethod,
+            paymentHandle: paymentHandle.trim(),
           })
         })
 
@@ -662,9 +689,21 @@ export default function TradeProductStartClient({ product, questions, basePrice,
 
             <div className="p-5 bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800 rounded-xl mb-6">
               <p className="text-xs font-medium text-emerald-600 dark:text-emerald-400 mb-1">{t('estimatedValue')}</p>
-              <p className="text-3xl font-bold text-emerald-600 dark:text-emerald-400">
-                {formatCurrency(calculatedQuote.value)}
-              </p>
+              <div className="flex items-baseline gap-2 flex-wrap justify-center">
+                <p className="text-3xl font-bold text-emerald-600 dark:text-emerald-400">
+                  {formatCurrency(calculatedQuote.value / 1.05)}
+                </p>
+                {calculatedQuote.value > 0 && (
+                  <span className="text-base font-bold text-emerald-500 dark:text-emerald-300">
+                    +{formatCurrency(calculatedQuote.value - calculatedQuote.value / 1.05)} (5%)
+                  </span>
+                )}
+              </div>
+              {calculatedQuote.value > 0 && (
+                <p className="text-sm font-semibold text-emerald-600/80 dark:text-emerald-400/80 mt-1">
+                  {t('total')}: {formatCurrency(calculatedQuote.value)}
+                </p>
+              )}
               <p className="text-xs text-emerald-600/70 dark:text-emerald-400/70 mt-1.5">
                 {t('finalValueNote')}
               </p>
@@ -678,14 +717,20 @@ export default function TradeProductStartClient({ product, questions, basePrice,
               </p>
             </div>
 
-            {/* Shipping method badge */}
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-muted rounded-full text-sm text-muted-foreground mb-6">
-              {shippingMethod === 'depxtech_box' ? (
-                <Package className="w-4 h-4" />
-              ) : (
-                <BoxIcon className="w-4 h-4" />
-              )}
-              {shippingMethod === 'depxtech_box' ? t('depxtechBox') : t('ownBox')}
+            {/* Shipping & payment method badges */}
+            <div className="flex flex-wrap items-center justify-center gap-2 mb-6">
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-muted rounded-full text-sm text-muted-foreground">
+                {shippingMethod === 'depxtech_box' ? (
+                  <Package className="w-4 h-4" />
+                ) : (
+                  <BoxIcon className="w-4 h-4" />
+                )}
+                {shippingMethod === 'depxtech_box' ? t('depxtechBox') : t('ownBox')}
+              </div>
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-muted rounded-full text-sm text-muted-foreground">
+                <WalletIcon className="w-4 h-4" />
+                {paymentMethod === 'paypal' ? 'PayPal' : paymentMethod === 'zelle' ? 'Zelle' : paymentMethod === 'cashapp' ? 'Cash App' : paymentMethod === 'venmo' ? 'Venmo' : 'Bitcoin'}
+              </div>
             </div>
 
             <div className="text-left bg-muted/50 rounded-xl p-4">
@@ -828,15 +873,27 @@ export default function TradeProductStartClient({ product, questions, basePrice,
                   )}>
                     {calculatedQuote.isZeroValue ? t('freeRecycling') : t('estimatedValue')}
                   </p>
-                  <p className={cn(
-                      "text-4xl sm:text-5xl font-extrabold tabular-nums",
-                      calculatedQuote.isZeroValue
-                        ? "text-orange-600 dark:text-orange-400"
-                        : "text-emerald-600 dark:text-emerald-400"
+                  <div className="flex items-baseline gap-2 flex-wrap">
+                    <p className={cn(
+                        "text-4xl sm:text-5xl font-extrabold tabular-nums",
+                        calculatedQuote.isZeroValue
+                          ? "text-orange-600 dark:text-orange-400"
+                          : "text-emerald-600 dark:text-emerald-400"
+                      )}
+                    >
+                      {formatCurrency(animatedPrice / 1.05)}
+                    </p>
+                    {!calculatedQuote.isZeroValue && animatedPrice > 0 && (
+                      <span className="text-lg sm:text-xl font-bold text-emerald-500 dark:text-emerald-300">
+                        +{formatCurrency(animatedPrice - animatedPrice / 1.05)} (5%)
+                      </span>
                     )}
-                  >
-                    {formatCurrency(animatedPrice)}
-                  </p>
+                  </div>
+                  {!calculatedQuote.isZeroValue && animatedPrice > 0 && (
+                    <p className="text-sm font-semibold text-emerald-600/80 dark:text-emerald-400/80 mt-1">
+                      {t('total')}: {formatCurrency(animatedPrice)}
+                    </p>
+                  )}
                   <div>
                     <p className="text-xs text-muted-foreground mt-3">{t('finalValueNote')}</p>
                     <div className="flex items-start gap-2 mt-3 p-2.5 bg-amber-50/80 dark:bg-amber-950/30 border border-amber-200/60 dark:border-amber-800/40 rounded-xl">
@@ -969,11 +1026,86 @@ export default function TradeProductStartClient({ product, questions, basePrice,
                 </div>
               </motion.div>
 
+              {/* Payment method selection */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.25 }}
+              >
+                <div className="space-y-1 mb-3">
+                  <h3 className="text-base font-semibold text-foreground">{t('choosePaymentMethod')}: <span className="text-red-500 text-sm">*</span></h3>
+                  <p className="text-sm text-muted-foreground">{t('choosePaymentMethodDesc')}</p>
+                </div>
+
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                  {[
+                    { id: 'paypal', label: 'PayPal' },
+                    { id: 'zelle', label: 'Zelle' },
+                    { id: 'cashapp', label: 'Cash App' },
+                    { id: 'venmo', label: 'Venmo' },
+                    { id: 'bitcoin', label: 'Bitcoin' },
+                  ].map((method) => (
+                    <motion.div
+                      key={method.id}
+                      whileTap={{ scale: 0.96 }}
+                      role="button"
+                      tabIndex={0}
+                      onClick={() => {
+                        setPaymentMethod(method.id)
+                        trigger()
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                          e.preventDefault()
+                          setPaymentMethod(method.id)
+                        }
+                      }}
+                      className={cn(
+                        "flex items-center justify-center gap-2 p-3 border rounded-xl transition-all cursor-pointer text-sm font-medium",
+                        paymentMethod === method.id
+                          ? "border-primary bg-primary/5 ring-1 ring-primary/20 text-primary"
+                          : "border-border hover:border-primary/30 hover:bg-muted/30 text-muted-foreground"
+                      )}
+                    >
+                      <WalletIcon className="w-4 h-4" />
+                      {method.label}
+                    </motion.div>
+                  ))}
+                </div>
+
+                {paymentMethod && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    transition={{ duration: 0.2 }}
+                    className="mt-3"
+                  >
+                    <Label htmlFor="paymentHandle" className="text-sm font-medium">
+                      {t('paymentHandle', { method: paymentMethod === 'bitcoin' ? 'Bitcoin' : paymentMethod === 'cashapp' ? 'Cash App' : paymentMethod === 'paypal' ? 'PayPal' : paymentMethod === 'zelle' ? 'Zelle' : 'Venmo' })} <span className="text-red-500">*</span>
+                    </Label>
+                    <Input
+                      id="paymentHandle"
+                      type="text"
+                      value={paymentHandle}
+                      onChange={(e) => setPaymentHandle(e.target.value)}
+                      placeholder={
+                        paymentMethod === 'paypal' ? t('paypalPlaceholder')
+                        : paymentMethod === 'zelle' ? t('zellePlaceholder')
+                        : paymentMethod === 'cashapp' ? t('cashappPlaceholder')
+                        : paymentMethod === 'venmo' ? t('venmoPlaceholder')
+                        : t('bitcoinPlaceholder')
+                      }
+                      className="h-11 rounded-xl mt-1.5"
+                    />
+                  </motion.div>
+                )}
+              </motion.div>
+
               {/* Contact form */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.3 }}
+                transition={{ duration: 0.5, delay: 0.35 }}
               >
                 <form onSubmit={handleRequestSubmit} className="space-y-4">
                   <div className="p-5 rounded-2xl border border-border/60 bg-muted/20">
@@ -1194,6 +1326,79 @@ export default function TradeProductStartClient({ product, questions, basePrice,
                     </div>
                   </div>
 
+                  {/* Terms of Service checkbox */}
+                  <div className="flex items-start gap-2.5">
+                    <input
+                      type="checkbox"
+                      id="tosCheckbox"
+                      checked={tosAccepted}
+                      onChange={(e) => {
+                        if (!tosAccepted && !tosScrolledToBottom) {
+                          e.preventDefault()
+                          setTosDialogOpen(true)
+                        } else {
+                          trigger('selection')
+                          setTosAccepted(e.target.checked)
+                        }
+                      }}
+                      className="rounded border-border mt-0.5"
+                    />
+                    <label htmlFor="tosCheckbox" className="text-xs text-muted-foreground leading-relaxed">
+                      {t('tosAgree')}{' '}
+                      <button
+                        type="button"
+                        onClick={() => setTosDialogOpen(true)}
+                        className="text-primary underline underline-offset-2 hover:text-primary/80"
+                      >
+                        {t('tosLink')}
+                      </button>
+                      {' '}<span className="text-red-500">*</span>
+                    </label>
+                  </div>
+
+                  {/* TOS Dialog */}
+                  <Dialog open={tosDialogOpen} onOpenChange={setTosDialogOpen}>
+                    <DialogContent className="max-w-2xl max-h-[80vh] flex flex-col p-0">
+                      <DialogHeader className="px-6 pt-6 pb-0">
+                        <DialogTitle>{t('tosDialogTitle')}</DialogTitle>
+                        <DialogDescription>{t('tosDialogDesc')}</DialogDescription>
+                      </DialogHeader>
+                      <div
+                        ref={tosScrollRef}
+                        onScroll={(e) => {
+                          const el = e.target
+                          if (el.scrollHeight - el.scrollTop - el.clientHeight < 40) {
+                            setTosScrolledToBottom(true)
+                          }
+                        }}
+                        className="flex-1 overflow-y-auto px-6 py-4 text-sm"
+                      >
+                        <TermsOfServiceContent />
+                      </div>
+                      <div className="px-6 py-4 border-t border-border flex items-center justify-between gap-3">
+                        {!tosScrolledToBottom && (
+                          <p className="text-xs text-muted-foreground">{t('tosScrollHint')}</p>
+                        )}
+                        <div className="flex gap-2 ml-auto">
+                          <Button variant="outline" size="sm" onClick={() => setTosDialogOpen(false)}>
+                            {t('cancelButton')}
+                          </Button>
+                          <Button
+                            size="sm"
+                            disabled={!tosScrolledToBottom}
+                            onClick={() => {
+                              trigger('success')
+                              setTosAccepted(true)
+                              setTosDialogOpen(false)
+                            }}
+                          >
+                            {t('tosAcceptButton')}
+                          </Button>
+                        </div>
+                      </div>
+                    </DialogContent>
+                  </Dialog>
+
                   <motion.div
                     initial={{ opacity: 0, y: 12 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -1201,7 +1406,7 @@ export default function TradeProductStartClient({ product, questions, basePrice,
                   >
                     <Button
                       type="submit"
-                      disabled={submitting || !formData.name || !formData.email || !formData.address || !formData.city || !formData.state || !formData.zipCode || !shippingMethod}
+                      disabled={submitting || !formData.name || !formData.email || !formData.address || !formData.city || !formData.state || !formData.zipCode || !shippingMethod || !paymentMethod || !paymentHandle.trim() || !tosAccepted}
                       className="w-full gap-2 h-12 text-base rounded-xl group"
                     >
                       {submitting ? (
@@ -1256,15 +1461,39 @@ export default function TradeProductStartClient({ product, questions, basePrice,
                 <div className="flex items-center justify-between text-sm">
                   <span className="text-muted-foreground">{t('estimatedValue')}</span>
                   <span className="font-semibold text-emerald-600 dark:text-emerald-400">
-                    {formatCurrency(calculatedQuote.value)}
+                    {formatCurrency(calculatedQuote.value / 1.05)}
+                    {calculatedQuote.value > 0 && (
+                      <span className="text-emerald-500 dark:text-emerald-300 ml-1">
+                        +{formatCurrency(calculatedQuote.value - calculatedQuote.value / 1.05)} (5%)
+                      </span>
+                    )}
                   </span>
                 </div>
+                {calculatedQuote.value > 0 && (
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-muted-foreground">{t('total')}</span>
+                    <span className="font-bold text-emerald-600 dark:text-emerald-400">
+                      {formatCurrency(calculatedQuote.value)}
+                    </span>
+                  </div>
+                )}
                 <div className="flex items-center justify-between text-sm">
                   <span className="text-muted-foreground">{t('shippingMethod')}</span>
                   <span className="font-medium text-foreground flex items-center gap-1.5">
                     {shippingMethod === 'depxtech_box' ? <Package className="w-3.5 h-3.5" /> : <BoxIcon className="w-3.5 h-3.5" />}
                     {shippingMethod === 'depxtech_box' ? t('depxtechBox') : t('ownBox')}
                   </span>
+                </div>
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-muted-foreground">{t('paymentMethodLabel')}</span>
+                  <span className="font-medium text-foreground flex items-center gap-1.5">
+                    <WalletIcon className="w-3.5 h-3.5" />
+                    {paymentMethod === 'paypal' ? 'PayPal' : paymentMethod === 'zelle' ? 'Zelle' : paymentMethod === 'cashapp' ? 'Cash App' : paymentMethod === 'venmo' ? 'Venmo' : 'Bitcoin'}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-muted-foreground">{t('paymentHandleLabel')}</span>
+                  <span className="font-medium text-foreground">{paymentHandle}</span>
                 </div>
                 <div className="border-t border-border pt-3 space-y-1.5">
                   <div className="flex items-center justify-between text-sm">
