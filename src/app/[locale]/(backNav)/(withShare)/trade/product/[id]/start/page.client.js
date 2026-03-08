@@ -236,7 +236,6 @@ export default function TradeProductStartClient({ product, questions, basePrice,
     setAnimatedPrice(0)
 
     const target = calculatedQuote.value
-    const bonusTarget = target * 1.1
     let cancelled = false
     let startTime = null
 
@@ -245,23 +244,15 @@ export default function TradeProductStartClient({ product, questions, basePrice,
       if (startTime === null) startTime = now
 
       const elapsed = now - startTime
-      const totalDuration = 800 // 500ms count-up + 300ms bonus
+      const duration = 500
 
-      if (elapsed < 500) {
-        // Phase 1: count from 0 to target
-        const progress = elapsed / 500
+      if (elapsed < duration) {
+        const progress = elapsed / duration
         const eased = 1 - Math.pow(1 - progress, 3)
         setAnimatedPrice(target * eased)
         requestAnimationFrame(tick)
-      } else if (elapsed < totalDuration) {
-        // Phase 2: grow from target to target * 1.1
-        const progress2 = (elapsed - 500) / 300
-        const eased2 = 1 - Math.pow(1 - progress2, 3)
-        setAnimatedPrice(target + (bonusTarget - target) * eased2)
-        requestAnimationFrame(tick)
       } else {
-        // Done
-        setAnimatedPrice(bonusTarget)
+        setAnimatedPrice(target)
         hasAnimatedRef.current = true
         try { triggerRef.current() } catch (_) {}
       }
@@ -674,13 +665,7 @@ export default function TradeProductStartClient({ product, questions, basePrice,
               <p className="text-3xl font-bold text-emerald-600 dark:text-emerald-400">
                 {formatCurrency(calculatedQuote.value)}
               </p>
-              <div className="flex items-center justify-center gap-1.5 mt-1.5 text-xs text-emerald-600 dark:text-emerald-400">
-                <Sparkles className="w-3.5 h-3.5" />
-                <span className="font-medium">
-                  {t('onlineBonusIncluded', { amount: formatCurrency(Math.round(calculatedQuote.value * 0.0909)) })}
-                </span>
-              </div>
-              <p className="text-xs text-emerald-600/70 dark:text-emerald-400/70 mt-1">
+              <p className="text-xs text-emerald-600/70 dark:text-emerald-400/70 mt-1.5">
                 {t('finalValueNote')}
               </p>
             </div>
@@ -852,12 +837,6 @@ export default function TradeProductStartClient({ product, questions, basePrice,
                   >
                     {formatCurrency(animatedPrice)}
                   </p>
-                  <div className="flex items-center gap-1.5 mt-3">
-                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-100 dark:bg-emerald-900/40 text-xs font-medium text-emerald-700 dark:text-emerald-300">
-                      <Sparkles className="w-3 h-3" />
-                      {t('onlineBonusIncluded', { amount: formatCurrency(Math.round(calculatedQuote.value * 0.0909)) })}
-                    </span>
-                  </div>
                   <div>
                     <p className="text-xs text-muted-foreground mt-3">{t('finalValueNote')}</p>
                     <div className="flex items-start gap-2 mt-3 p-2.5 bg-amber-50/80 dark:bg-amber-950/30 border border-amber-200/60 dark:border-amber-800/40 rounded-xl">
@@ -1280,12 +1259,6 @@ export default function TradeProductStartClient({ product, questions, basePrice,
                     {formatCurrency(calculatedQuote.value)}
                   </span>
                 </div>
-                {!calculatedQuote.isZeroValue && calculatedQuote.value > 0 && (
-                  <div className="flex items-center gap-1.5 text-xs text-emerald-600 dark:text-emerald-400 pl-1">
-                    <Sparkles className="w-3 h-3" />
-                    <span>{t('onlineBonusIncluded', { amount: formatCurrency(Math.round(calculatedQuote.value * 0.0909)) })}</span>
-                  </div>
-                )}
                 <div className="flex items-center justify-between text-sm">
                   <span className="text-muted-foreground">{t('shippingMethod')}</span>
                   <span className="font-medium text-foreground flex items-center gap-1.5">
