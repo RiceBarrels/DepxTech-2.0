@@ -689,19 +689,12 @@ export default function TradeProductStartClient({ product, questions, basePrice,
 
             <div className="p-5 bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800 rounded-xl mb-6">
               <p className="text-xs font-medium text-emerald-600 dark:text-emerald-400 mb-1">{t('estimatedValue')}</p>
-              <div className="flex items-baseline gap-2 flex-wrap justify-center">
-                <p className="text-3xl font-bold text-emerald-600 dark:text-emerald-400">
-                  {formatCurrency(calculatedQuote.value / 1.05)}
-                </p>
-                {calculatedQuote.value > 0 && (
-                  <span className="text-base font-bold text-emerald-500 dark:text-emerald-300">
-                    +{formatCurrency(calculatedQuote.value - calculatedQuote.value / 1.05)} (5%)
-                  </span>
-                )}
-              </div>
+              <p className="text-3xl font-bold text-emerald-600 dark:text-emerald-400">
+                {formatCurrency(calculatedQuote.value)}
+              </p>
               {calculatedQuote.value > 0 && (
-                <p className="text-sm font-semibold text-emerald-600/80 dark:text-emerald-400/80 mt-1">
-                  {t('total')}: {formatCurrency(calculatedQuote.value)}
+                <p className="text-xs text-emerald-600/70 dark:text-emerald-400/70 mt-1">
+                  {formatCurrency(calculatedQuote.value / 1.05)}&nbsp;+&nbsp;{formatCurrency(calculatedQuote.value - calculatedQuote.value / 1.05)} (5%)
                 </p>
               )}
               <p className="text-xs text-emerald-600/70 dark:text-emerald-400/70 mt-1.5">
@@ -873,25 +866,18 @@ export default function TradeProductStartClient({ product, questions, basePrice,
                   )}>
                     {calculatedQuote.isZeroValue ? t('freeRecycling') : t('estimatedValue')}
                   </p>
-                  <div className="flex items-baseline gap-2 flex-wrap">
-                    <p className={cn(
-                        "text-4xl sm:text-5xl font-extrabold tabular-nums",
-                        calculatedQuote.isZeroValue
-                          ? "text-orange-600 dark:text-orange-400"
-                          : "text-emerald-600 dark:text-emerald-400"
-                      )}
-                    >
-                      {formatCurrency(animatedPrice / 1.05)}
-                    </p>
-                    {!calculatedQuote.isZeroValue && animatedPrice > 0 && (
-                      <span className="text-lg sm:text-xl font-bold text-emerald-500 dark:text-emerald-300">
-                        +{formatCurrency(animatedPrice - animatedPrice / 1.05)} (5%)
-                      </span>
+                  <p className={cn(
+                      "text-4xl sm:text-5xl font-extrabold tabular-nums",
+                      calculatedQuote.isZeroValue
+                        ? "text-orange-600 dark:text-orange-400"
+                        : "text-emerald-600 dark:text-emerald-400"
                     )}
-                  </div>
+                  >
+                    {formatCurrency(animatedPrice)}
+                  </p>
                   {!calculatedQuote.isZeroValue && animatedPrice > 0 && (
-                    <p className="text-sm font-semibold text-emerald-600/80 dark:text-emerald-400/80 mt-1">
-                      {t('total')}: {formatCurrency(animatedPrice)}
+                    <p className="text-sm text-emerald-600/70 dark:text-emerald-400/70 mt-1">
+                      {formatCurrency(animatedPrice / 1.05)}&nbsp;+&nbsp;{formatCurrency(animatedPrice - animatedPrice / 1.05)} (5%)
                     </p>
                   )}
                   <div>
@@ -1458,25 +1444,19 @@ export default function TradeProductStartClient({ product, questions, basePrice,
                   <span className="text-muted-foreground">{t('product')}</span>
                   <span className="font-medium text-foreground">{product.title}</span>
                 </div>
-                <div className="flex items-center justify-between text-sm">
-                  <span className="text-muted-foreground">{t('estimatedValue')}</span>
-                  <span className="font-semibold text-emerald-600 dark:text-emerald-400">
-                    {formatCurrency(calculatedQuote.value / 1.05)}
-                    {calculatedQuote.value > 0 && (
-                      <span className="text-emerald-500 dark:text-emerald-300 ml-1">
-                        +{formatCurrency(calculatedQuote.value - calculatedQuote.value / 1.05)} (5%)
-                      </span>
-                    )}
-                  </span>
-                </div>
-                {calculatedQuote.value > 0 && (
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-muted-foreground">{t('total')}</span>
-                    <span className="font-bold text-emerald-600 dark:text-emerald-400">
+                <div className="flex items-center justify-between">
+                  <span className="text-muted-foreground text-sm">{t('estimatedValue')}</span>
+                  <div className="text-right">
+                    <span className="font-bold text-base text-emerald-600 dark:text-emerald-400">
                       {formatCurrency(calculatedQuote.value)}
                     </span>
+                    {calculatedQuote.value > 0 && (
+                      <p className="text-xs text-emerald-600/70 dark:text-emerald-400/70">
+                        {formatCurrency(calculatedQuote.value / 1.05)}&nbsp;+&nbsp;{formatCurrency(calculatedQuote.value - calculatedQuote.value / 1.05)} (5%)
+                      </p>
+                    )}
                   </div>
-                )}
+                </div>
                 <div className="flex items-center justify-between text-sm">
                   <span className="text-muted-foreground">{t('shippingMethod')}</span>
                   <span className="font-medium text-foreground flex items-center gap-1.5">
