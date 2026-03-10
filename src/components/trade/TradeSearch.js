@@ -144,21 +144,26 @@ export default function TradeSearch({ variant = "default" }) {
                 .search-cursor {
                     animation: blink 1s step-end infinite;
                 }
-                @keyframes gradient-spin {
-                    to { --gradient-angle: 360deg; }
-                }
-                @property --gradient-angle {
-                    syntax: '<angle>';
-                    initial-value: 0deg;
-                    inherits: false;
-                }
-                .search-border {
-                    background: conic-gradient(from var(--gradient-angle), rgba(124,58,237,0.3), rgba(16,185,129,0.3), rgba(59,130,246,0.3), rgba(236,72,153,0.3), rgba(124,58,237,0.3));
-                    animation: gradient-spin 4s linear infinite;
-                }
+                .search-border,
                 .search-border-focused {
-                    background: conic-gradient(from var(--gradient-angle), #7c3aed, #10b981, #3b82f6, #ec4899, #7c3aed);
+                    overflow: hidden;
+                }
+                .search-border::before,
+                .search-border-focused::before {
+                    content: '';
+                    position: absolute;
+                    inset: -50%;
                     animation: gradient-spin 4s linear infinite;
+                    will-change: transform;
+                }
+                .search-border::before {
+                    background: conic-gradient(from 0deg, rgba(124,58,237,0.3), rgba(16,185,129,0.3), rgba(59,130,246,0.3), rgba(236,72,153,0.3), rgba(124,58,237,0.3));
+                }
+                .search-border-focused::before {
+                    background: conic-gradient(from 0deg, #7c3aed, #10b981, #3b82f6, #ec4899, #7c3aed);
+                }
+                @keyframes gradient-spin {
+                    to { transform: rotate(360deg); }
                 }
                 @keyframes search-expand {
                     from {

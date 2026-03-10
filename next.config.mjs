@@ -8,8 +8,9 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   experimental: {
-    optimizePackageImports: ['lucide-react'],
-    viewTransition: true
+    optimizePackageImports: ['lucide-react', 'framer-motion'],
+    viewTransition: true,
+    optimizeCss: true,
   },
   turbopack: {
     root: __dirname,
