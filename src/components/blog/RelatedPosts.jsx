@@ -23,7 +23,7 @@ export function RelatedPosts({ posts, className }) {
   if (posts.length === 0) return null
 
   return (
-    <section className={cn("py-16 bg-slate-50/50 dark:bg-slate-900/50", className)}>
+    <section className={cn("py-16", className)}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center gap-3 mb-8">
           <div className="p-2 rounded-xl bg-primary/10">
