@@ -104,6 +104,7 @@ export async function Footer(){
                                 <TransitionLink href="/terms-of-service" className={desktopLinkClass}>{t('termsOfService')}</TransitionLink>
                                 <TransitionLink href="/refund-policy" className={desktopLinkClass}>{t('refundPolicy')}</TransitionLink>
                                 <TransitionLink href="/shipping-policy" className={desktopLinkClass}>{t('shippingPolicy')}</TransitionLink>
+                                <a href="/sitemap.xml" className={desktopLinkClass}>{t('sitemap')}</a>
                             </div>
                         </div>
                     </div>
@@ -232,6 +233,8 @@ export async function Footer(){
                             <TransitionLink href="/refund-policy" className={linkClass}>{t('refundPolicy')}</TransitionLink>
                             <div className="px-6"><Separator /></div>
                             <TransitionLink href="/shipping-policy" className={linkClass}>{t('shippingPolicy')}</TransitionLink>
+                            <div className="px-6"><Separator /></div>
+                            <a href="/sitemap.xml" className={linkClass}>{t('sitemap')}</a>
                         </AccordionContent>
                     </AccordionItem>
                 </Accordion>
