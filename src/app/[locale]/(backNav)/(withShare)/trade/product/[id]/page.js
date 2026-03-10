@@ -35,11 +35,11 @@ export async function generateMetadata({ params }) {
         title: t('metaTitle', { title: resolved.title }),
         description: t('metaDesc', { title: resolved.title }),
         type: 'website',
-        url: `${baseUrl}/trade/product/${id}`,
+        url: `${baseUrl}/${locale}/trade/product/${id}`,
         images: product.imgs && product.imgs.length > 0 ? [product.imgs[0]] : [],
       },
       alternates: {
-        canonical: `${baseUrl}/trade/product/${id}`,
+        canonical: `${baseUrl}/${locale}/trade/product/${id}`,
       },
     }
   } catch (error) {

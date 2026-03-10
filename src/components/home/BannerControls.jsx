@@ -94,17 +94,19 @@ export function BannerControls({ count }) {
       </button>
 
       {/* Dots */}
-      <div className="absolute bottom-2 sm:bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5 z-10">
+      <div className="absolute bottom-0 sm:bottom-1 left-1/2 -translate-x-1/2 flex z-10">
         {Array.from({ length: count }, (_, i) => (
           <button
             key={i}
             onClick={() => scrollTo(i)}
-            className={cn(
-              "h-1.5 rounded-full transition-all",
-              i === current ? "w-5 bg-white" : "w-1.5 bg-white/50 hover:bg-white/70"
-            )}
+            className="flex items-center justify-center p-2"
             aria-label={`Go to slide ${i + 1}`}
-          />
+          >
+            <span className={cn(
+              "h-1.5 rounded-full transition-all block",
+              i === current ? "w-5 bg-white" : "w-1.5 bg-white/50 hover:bg-white/70"
+            )} />
+          </button>
         ))}
       </div>
     </>

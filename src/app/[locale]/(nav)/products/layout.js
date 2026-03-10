@@ -19,7 +19,7 @@ export async function generateMetadata({ params }) {
       title: t('productsTitle'),
       description: t('productsDescription'),
       type: 'website',
-      url: `${baseUrl}/products`,
+      url: `${baseUrl}/${locale}/products`,
       siteName: 'DepxTech',
       images: [{ url: `${baseUrl}/lightLogo.svg`, width: 1200, height: 630, alt: 'DepxTech' }],
     },
@@ -29,7 +29,7 @@ export async function generateMetadata({ params }) {
       description: t('productsDescription'),
       images: [`${baseUrl}/lightLogo.svg`],
     },
-    alternates: { canonical: `${baseUrl}/products` },
+    alternates: { canonical: `${baseUrl}/${locale}/products` },
     robots: {
       index: true, follow: true,
       googleBot: { index: true, follow: true, 'max-video-preview': -1, 'max-image-preview': 'large', 'max-snippet': -1 },

@@ -66,7 +66,7 @@ export function LanguageSwitcher({ variant = 'default' }) {
   if (variant === 'compact') {
     return (
       <Select value={locale} onValueChange={handleChange} popover>
-        <SelectTrigger className="w-auto h-6 gap-1.5 px-4 text-xs border-none py-0">
+        <SelectTrigger className="w-auto h-6 gap-1.5 px-4 text-xs border-none py-0" aria-label="Select language">
           <SelectValue />
         </SelectTrigger>
         <SelectContent>
@@ -85,7 +85,7 @@ export function LanguageSwitcher({ variant = 'default' }) {
 
   return (
     <Select value={locale} onValueChange={handleChange}>
-      <SelectTrigger className="w-[160px] h-8 gap-2 text-sm">
+      <SelectTrigger className="w-[160px] h-8 gap-2 text-sm" aria-label="Select language">
         <FlagIcon code={localeFlags[locale]} label={localeLabels[locale]} className="w-5 h-3.5 shrink-0" />
         <SelectValue />
       </SelectTrigger>

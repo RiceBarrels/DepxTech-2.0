@@ -88,7 +88,7 @@ export async function generateMetadata({ params }) {
       googleBot: { index: true, follow: true, 'max-video-preview': -1, 'max-image-preview': 'large', 'max-snippet': -1 },
     },
     alternates: {
-      canonical: baseUrl,
+      canonical: `${baseUrl}/${locale}`,
       languages: Object.fromEntries(routing.locales.map(l => [l, `/${l}`])),
     },
   }

@@ -5,7 +5,7 @@ import ProductDetailClient from '@/components/product/ProductDetailClient'
 import { ProductStructuredData, BreadcrumbStructuredData } from '@/components/seo/StructuredData'
 
 export async function generateMetadata({ params }) {
-  const { id } = await params
+  const { id, locale } = await params
   const t = await getTranslations('productDetail')
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://depxtech.com'
   
@@ -43,7 +43,7 @@ export async function generateMetadata({ params }) {
         title,
         description,
         type: 'website',
-        url: `${baseUrl}/products/${id}`,
+        url: `${baseUrl}/${locale}/products/${id}`,
         images: [
           {
             url: image,
@@ -60,7 +60,7 @@ export async function generateMetadata({ params }) {
         images: [image],
       },
       alternates: {
-        canonical: `${baseUrl}/products/${id}`,
+        canonical: `${baseUrl}/${locale}/products/${id}`,
       },
       other: {
         'product:price:amount': productDetails.price?.toString() || '',

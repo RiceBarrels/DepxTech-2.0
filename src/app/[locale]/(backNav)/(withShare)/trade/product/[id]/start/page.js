@@ -29,10 +29,10 @@ export async function generateMetadata({ params }) {
         title: t('startTradeIn', { title: resolved.title }),
         description: t('metaDesc', { title: resolved.title }),
         type: 'website',
-        url: `${baseUrl}/trade/product/${id}/start`,
+        url: `${baseUrl}/${locale}/trade/product/${id}/start`,
       },
       alternates: {
-        canonical: `${baseUrl}/trade/product/${id}/start`,
+        canonical: `${baseUrl}/${locale}/trade/product/${id}/start`,
       },
     }
   } catch (error) {

@@ -105,9 +105,9 @@ export async function WhyChooseUs() {
                     <Check className="w-5 h-5" />
                   </div>
                   <div>
-                    <h5 className="font-bold text-slate-900 dark:text-white">
+                    <h3 className="font-bold text-slate-900 dark:text-white">
                       Over <ScrollCounter value={12000} suffix=" kg" className="text-emerald-500" /> {t('eWasteDiverted')}
-                    </h5>
+                    </h3>
                     <p className="text-slate-500">{t('eWasteDesc')}</p>
                   </div>
                 </div>
@@ -118,7 +118,7 @@ export async function WhyChooseUs() {
                     <Check className="w-5 h-5" />
                   </div>
                   <div>
-                    <h5 className="font-bold text-slate-900 dark:text-white">{t('r2Certified')}</h5>
+                    <h3 className="font-bold text-slate-900 dark:text-white">{t('r2Certified')}</h3>
                     <p className="text-slate-500">{t('r2Desc')}</p>
                   </div>
                 </div>

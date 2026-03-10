@@ -73,11 +73,11 @@ export async function generateMetadata({ params }) {
     robots: { index: true, follow: true },
     openGraph: {
       title, description,
-      url: `${baseUrl}${browsePath}`,
+      url: `${baseUrl}/${locale}${browsePath}`,
       type: 'website',
       siteName: 'DepxTech',
     },
-    alternates: { canonical: `${baseUrl}${browsePath}` },
+    alternates: { canonical: `${baseUrl}/${locale}${browsePath}` },
   }
 }
 
