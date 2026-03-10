@@ -41,7 +41,7 @@ export async function HomeHero() {
             </div>
 
             {/* Headline */}
-            <div className="text-3xl sm:text-4xl lg:text-5xl font-black leading-[1.05] tracking-tight">
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black leading-[1.05] tracking-tight">
               <TextGenerateEffect
                 words={t('headline1')}
                 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 dark:text-white leading-[1.05] tracking-tight"
@@ -52,7 +52,7 @@ export async function HomeHero() {
                 <FlipWords words={t.raw('flipWords')} className="text-violet-600 dark:text-violet-400" />
                 {t('headline2')}
               </span>
-            </div>
+            </h1>
 
             {/* Subheadline */}
             <p className="text-slate-600 dark:text-slate-400 text-base max-w-md leading-relaxed">

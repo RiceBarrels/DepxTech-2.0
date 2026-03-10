@@ -98,7 +98,7 @@ export function generateViewport() {
   return {
     width: 'device-width',
     initialScale: 1,
-    maximumScale: 1,
+    maximumScale: 5,
     viewportFit: 'cover',
     themeColor: [
       { media: '(prefers-color-scheme: light)', color: '#ffffff' },

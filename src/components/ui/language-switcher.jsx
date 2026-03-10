@@ -10,7 +10,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import Flag from 'react-flagpack'
 import 'react-flagpack/dist/style.css'
 
 const localeLabels = {
@@ -49,6 +48,14 @@ const localeFlags = {
   'zh-HK': 'HK',
 }
 
+function FlagImg({ code, size = 'l', label, className = '' }) {
+  return (
+    <div className={`flag real-linear size-${size} border border-radius ${className}`.trim()}>
+      <img src={`/flags/${size}/${code}.svg`} alt={label} />
+    </div>
+  )
+}
+
 export function LanguageSwitcher({ variant = 'default' }) {
   const locale = useLocale()
   const router = useRouter()
@@ -68,12 +75,7 @@ export function LanguageSwitcher({ variant = 'default' }) {
           {routing.locales.map((l) => (
             <SelectItem key={l} value={l} className="text-xs">
               <div className="flex items-center gap-2">
-                <Flag
-                  code={localeFlags[l]}
-                  size="S"
-                  gradient="real-linear"
-                  hasBorderRadius
-                />
+                <FlagImg code={localeFlags[l]} size="S" label={localeLabels[l]} />
                 <span>{localeLabels[l]}</span>
               </div>
             </SelectItem>
@@ -86,25 +88,14 @@ export function LanguageSwitcher({ variant = 'default' }) {
   return (
     <Select value={locale} onValueChange={handleChange}>
       <SelectTrigger className="w-[160px] h-8 gap-2 text-sm">
-        <Flag
-          code={localeFlags[locale]}
-          size="M"
-          gradient="real-linear"
-          hasBorderRadius
-          className="shrink-0"
-        />
+        <FlagImg code={localeFlags[locale]} size="M" label={localeLabels[locale]} className="shrink-0" />
         <SelectValue />
       </SelectTrigger>
       <SelectContent>
         {routing.locales.map((l) => (
           <SelectItem key={l} value={l}>
             <div className="flex items-center gap-2">
-              <Flag
-                code={localeFlags[l]}
-                size="M"
-                gradient="real-linear"
-                hasBorderRadius
-              />
+              <FlagImg code={localeFlags[l]} size="M" label={localeLabels[l]} />
               <span>{localeLabels[l]}</span>
             </div>
           </SelectItem>

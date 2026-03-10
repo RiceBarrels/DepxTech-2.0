@@ -97,6 +97,7 @@ export function NavSearch({ className }) {
                         type="button"
                         onClick={() => { setQuery(''); setResults([]); setOpen(false) }}
                         className="absolute right-2 top-1/2 -translate-y-1/2 p-0.5 hover:bg-muted rounded"
+                        aria-label="Clear search"
                     >
                         <XIcon className="size-3.5 text-muted-foreground" />
                     </button>

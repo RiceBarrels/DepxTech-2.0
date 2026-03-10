@@ -223,6 +223,7 @@ export default function TradeSearch({ variant = "default" }) {
                                 onChange={(e) => setSearchTerm(e.target.value)}
                                 onFocus={handleFocus}
                                 placeholder=""
+                                aria-label="Search devices to trade in"
                                 className={`w-full ${isHero ? 'h-16 text-lg' : 'h-14 text-base'} pl-14 pr-24 bg-transparent border-none outline-none focus:ring-0 text-foreground`}
                             />
 
@@ -251,6 +252,7 @@ export default function TradeSearch({ variant = "default" }) {
                                         type="button"
                                         onClick={clearSearch}
                                         className="p-2 hover:bg-muted rounded-full transition-colors"
+                                        aria-label="Clear search"
                                     >
                                         <XIcon className="w-5 h-5 text-muted-foreground" />
                                     </button>
