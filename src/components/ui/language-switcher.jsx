@@ -10,7 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import 'react-flagpack/dist/style.css'
+import * as Flags from 'country-flag-icons/react/3x2'
 
 const localeLabels = {
   ar: 'العربية',
@@ -48,12 +48,10 @@ const localeFlags = {
   'zh-HK': 'HK',
 }
 
-function FlagImg({ code, size = 'l', label, className = '' }) {
-  return (
-    <div className={`flag real-linear size-${size} border border-radius ${className}`.trim()}>
-      <img src={`/flags/${size}/${code}.svg`} alt={label} />
-    </div>
-  )
+function FlagIcon({ code, label, className = '' }) {
+  const Flag = Flags[code]
+  if (!Flag) return null
+  return <Flag title={label} className={`inline-block rounded-sm ${className}`} />
 }
 
 export function LanguageSwitcher({ variant = 'default' }) {
@@ -75,7 +73,7 @@ export function LanguageSwitcher({ variant = 'default' }) {
           {routing.locales.map((l) => (
             <SelectItem key={l} value={l} className="text-xs">
               <div className="flex items-center gap-2">
-                <FlagImg code={localeFlags[l]} size="S" label={localeLabels[l]} />
+                <FlagIcon code={localeFlags[l]} label={localeLabels[l]} className="w-4 h-3" />
                 <span>{localeLabels[l]}</span>
               </div>
             </SelectItem>
@@ -88,14 +86,14 @@ export function LanguageSwitcher({ variant = 'default' }) {
   return (
     <Select value={locale} onValueChange={handleChange}>
       <SelectTrigger className="w-[160px] h-8 gap-2 text-sm">
-        <FlagImg code={localeFlags[locale]} size="M" label={localeLabels[locale]} className="shrink-0" />
+        <FlagIcon code={localeFlags[locale]} label={localeLabels[locale]} className="w-5 h-3.5 shrink-0" />
         <SelectValue />
       </SelectTrigger>
       <SelectContent>
         {routing.locales.map((l) => (
           <SelectItem key={l} value={l}>
             <div className="flex items-center gap-2">
-              <FlagImg code={localeFlags[l]} size="M" label={localeLabels[l]} />
+              <FlagIcon code={localeFlags[l]} label={localeLabels[l]} className="w-5 h-3.5" />
               <span>{localeLabels[l]}</span>
             </div>
           </SelectItem>
