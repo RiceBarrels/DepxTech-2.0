@@ -8,17 +8,11 @@ import { Testimonials } from '@/components/home/Testimonials'
 import { ImpactStats } from '@/components/home/ImpactStats'
 import { BrandMarquee } from '@/components/home/BrandMarquee'
 import { NewsletterSection } from '@/components/home/NewsletterSection'
-import { getTranslations } from 'next-intl/server'
+import { buildPageMeta } from '@/lib/seo'
 
 export async function generateMetadata({ params }) {
   const { locale } = await params
-  const t = await getTranslations({ locale, namespace: 'metadata' })
-  return {
-    title: t('homeTitle'),
-    description: t('homeDescription'),
-    openGraph: { title: t('homeTitle'), description: t('homeDescription'), type: 'website', siteName: 'DepxTech' },
-    twitter: { card: 'summary_large_image', title: t('homeTitle'), description: t('homeDescription') },
-  }
+  return buildPageMeta(locale, { titleKey: 'homeTitle', descKey: 'homeDescription', path: '' })
 }
 
 function SectionDivider() {

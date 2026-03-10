@@ -15,11 +15,13 @@ import {
 
 export async function generateMetadata({ params }) {
   const { locale } = await params
-  const t = await getTranslations({ locale, namespace: 'help' })
-  return {
-    title: t('title'),
-    description: t('metaDescription'),
-  }
+  const { buildPageMeta } = await import('@/lib/seo')
+  return buildPageMeta(locale, {
+    titleKey: 'title',
+    descKey: 'metaDescription',
+    path: '/help',
+    namespace: 'help',
+  })
 }
 
 export default async function HelpPage() {

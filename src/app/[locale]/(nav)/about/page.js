@@ -17,13 +17,8 @@ import {
 
 export async function generateMetadata({ params }) {
   const { locale } = await params
-  const t = await getTranslations({ locale, namespace: 'metadata' })
-  return {
-    title: t('aboutTitle'),
-    description: t('aboutDescription'),
-    openGraph: { title: t('aboutTitle'), description: t('aboutDescription'), type: 'website' },
-    robots: { index: true, follow: true },
-  }
+  const { buildPageMeta } = await import('@/lib/seo')
+  return buildPageMeta(locale, { titleKey: 'aboutTitle', descKey: 'aboutDescription', path: '/about' })
 }
 
 export default async function AboutPage() {

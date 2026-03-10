@@ -15,8 +15,8 @@ import {
 
 export async function generateMetadata({ params }) {
   const { locale } = await params
-  const t = await getTranslations({ locale, namespace: 'metadata' })
-  return { title: t('blogTitle'), description: t('blogDescription') }
+  const { buildPageMeta } = await import('@/lib/seo')
+  return buildPageMeta(locale, { titleKey: 'blogTitle', descKey: 'blogDescription', path: '/blog' })
 }
 
 function formatDate(dateString) {

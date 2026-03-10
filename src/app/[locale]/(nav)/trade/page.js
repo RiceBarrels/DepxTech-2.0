@@ -14,13 +14,8 @@ import { getTranslations } from 'next-intl/server'
 
 export async function generateMetadata({ params }) {
   const { locale } = await params
-  const t = await getTranslations({ locale, namespace: 'metadata' })
-  return {
-    title: t('tradeTitle'),
-    description: t('tradeDescription'),
-    openGraph: { title: t('tradeTitle'), description: t('tradeDescription'), type: 'website' },
-    robots: { index: true, follow: true },
-  }
+  const { buildPageMeta } = await import('@/lib/seo')
+  return buildPageMeta(locale, { titleKey: 'tradeTitle', descKey: 'tradeDescription', path: '/trade' })
 }
 
 export default async function TradePage() {
