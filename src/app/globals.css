@@ -790,150 +790,60 @@ body {
   } */
 }
 
-/* Enable view transitions on mobile */
-@supports (view-transition-name: none) {
-  :root {
-    view-transition-name: root;
-  }
+/* ═══════════════════════════════════════════
+   View Transitions
+   ═══════════════════════════════════════════ */
+
+@view-transition {
+  navigation: auto;
 }
 
-/* View Transitions - Root */
-::view-transition-old(root),
-::view-transition-new(root) {
-  /* animation: none; */
-  /* mix-blend-mode: normal; Prevents blending issues */
-}
+/* ── Global defaults ── */
+::view-transition-group(*) { z-index: 0; }
+::view-transition-old(*) { z-index: 0; }
+::view-transition-new(*) { z-index: 1; }
 
-/* Default: fade and scale for nav pages */
+/* ── Root page transitions ── */
+
+/* Default: fade + scale (nav pages) */
 :root:not(.transition-slide) ::view-transition-old(root) {
-
-  animation-name: fade-and-scale-out;
+  animation: vt-fade-scale-out 0.3s cubic-bezier(0.32, 0.72, 0, 1) both;
 }
-
 :root:not(.transition-slide) ::view-transition-new(root) {
-  animation-name: fade-and-scale-in;
+  animation: vt-fade-scale-in 0.3s cubic-bezier(0.32, 0.72, 0, 1) both;
 }
 
-/* Slide transitions when navigating to/from transition routes (no nav) */
+/* Slide (transition routes — login, checkout, account, etc.) */
 :root.transition-slide ::view-transition-old(root) {
-  animation-name: slide-out-left;
-  animation-duration: 0.35s;
-  animation-timing-function: cubic-bezier(0.32, 0.72, 0, 1);
+  animation: vt-slide-out 0.35s cubic-bezier(0.32, 0.72, 0, 1) both;
 }
-
 :root.transition-slide ::view-transition-new(root) {
-  animation-name: slide-in-right;
-  animation-duration: 0.35s;
-  animation-timing-function: cubic-bezier(0.32, 0.72, 0, 1);
+  animation: vt-slide-in 0.35s cubic-bezier(0.32, 0.72, 0, 1) both;
 }
 
-/* View Transitions for Main Content Only - fast start, ease out */
-::view-transition-old(main-content) {
-  animation: main-content-out 0.2s cubic-bezier(0.4, 0, 1, 1) forwards;
-}
-
-::view-transition-new(main-content) {
-  animation: main-content-in 0.3s cubic-bezier(0.0, 0, 0.2, 1) 0.15s both;
-}
-
-/* View Transitions for transition pages - fancy left-to-right slide */
-::view-transition-old(transition-page),
-::view-transition-new(transition-page) {
-  animation-duration: 0.35s;
-  animation-timing-function: cubic-bezier(0.32, 0.72, 0, 1);
-}
-
+/* ── transition-page (nav + backNav layouts) ── */
 ::view-transition-old(transition-page) {
-  animation-name: slide-out-left;
+  animation: vt-slide-out 0.35s cubic-bezier(0.32, 0.72, 0, 1) both;
 }
-
 ::view-transition-new(transition-page) {
-  animation-name: slide-in-right;
+  animation: vt-slide-in 0.35s cubic-bezier(0.32, 0.72, 0, 1) both;
+}
+::view-transition-group(transition-page) { z-index: 20 !important; }
+
+/* ── Admin content ── */
+::view-transition-old(admin-content) {
+  animation: vt-content-out 0.25s cubic-bezier(0.4, 0, 1, 1) forwards;
+}
+::view-transition-new(admin-content) {
+  animation: vt-content-in 0.3s cubic-bezier(0, 0, 0.2, 1) 0.1s both;
 }
 
-::view-transition-group(transition-page) {
-  z-index: 20 !important;
-}
-
-/* View Transitions for fade-and-scale Only */
-::view-transition-old(fade-and-scale),
-::view-transition-new(fade-and-scale) {
-  animation-duration: 0.3s;
-  animation-timing-function: cubic-bezier(0.32, 0.72, 0, 1);
-}
-
-::view-transition-old(fade-and-scale) {
-  animation-name: fade-and-scale-out;
-}
-
-::view-transition-new(fade-and-scale) {
-  animation-name: fade-and-scale-in;
-}
-
-/* View Transitions for auth-card Only */
-::view-transition-old(auth-card),
-::view-transition-new(auth-card) {
-  animation-duration: 0.3s;
-  animation-timing-function: cubic-bezier(0.32, 0.72, 0, 1);
-}
-
-::view-transition-old(auth-card) {
-  animation-name: slide-out-fade;
-}
-
-::view-transition-new(auth-card) {
-  animation-name: slide-in-fade;
-}
-
-/* sidebar */
-::view-transition-old(side-bar),
-::view-transition-new(side-bar) {
-  animation-duration: 0.3s;
-  animation-timing-function: cubic-bezier(0.32, 0.72, 0, 1);
-}
-
-::view-transition-old(side-bar) {
-  animation-name: slide-out-fade;
-}
-
-::view-transition-new(side-bar) {
-  animation-name: slide-in-fade;
-}
-
-/* Ensure nav stays on top during view transitions */
-::view-transition-group(*) {
-  z-index: 0;
-}
-/* Ensure nav stays on top during view transitions */
-::view-transition-old(*){
-  z-index: 0;
-  /* mix-blend-mode: plus-lighter */
-}
-/* Ensure nav stays on top during view transitions */
-::view-transition-new(*) {
-  z-index: 1;
-  /* mix-blend-mode: plus-lighter */
-}
-
-/* Nav should be below transition pages */
-nav[class*="fixed"] {
-  position: fixed !important;
-  z-index: 10 !important;
-  isolation: isolate;
-}
-
-/* Nav bar view transition - always on top */
+/* ── Persistent UI — always on top ── */
 ::view-transition-group(nav-bar),
 ::view-transition-group(nav-bar-mobile),
 ::view-transition-group(pwa-tab-bar),
 ::view-transition-group(route-controller) {
   z-index: 20 !important;
-}
-
-/* Transition pages should be below nav */
-[data-route-group="transitions"] {
-  z-index: 10 !important;
-  position: relative;
 }
 
 ::view-transition-old(nav-bar),
@@ -943,197 +853,65 @@ nav[class*="fixed"] {
 ::view-transition-old(pwa-tab-bar),
 ::view-transition-new(pwa-tab-bar),
 ::view-transition-old(route-controller),
-::view-transition-new(route-controller)
- {
+::view-transition-new(route-controller) {
   mix-blend-mode: normal;
 }
 
-@keyframes slide-out-fade {
-  from {
-    opacity: 1;
-    transform: translateX(0);
-  }
-  to {
-    opacity: 0;
-    transform: translateX(-20px);
-  }
+[data-route-group="transitions"] {
+  z-index: 10 !important;
+  position: relative;
 }
 
-@keyframes slide-in-fade {
-  from {
-    opacity: 0;
-    transform: translateX(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
+/* ── Keyframes ── */
+
+@keyframes vt-fade-scale-out {
+  to { opacity: 0; transform: scale(0.96) translateX(-8px); }
+}
+@keyframes vt-fade-scale-in {
+  from { opacity: 0; transform: scale(1.04) translateX(8px); }
 }
 
-/* Main transition animations */
-@keyframes pageEnter {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+@keyframes vt-slide-out {
+  to { opacity: 0; transform: translateX(-30%) scale(0.95); }
+}
+@keyframes vt-slide-in {
+  from { opacity: 0; transform: translateX(30%) scale(0.95); }
 }
 
-@keyframes pageExit {
-  from {
-    opacity: 1;
-    transform: translateY(0);
-  }
-  to {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
+@keyframes vt-content-out {
+  to { opacity: 0; transform: translateY(-20px); filter: blur(2px); }
+}
+@keyframes vt-content-in {
+  from { opacity: 0; transform: translateY(20px); filter: blur(2px); }
 }
 
-@keyframes fade-and-scale-out {
-  from {
-    opacity: 1;
-    transform: scale(1) translateX(0);
-  }
-  to {
-    opacity: 0;
-    transform: scale(0.96) translateX(-8px);
-  }
-}
-
-@keyframes fade-and-scale-in {
-  from {
-    opacity: 0;
-    transform: scale(1.04) translateX(8px);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1) translateX(0);
-  }
-}
-
-/* Smooth main-content animations */
-/* Old page exits upward */
-@keyframes main-content-out {
-  0% {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-    filter: blur(0);
-  }
-  100% {
-    opacity: 0;
-    transform: translateY(-50px) scale(0.95);
-    filter: blur(4px);
-  }
-}
-
-/* New page enters from below */
-@keyframes main-content-in {
-  0% {
-    opacity: 0;
-    transform: translateY(50px) scale(1.03);
-    filter: blur(4px);
-  }
-  50% {
-    filter: blur(0);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-    filter: blur(0);
-  }
-}
-
-/* Smooth slide transitions - mobile-like full screen slide */
-@keyframes slide-out-left {
-  from {
-    opacity: 1;
-    transform: translateX(0) scale(1);
-  }
-  to {
-    opacity: 0;
-    transform: translateX(-30%) scale(0.95);
-  }
-}
-
-@keyframes slide-in-right {
-  from {
-    opacity: 0;
-    transform: translateX(30%) scale(0.95);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0) scale(1);
-  }
-}
-
-/* Fade transitions */
-@keyframes fade-out {
-  from {
-    opacity: 1;
-  }
-  to {
-    opacity: 0;
-  }
-}
-
+/* ── Utility animation classes ── */
 @keyframes fade-in {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
-
 @keyframes fade-in-up {
-  from {
-    opacity: 0;
-    transform: translateY(12px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
 }
-
 @keyframes slide-down {
-  from {
-    opacity: 0;
-    transform: translateY(-4px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@view-transition {
-  navigation: auto;
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .animate-fade-in {
   animation: fade-in 0.4s cubic-bezier(0.32, 0.72, 0, 1) both;
 }
-
 .animate-fade-in-up {
   animation: fade-in-up 0.4s cubic-bezier(0.32, 0.72, 0, 1) both;
 }
-
 .animate-slide-down {
   animation: slide-down 0.25s cubic-bezier(0.32, 0.72, 0, 1) both;
 }
 
-/* Optional: Add transition to specific elements */
-.sidebar-menu-button {
-  transition: all 0.2s ease;
-}
-
-.sidebar-menu-button:hover {
-  transform: translateX(2px);
+/* ── Layout containment for transitioned elements ── */
+[style*="viewTransitionName"] {
+  contain: layout;
 }
 
 /* Aceternity UI Animations */
@@ -1293,183 +1071,3 @@ nav[class*="fixed"] {
   opacity: 1;
 }
 
-/* Fix view transition flickering for morphing elements */
-/* Disable all transitions and animations during view transitions */
-::view-transition-group(*) {
-  animation-duration: 0.35s;
-  animation-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);
-}
-
-/* Product image view transitions - smooth morphing with blur and scale */
-::view-transition-old(product-image) {
-  animation: product-image-exit 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-::view-transition-new(product-image) {
-  animation: product-image-enter 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-::view-transition-group(product-image) {
-  z-index: 100;
-  transform-origin: center;
-}
-
-/* Product title view transitions - fancy slide with rotation */
-::view-transition-old(product-title) {
-  animation: title-exit 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-}
-
-::view-transition-new(product-title) {
-  animation: title-enter 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-}
-
-::view-transition-group(product-title) {
-  z-index: 99;
-}
-
-/* Price display view transitions - bounce effect */
-::view-transition-old(price-display) {
-  animation: price-exit 0.35s cubic-bezier(0.6, -0.28, 0.735, 0.045);
-}
-
-::view-transition-new(price-display) {
-  animation: price-enter 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
-
-::view-transition-group(price-display) {
-  z-index: 98;
-}
-
-/* Fancy animation keyframes */
-@keyframes product-image-exit {
-  from {
-    opacity: 1;
-    transform: scale(1) rotate(0deg);
-    filter: blur(0px);
-  }
-  to {
-    opacity: 0;
-    transform: scale(0.85) rotate(-2deg);
-    filter: blur(8px);
-  }
-}
-
-@keyframes product-image-enter {
-  from {
-    opacity: 0;
-    transform: scale(1.15) rotate(2deg);
-    filter: blur(8px);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1) rotate(0deg);
-    filter: blur(0px);
-  }
-}
-
-@keyframes title-exit {
-  from {
-    opacity: 1;
-    transform: translateY(0) translateX(0) rotate(0deg);
-    filter: blur(0px);
-  }
-  to {
-    opacity: 0;
-    transform: translateY(-20px) translateX(-10px) rotate(-3deg);
-    filter: blur(4px);
-  }
-}
-
-@keyframes title-enter {
-  from {
-    opacity: 0;
-    transform: translateY(20px) translateX(10px) rotate(3deg);
-    filter: blur(4px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) translateX(0) rotate(0deg);
-    filter: blur(0px);
-  }
-}
-
-@keyframes price-exit {
-  from {
-    opacity: 1;
-    transform: scale(1) translateY(0);
-  }
-  to {
-    opacity: 0;
-    transform: scale(0.8) translateY(-15px);
-  }
-}
-
-@keyframes price-enter {
-  from {
-    opacity: 0;
-    transform: scale(0.7) translateY(15px);
-  }
-  50% {
-    transform: scale(1.05) translateY(-2px);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1) translateY(0);
-  }
-}
-
-/* Admin content view transitions */
-::view-transition-old(admin-content) {
-  animation: admin-content-out 0.25s cubic-bezier(0.4, 0, 1, 1) forwards;
-}
-
-::view-transition-new(admin-content) {
-  animation: admin-content-in 0.3s cubic-bezier(0.0, 0, 0.2, 1) 0.1s both;
-}
-
-@keyframes admin-content-out {
-  from {
-    opacity: 1;
-    transform: translateY(0);
-    filter: blur(0);
-  }
-  to {
-    opacity: 0;
-    transform: translateY(-20px);
-    filter: blur(2px);
-  }
-}
-
-@keyframes admin-content-in {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-    filter: blur(2px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-    filter: blur(0);
-  }
-}
-
-/* Prevent layout shifts during view transitions */
-[style*="viewTransitionName"] {
-  contain: layout;
-}
-
-/* Disable regular CSS transitions during view transitions */
-@media (prefers-reduced-motion: no-preference) {
-  html:has(::view-transition) * {
-    transition-property: none !important;
-    animation: none !important;
-  }
-
-  /* Except for view transition pseudo-elements */
-  html:has(::view-transition) ::view-transition-group(*),
-  html:has(::view-transition) ::view-transition-old(*),
-  html:has(::view-transition) ::view-transition-new(*) {
-    transition-property: all !important;
-    animation: inherit !important;
-  }
-}

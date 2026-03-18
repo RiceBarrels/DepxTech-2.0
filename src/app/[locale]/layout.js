@@ -162,7 +162,7 @@ export default async function LocaleLayout({ children, params }) {
           </AuthProvider>
         {/* </PasswordWall> */}
         <Analytics />
-        <SpeedInsights />
+        {/* <SpeedInsights /> */}
       </body>
     </html>
     </ViewTransitions>

@@ -1,7 +1,8 @@
 import Image from 'next/image'
 import { TextGenerateEffect } from '@/components/ui/aceternity/text-generate-effect'
-import TradeSearch from '@/components/trade/TradeSearch'
-import { Leaf, BadgeCheck, DollarSign } from 'lucide-react'
+import HeroSearchTabs from '@/components/home/HeroSearchTabs'
+import { Leaf, BadgeCheck, DollarSign, SmartphoneIcon, LaptopIcon, TabletIcon, GamepadIcon, HeadphonesIcon, WatchIcon } from 'lucide-react'
+import { Link } from '@/i18n/navigation'
 import { FlipWords } from '../ui/flip-words'
 import { getTranslations } from 'next-intl/server'
 
@@ -59,8 +60,32 @@ export async function HomeHero() {
               {t('subheadline')}
             </p>
 
-            {/* Search */}
-            <TradeSearch variant="hero" />
+            {/* Search Tabs */}
+            <HeroSearchTabs />
+
+            {/* Category Quick-Links */}
+            <div className="flex flex-col gap-2">
+              <p className="text-xs text-slate-400 dark:text-slate-500 text-center font-medium tracking-wide">— Or browse by —</p>
+              <div className="flex flex-wrap gap-2">
+                {[
+                  { href: "/trade?category=smartphones", icon: SmartphoneIcon, label: "Phones" },
+                  { href: "/trade?category=laptops", icon: LaptopIcon, label: "Laptops" },
+                  { href: "/trade?category=tablets", icon: TabletIcon, label: "Tablets" },
+                  { href: "/trade?category=gaming", icon: GamepadIcon, label: "Gaming" },
+                  { href: "/trade?category=audio", icon: HeadphonesIcon, label: "Audio" },
+                  { href: "/trade?category=wearables", icon: WatchIcon, label: "Wearables" },
+                ].map(({ href, icon: Icon, label }) => (
+                  <Link
+                    key={href}
+                    href={href}
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border border-slate-200 dark:border-white/10 bg-white/50 dark:bg-white/[0.03] text-slate-600 dark:text-slate-400 hover:border-violet-300 dark:hover:border-violet-500/30 hover:text-violet-600 dark:hover:text-violet-400 transition-colors"
+                  >
+                    <Icon className="size-3" />
+                    {label}
+                  </Link>
+                ))}
+              </div>
+            </div>
 
             {/* Trust */}
             <div className="flex items-center gap-4 text-sm">
