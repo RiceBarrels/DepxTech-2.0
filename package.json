@@ -8,7 +8,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "postinstall": "mkdir -p public/flags/{s,m,l} && for size in s m l; do for flag in US CN HK SA NL FR DE IT JP KR PL PT RU ES SE; do cp node_modules/react-flagpack/dist/flags/$size/$flag.svg public/flags/$size/ 2>/dev/null; done; done"
+    "postinstall": "mkdir -p public/flags/s public/flags/m public/flags/l && for size in s m l; do for flag in US CN HK SA NL FR DE IT JP KR PL PT RU ES SE; do cp node_modules/react-flagpack/dist/flags/$size/$flag.svg public/flags/$size/ 2>/dev/null || true; done; done"
   },
   "dependencies": {
     "@clerk/nextjs": "^6.37.3",
