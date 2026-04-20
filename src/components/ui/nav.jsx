@@ -407,8 +407,8 @@ export default function Nav({ layers = 3 }) {
                     paddingTop: `${safeArea.top}px`,
                 }}
             >
-                {/* Layer 1: Logo + Account + Hamburger */}
-                <div className="flex items-center justify-between h-11 px-4">
+                {/* Layer 1: Logo + Account (pl-16 reserves space for floating sidebar button) */}
+                <div className="flex items-center justify-between h-11 pl-16 pr-4">
                     <TransitionLink href="/" className="flex items-center shrink-0">
                         <h1 className="font-black text-xl tracking-tight">DepxTech</h1>
                     </TransitionLink>
@@ -433,23 +433,6 @@ export default function Nav({ layers = 3 }) {
                                 <UserIcon className="size-5 text-muted-foreground" />
                             </TransitionLink>
                         ) : null}
-
-                        <Button
-                            onClick={() => {
-                                setDrawerOpen(true);
-                                trigger([
-                                    { duration: 100, intensity: 1 },
-                                    { delay: 120, duration: 30, intensity: 1 },
-                                ])
-                            }}
-                            className="p-2 -mr-2 text-foreground"
-                            variant="ghost"
-                            size="icon"
-                            aria-label="Open menu"
-                            doHaptic={false}
-                        >
-                            <MenuIcon className="size-5" />
-                        </Button>
                     </div>
                 </div>
 
@@ -472,8 +455,8 @@ export default function Nav({ layers = 3 }) {
                 )}
             </motion.nav>}
 
-            {/* ── Mobile Drawer Menu with Sub-Panels ── */}
-            <Drawer open={drawerOpen} onOpenChange={(open) => { setDrawerOpen(open); if (!open) setDrawerSection(null) }} direction="right">
+            {/* Mobile drawer removed — navigation handled by MobileSidebarShell */}
+            {false && <Drawer open={drawerOpen} onOpenChange={(open) => { setDrawerOpen(open); if (!open) setDrawerSection(null) }} direction="right">
                 <DrawerContent
                     className="h-full w-[280px] ml-auto border-none rounded-xl rounded-r-none p-2 shadow-2xl z-101"
                     showCloseButton={false}
@@ -602,7 +585,7 @@ export default function Nav({ layers = 3 }) {
                         </div>
                     </div>
                 </DrawerContent>
-            </Drawer>
+            </Drawer>}
 
             {/* ── PWA Bottom Tab Bar ── */}
             {isPwaMode && (
