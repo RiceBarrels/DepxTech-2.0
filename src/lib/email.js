@@ -1,7 +1,11 @@
 import { Resend } from 'resend'
 import { createClient } from '@supabase/supabase-js'
 
-const resend = new Resend(process.env.RESEND_API_KEY)
+let _resend = null
+function getResend() {
+    if (!_resend) _resend = new Resend(process.env.RESEND_API_KEY)
+    return _resend
+}
 
 const FROM_EMAIL = process.env.STORE_EMAIL || 'support@depxtech.com'
 
@@ -57,7 +61,7 @@ export function notifyAdmins({ subject, html }) {
                 return
             }
 
-            const { error } = await resend.emails.send({
+            const { error } = await getResend().emails.send({
                 from: `DepxTech <${FROM_EMAIL}>`,
                 to: emails,
                 subject,
@@ -128,7 +132,7 @@ export function buildTradeInEmail({ productTitle, customerName, customerEmail, c
  * Send email to a customer (fire-and-forget)
  */
 export function notifyCustomer({ to, subject, html }) {
-    resend.emails.send({
+    getResend().emails.send({
         from: `DepxTech <${FROM_EMAIL}>`,
         to,
         subject,
