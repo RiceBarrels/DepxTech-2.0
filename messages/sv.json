@@ -17,6 +17,8 @@
     "condition": "Skick:",
     "getYourQuote": "Få din offert",
     "readyToTradeIn": "Redo att byta in?",
+    "offers": "Erbjudanden",
+    "cart": "Kundvagn",
     "status": {
       "pending": "Väntande",
       "approved": "Godkänd",
@@ -116,6 +118,29 @@
       "subscribing": "Prenumererar...",
       "success": "Prenumeration lyckades!",
       "successDesc": "Du kommer att få uppdateringar om inbytespriser i din inkorg."
+    },
+    "testimonials": {
+      "heading": "Vad våra kunder säger",
+      "subheading": "Tusentals nöjda kunder har bytt in sina enheter hos oss",
+      "review1Quote": "Fick $380 för min gamla iPhone 13 — mycket mer än jag förväntade mig. Hela processen tog mindre än en vecka från offert till betalning.",
+      "review1Name": "Sarah M.",
+      "review1Device": "iPhone 13 Pro",
+      "review2Quote": "Jag var skeptisk i början, men DepxTech gjorde det så enkelt. Gratis fraktetikett, snabb inspektion och utbetalningen var exakt vad de offererade.",
+      "review2Name": "James L.",
+      "review2Device": "MacBook Air M1",
+      "review3Quote": "Bästa inbytesupplevelsen jag någonsin haft. Det miljövänliga tillvägagångssättet är en enorm bonus. Kommer definitivt att använda igen vid nästa uppgradering.",
+      "review3Name": "Emily R.",
+      "review3Device": "iPad Pro 11\"",
+      "review4Quote": "Skickade in min Galaxy S22 och fick betalt inom 48 timmar. Erbjudandet var rättvist och processen kunde inte ha varit enklare. Har redan rekommenderat till vänner.",
+      "review4Name": "Marcus T.",
+      "review4Device": "Galaxy S22 Ultra",
+      "review5Quote": "Lämnade in en trasig laptop som jag trodde var värdelös. DepxTech gav mig ändå $120! Utmärkt kundservice och snabb hantering.",
+      "review5Name": "Jessica H.",
+      "review5Device": "HP Spectre x360",
+      "review6Quote": "Har använt DepxTech två gånger — för min gamla Switch och en MacBook. Båda gångerna var upplevelsen felfri. Rättvisa priser, inget krångel.",
+      "review6Name": "Ryan P.",
+      "review6Device": "Nintendo Switch + MacBook Pro",
+      "moreReviews": "Läs fler omdömen på"
     }
   },
   "footer": {
@@ -159,6 +184,7 @@
     "termsOfService": "Användarvillkor",
     "refundPolicy": "Återbetalningspolicy",
     "shippingPolicy": "Fraktpolicy",
+    "sitemap": "Sitemap",
     "copyright": "Copyright © {year} DepxTech. Alla rättigheter förbehållna."
   },
   "faq": {
@@ -537,6 +563,40 @@
     "ctaSubheading": "Få en offert för din enhet med bara några klick.",
     "ctaButton": "Få din offert"
   },
+  "about": {
+    "badge": "Om DepxTech",
+    "heading": "Gör teknikinköp enkelt, rättvist och grönt",
+    "subheading": "Vi började med en enkel idé: att sälja gammal elektronik borde vara enkelt, transparent och bra för planeten.",
+    "storyTitle": "Vår historia",
+    "storyP1": "DepxTech föddes ur frustration. Vi såg miljontals perfekt fungerande enheter samla damm i lådor — medan miljontals fler hamnade på soptippen varje år. Befintliga alternativ var långsamma, förvirrande och erbjöd orättvisa priser. Vi visste att det måste finnas ett bättre sätt.",
+    "storyP2": "Så vi byggde DepxTech — en plattform där vem som helst kan sälja sina gamla enheter på minuter, få ett omedelbart rättvist pris och snabbt få betalt. Inga dolda avgifter, inga låga bud, ingen väntan i veckor. Bara en enkel, ärlig process från början till slut.",
+    "storyP3": "Idag har vi hjälpt tusentals kunder att förvandla oanvända enheter till pengar och räddat tusentals apparater från soptippen. Varje inköp räknas — för din plånbok och för planeten. Och vi har bara börjat.",
+    "stat1Label": "Återvunna enheter",
+    "stat2Label": "Nöjda kunder",
+    "stat3Label": "Sparade CO₂-utsläpp",
+    "stat4Label": "Genomsnittlig utbetalningstid",
+    "valuesTitle": "Vad vi står för",
+    "valuesSubtitle": "Dessa kärnvärden styr varje beslut vi fattar och varje interaktion med våra kunder.",
+    "value1Title": "Hållbarhet först",
+    "value1Desc": "Varje enhet vi tar emot får ett andra liv. Vi samarbetar med certifierade återvinnare för att säkerställa noll deponiavfall.",
+    "value2Title": "Total transparens",
+    "value2Desc": "Inga dolda avgifter, inga överraskningar. Våra omedelbara bud baseras på verkliga marknadsdata, och vi håller alltid det erbjudna priset.",
+    "value3Title": "Snabbhet och enkelhet",
+    "value3Desc": "Bud på sekunder, gratis frakt, betalning inom 24 timmar efter inspektion. Vi respekterar din tid.",
+    "value4Title": "Kvalitet garanterad",
+    "value4Desc": "Varje renoverad enhet genomgår rigorösa tester. Vi backar upp våra produkter med garanti och problemfria returer.",
+    "diffTitle": "Varför DepxTech?",
+    "diffSubtitle": "Här är vad som gör oss annorlunda.",
+    "diff1Title": "Bästa marknadspriser",
+    "diff1Desc": "Våra bud drivs av realtidsmarknadsdata. Vi erbjuder konsekvent högre priser än konkurrenterna.",
+    "diff2Title": "Noll-avfall-löfte",
+    "diff2Desc": "99% av enheterna vi tar emot renoveras eller återvinns ansvarsfullt. Inget hamnar på soptippen.",
+    "diff3Title": "Kundfokuserade",
+    "diff3Desc": "Tusentals 5-stjärniga omdömen på eBay och Jawa. Våra kunder återkommer eftersom vi håller varje löfte.",
+    "ctaTitle": "Redo att sälja?",
+    "ctaDesc": "Gå med tusentals nöjda kunder som har förvandlat sina gamla enheter till pengar. Få ditt gratis omedelbara bud idag.",
+    "ctaButton": "Börja din försäljning"
+  },
   "sustainability": {
     "badge": "Vårt åtagande för planeten",
     "heading": "Hållbarhet hos DepxTech",
@@ -814,13 +874,26 @@
       "errorLoadSettings": "Kunde inte ladda inställningar",
       "errorUpdateSetting": "Kunde inte uppdatera inställning",
       "errorDeleteAccount": "Kontoborttagning kräver att du kontaktar support",
+      "pushPermissionDenied": "Behörighet för push-aviseringar nekades",
       "loadingSettings": "Laddar inställningar...",
       "pleaseLogIn": "Vänligen logga in",
       "needLogIn": "Du måste vara inloggad för att komma åt inställningar",
       "goToLogin": "Gå till inloggning"
     },
     "inboxPage": {
-      "title": "Inkorg"
+      "title": "Inkorg",
+      "subtitle": "Dina aviseringar och uppdateringar",
+      "loading": "Laddar aviseringar...",
+      "empty": "Inga aviseringar ännu",
+      "emptyDesc": "Här ser du uppdateringar om dina inbyten och beställningar",
+      "markAllRead": "Markera alla som lästa",
+      "loadMore": "Ladda fler",
+      "errorLoad": "Kunde inte ladda aviseringar",
+      "errorMarkRead": "Kunde inte uppdatera avisering",
+      "browseTradeIn": "Bläddra bland inbyten",
+      "pleaseLogIn": "Vänligen logga in",
+      "needLogIn": "Du måste vara inloggad för att se din inkorg.",
+      "goToLogin": "Gå till inloggning"
     },
     "membershipPage": {
       "title": "Medlemskap"
@@ -881,7 +954,8 @@
       "tradeInOrders": "Inbytesordrar",
       "offers": "Erbjudanden",
       "users": "Användare",
-      "signOut": "Logga ut"
+      "signOut": "Logga ut",
+      "goBackHome": "Tillbaka till startsidan"
     },
     "dashboard": {
       "title": "Översikt",
@@ -1042,7 +1116,8 @@
       "cancel": "Avbryt",
       "prev": "Föreg",
       "save": "Spara",
-      "saving": "Sparar..."
+      "saving": "Sparar...",
+      "fetchBackmarketPrices": "Hämta BackMarket-priser"
     },
     "users": {
       "title": "Användare",
@@ -1411,7 +1486,9 @@
     "privacyTitle": "Integritetspolicy",
     "privacyDescription": "DepxTech Integritetspolicy – Läs om hur vi samlar in, använder och skyddar din personliga information.",
     "membershipTitle": "Premiummedlemsförmåner | DepxTech",
-    "membershipDescription": "Gå med i vårt exklusiva medlemsprogram med fri frakt, månatliga gåvor, snabb leverans och överraskande veckoebjudanden."
+    "membershipDescription": "Gå med i vårt exklusiva medlemsprogram med fri frakt, månatliga gåvor, snabb leverans och överraskande veckoebjudanden.",
+    "aboutTitle": "Om oss | DepxTech",
+    "aboutDescription": "Lär dig om DepxTechs uppdrag — att göra inköp av elektronik enkelt, snabbt och miljövänligt. Vår historia, värderingar och engagemang för hållbarhet."
   },
   "trade": {
     "hero": {
@@ -1467,10 +1544,49 @@
       "customers": "Kunder",
       "rating": "Betyg"
     },
+    "cantFindDevice": "Hittar du inte din enhet?",
+    "cantFindDeviceDesc": "Skicka en anpassad inbytesförfrågan så återkommer vi med en offert.",
+    "cantFindDeviceCta": "Anpassat inbyte",
     "cta": {
       "title": "Redo att byta in?",
       "description": "Få ett rättvist pris för din gamla teknik idag.",
       "browseAll": "Bläddra bland alla enheter"
+    },
+    "custom": {
+      "metaTitle": "Anpassat inbyte | DepxTech",
+      "metaDesc": "Hittar du inte din enhet? Skicka en anpassad inbytesförfrågan.",
+      "title": "Anpassat inbyte",
+      "subtitle": "Din enhet finns inte i vår katalog? Beskriv den nedan så skickar vi en offert.",
+      "deviceInfoTitle": "Enhetsinformation",
+      "deviceName": "Enhetsnamn",
+      "deviceNamePlaceholder": "t.ex. iPhone 13 Pro, MacBook Air M2, Samsung Galaxy S23...",
+      "category": "Kategori",
+      "categoryPlaceholder": "Välj kategori",
+      "categoryOther": "Övrigt",
+      "brand": "Varumärke",
+      "brandPlaceholder": "t.ex. Apple, Samsung, Dell...",
+      "conditionDesc": "Beskrivning av skick",
+      "conditionDescPlaceholder": "Beskriv enhetens skick: repor, bucklor, skärmskador, batterihälsa osv.",
+      "photos": "Foton",
+      "photosHint": "Ladda upp max 5 foton av din enhet (max 10 MB vardera).",
+      "photosCount": "foto(n)",
+      "addPhotos": "Lägg till foton",
+      "uploading": "Laddar upp...",
+      "maxPhotos": "Max 5 foton tillåtna",
+      "photoTooLarge": "Fotot måste vara under 10 MB",
+      "photoUploadError": "Kunde inte ladda upp foto",
+      "submitButton": "Skicka inbytesförfrågan",
+      "submitting": "Skickar...",
+      "confirmTitle": "Bekräfta din inskickning",
+      "confirmDesc": "Granska enhetsinformation och kontaktuppgifter innan du skickar.",
+      "confirmSubmit": "Skicka förfrågan",
+      "successTitle": "Förfrågan skickad!",
+      "successDesc": "Vi har mottagit din anpassade inbytesförfrågan. Vårt team granskar den och återkommer med en offert inom 24 timmar.",
+      "successToast": "Anpassad inbytesförfrågan skickad!",
+      "errorSubmit": "Kunde inte skicka. Försök igen.",
+      "errorDeviceFieldsRequired": "Fyll i enhetsnamn, kategori och beskrivning av skick.",
+      "submitAnother": "Skicka en ny förfrågan",
+      "backToTrade": "Tillbaka till inbyte"
     },
     "search": {
       "prefix": "Sök \"",
@@ -1495,7 +1611,7 @@
       "devicesFound": "{count} {count, plural, one {enhet} other {enheter}} hittade",
       "noDevicesFound": "Inga enheter hittades",
       "noDevicesHint": "Prova att justera dina filter eller sök efter en annan enhet.",
-      "startsAt": "Från",
+      "upTo": "Upp till",
       "tradeInUpTo": "Inbytesvärde upp till",
       "getQuote": "Få offert",
       "tradeIn": "Byt in",
@@ -1510,7 +1626,18 @@
       "metaTitleDefault": "Bläddra bland inbytesenheter | DepxTech",
       "metaDescDefault": "Bläddra bland alla inbytesberättigade enheter hos DepxTech. Smartphones, bärbara datorer, surfplattor, GPU:er och mer.",
       "metaTitleFiltered": "Byt in {parts} | DepxTech",
-      "metaDescFiltered": "Byt in din {parts} hos DepxTech. Få omedelbara offerter och toppbetalning."
+      "metaDescFiltered": "Byt in din {parts} hos DepxTech. Få omedelbara offerter och toppbetalning.",
+      "filterBtn": "Filter",
+      "searchLabel": "Search",
+      "sortLabel": "Sort by",
+      "sortPriceDesc": "Price: High to Low",
+      "sortPriceAsc": "Price: Low to High",
+      "sortName": "Name: A to Z",
+      "sortPopular": "Most Popular",
+      "priceRange": "Price Range",
+      "seriesLabel": "Series",
+      "bannerBrandTitle": "Byt in {brand} {category} hos DepxTech",
+      "bannerBrandSubtitle": "Omedelbara offerter upp till ${value}"
     },
     "product": {
       "notFound": "Produkt hittades inte | DepxTech",
@@ -1526,6 +1653,9 @@
       "24hours": "24 timmar",
       "dataWipe": "Dataradering",
       "certified": "Certifierat",
+      "readyToStart": "Redo att få din offert?",
+      "answerFewQuestions": "Svara på några snabba frågor för att få en exakt inbytesvärdering.",
+      "startTradeIn": "Börja inbyte",
       "depreciationCurrent": "Aktuellt",
       "depreciationSignificant": "Betydande värdeminskning",
       "depreciationModerate": "Måttlig värdeminskning",
@@ -1563,6 +1693,7 @@
       "quoteSubmittedDesc": "Vi granskar din förfrågan och kontaktar dig inom 24 timmar.",
       "estimatedValue": "Ditt uppskattade värde",
       "finalValueNote": "Slutligt värde bekräftas efter inspektion",
+      "total": "Totalt",
       "whatsNext": "Vad händer nu?",
       "step1": "Kontrollera din e-post för bekräftelse",
       "step2": "Vi skickar dig en förbetald fraktetikett",
@@ -1603,7 +1734,37 @@
       "cancelButton": "Cancel",
       "product": "Product",
       "errorShippingRequired": "Please select a shipping method",
-      "onlineBonusIncluded": "Includes +10% Online Bonus ({amount})"
+      "onlineBonusIncluded": "Includes +10% Online Bonus ({amount})",
+      "shippingDeadlineWarning": "Please ship your device within 14 days. The final price may change if received after this period due to market fluctuations.",
+      "pushDialogTitle": "Håll koll på ditt inbyte",
+      "pushDialogDesc": "Få notiser när ditt inbyte godkänns, skickas eller slutförs. Vi skickar bara viktiga uppdateringar.",
+      "pushDialogEnable": "Aktivera notiser",
+      "pushDialogSkip": "Kanske senare",
+      "pushEnabled": "Notiser aktiverade! Vi håller dig uppdaterad.",
+      "pushFailed": "Kunde inte aktivera notiser. Försök igen senare.",
+      "savedAddresses": "Sparade",
+      "newAddress": "Ny adress",
+      "default": "Standard",
+      "saveToAddressBook": "Spara i adressboken",
+      "choosePaymentMethod": "Choose Payment Method",
+      "choosePaymentMethodDesc": "How would you like to receive your payment?",
+      "paymentMethodLabel": "Payment Method",
+      "paymentHandleLabel": "Payment Account",
+      "paymentHandle": "{method} username / email / address",
+      "paypalPlaceholder": "PayPal email address",
+      "zellePlaceholder": "Zelle email or phone number",
+      "cashappPlaceholder": "$cashtag or phone number",
+      "venmoPlaceholder": "@username or phone number",
+      "bitcoinPlaceholder": "Bitcoin wallet address",
+      "errorPaymentRequired": "Please select a payment method",
+      "errorPaymentHandleRequired": "Please enter your payment account info",
+      "tosAgree": "I have read and agree to the",
+      "tosLink": "Terms of Service",
+      "tosDialogTitle": "Terms of Service",
+      "tosDialogDesc": "Please read and scroll to the bottom to accept.",
+      "tosScrollHint": "Scroll to the bottom to accept",
+      "tosAcceptButton": "I Accept",
+      "errorTosRequired": "Please accept the Terms of Service"
     }
   }
 }

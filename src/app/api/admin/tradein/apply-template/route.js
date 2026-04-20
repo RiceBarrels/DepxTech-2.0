@@ -1,22 +1,7 @@
 import { NextResponse } from 'next/server'
 import { verifyAdminAccess } from '@/lib/serverAuth'
-import { createClient } from '@supabase/supabase-js'
+import { supabaseAdmin } from '@/lib/supabase-admin'
 
-function createServiceRoleClient() {
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-  const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE
-
-  if (!supabaseUrl || !supabaseServiceRoleKey) {
-    throw new Error('Missing Supabase environment variables')
-  }
-
-  return createClient(supabaseUrl, supabaseServiceRoleKey, {
-    auth: {
-      autoRefreshToken: false,
-      persistSession: false
-    }
-  })
-}
 
 export async function POST(request) {
   try {
@@ -37,7 +22,7 @@ export async function POST(request) {
       )
     }
 
-    const supabase = createServiceRoleClient()
+    const supabase = supabaseAdmin
 
     // Fetch the template
     const { data: template, error: templateError } = await supabase
@@ -58,7 +43,8 @@ export async function POST(request) {
       .from('tradable_products')
       .update({
         question_template_id: templateId,
-        questions: template.questions || []
+        questions: template.questions || [],
+        questions_i18n: template.questions_i18n || {}
       })
       .in('id', productIds)
       .select('id')

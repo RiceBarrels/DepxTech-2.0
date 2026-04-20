@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { saveTransaction } from '@/lib/serverAuth'
 import { createClient } from '@/utils/supabase/server'
 import { notifyAdmins, buildOrderEmail } from '@/lib/email'
+import { notifyAdminsPush } from '@/lib/notify'
 
 export async function POST(request) {
   try {
@@ -37,6 +38,14 @@ export async function POST(request) {
           customerEmail: user.email,
           cartItems,
         }),
+      })
+
+      // Notify admins via push + inbox (fire-and-forget)
+      notifyAdminsPush({
+        type: 'admin_order',
+        title: `New Order: $${(Number(amount) / 100).toFixed(2)}`,
+        body: `Order from ${user.email}`,
+        url: '/admin/orders',
       })
 
       return NextResponse.json({

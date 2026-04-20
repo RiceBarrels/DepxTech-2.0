@@ -17,6 +17,8 @@
     "condition": "상태:",
     "getYourQuote": "견적 받기",
     "readyToTradeIn": "보상 판매를 시작하시겠어요?",
+    "offers": "혜택",
+    "cart": "장바구니",
     "status": {
       "pending": "대기 중",
       "approved": "승인됨",
@@ -116,6 +118,29 @@
       "subscribing": "구독 중...",
       "success": "구독이 완료되었습니다!",
       "successDesc": "보상 판매 가격 업데이트가 이메일로 전송됩니다."
+    },
+    "testimonials": {
+      "heading": "고객 후기",
+      "subheading": "수천 명의 만족한 고객이 저희를 통해 기기를 보상 판매했습니다",
+      "review1Quote": "오래된 iPhone 13으로 $380을 받았습니다 — 예상보다 훨씬 많았어요. 견적부터 결제까지 일주일도 안 걸렸습니다.",
+      "review1Name": "Sarah M.",
+      "review1Device": "iPhone 13 Pro",
+      "review2Quote": "처음에는 반신반의했지만 DepxTech 덕분에 정말 쉬웠어요. 무료 배송 라벨, 빠른 검수, 견적 그대로 지급.",
+      "review2Name": "James L.",
+      "review2Device": "MacBook Air M1",
+      "review3Quote": "지금까지 최고의 보상 판매 경험이었습니다. 친환경적인 접근 방식도 큰 장점이에요. 다음 업그레이드 때도 꼭 이용할 거예요.",
+      "review3Name": "Emily R.",
+      "review3Device": "iPad Pro 11\"",
+      "review4Quote": "Galaxy S22를 보냈더니 48시간 안에 결제를 받았습니다. 견적이 공정했고 과정이 이보다 더 간단할 수 없었어요. 이미 친구들에게 추천했습니다.",
+      "review4Name": "Marcus T.",
+      "review4Device": "Galaxy S22 Ultra",
+      "review5Quote": "고장 난 노트북이 가치가 없다고 생각했는데 DepxTech에서 $120을 줬어요! 훌륭한 고객 서비스와 빠른 처리.",
+      "review5Name": "Jessica H.",
+      "review5Device": "HP Spectre x360",
+      "review6Quote": "DepxTech를 두 번 이용했습니다 — Switch와 MacBook. 두 번 다 완벽한 경험이었어요. 공정한 가격, 번거로움 없음.",
+      "review6Name": "Ryan P.",
+      "review6Device": "Nintendo Switch + MacBook Pro",
+      "moreReviews": "다른 플랫폼에서 더 많은 리뷰 보기"
     }
   },
   "footer": {
@@ -159,6 +184,7 @@
     "termsOfService": "이용약관",
     "refundPolicy": "환불 정책",
     "shippingPolicy": "배송 정책",
+    "sitemap": "Sitemap",
     "copyright": "Copyright © {year} DepxTech. All rights reserved."
   },
   "faq": {
@@ -537,6 +563,40 @@
     "ctaSubheading": "몇 번의 클릭만으로 기기의 즉시 견적을 받으세요.",
     "ctaButton": "견적 받기"
   },
+  "about": {
+    "badge": "DepxTech 소개",
+    "heading": "기술 매입을 간편하고, 공정하고, 친환경적으로",
+    "subheading": "간단한 아이디어에서 시작했습니다: 오래된 전자기기 매입은 쉽고, 투명하고, 지구에 좋아야 한다고.",
+    "storyTitle": "우리의 이야기",
+    "storyP1": "DepxTech는 불만에서 탄생했습니다. 수백만 대의 멀쩡한 기기가 서랍 속에서 먼지를 쌓고 있고, 더 많은 기기가 매년 매립지에 버려지는 것을 보았습니다. 기존 매입 서비스는 느리고, 혼란스럽고, 불공정한 가격을 제시했습니다. 더 나은 방법이 있어야 한다고 확신했습니다.",
+    "storyP2": "그래서 DepxTech를 만들었습니다 — 누구나 몇 분 안에 오래된 전자기기를 매입하고, 즉석 공정 견적을 받고, 빠르게 지급받을 수 있는 플랫폼입니다. 숨겨진 수수료도, 헐값 매입도, 몇 주씩 기다릴 필요도 없습니다. 처음부터 끝까지 간단하고 정직한 과정입니다.",
+    "storyP3": "현재까지 수천 명의 고객이 사용하지 않는 기기를 현금으로 바꾸고, 수천 대의 기기가 매립지로 가는 것을 막았습니다. 모든 매입이 중요합니다 — 당신의 지갑에도, 지구에도. 그리고 우리는 이제 막 시작했습니다.",
+    "stat1Label": "재활용 기기 수",
+    "stat2Label": "만족한 고객",
+    "stat3Label": "절감한 CO₂ 배출량",
+    "stat4Label": "평균 지급 시간",
+    "valuesTitle": "우리의 신념",
+    "valuesSubtitle": "이러한 핵심 가치가 모든 결정과 고객과의 모든 상호작용을 이끕니다.",
+    "value1Title": "지속가능성 우선",
+    "value1Desc": "접수하는 모든 기기에 제2의 삶을 부여합니다. 인증 재활용 업체와 협력하여 매립 제로와 환경 영향 최소화를 보장합니다.",
+    "value2Title": "완전한 투명성",
+    "value2Desc": "숨겨진 수수료도, 놀라운 일도 없습니다. 즉석 견적은 실제 시장 데이터를 기반으로 하며, 제시한 가격을 항상 지킵니다.",
+    "value3Title": "속도와 간편함",
+    "value3Desc": "몇 초 만에 견적, 무료 배송, 검수 후 24시간 내 지급. 당신의 시간을 소중히 여깁니다.",
+    "value4Title": "품질 보증",
+    "value4Desc": "모든 리퍼비시 기기는 엄격한 테스트를 거칩니다. 보증과 번거롭지 않은 반품으로 제품을 지원합니다.",
+    "diffTitle": "왜 DepxTech인가?",
+    "diffSubtitle": "다른 서비스와의 차이점은 다음과 같습니다.",
+    "diff1Title": "최고의 시장 가격",
+    "diff1Desc": "실시간 시장 데이터로 견적을 산출합니다. 경쟁사보다 지속적으로 높은 매입 가격을 제공합니다.",
+    "diff2Title": "제로 웨이스트 약속",
+    "diff2Desc": "접수한 기기의 99%가 리퍼비시되거나 책임감 있게 재활용됩니다. 매립지로 가는 것은 없습니다.",
+    "diff3Title": "고객 최우선",
+    "diff3Desc": "eBay와 Jawa에서 수천 개의 5성 리뷰. 고객이 다시 찾는 이유는 모든 약속을 지키기 때문입니다.",
+    "ctaTitle": "매입할 준비되셨나요?",
+    "ctaDesc": "수천 명의 만족한 고객에 합류하여 오래된 기기를 현금으로. 지금 무료 즉석 견적을 받으세요.",
+    "ctaButton": "매입 시작하기"
+  },
   "sustainability": {
     "badge": "지구를 위한 약속",
     "heading": "DepxTech의 지속가능성",
@@ -814,13 +874,26 @@
       "errorLoadSettings": "설정을 불러오지 못했습니다",
       "errorUpdateSetting": "설정을 업데이트하지 못했습니다",
       "errorDeleteAccount": "계정 삭제는 고객지원팀에 문의해야 합니다",
+      "pushPermissionDenied": "푸시 알림 권한이 거부되었습니다",
       "loadingSettings": "설정 로딩 중...",
       "pleaseLogIn": "로그인해 주세요",
       "needLogIn": "설정에 접근하려면 로그인이 필요합니다",
       "goToLogin": "로그인으로 이동"
     },
     "inboxPage": {
-      "title": "수신함"
+      "title": "수신함",
+      "subtitle": "알림 및 업데이트",
+      "loading": "알림을 불러오는 중...",
+      "empty": "아직 알림이 없습니다",
+      "emptyDesc": "보상판매 및 주문에 대한 업데이트가 여기에 표시됩니다",
+      "markAllRead": "모두 읽음으로 표시",
+      "loadMore": "더 보기",
+      "errorLoad": "알림을 불러오지 못했습니다",
+      "errorMarkRead": "알림 업데이트에 실패했습니다",
+      "browseTradeIn": "보상판매 둘러보기",
+      "pleaseLogIn": "로그인해 주세요",
+      "needLogIn": "수신함을 보려면 로그인이 필요합니다.",
+      "goToLogin": "로그인으로 이동"
     },
     "membershipPage": {
       "title": "멤버십"
@@ -881,7 +954,8 @@
       "tradeInOrders": "보상 판매 주문",
       "offers": "혜택",
       "users": "사용자",
-      "signOut": "로그아웃"
+      "signOut": "로그아웃",
+      "goBackHome": "홈으로 돌아가기"
     },
     "dashboard": {
       "title": "대시보드",
@@ -1042,7 +1116,8 @@
       "cancel": "취소",
       "prev": "이전",
       "save": "저장",
-      "saving": "저장 중..."
+      "saving": "저장 중...",
+      "fetchBackmarketPrices": "BackMarket 가격 가져오기"
     },
     "users": {
       "title": "사용자",
@@ -1411,7 +1486,9 @@
     "privacyTitle": "개인정보 처리방침",
     "privacyDescription": "DepxTech 개인정보 처리방침 - 개인정보의 수집, 이용, 보호 방법에 대해 알아보세요.",
     "membershipTitle": "프리미엄 멤버십 혜택 | DepxTech",
-    "membershipDescription": "무료 배송, 월간 선물, 빠른 배송, 매주 깜짝 혜택이 포함된 독점 멤버십 프로그램에 가입하세요."
+    "membershipDescription": "무료 배송, 월간 선물, 빠른 배송, 매주 깜짝 혜택이 포함된 독점 멤버십 프로그램에 가입하세요.",
+    "aboutTitle": "소개 | DepxTech",
+    "aboutDescription": "DepxTech의 미션을 알아보세요 — 전자기기 매입을 간편하고, 빠르고, 친환경적으로. 우리의 이야기, 가치관, 지속가능성에 대한 약속."
   },
   "trade": {
     "hero": {
@@ -1467,10 +1544,49 @@
       "customers": "고객",
       "rating": "평점"
     },
+    "cantFindDevice": "기기를 찾을 수 없나요？",
+    "cantFindDeviceDesc": "맞춤 보상 판매 요청을 제출하면 견적을 보내드립니다.",
+    "cantFindDeviceCta": "맞춤 보상 판매",
     "cta": {
       "title": "보상 판매를 시작하시겠어요?",
       "description": "오래된 전자기기의 합리적인 가격을 오늘 받으세요.",
       "browseAll": "전체 기기 검색"
+    },
+    "custom": {
+      "metaTitle": "맞춤 보상 판매 | DepxTech",
+      "metaDesc": "기기를 찾을 수 없나요? 맞춤 보상 판매 요청을 제출하세요.",
+      "title": "맞춤 보상 판매",
+      "subtitle": "카탈로그에서 기기를 찾을 수 없나요? 아래에 설명해 주시면 견적을 보내드립니다.",
+      "deviceInfoTitle": "기기 정보",
+      "deviceName": "기기 이름",
+      "deviceNamePlaceholder": "예: iPhone 13 Pro, MacBook Air M2, Samsung Galaxy S23...",
+      "category": "카테고리",
+      "categoryPlaceholder": "카테고리 선택",
+      "categoryOther": "기타",
+      "brand": "브랜드",
+      "brandPlaceholder": "예: Apple, Samsung, Dell...",
+      "conditionDesc": "상태 설명",
+      "conditionDescPlaceholder": "기기 상태를 설명해 주세요: 스크래치, 찌그러짐, 화면 손상, 배터리 상태 등.",
+      "photos": "사진",
+      "photosHint": "기기 사진을 최대 5장 업로드하세요 (각 10MB 이하).",
+      "photosCount": "장",
+      "addPhotos": "사진 추가",
+      "uploading": "업로드 중...",
+      "maxPhotos": "사진은 최대 5장까지 가능합니다",
+      "photoTooLarge": "사진은 10MB 이하여야 합니다",
+      "photoUploadError": "사진 업로드에 실패했습니다",
+      "submitButton": "보상 판매 요청 제출",
+      "submitting": "제출 중...",
+      "confirmTitle": "제출 확인",
+      "confirmDesc": "제출 전에 기기 정보와 연락처를 확인해 주세요.",
+      "confirmSubmit": "요청 제출",
+      "successTitle": "요청이 제출되었습니다!",
+      "successDesc": "맞춤 보상 판매 요청을 접수했습니다. 24시간 이내에 견적을 보내드리겠습니다.",
+      "successToast": "맞춤 보상 판매 요청이 제출되었습니다!",
+      "errorSubmit": "제출에 실패했습니다. 다시 시도해 주세요.",
+      "errorDeviceFieldsRequired": "기기 이름, 카테고리, 상태 설명을 입력해 주세요.",
+      "submitAnother": "다른 요청 제출",
+      "backToTrade": "보상 판매로 돌아가기"
     },
     "search": {
       "prefix": "\"",
@@ -1495,7 +1611,7 @@
       "devicesFound": "{count} 개의 기기{count, plural, one {} other {}}를 찾았습니다",
       "noDevicesFound": "기기를 찾을 수 없습니다",
       "noDevicesHint": "필터를 조정하거나 다른 기기를 검색해 보세요.",
-      "startsAt": "최저가",
+      "upTo": "최대",
       "tradeInUpTo": "최대 보상가",
       "getQuote": "견적 받기",
       "tradeIn": "보상 판매",
@@ -1510,7 +1626,18 @@
       "metaTitleDefault": "보상 판매 기기 검색 | DepxTech",
       "metaDescDefault": "DepxTech에서 보상 판매 가능한 모든 기기를 검색하세요. 스마트폰, 노트북, 태블릿, GPU 등.",
       "metaTitleFiltered": "{parts} 보상 판매 | DepxTech",
-      "metaDescFiltered": "DepxTech에서 {parts}을(를) 보상 판매하세요. 즉시 견적과 최고 보상가를 받으세요."
+      "metaDescFiltered": "DepxTech에서 {parts}을(를) 보상 판매하세요. 즉시 견적과 최고 보상가를 받으세요.",
+      "filterBtn": "Filter",
+      "searchLabel": "Search",
+      "sortLabel": "Sort by",
+      "sortPriceDesc": "Price: High to Low",
+      "sortPriceAsc": "Price: Low to High",
+      "sortName": "Name: A to Z",
+      "sortPopular": "Most Popular",
+      "priceRange": "Price Range",
+      "seriesLabel": "Series",
+      "bannerBrandTitle": "DepxTech에서 {brand} {category} 보상 판매",
+      "bannerBrandSubtitle": "최대 ${value} 즉시 견적"
     },
     "product": {
       "notFound": "상품을 찾을 수 없습니다 | DepxTech",
@@ -1526,6 +1653,9 @@
       "24hours": "24시간",
       "dataWipe": "데이터 삭제",
       "certified": "인증됨",
+      "readyToStart": "견적을 받을 준비가 되셨나요?",
+      "answerFewQuestions": "몇 가지 간단한 질문에 답하여 정확한 보상 판매 견적을 받으세요.",
+      "startTradeIn": "보상 판매 시작",
       "depreciationCurrent": "현재",
       "depreciationSignificant": "큰 폭 감가",
       "depreciationModerate": "보통 감가",
@@ -1563,6 +1693,7 @@
       "quoteSubmittedDesc": "요청을 검토하고 24시간 이내에 연락드리겠습니다.",
       "estimatedValue": "예상 가치",
       "finalValueNote": "최종 가치는 검수 후 확정됩니다",
+      "total": "합계",
       "whatsNext": "다음 단계는요?",
       "step1": "이메일에서 확인 메일을 확인하세요",
       "step2": "선불 배송 라벨을 보내드립니다",
@@ -1603,7 +1734,37 @@
       "cancelButton": "Cancel",
       "product": "Product",
       "errorShippingRequired": "Please select a shipping method",
-      "onlineBonusIncluded": "Includes +10% Online Bonus ({amount})"
+      "onlineBonusIncluded": "Includes +10% Online Bonus ({amount})",
+      "shippingDeadlineWarning": "Please ship your device within 14 days. The final price may change if received after this period due to market fluctuations.",
+      "pushDialogTitle": "보상판매 업데이트 받기",
+      "pushDialogDesc": "보상판매 승인, 배송, 완료 시 알림을 받으세요. 중요한 업데이트만 보내드립니다.",
+      "pushDialogEnable": "알림 활성화",
+      "pushDialogSkip": "나중에",
+      "pushEnabled": "알림이 활성화되었습니다! 최신 정보를 알려드리겠습니다.",
+      "pushFailed": "알림을 활성화할 수 없습니다. 나중에 다시 시도해 주세요.",
+      "savedAddresses": "저장됨",
+      "newAddress": "새 주소",
+      "default": "기본값",
+      "saveToAddressBook": "주소록에 저장",
+      "choosePaymentMethod": "Choose Payment Method",
+      "choosePaymentMethodDesc": "How would you like to receive your payment?",
+      "paymentMethodLabel": "Payment Method",
+      "paymentHandleLabel": "Payment Account",
+      "paymentHandle": "{method} username / email / address",
+      "paypalPlaceholder": "PayPal email address",
+      "zellePlaceholder": "Zelle email or phone number",
+      "cashappPlaceholder": "$cashtag or phone number",
+      "venmoPlaceholder": "@username or phone number",
+      "bitcoinPlaceholder": "Bitcoin wallet address",
+      "errorPaymentRequired": "Please select a payment method",
+      "errorPaymentHandleRequired": "Please enter your payment account info",
+      "tosAgree": "I have read and agree to the",
+      "tosLink": "Terms of Service",
+      "tosDialogTitle": "Terms of Service",
+      "tosDialogDesc": "Please read and scroll to the bottom to accept.",
+      "tosScrollHint": "Scroll to the bottom to accept",
+      "tosAcceptButton": "I Accept",
+      "errorTosRequired": "Please accept the Terms of Service"
     }
   }
 }

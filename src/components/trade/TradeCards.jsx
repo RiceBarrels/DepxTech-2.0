@@ -7,10 +7,62 @@ import { TransitionLink } from '@/components/ui/pageTransitions'
 import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { Eye } from 'lucide-react'
+
+// Calculate maximum trade-in value based on questions
+function calculateUpToValue(product) {
+  const basePrice = product.base_price || 0
+  const questions = product.questions || []
+
+  // Debug: log product data to verify structure
+  if (process.env.NODE_ENV === 'development') {
+    console.log('Product:', {
+      title: product.title,
+      base_price: basePrice,
+      hasQuestions: questions.length > 0,
+      questions
+    })
+  }
+
+  // If no questions, return base price
+  if (questions.length === 0) return basePrice
+
+  // Calculate maximum value by selecting the highest-value option for each question
+  const totalPercentage = questions.reduce((total, question) => {
+    const answers = question.ans || []
+    if (answers.length === 0) return total
+
+    // For "opposite_multiple" type, best case is selecting none (0%)
+    if (question.type === 'opposite_multiple') {
+      return total
+    }
+
+    // For other types, find the answer with the highest percentage
+    const maxPercentage = answers.reduce((max, answer) => {
+      // Parse percentage string: "+6", "12", "-30", "" → 6, 12, -30, 0
+      const percentStr = (answer.persentage || '').trim()
+      if (percentStr === '') return max
+
+      const percent = parseFloat(percentStr.replace('+', ''))
+      return isNaN(percent) ? max : Math.max(max, percent)
+    }, 0)
+
+    return total + maxPercentage
+  }, 0)
+
+  // Calculate final value: base price + (base price * total percentage / 100)
+  const totalValue = basePrice + (basePrice * totalPercentage / 100)
+
+  if (process.env.NODE_ENV === 'development') {
+    console.log('Calculated upTo:', { basePrice, totalPercentage, totalValue })
+  }
+
+  return totalValue
+}
+
 // Product Card — used on browse page and landing page
 export function TradeProductCard({ product, href, index = 0 }) {
   const t = useTranslations('trade.browse')
-  const price = product.base_price || 0
+  const upToPrice = calculateUpToValue(product)
 
   return (
     <motion.div
@@ -36,7 +88,7 @@ export function TradeProductCard({ product, href, index = 0 }) {
 
               {/* Price badge */}
               <div className="absolute top-4 right-4 bg-emerald-500 text-white px-2 py-0.5 rounded-lg text-xs sm:text-sm font-bold shadow-sm">
-                ${price.toFixed(0)}
+                ${upToPrice.toFixed(0)}
               </div>
             </div>
           </div>
@@ -52,14 +104,14 @@ export function TradeProductCard({ product, href, index = 0 }) {
             {/* Trade value */}
             <div className="flex flex-col sm:h-auto sm:flex-row items-start pb-4">
               <span className="text-xs text-muted-foreground pr-2">
-                {t('startsAt')}
+                {t('upTo')}
               </span>
               <div>
                 <span className="font-bold text-emerald-600 dark:text-emerald-400 text-md">
-                  ${price.toFixed(2).split('.')[0]}
+                  ${upToPrice.toFixed(2).split('.')[0]}
                 </span>
                 <span className="font-bold text-emerald-600 dark:text-emerald-400 text-sm">
-                  .{price.toFixed(2).split('.')[1]}
+                  .{upToPrice.toFixed(2).split('.')[1]}
                 </span>
               </div>
               <div className='flex-1'/>

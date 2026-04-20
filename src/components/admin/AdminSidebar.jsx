@@ -1,6 +1,6 @@
 'use client'
 
-import { usePathname } from '@/i18n/navigation'
+import { usePathname, Link } from '@/i18n/navigation'
 import { useTransitionRouter } from '@/components/ui/pageTransitions'
 import { useAuth } from '@/lib/auth'
 import { useTranslations } from 'next-intl'
@@ -24,6 +24,7 @@ import {
   XIcon,
   ClipboardListIcon,
   FileTextIcon,
+  BellIcon,
 } from 'lucide-react'
 import { useState } from 'react'
 
@@ -36,11 +37,11 @@ const navItems = [
   { href: '/admin/blog', labelKey: 'blog', icon: FileTextIcon },
   { href: '/admin/offers', labelKey: 'offers', icon: TicketPercentIcon },
   { href: '/admin/users', labelKey: 'users', icon: UsersIcon },
+  { href: '/admin/push-notifications', labelKey: 'pushNotifications', icon: BellIcon },
 ]
 
 function NavLinks({ onNavigate }) {
   const pathname = usePathname()
-  const router = useTransitionRouter()
   const t = useTranslations('admin.sidebar')
 
   const isActive = (item) => {
@@ -54,12 +55,11 @@ function NavLinks({ onNavigate }) {
         const active = isActive(item)
         const Icon = item.icon
         return (
-          <button
+          <Link
             key={item.href}
-            onClick={() => {
-              router.push(item.href)
-              onNavigate?.()
-            }}
+            href={item.href}
+            prefetch={true}
+            onClick={() => onNavigate?.()}
             className={cn(
               'flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors text-left',
               active
@@ -69,7 +69,7 @@ function NavLinks({ onNavigate }) {
           >
             <Icon className="h-4 w-4 shrink-0" />
             {t(item.labelKey)}
-          </button>
+          </Link>
         )
       })}
     </nav>

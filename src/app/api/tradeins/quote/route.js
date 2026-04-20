@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
-// Admin notification is now sent after shipping method selection
-// via /api/tradeins/quote/shipping
+import { notifyAdminsPush } from '@/lib/notify'
 
 // Create Supabase client with service role for public operations
 function createServiceRoleClient() {
@@ -37,19 +36,35 @@ export async function POST(request) {
       depreciation,
       // Legacy field (for backwards compatibility)
       condition,
+      // Custom trade-in fields
+      customDevice,
       // Common fields
       estimatedValue,
       name,
       email,
       phone,
+      address,
+      city,
+      state,
+      zipCode,
       notes,
-      userId
+      userId,
+      paymentMethod,
+      paymentHandle,
     } = body
 
+    const isCustom = !productId && customDevice
+
     // Validate required fields
-    if (!productId || !productTitle || !estimatedValue || !name || !email) {
+    if (!isCustom && (!productId || !productTitle || estimatedValue == null)) {
       return NextResponse.json(
         { error: 'Missing required fields' },
+        { status: 400 }
+      )
+    }
+    if (!name || !email) {
+      return NextResponse.json(
+        { error: 'Missing required contact fields' },
         { status: 400 }
       )
     }
@@ -63,14 +78,18 @@ export async function POST(request) {
       )
     }
 
-    // Build quote data - supports both legacy and new questionnaire format
+    // Build quote data - supports legacy, questionnaire, and custom trade-in formats
     const quoteData = {
-      product_id: productId,
-      product_title: productTitle,
-      estimated_value: parseFloat(estimatedValue),
+      product_id: isCustom ? null : productId,
+      product_title: productTitle || (customDevice?.deviceName ?? 'Custom Device'),
+      estimated_value: parseFloat(estimatedValue) || 0,
       customer_name: name,
       customer_email: email,
       customer_phone: phone || null,
+      address: address || null,
+      city: city || null,
+      state: state || null,
+      zipCode: zipCode || null,
       notes: notes || null,
       user_id: userId || null,
       status: 'pending',
@@ -82,8 +101,10 @@ export async function POST(request) {
       total_bonus: totalBonus || 0,
       base_price: basePrice || null,
       depreciation: depreciation || null,
-      // Legacy field
-      condition: condition || null
+      // For custom trade-ins, store device info in condition as JSON
+      condition: isCustom ? JSON.stringify(customDevice) : (condition || null),
+      payment_method: paymentMethod || null,
+      payment_handle: paymentHandle || null,
     }
 
     // Try to insert into trade_quotes table
@@ -109,18 +130,20 @@ export async function POST(request) {
         // Table doesn't exist - log for now and return success
         console.log('Trade quote request (table may not exist):', JSON.stringify(quoteData, null, 2))
 
-        // Still increment trades count
-        const { data: product } = await supabase
-          .from('tradable_products')
-          .select('trades')
-          .eq('id', productId)
-          .single()
-
-        if (product) {
-          await supabase
+        // Still increment trades count (if not custom)
+        if (productId) {
+          const { data: product } = await supabase
             .from('tradable_products')
-            .update({ trades: (product.trades || 0) + 1 })
+            .select('trades')
             .eq('id', productId)
+            .single()
+
+          if (product) {
+            await supabase
+              .from('tradable_products')
+              .update({ trades: (product.trades || 0) + 1 })
+              .eq('id', productId)
+          }
         }
 
         return NextResponse.json({
@@ -163,19 +186,36 @@ export async function POST(request) {
       }
     }
 
-    // Increment trades count for the product
-    const { data: product } = await supabase
-      .from('tradable_products')
-      .select('trades')
-      .eq('id', productId)
-      .single()
-
-    if (product) {
-      await supabase
+    // Increment trades count for the product (skip for custom trade-ins)
+    if (productId) {
+      const { data: product } = await supabase
         .from('tradable_products')
-        .update({ trades: (product.trades || 0) + 1 })
+        .select('trades')
         .eq('id', productId)
+        .single()
+
+      if (product) {
+        await supabase
+          .from('tradable_products')
+          .update({ trades: (product.trades || 0) + 1 })
+          .eq('id', productId)
+      }
     }
+
+    // Notify admins via push + inbox (fire-and-forget)
+    const notifTitle = isCustom
+      ? `New Custom Trade-in: ${customDevice?.deviceName || 'Unknown'}`
+      : `New Trade-in: ${productTitle}`
+    const notifBody = isCustom
+      ? `${name} submitted a custom trade-in request for ${customDevice?.deviceName || 'a device'}`
+      : `${name} submitted a trade-in worth $${Number(estimatedValue).toFixed(2)}`
+
+    notifyAdminsPush({
+      type: 'admin_trade_in',
+      title: notifTitle,
+      body: notifBody,
+      url: '/admin/trade-quotes',
+    })
 
     return NextResponse.json({
       success: true,

@@ -1,25 +1,13 @@
-import createMiddleware from 'next-intl/middleware'
-import { routing } from './i18n/routing'
-import { updateSession } from './utils/supabase/session'
+import createMiddleware from 'next-intl/middleware';
+import { routing } from './i18n/routing';
 
-const intlMiddleware = createMiddleware(routing)
+const intlMiddleware = createMiddleware(routing);
 
-export async function proxy(request) {
-  // Run next-intl middleware first for locale handling
-  const intlResponse = intlMiddleware(request)
-
-  // If next-intl returned a redirect (e.g. adding locale prefix), return it directly
-  if (intlResponse.status !== 200) {
-    return intlResponse
-  }
-
-  // Then run Supabase session update (refreshes auth tokens, redirects unauthenticated users)
-  return await updateSession(request)
+export function proxy(request) {
+  return intlMiddleware(request);
 }
 
 export const config = {
-  matcher: [
-    '/((?!api|auth|_next|_vercel|.*\\..*).*)',
-    '/'
-  ]
-}
+  // Match all pathnames except Next.js internals and static files
+  matcher: ['/((?!_next|api|auth|.*\\..*).*)']
+};

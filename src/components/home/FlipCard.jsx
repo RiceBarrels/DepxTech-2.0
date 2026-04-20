@@ -45,6 +45,7 @@ function FlipCard({
   colorScheme = 'violet',
 }) {
   const [isFlipped, setIsFlipped] = useState(false)
+  const { trigger } = useWebHaptics()
 
   const colorSchemes = {
     violet: {
@@ -73,6 +74,7 @@ function FlipCard({
 
   const handleFlip = () => {
     if (!flipOnHover) {
+      trigger('light')
       setIsFlipped(!isFlipped)
     }
   }

@@ -2,13 +2,13 @@
 
 import { usePathname } from "@/i18n/navigation"
 import { useTransitionRouter } from "@/components/ui/pageTransitions"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
 import { Label } from '@/components/ui/label'
-import { ArrowLeftIcon, SaveIcon, LoaderIcon, XIcon, PlusIcon, ArrowRightLeftIcon, CalendarIcon, StarIcon, TrashIcon, HelpCircleIcon, CopyIcon, ImageIcon, FileTextIcon } from 'lucide-react'
+import { ArrowLeftIcon, SaveIcon, LoaderIcon, XIcon, PlusIcon, ArrowRightLeftIcon, CalendarIcon, StarIcon, TrashIcon, HelpCircleIcon, CopyIcon, ImageIcon, FileTextIcon, GitBranchIcon } from 'lucide-react'
 import {
     Select,
     SelectContent,
@@ -21,6 +21,7 @@ import { openWindow } from "@/components/ui/windows"
 import { ImageUpload, uploadFiles, deleteFileFromBucket } from "@/components/admin/ImageUpload"
 import { Checkbox } from '@/components/ui/checkbox'
 import { CategorySelect } from '@/components/admin/CategorySelect'
+import { BrandSelect } from '@/components/admin/BrandSelect'
 import { toast } from 'sonner'
 import { AITranslateButton, AITranslateQuestionsButton, AIGenerateButton } from '@/components/admin/AIButton'
 import TranslationEditor from '@/components/admin/TranslationEditor'
@@ -33,13 +34,13 @@ export default function AddTradeinProductPage({defaultData={
     category: '',
     brand: '',
     series: '',
-    brand_img: '',
     imgs: [],
     base_date: '',
     depreciation_rate: '',
     is_featured: false,
     questions: [],
     question_template_id: null,
+    variant_of: null,
     title_i18n: {},
     des_i18n: {},
     questions_i18n: {},
@@ -95,10 +96,13 @@ export default function AddTradeinProductPage({defaultData={
         }
     }
 
-    // Fetch other products with questions
-    const fetchOtherProducts = async () => {
-        if (otherProducts.length > 0) {
-            setShowCopySelect(true)
+    // All products (for variant selector & copy)
+    const [allProducts, setAllProducts] = useState([])
+
+    // Fetch other products
+    const fetchOtherProducts = async ({ showCopy = true } = {}) => {
+        if (allProducts.length > 0) {
+            if (showCopy) setShowCopySelect(true)
             return
         }
         setLoadingProducts(true)
@@ -106,12 +110,9 @@ export default function AddTradeinProductPage({defaultData={
             const response = await fetch('/api/admin/tradein')
             const data = await response.json()
             if (data.products) {
-                // Filter products that have questions
-                const productsWithQuestions = data.products.filter(
-                    p => p.questions && p.questions.length > 0
-                )
-                setOtherProducts(productsWithQuestions)
-                setShowCopySelect(true)
+                setAllProducts(data.products)
+                setOtherProducts(data.products.filter(p => p.questions && p.questions.length > 0))
+                if (showCopy) setShowCopySelect(true)
             }
         } catch (error) {
             toast.error('Failed to fetch products')
@@ -119,6 +120,11 @@ export default function AddTradeinProductPage({defaultData={
             setLoadingProducts(false)
         }
     }
+
+    // Auto-load products for variant selector
+    useEffect(() => {
+        fetchOtherProducts({ showCopy: false })
+    }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
     const copyQuestionsFromProduct = (productId) => {
         const sourceProduct = otherProducts.find(p => p.id === productId)
@@ -150,9 +156,6 @@ export default function AddTradeinProductPage({defaultData={
 
         try {
             // Upload images first
-            const uploadedBrandImg = formData.brand_img instanceof File
-                ? (await uploadFiles(formData.brand_img, 'tradein/brands'))[0]
-                : formData.brand_img
             const uploadedProductImgs = await uploadFiles(formData.imgs, 'tradein/products')
 
             // Upload question and answer images
@@ -191,7 +194,6 @@ export default function AddTradeinProductPage({defaultData={
                 },
                 body: JSON.stringify({
                     ...formData,
-                    brand_img: uploadedBrandImg || null,
                     imgs: uploadedProductImgs,
                     base_price: parseFloat(formData.base_price) || 0,
                     min_price: formData.min_price ? parseFloat(formData.min_price) : null,
@@ -199,7 +201,8 @@ export default function AddTradeinProductPage({defaultData={
                     depreciation_rate: parseFloat(formData.depreciation_rate) || 0,
                     is_featured: formData.is_featured || false,
                     questions: processedQuestions,
-                    question_template_id: formData.question_template_id
+                    question_template_id: formData.question_template_id,
+                    variant_of: formData.variant_of
                 })
             })
 
@@ -221,13 +224,13 @@ export default function AddTradeinProductPage({defaultData={
                 category: '',
                 brand: '',
                 series: '',
-                brand_img: '',
                 imgs: [],
                 base_date: '',
                 depreciation_rate: '',
                 is_featured: false,
                 questions: [],
                 question_template_id: null,
+                variant_of: null,
                 title_i18n: {},
                 des_i18n: {},
                 questions_i18n: {},
@@ -350,13 +353,7 @@ export default function AddTradeinProductPage({defaultData={
                             </div>
                             <div className="space-y-2">
                                 <Label htmlFor="brand">Brand *</Label>
-                                <Input
-                                    id="brand"
-                                    value={formData.brand}
-                                    onChange={(e) => handleInputChange('brand', e.target.value)}
-                                    placeholder="e.g., Apple"
-                                    required
-                                />
+                                <BrandSelect value={formData.brand} onChange={(val) => handleInputChange('brand', val)} />
                             </div>
                             <div className="space-y-2">
                                 <Label htmlFor="series">Series *</Label>
@@ -368,6 +365,33 @@ export default function AddTradeinProductPage({defaultData={
                                     required
                                 />
                             </div>
+                        </div>
+
+                        {/* Variant Of */}
+                        <div className="space-y-2">
+                            <Label className="flex items-center gap-1.5">
+                                <GitBranchIcon className="w-4 h-4" />
+                                Variant Of
+                            </Label>
+                            <Select
+                                value={formData.variant_of || '_none'}
+                                onValueChange={(val) => handleInputChange('variant_of', val === '_none' ? null : val)}
+                            >
+                                <SelectTrigger>
+                                    <SelectValue placeholder="None (standalone product)" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="_none">None (standalone product)</SelectItem>
+                                    {allProducts.map(p => (
+                                        <SelectItem key={p.id} value={p.id}>
+                                            {p.title}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                            <p className="text-xs text-muted-foreground">
+                                Link this product as a variant of another (e.g. Mac Mini M2 Pro → Mac Mini M2)
+                            </p>
                         </div>
 
                         {/* Pricing Section */}
@@ -826,18 +850,6 @@ export default function AddTradeinProductPage({defaultData={
                                     No product-specific questions. Click "Add Question" to create one.
                                 </p>
                             )}
-                        </div>
-
-                        {/* Brand Image */}
-                        <div className="space-y-2">
-                            <ImageUpload
-                                value={formData.brand_img}
-                                onChange={(url) => handleInputChange('brand_img', url)}
-                                multiple={false}
-                                folder="tradein/brands"
-                                label="Brand Image"
-                                onDelete={deleteFileFromBucket}
-                            />
                         </div>
 
                         {/* Product Images */}

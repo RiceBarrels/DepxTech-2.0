@@ -4,16 +4,20 @@ import { AuthProvider } from "@/lib/auth";
 import { WindowsLayer } from "@/components/ui/windows";
 import AdminUI from "@/components/ui/adminUI";
 import { Toaster } from "@/components/ui/sonner";
-import { ViewTransitions } from "next-view-transitions";
 import { ThemeProvider } from "@/components/theme-provider"
 import { OrganizationStructuredData, WebSiteStructuredData } from "@/components/seo/StructuredData"
 import { DisableLinkContextMenu } from "@/components/ui/disableLinkContextMenu"
-import MobileSetupGuard from "@/components/mobile-setup-guard";
 import PasswordWall from "@/components/password-wall";
 import ServiceWorkerRegistration from "@/components/pwa/ServiceWorkerRegistration";
+import { CookieConsent } from "@/components/ui/cookie-consent";
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages, getTranslations, setRequestLocale } from 'next-intl/server';
 import { routing } from '@/i18n/routing';
+import { ViewTransitions } from 'next-view-transitions'
+import OnlyUSDialog from "@/components/OnlyUSDialog";
+import PushPrompt from "@/components/PushPrompt";
+import { Analytics } from "@vercel/analytics/next"
+import { SpeedInsights } from "@vercel/speed-insights/next"
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -33,7 +37,7 @@ const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://depxtech.com'
 
 const rtlLocales = ['ar']
 
-const ogLocaleMap = { en: 'en_US', 'zh-CN': 'zh_CN', 'zh-TW': 'zh_TW', ar: 'ar_AR', nl: 'nl_NL', fr: 'fr_FR', de: 'de_DE', it: 'it_IT', ja: 'ja_JP', ko: 'ko_KR', pl: 'pl_PL', pt: 'pt_BR', ru: 'ru_RU', es: 'es_ES', sv: 'sv_SE' }
+const ogLocaleMap = { en: 'en_US', 'zh-CN': 'zh_CN', 'zh-HK': 'zh_HK', ar: 'ar_AR', nl: 'nl_NL', fr: 'fr_FR', de: 'de_DE', it: 'it_IT', ja: 'ja_JP', ko: 'ko_KR', pl: 'pl_PL', pt: 'pt_BR', ru: 'ru_RU', es: 'es_ES', sv: 'sv_SE' }
 
 export async function generateMetadata({ params }) {
   const { locale } = await params
@@ -55,10 +59,6 @@ export async function generateMetadata({ params }) {
     publisher: 'DepxTech',
     formatDetection: { email: false, address: false, telephone: false },
     manifest: '/manifest.webmanifest',
-    themeColor: [
-      { media: '(prefers-color-scheme: light)', color: '#ffffff' },
-      { media: '(prefers-color-scheme: dark)', color: '#0f172a' },
-    ],
     appleWebApp: { capable: true, statusBarStyle: 'default', title: 'DepxTech' },
     icons: {
       icon: [
@@ -88,9 +88,22 @@ export async function generateMetadata({ params }) {
       googleBot: { index: true, follow: true, 'max-video-preview': -1, 'max-image-preview': 'large', 'max-snippet': -1 },
     },
     alternates: {
-      canonical: baseUrl,
+      canonical: `${baseUrl}/${locale}`,
       languages: Object.fromEntries(routing.locales.map(l => [l, `/${l}`])),
     },
+  }
+}
+
+export function generateViewport() {
+  return {
+    width: 'device-width',
+    initialScale: 1,
+    maximumScale: 5,
+    viewportFit: 'cover',
+    themeColor: [
+      { media: '(prefers-color-scheme: light)', color: '#ffffff' },
+      { media: '(prefers-color-scheme: dark)', color: '#0f172a' },
+    ],
   }
 }
 
@@ -101,42 +114,57 @@ export default async function LocaleLayout({ children, params }) {
 
   return (
     <ViewTransitions>
-      <html lang={locale} dir={rtlLocales.includes(locale) ? 'rtl' : 'ltr'} suppressHydrationWarning>
-        <head>
-          <OrganizationStructuredData />
-          <WebSiteStructuredData />
+    <html lang={locale} dir={rtlLocales.includes(locale) ? 'rtl' : 'ltr'} suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: `
+          if (typeof Node !== 'undefined') {
+            var oRC = Node.prototype.removeChild;
+            Node.prototype.removeChild = function(c) {
+              return c.parentNode !== this ? c : oRC.apply(this, arguments);
+            };
+            var oIB = Node.prototype.insertBefore;
+            Node.prototype.insertBefore = function(n, r) {
+              return r && r.parentNode !== this ? n : oIB.apply(this, arguments);
+            };
+          }
+        `}} />
+        <OrganizationStructuredData />
+        <WebSiteStructuredData />
 
-          <script
-            async
-            crossOrigin="anonymous"
-            src="https://tweakcn.com/live-preview.min.js"
-          />
-        </head>
-        <body
-          className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-        >
-          <PasswordWall>
-            <AuthProvider>
-              <ThemeProvider
-                attribute="class"
-                defaultTheme="system"
-                enableSystem
-              >
-                <NextIntlClientProvider messages={messages}>
-                  <DisableLinkContextMenu />
-                  <MobileSetupGuard>
-                    {children}
-                  </MobileSetupGuard>
-                  <WindowsLayer />
-                  <AdminUI/>
-                  <Toaster />
-                  <ServiceWorkerRegistration />
-                </NextIntlClientProvider>
-              </ThemeProvider>
-            </AuthProvider>
-          </PasswordWall>
-        </body>
-      </html>
+        <script
+          async
+          crossOrigin="anonymous"
+          src="https://tweakcn.com/live-preview.min.js"
+        />
+      </head>
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-background overflow-y-hidden`}
+      >
+        {/* <PasswordWall> */}
+          <AuthProvider>
+            <ThemeProvider
+              attribute="class"
+              defaultTheme="system"
+              enableSystem
+            >
+              <NextIntlClientProvider messages={messages}>
+                <DisableLinkContextMenu />
+                {children}
+                <WindowsLayer />
+                <AdminUI/>
+                <Toaster />
+                <CookieConsent />
+                <OnlyUSDialog />
+                <PushPrompt />
+                <ServiceWorkerRegistration />
+              </NextIntlClientProvider>
+            </ThemeProvider>
+          </AuthProvider>
+        {/* </PasswordWall> */}
+        <Analytics />
+        {/* <SpeedInsights /> */}
+      </body>
+    </html>
     </ViewTransitions>
   );
 }

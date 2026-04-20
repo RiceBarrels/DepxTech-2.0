@@ -6,12 +6,29 @@ import { toast } from 'sonner'
 import { useTransitionRouter } from '@/components/ui/pageTransitions'
 import ProductDetailEnhanced from './ProductDetailEnhanced'
 import Recommends from '@/components/ui/recommends'
+import { RecentlyViewed } from '@/components/product/RecentlyViewed'
+import { useRecentlyViewed } from '@/hooks/useRecentlyViewed'
 import { motion } from 'framer-motion'
+import { useEffect } from 'react'
+import { useWebHaptics } from 'web-haptics/react'
 
 export default function ProductDetailClient({ product, productId }) {
   const t = useTranslations('productDetail')
   const { addToCart, user } = useAuth()
   const router = useTransitionRouter()
+  const { addItem } = useRecentlyViewed()
+  const { trigger } = useWebHaptics()
+
+  useEffect(() => {
+    if (product) {
+      addItem({
+        id: productId,
+        title: product.title,
+        price: product.price,
+        image: product.imgs?.[0] || null,
+      })
+    }
+  }, [productId])
 
   const handleAddToCart = async (product, quantity = 1) => {
     if (!user) {
@@ -23,6 +40,7 @@ export default function ProductDetailClient({ product, productId }) {
     try {
       const result = await addToCart(product.id, quantity)
       if (result.success) {
+        trigger('success')
         toast.success(t('addedToCartToast'), {
           description: t('addedToCartDesc', { title: product.title, quantity }),
           action: {
@@ -31,15 +49,18 @@ export default function ProductDetailClient({ product, productId }) {
           }
         })
       } else {
+        trigger('error')
         toast.error(t('failedAddToCart') + ': ' + result.error)
       }
     } catch (error) {
+      trigger('error')
       console.error('Error adding to cart:', error)
       toast.error(t('failedAddToCart'))
     }
   }
 
   const handleToggleFavorite = () => {
+    trigger('selection')
     toast.success(t('addedToFavorites'), {
       description: t('addedToFavoritesDesc'),
     })
@@ -87,6 +108,11 @@ export default function ProductDetailClient({ product, productId }) {
           />
         </div>
       </motion.section>
+
+      {/* Recently Viewed */}
+      <div className="max-w-7xl mx-auto px-4 pb-8">
+        <RecentlyViewed excludeId={productId} />
+      </div>
     </div>
   )
 }

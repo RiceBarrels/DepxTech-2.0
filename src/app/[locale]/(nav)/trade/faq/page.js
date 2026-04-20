@@ -1,7 +1,5 @@
-'use client'
-
 import { Link } from '@/i18n/navigation'
-import { motion } from 'framer-motion'
+import { getTranslations } from 'next-intl/server'
 import {
   HelpCircle,
   MessageCircle,
@@ -15,15 +13,9 @@ import {
   AccordionTrigger,
 } from '@/components/ui/accordion'
 import { FAQPageStructuredData } from '@/components/seo/StructuredData'
-import { useTranslations } from 'next-intl'
 
-const sectionVariants = {
-  hidden: { opacity: 0, y: 24 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: 'easeOut' } }
-}
-
-export default function FAQPage() {
-  const t = useTranslations('faq')
+export default async function FAQPage() {
+  const t = await getTranslations('faq')
 
   const faqCategories = [
     {
@@ -84,12 +76,7 @@ export default function FAQPage() {
       {/* Hero */}
       <section className="py-16 lg:py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            className="text-center max-w-3xl mx-auto"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-          >
+          <div className="text-center max-w-3xl mx-auto">
             <div className="size-16 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-6">
               <HelpCircle className="size-8 text-primary" />
             </div>
@@ -99,7 +86,7 @@ export default function FAQPage() {
             <p className="mt-6 text-lg text-muted-foreground leading-relaxed">
               {t('subheading')}
             </p>
-          </motion.div>
+          </div>
         </div>
       </section>
 
@@ -108,13 +95,7 @@ export default function FAQPage() {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="space-y-8 md:space-y-12">
             {faqCategories.map((category, catIndex) => (
-              <motion.div
-                key={category.category}
-                variants={sectionVariants}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true, margin: '-40px' }}
-              >
+              <div key={category.category}>
                 <h2 className="text-2xl font-bold text-foreground mb-6">
                   {category.category}
                 </h2>
@@ -134,7 +115,7 @@ export default function FAQPage() {
                     </AccordionItem>
                   ))}
                 </Accordion>
-              </motion.div>
+              </div>
             ))}
           </div>
         </div>
@@ -143,28 +124,16 @@ export default function FAQPage() {
       {/* Contact Section */}
       <section className="py-16 bg-card/50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            className="text-center mb-12"
-            variants={sectionVariants}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-          >
+          <div className="text-center mb-12">
             <h2 className="text-3xl font-bold text-foreground mb-4">
               {t('contactHeading')}
             </h2>
             <p className="text-muted-foreground">
               {t('contactSubheading')}
             </p>
-          </motion.div>
+          </div>
 
-          <motion.div
-            className="grid md:grid-cols-2 gap-6 max-w-2xl mx-auto"
-            variants={sectionVariants}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-          >
+          <div className="grid md:grid-cols-2 gap-6 max-w-2xl mx-auto">
             <a
               href="mailto:support@depxtech.com"
               className="flex items-center gap-3 sm:gap-4 p-4 sm:p-6 bg-muted/50 rounded-2xl hover:bg-muted transition-colors"
@@ -190,20 +159,14 @@ export default function FAQPage() {
                 <p className="text-sm text-muted-foreground">{t('liveChatHours')}</p>
               </div>
             </a>
-          </motion.div>
+          </div>
         </div>
       </section>
 
       {/* CTA */}
       <section className="py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            className="text-center"
-            variants={sectionVariants}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-          >
+          <div className="text-center">
             <h2 className="text-3xl font-bold text-foreground mb-4">
               {t('ctaHeading')}
             </h2>
@@ -216,7 +179,7 @@ export default function FAQPage() {
             >
               {t('ctaButton')} <ArrowRight className="size-5" />
             </Link>
-          </motion.div>
+          </div>
         </div>
       </section>
     </main>

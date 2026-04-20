@@ -26,10 +26,12 @@ import { toast } from "sonner"
 import { useTransitionRouter } from "@/components/ui/pageTransitions"
 import CartLoading from "./loading"
 import { TransitionLink } from "@/components/ui/pageTransitions"
+import { useWebHaptics } from "web-haptics/react"
 
 export default function CartPage() {
     const t = useTranslations('cart')
     const { user, getCart, updateCartItemAmount, clearCart } = useAuth()
+    const { trigger } = useWebHaptics()
     
     // Initialize fast cart data immediately
     const initializeFastCart = () => {
@@ -235,11 +237,14 @@ export default function CartPage() {
                  ))
                  // Update input values
                  setInputValues(prev => ({ ...prev, [productId]: newAmount }))
+                 trigger('success')
                  toast.success(t('cartUpdated'))
             } else {
+                trigger('error')
                 toast.error(t('failedUpdateCart'))
             }
         } catch (error) {
+            trigger('error')
             console.error('Error updating cart:', error)
             toast.error(t('failedUpdateCart'))
         } finally {
@@ -258,11 +263,14 @@ export default function CartPage() {
                      const { [productId]: removed, ...rest } = prev
                      return rest
                  })
+                 trigger('success')
                  toast.success(t('itemRemoved'))
             } else {
+                trigger('error')
                 toast.error(t('failedRemoveItem'))
             }
         } catch (error) {
+            trigger('error')
             console.error('Error removing item:', error)
             toast.error(t('failedRemoveItem'))
         } finally {
@@ -276,11 +284,14 @@ export default function CartPage() {
                          if (result.success) {
                  setProducts([])
                  setInputValues({})
+                 trigger('success')
                  toast.success(t('cartCleared'))
             } else {
+                trigger('error')
                 toast.error(t('failedClearCart'))
             }
         } catch (error) {
+            trigger('error')
             console.error('Error clearing cart:', error)
             toast.error(t('failedClearCart'))
         }

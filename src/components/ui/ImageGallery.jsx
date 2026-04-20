@@ -4,18 +4,22 @@ import { useState } from "react"
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { ChevronLeftIcon, ChevronRightIcon, PackageIcon } from 'lucide-react'
+import { useWebHaptics } from 'web-haptics/react'
 
 export function ImageGallery({ images = [], title = "" }) {
     const [currentImageIndex, setCurrentImageIndex] = useState(0)
+    const { trigger } = useWebHaptics()
 
     const nextImage = () => {
         if (images.length > 1) {
+            trigger('light')
             setCurrentImageIndex((prev) => (prev + 1) % images.length)
         }
     }
 
     const prevImage = () => {
         if (images.length > 1) {
+            trigger('light')
             setCurrentImageIndex((prev) => (prev - 1 + images.length) % images.length)
         }
     }

@@ -4,8 +4,10 @@ import { ChevronLeftIcon, ShareIcon } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { TransitionLink } from "./pageTransitions"
 import { TopSafeArea } from "../safe-area"
+import { useWebHaptics } from 'web-haptics/react'
 
 export default function TopNav(backURL="") {
+    const { trigger } = useWebHaptics()
     console.log("backURL", backURL)
     return (
         <>
@@ -16,11 +18,11 @@ export default function TopNav(backURL="") {
                 <TransitionLink href={backURL.backURL}>
                     <Button className="bg-background/50 backdrop-blur-sm" variant="outline" size="icon"><ChevronLeftIcon className="size-4.5" alt="Back" /></Button>
                 </TransitionLink>
-                <Button className="bg-background/50 backdrop-blur-sm" variant="outline" size="icon" onClick={() => navigator.share({
+                <Button className="bg-background/50 backdrop-blur-sm" variant="outline" size="icon" onClick={() => { trigger('light'); navigator.share({
                     title: "Share",
                     text: "Share",
                     url: window.location.href
-                })}><ShareIcon className="size-4.5" alt="Share" /></Button>
+                })}}><ShareIcon className="size-4.5" alt="Share" /></Button>
             </div>
         </>
     )

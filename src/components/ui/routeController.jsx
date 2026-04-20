@@ -1,6 +1,6 @@
 "use client"
 
-import { useTransitionRouter } from "@/components/ui/pageTransitions"
+import { useRouter } from "@/i18n/navigation"
 import { ChevronLeftIcon, ChevronRightIcon, HomeIcon, RefreshCcwIcon } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { LayoutDashboardIcon } from "lucide-react"
@@ -9,8 +9,9 @@ import { Minimize2Icon } from "lucide-react"
 import { Maximize2Icon } from "lucide-react"
 import { motion, AnimatePresence } from "motion/react"
 import { useSafeArea } from "@/components/safe-area"
+
 export default function RouteController() {
-    const router = useTransitionRouter()
+    const router = useRouter()
     const safeArea = useSafeArea()
     const [minimized, setMinimized] = useState(() => {
         if (typeof window !== 'undefined') {
@@ -24,7 +25,6 @@ export default function RouteController() {
         }
         return false
     })
-    const [isHover, setIsHover] = useState(false)
     
     useEffect(() => {
         if (typeof window !== 'undefined') {
@@ -37,9 +37,7 @@ export default function RouteController() {
     }, [minimized])
 
     return (
-        <div 
-            onMouseEnter={() => setIsHover(true)}
-            onMouseLeave={() => setIsHover(false)}
+        <div
             className="flex items-center gap-2 p-2 bg-background/50 backdrop-blur-sm rounded-lg fixed bottom-2 right-2 z-100 shadow-lg h-14"style={{ 
                 viewTransitionName: 'route-controller',
                 bottom: `${4 + safeArea.top}px`,
@@ -67,21 +65,16 @@ export default function RouteController() {
                     {
                         <Button onClick={() => router.forward()} variant="ghost" size="icon"><ChevronRightIcon className="w-4 h-4" /></Button>
                     }
-                    <Button onClick={() => router.refresh()} variant="ghost" size="icon"><RefreshCcwIcon className="w-4 h-4" /></Button>
+                    <Button onClick={() => window.location.reload()} variant="ghost" size="icon"><RefreshCcwIcon className="w-4 h-4" /></Button>
                     
                     <Button onClick={() => router.push('/')} variant="ghost" size="icon"><HomeIcon className="w-4 h-4" /></Button>
                     <Button onClick={() => router.push('/admin')} variant="ghost"><LayoutDashboardIcon className="w-4 h-4" />Dashboard</Button>
                 </motion.div>
                 )}
             </AnimatePresence>
-            {(isHover || !minimized) ?
-                <Button onClick={() => setMinimized(!minimized)} variant="ghost" size="icon">
-                    {minimized ? <Maximize2Icon className="w-4 h-4" /> : <Minimize2Icon className="w-4 h-4" />}
-                </Button> 
-                :
-                <ChevronRightIcon strokeWidth={1.5} className="w-3 h-4"/>
-
-            }
+            <Button onClick={() => setMinimized(!minimized)} variant="ghost" size="icon">
+                {minimized ? <Maximize2Icon className="w-4 h-4" /> : <Minimize2Icon className="w-4 h-4" />}
+            </Button>
 
         </div>
     )

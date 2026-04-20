@@ -9,7 +9,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Badge } from '@/components/ui/badge'
-import { Search, RefreshCw, Eye, ArrowRightLeft, DollarSign, Clock, CheckCircle, XCircle, CircleDot, ListChecks, Cable, Package, BoxIcon } from 'lucide-react'
+import { Search, RefreshCw, Eye, ArrowRightLeft, DollarSign, Clock, CheckCircle, XCircle, CircleDot, ListChecks, Cable, Package, BoxIcon, Sparkles } from 'lucide-react'
+import Image from 'next/image'
 
 function parseCondition(condition) {
   if (!condition) return null
@@ -93,6 +94,59 @@ function ConditionDisplay({ quote }) {
   }
 
   return null
+}
+
+function isCustomTradeIn(quote) {
+  if (!quote.product_id) return true
+  if (!quote.condition) return false
+  try {
+    const parsed = JSON.parse(quote.condition)
+    return parsed && typeof parsed === 'object' && parsed.deviceName
+  } catch { return false }
+}
+
+function getCustomDeviceInfo(quote) {
+  if (!quote.condition) return null
+  try {
+    const parsed = JSON.parse(quote.condition)
+    if (parsed && typeof parsed === 'object' && parsed.deviceName) return parsed
+  } catch { /* not JSON */ }
+  return null
+}
+
+function CustomDeviceDisplay({ info }) {
+  if (!info) return null
+  return (
+    <div className="space-y-3">
+      <h4 className="font-semibold flex items-center gap-1.5 text-sm">
+        <Sparkles className="h-4 w-4" />
+        Custom Device Details
+      </h4>
+      <div className="text-sm space-y-1.5">
+        <p><span className="text-muted-foreground">Device:</span> <span className="font-medium">{info.deviceName}</span></p>
+        {info.category && <p><span className="text-muted-foreground">Category:</span> {info.category}</p>}
+        {info.brand && <p><span className="text-muted-foreground">Brand:</span> {info.brand}</p>}
+        {info.conditionDesc && (
+          <div>
+            <span className="text-muted-foreground">Condition:</span>
+            <p className="mt-1 bg-accent p-2 rounded text-sm">{info.conditionDesc}</p>
+          </div>
+        )}
+        {info.photos && info.photos.length > 0 && (
+          <div>
+            <span className="text-muted-foreground">Photos ({info.photos.length}):</span>
+            <div className="flex gap-2 flex-wrap mt-1.5">
+              {info.photos.map((url, i) => (
+                <a key={i} href={url} target="_blank" rel="noopener noreferrer" className="relative w-20 h-20 rounded-lg overflow-hidden border border-border hover:ring-2 hover:ring-primary">
+                  <Image src={url} alt={`Photo ${i + 1}`} fill className="object-cover" />
+                </a>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  )
 }
 
 function ShippingMethodBadge({ method }) {
@@ -346,8 +400,13 @@ export default function AdminTradeQuotes() {
                   <TableBody>
                     {filteredQuotes.map((quote) => (
                       <TableRow key={quote.id}>
-                        <TableCell className="font-medium max-w-[200px] truncate">
-                          {quote.product_title}
+                        <TableCell className="font-medium max-w-[200px]">
+                          <div className="flex items-center gap-1.5">
+                            {isCustomTradeIn(quote) && (
+                              <Badge variant="secondary" className="text-xs shrink-0 bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400">Custom</Badge>
+                            )}
+                            <span className="truncate">{quote.product_title}</span>
+                          </div>
                         </TableCell>
                         <TableCell>
                           <div className="space-y-0.5">
@@ -410,7 +469,12 @@ export default function AdminTradeQuotes() {
             <Card className="max-w-2xl w-full max-h-[80vh] overflow-y-auto">
               <CardHeader className="flex flex-row items-start justify-between">
                 <div>
-                  <CardTitle>{t('details')}</CardTitle>
+                  <CardTitle className="flex items-center gap-2">
+                    {t('details')}
+                    {isCustomTradeIn(selectedQuote) && (
+                      <Badge variant="secondary" className="text-xs bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400">Custom</Badge>
+                    )}
+                  </CardTitle>
                   <CardDescription>{selectedQuote.product_title}</CardDescription>
                 </div>
                 <Button variant="outline" size="sm" onClick={() => setShowDetails(false)}>
@@ -448,7 +512,11 @@ export default function AdminTradeQuotes() {
                   </div>
                 </div>
 
-                <ConditionDisplay quote={selectedQuote} />
+                {isCustomTradeIn(selectedQuote) ? (
+                  <CustomDeviceDisplay info={getCustomDeviceInfo(selectedQuote)} />
+                ) : (
+                  <ConditionDisplay quote={selectedQuote} />
+                )}
 
                 {selectedQuote.depreciation && (
                   <div>

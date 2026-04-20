@@ -11,11 +11,13 @@ import { ArrowLeftIcon, UploadIcon, Loader2, UserIcon, XIcon } from 'lucide-reac
 import { toast } from 'sonner'
 import Image from 'next/image'
 import { useTranslations } from 'next-intl'
+import { useWebHaptics } from 'web-haptics/react'
 
 export default function EditAccountPage() {
   const t = useTranslations('account.editPage')
   const { user, profileData, updateProfile, loading: authLoading } = useAuth()
   const router = useTransitionRouter()
+  const { trigger } = useWebHaptics()
   const fileInputRef = useRef(null)
   
   const [loading, setLoading] = useState(false)
@@ -99,13 +101,15 @@ export default function EditAccountPage() {
         throw new Error(data.error || 'Failed to upload image')
       }
 
+      trigger('success')
       toast.success(t('successUpload'))
       setSelectedFile(null)
       setAvatarPreview(data.url)
-      
+
       // Refresh profile data
       window.location.reload()
     } catch (error) {
+      trigger('error')
       console.error('Upload error:', error)
       toast.error(error.message || 'Failed to upload image')
     } finally {
@@ -128,12 +132,14 @@ export default function EditAccountPage() {
       })
 
       if (result.success) {
+        trigger('success')
         toast.success(t('successUpdate'))
         router.push('/account')
       } else {
         throw new Error(result.error || 'Failed to update profile')
       }
     } catch (error) {
+      trigger('error')
       console.error('Update error:', error)
       toast.error(error.message || 'Failed to update profile')
     } finally {

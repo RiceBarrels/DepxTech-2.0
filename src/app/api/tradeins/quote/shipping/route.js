@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 import { notifyAdmins, buildTradeInEmail } from '@/lib/email'
+import { notifyAdminsPush } from '@/lib/notify'
 
 function createServiceRoleClient() {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
@@ -33,6 +34,8 @@ export async function PUT(request) {
       customerPhone,
       estimatedValue,
       notes,
+      paymentMethod,
+      paymentHandle,
     } = body
 
     if (!quoteId || !shippingMethod) {
@@ -82,7 +85,17 @@ export async function PUT(request) {
         estimatedValue: estimatedValue || 0,
         notes,
         shippingMethod,
+        paymentMethod,
+        paymentHandle,
       }),
+    })
+
+    // Notify admins via push + inbox (fire-and-forget)
+    notifyAdminsPush({
+      type: 'admin_trade_in',
+      title: `New Trade-in: ${productTitle || 'Unknown Product'}`,
+      body: `${customerName || 'A customer'} submitted a trade-in worth $${Number(estimatedValue || 0).toFixed(2)}`,
+      url: '/admin/trade-quotes',
     })
 
     return NextResponse.json({

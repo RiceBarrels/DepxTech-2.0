@@ -9,7 +9,7 @@ import { ChevronDown, ChevronRight, Globe } from 'lucide-react'
 
 const LOCALE_NAMES = {
   'zh-CN': '简体中文',
-  'zh-TW': '繁體中文',
+  'zh-HK': '繁體中文',
   ar: 'العربية',
   nl: 'Nederlands',
   fr: 'Français',

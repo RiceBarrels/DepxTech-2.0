@@ -293,14 +293,14 @@ export default function ProductsPageClient({
                                         layout
                                     >
                                         <TransitionLink href={`/products/${product.id}`}>
-                                            <Card className="cursor-pointer bg-primary/5 group p-0 gap-0 h-full border-none shadow-none rounded-lg">
+                                            <Card className="cursor-pointer bg-primary/5 group p-0 gap-0 h-full border-none shadow-none rounded-lg hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
                                                 <CardHeader className="p-0">
                                                     <div className="aspect-square relative overflow-hidden rounded-lg bg-muted">
                                                         {product.imgs && product.imgs.length > 0 ? (
-                                                            <img 
-                                                                src={product.imgs[0]} 
+                                                            <img
+                                                                src={product.imgs[0]}
                                                                 alt={product.title}
-                                                                className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-300 rounded-xl"
+                                                                className="object-cover w-full h-full group-hover:scale-110 transition-transform duration-500 rounded-xl"
                                                                 loading={index < 10 ? "eager" : "lazy"}
                                                                 onError={(e) => {
                                                                     e.target.style.display = 'none'

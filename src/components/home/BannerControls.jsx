@@ -3,20 +3,23 @@
 import { useState, useEffect, useCallback } from 'react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { useWebHaptics } from 'web-haptics/react'
 
 const AUTOPLAY_MS = 5000
 
 export function BannerControls({ count }) {
   const [current, setCurrent] = useState(0)
   const [paused, setPaused] = useState(false)
+  const { trigger } = useWebHaptics()
 
   const scrollTo = useCallback((index) => {
+    trigger('light')
     const scroller = document.getElementById('banner-scroller')
     if (!scroller) return
     const width = scroller.offsetWidth
     scroller.scrollTo({ left: width * index, behavior: 'smooth' })
     setCurrent(index)
-  }, [])
+  }, [trigger])
 
   const next = useCallback(() => {
     scrollTo(current >= count - 1 ? 0 : current + 1)
@@ -91,17 +94,19 @@ export function BannerControls({ count }) {
       </button>
 
       {/* Dots */}
-      <div className="absolute bottom-2 sm:bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5 z-10">
+      <div className="absolute bottom-0 sm:bottom-1 left-1/2 -translate-x-1/2 flex z-10">
         {Array.from({ length: count }, (_, i) => (
           <button
             key={i}
             onClick={() => scrollTo(i)}
-            className={cn(
-              "h-1.5 rounded-full transition-all",
-              i === current ? "w-5 bg-white" : "w-1.5 bg-white/50 hover:bg-white/70"
-            )}
+            className="flex items-center justify-center p-2"
             aria-label={`Go to slide ${i + 1}`}
-          />
+          >
+            <span className={cn(
+              "h-1.5 rounded-full transition-all block",
+              i === current ? "w-5 bg-white" : "w-1.5 bg-white/50 hover:bg-white/70"
+            )} />
+          </button>
         ))}
       </div>
     </>

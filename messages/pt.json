@@ -17,6 +17,8 @@
     "condition": "Condição:",
     "getYourQuote": "Obtenha Sua Cotação",
     "readyToTradeIn": "Pronto para Negociar?",
+    "offers": "Ofertas",
+    "cart": "Carrinho",
     "status": {
       "pending": "Pendente",
       "approved": "Aprovado",
@@ -116,6 +118,29 @@
       "subscribing": "Inscrevendo...",
       "success": "Inscrito com sucesso!",
       "successDesc": "Você receberá atualizações de preços de trade-in na sua caixa de entrada."
+    },
+    "testimonials": {
+      "heading": "O que nossos clientes dizem",
+      "subheading": "Milhares de clientes satisfeitos já fizeram trade-in de seus dispositivos conosco",
+      "review1Quote": "Recebi $380 pelo meu iPhone 13 antigo — muito mais do que eu esperava. Todo o processo levou menos de uma semana, da cotação ao pagamento.",
+      "review1Name": "Sarah M.",
+      "review1Device": "iPhone 13 Pro",
+      "review2Quote": "No início eu estava desconfiado, mas a DepxTech tornou tudo muito fácil. Etiqueta de envio grátis, inspeção rápida e o pagamento foi exatamente o que me cotaram.",
+      "review2Name": "James L.",
+      "review2Device": "MacBook Air M1",
+      "review3Quote": "A melhor experiência de trade-in que já tive. A abordagem ecológica é um grande diferencial. Com certeza vou usar novamente na minha próxima troca.",
+      "review3Name": "Emily R.",
+      "review3Device": "iPad Pro 11\"",
+      "review4Quote": "Enviei meu Galaxy S22 e recebi o pagamento em 48 horas. A cotação foi justa e o processo não poderia ter sido mais simples. Já recomendei a amigos.",
+      "review4Name": "Marcus T.",
+      "review4Device": "Galaxy S22 Ultra",
+      "review5Quote": "Troquei um notebook quebrado que achava que não valia nada. A DepxTech ainda me deu $120! Ótimo atendimento ao cliente e resposta rápida.",
+      "review5Name": "Jessica H.",
+      "review5Device": "HP Spectre x360",
+      "review6Quote": "Usei a DepxTech duas vezes — para meu Switch antigo e um MacBook. As duas vezes a experiência foi impecável. Preços justos, sem complicações.",
+      "review6Name": "Ryan P.",
+      "review6Device": "Nintendo Switch + MacBook Pro",
+      "moreReviews": "Leia mais avaliações em"
     }
   },
   "footer": {
@@ -159,6 +184,7 @@
     "termsOfService": "Termos de Serviço",
     "refundPolicy": "Política de Reembolso",
     "shippingPolicy": "Política de Envio",
+    "sitemap": "Sitemap",
     "copyright": "Copyright © {year} DepxTech. Todos os direitos reservados."
   },
   "faq": {
@@ -537,6 +563,40 @@
     "ctaSubheading": "Obtenha uma cotação instantânea para o seu dispositivo em poucos cliques.",
     "ctaButton": "Obtenha Sua Cotação"
   },
+  "about": {
+    "badge": "Sobre a DepxTech",
+    "heading": "Tornando a compra de tech simples, justa e verde",
+    "subheading": "Começamos com uma ideia simples: vender seus dispositivos antigos deveria ser fácil, transparente e bom para o planeta.",
+    "storyTitle": "Nossa história",
+    "storyP1": "A DepxTech nasceu da frustração. Vimos milhões de dispositivos perfeitamente funcionais juntando poeira em gavetas — enquanto milhões mais acabavam em aterros sanitários todo ano. As opções existentes eram lentas, confusas e ofereciam preços injustos. Sabíamos que deveria haver uma forma melhor.",
+    "storyP2": "Então criamos a DepxTech — uma plataforma onde qualquer pessoa pode vender seus dispositivos antigos em minutos, receber uma cotação justa instantânea e ser paga rapidamente. Sem taxas ocultas, sem ofertas baixas, sem esperar semanas. Apenas um processo simples e honesto do início ao fim.",
+    "storyP3": "Hoje, ajudamos milhares de clientes a transformar dispositivos parados em dinheiro, evitando que milhares de aparelhos acabem em aterros. Cada compra importa — para sua carteira e para o planeta. E estamos apenas começando.",
+    "stat1Label": "Dispositivos reciclados",
+    "stat2Label": "Clientes satisfeitos",
+    "stat3Label": "Emissões CO₂ economizadas",
+    "stat4Label": "Tempo médio de pagamento",
+    "valuesTitle": "No que acreditamos",
+    "valuesSubtitle": "Esses valores fundamentais guiam cada decisão que tomamos e cada interação com nossos clientes.",
+    "value1Title": "Sustentabilidade em primeiro lugar",
+    "value1Desc": "Cada dispositivo que aceitamos ganha uma segunda vida. Trabalhamos com recicladores certificados para garantir zero resíduos em aterros.",
+    "value2Title": "Transparência total",
+    "value2Desc": "Sem taxas ocultas, sem surpresas. Nossas cotações instantâneas são baseadas em dados reais de mercado, e sempre honramos o preço oferecido.",
+    "value3Title": "Velocidade e simplicidade",
+    "value3Desc": "Cotação em segundos, frete grátis e pagamento em 24 horas após inspeção. Respeitamos seu tempo.",
+    "value4Title": "Qualidade garantida",
+    "value4Desc": "Cada dispositivo recondicionado passa por testes rigorosos. Garantimos nossos produtos com garantia e devoluções sem complicações.",
+    "diffTitle": "Por que a DepxTech?",
+    "diffSubtitle": "Veja o que nos torna diferentes.",
+    "diff1Title": "Melhores preços do mercado",
+    "diff1Desc": "Nossas cotações são baseadas em dados de mercado em tempo real. Oferecemos consistentemente preços mais altos que a concorrência.",
+    "diff2Title": "Compromisso zero resíduos",
+    "diff2Desc": "99% dos dispositivos que recebemos são recondicionados ou reciclados de forma responsável. Nada vai para o aterro.",
+    "diff3Title": "Obcecados pelo cliente",
+    "diff3Desc": "Milhares de avaliações 5 estrelas no eBay e Jawa. Nossos clientes voltam porque cumprimos cada promessa.",
+    "ctaTitle": "Pronto para vender?",
+    "ctaDesc": "Junte-se a milhares de clientes satisfeitos que transformaram seus dispositivos antigos em dinheiro. Receba sua cotação gratuita hoje.",
+    "ctaButton": "Começar a venda"
+  },
   "sustainability": {
     "badge": "Nosso Compromisso com o Planeta",
     "heading": "Sustentabilidade na DepxTech",
@@ -814,13 +874,26 @@
       "errorLoadSettings": "Falha ao carregar configurações",
       "errorUpdateSetting": "Falha ao atualizar configuração",
       "errorDeleteAccount": "A exclusão da conta requer contato com o suporte",
+      "pushPermissionDenied": "A permissão de notificação push foi negada",
       "loadingSettings": "Carregando configurações...",
       "pleaseLogIn": "Por favor, faça login",
       "needLogIn": "Você precisa estar logado para acessar as configurações",
       "goToLogin": "Ir para Login"
     },
     "inboxPage": {
-      "title": "Caixa de Entrada"
+      "title": "Caixa de Entrada",
+      "subtitle": "Suas notificações e atualizações",
+      "loading": "Carregando notificações...",
+      "empty": "Nenhuma notificação ainda",
+      "emptyDesc": "Você verá atualizações sobre suas trocas e pedidos aqui",
+      "markAllRead": "Marcar todas como lidas",
+      "loadMore": "Carregar mais",
+      "errorLoad": "Falha ao carregar notificações",
+      "errorMarkRead": "Falha ao atualizar notificação",
+      "browseTradeIn": "Ver Trocas",
+      "pleaseLogIn": "Por favor, faça login",
+      "needLogIn": "Você precisa estar logado para ver sua caixa de entrada.",
+      "goToLogin": "Ir para Login"
     },
     "membershipPage": {
       "title": "Associação"
@@ -881,7 +954,8 @@
       "tradeInOrders": "Pedidos de Trade-in",
       "offers": "Ofertas",
       "users": "Usuários",
-      "signOut": "Sair"
+      "signOut": "Sair",
+      "goBackHome": "Voltar para o Início"
     },
     "dashboard": {
       "title": "Painel",
@@ -1042,7 +1116,8 @@
       "cancel": "Cancelar",
       "prev": "Anterior",
       "save": "Salvar",
-      "saving": "Salvando..."
+      "saving": "Salvando...",
+      "fetchBackmarketPrices": "Buscar preços BackMarket"
     },
     "users": {
       "title": "Usuários",
@@ -1411,7 +1486,9 @@
     "privacyTitle": "Política de Privacidade",
     "privacyDescription": "Política de Privacidade da DepxTech - Saiba como coletamos, usamos e protegemos suas informações pessoais.",
     "membershipTitle": "Benefícios da Associação Premium | DepxTech",
-    "membershipDescription": "Junte-se ao nosso programa de associação exclusivo com frete grátis, presentes mensais, entrega rápida e ofertas surpresa semanais."
+    "membershipDescription": "Junte-se ao nosso programa de associação exclusivo com frete grátis, presentes mensais, entrega rápida e ofertas surpresa semanais.",
+    "aboutTitle": "Sobre nós | DepxTech",
+    "aboutDescription": "Conheça a missão da DepxTech — tornar a compra de dispositivos simples, rápida e ecológica. Nossa história, valores e compromisso com a sustentabilidade."
   },
   "trade": {
     "hero": {
@@ -1467,10 +1544,49 @@
       "customers": "Clientes",
       "rating": "Avaliação"
     },
+    "cantFindDevice": "Não encontrou seu dispositivo?",
+    "cantFindDeviceDesc": "Envie uma solicitação de trade-in personalizada e retornaremos com uma cotação.",
+    "cantFindDeviceCta": "Trade-in personalizado",
     "cta": {
       "title": "Pronto para negociar?",
       "description": "Obtenha um preço justo pela sua tecnologia antiga hoje.",
       "browseAll": "Ver Todos os Dispositivos"
+    },
+    "custom": {
+      "metaTitle": "Trade-in personalizado | DepxTech",
+      "metaDesc": "Não encontrou seu dispositivo? Envie uma solicitação de trade-in personalizada.",
+      "title": "Trade-in personalizado",
+      "subtitle": "Seu dispositivo não está no nosso catálogo? Descreva-o abaixo e enviaremos uma cotação.",
+      "deviceInfoTitle": "Informações do dispositivo",
+      "deviceName": "Nome do dispositivo",
+      "deviceNamePlaceholder": "ex. iPhone 13 Pro, MacBook Air M2, Samsung Galaxy S23...",
+      "category": "Categoria",
+      "categoryPlaceholder": "Selecionar categoria",
+      "categoryOther": "Outro",
+      "brand": "Marca",
+      "brandPlaceholder": "ex. Apple, Samsung, Dell...",
+      "conditionDesc": "Descrição do estado",
+      "conditionDescPlaceholder": "Descreva o estado do seu dispositivo: arranhões, amassados, danos na tela, saúde da bateria, etc.",
+      "photos": "Fotos",
+      "photosHint": "Envie até 5 fotos do seu dispositivo (máx. 10 MB cada).",
+      "photosCount": "foto(s)",
+      "addPhotos": "Adicionar fotos",
+      "uploading": "Enviando...",
+      "maxPhotos": "Máximo de 5 fotos permitidas",
+      "photoTooLarge": "A foto deve ter menos de 10 MB",
+      "photoUploadError": "Falha ao enviar foto",
+      "submitButton": "Enviar solicitação de trade-in",
+      "submitting": "Enviando...",
+      "confirmTitle": "Confirmar envio",
+      "confirmDesc": "Revise as informações do dispositivo e dados de contato antes de enviar.",
+      "confirmSubmit": "Enviar solicitação",
+      "successTitle": "Solicitação enviada!",
+      "successDesc": "Recebemos sua solicitação de trade-in personalizada. Nossa equipe analisará e enviará uma cotação em até 24 horas.",
+      "successToast": "Solicitação de trade-in personalizada enviada!",
+      "errorSubmit": "Falha ao enviar. Tente novamente.",
+      "errorDeviceFieldsRequired": "Preencha o nome do dispositivo, categoria e descrição do estado.",
+      "submitAnother": "Enviar outra solicitação",
+      "backToTrade": "Voltar ao trade-in"
     },
     "search": {
       "prefix": "Pesquisar \"",
@@ -1495,7 +1611,7 @@
       "devicesFound": "{count} dispositivo{count, plural, one {} other {s}} encontrado{count, plural, one {} other {s}}",
       "noDevicesFound": "Nenhum dispositivo encontrado",
       "noDevicesHint": "Tente ajustar seus filtros ou pesquise um dispositivo diferente.",
-      "startsAt": "A partir de",
+      "upTo": "Até",
       "tradeInUpTo": "Trade-in de até",
       "getQuote": "Obter Cotação",
       "tradeIn": "Negociar",
@@ -1510,7 +1626,18 @@
       "metaTitleDefault": "Navegue pelos Dispositivos de Trade-In | DepxTech",
       "metaDescDefault": "Navegue por todos os dispositivos elegíveis para trade-in na DepxTech. Smartphones, notebooks, tablets, GPUs e mais.",
       "metaTitleFiltered": "Negocie {parts} | DepxTech",
-      "metaDescFiltered": "Negocie seu {parts} na DepxTech. Obtenha cotações instantâneas e os melhores pagamentos."
+      "metaDescFiltered": "Negocie seu {parts} na DepxTech. Obtenha cotações instantâneas e os melhores pagamentos.",
+      "filterBtn": "Filter",
+      "searchLabel": "Search",
+      "sortLabel": "Sort by",
+      "sortPriceDesc": "Price: High to Low",
+      "sortPriceAsc": "Price: Low to High",
+      "sortName": "Name: A to Z",
+      "sortPopular": "Most Popular",
+      "priceRange": "Price Range",
+      "seriesLabel": "Series",
+      "bannerBrandTitle": "Negocie {category} {brand} com a DepxTech",
+      "bannerBrandSubtitle": "Cotações instantâneas até ${value}"
     },
     "product": {
       "notFound": "Produto Não Encontrado | DepxTech",
@@ -1526,6 +1653,9 @@
       "24hours": "24 Horas",
       "dataWipe": "Apagamento de Dados",
       "certified": "Certificado",
+      "readyToStart": "Pronto para Obter sua Cotação?",
+      "answerFewQuestions": "Responda algumas perguntas rápidas para obter uma estimativa precisa de trade-in.",
+      "startTradeIn": "Iniciar Trade-In",
       "depreciationCurrent": "Atual",
       "depreciationSignificant": "Depreciação Significativa",
       "depreciationModerate": "Depreciação Moderada",
@@ -1563,6 +1693,7 @@
       "quoteSubmittedDesc": "Analisaremos sua solicitação e entraremos em contato em até 24 horas.",
       "estimatedValue": "Seu Valor Estimado",
       "finalValueNote": "Valor final confirmado após inspeção",
+      "total": "Total",
       "whatsNext": "Próximos passos",
       "step1": "Verifique seu e-mail para confirmação",
       "step2": "Enviaremos uma etiqueta de envio pré-paga",
@@ -1603,7 +1734,37 @@
       "cancelButton": "Cancel",
       "product": "Product",
       "errorShippingRequired": "Please select a shipping method",
-      "onlineBonusIncluded": "Includes +10% Online Bonus ({amount})"
+      "onlineBonusIncluded": "Includes +10% Online Bonus ({amount})",
+      "shippingDeadlineWarning": "Please ship your device within 14 days. The final price may change if received after this period due to market fluctuations.",
+      "pushDialogTitle": "Acompanhe sua troca",
+      "pushDialogDesc": "Receba notificações quando sua troca for aprovada, enviada ou concluída. Enviamos apenas atualizações importantes.",
+      "pushDialogEnable": "Ativar notificações",
+      "pushDialogSkip": "Talvez depois",
+      "pushEnabled": "Notificações ativadas! Manteremos você informado.",
+      "pushFailed": "Não foi possível ativar notificações. Tente novamente mais tarde.",
+      "savedAddresses": "Salvos",
+      "newAddress": "Novo endereço",
+      "default": "Padrão",
+      "saveToAddressBook": "Salvar no catálogo de endereços",
+      "choosePaymentMethod": "Choose Payment Method",
+      "choosePaymentMethodDesc": "How would you like to receive your payment?",
+      "paymentMethodLabel": "Payment Method",
+      "paymentHandleLabel": "Payment Account",
+      "paymentHandle": "{method} username / email / address",
+      "paypalPlaceholder": "PayPal email address",
+      "zellePlaceholder": "Zelle email or phone number",
+      "cashappPlaceholder": "$cashtag or phone number",
+      "venmoPlaceholder": "@username or phone number",
+      "bitcoinPlaceholder": "Bitcoin wallet address",
+      "errorPaymentRequired": "Please select a payment method",
+      "errorPaymentHandleRequired": "Please enter your payment account info",
+      "tosAgree": "I have read and agree to the",
+      "tosLink": "Terms of Service",
+      "tosDialogTitle": "Terms of Service",
+      "tosDialogDesc": "Please read and scroll to the bottom to accept.",
+      "tosScrollHint": "Scroll to the bottom to accept",
+      "tosAcceptButton": "I Accept",
+      "errorTosRequired": "Please accept the Terms of Service"
     }
   }
 }

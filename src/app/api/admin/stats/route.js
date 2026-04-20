@@ -1,22 +1,6 @@
 import { NextResponse } from 'next/server'
 import { verifyAdminAccess } from '@/lib/serverAuth'
-import { createClient } from '@supabase/supabase-js'
-
-function createServiceRoleClient() {
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-  const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE
-
-  if (!supabaseUrl || !supabaseServiceRoleKey) {
-    throw new Error('Missing Supabase environment variables')
-  }
-
-  return createClient(supabaseUrl, supabaseServiceRoleKey, {
-    auth: {
-      autoRefreshToken: false,
-      persistSession: false
-    }
-  })
-}
+import { supabaseAdmin } from '@/lib/supabase-admin'
 
 export async function GET(request) {
   try {
@@ -29,22 +13,23 @@ export async function GET(request) {
       )
     }
 
-    const supabase = createServiceRoleClient()
-
-    const [productsResult, transactionsResult, tradeinResult, offersResult] = await Promise.all([
-      supabase.from('products').select('id', { count: 'exact', head: true }),
-      supabase.from('transactions').select('id, amount, status, order_status, billing_details, created_at, payment_intent_id').order('created_at', { ascending: false }),
-      supabase.from('tradable_products').select('id', { count: 'exact', head: true }),
-      supabase.from('offers').select('id, is_active, start_date, end_date'),
+    // Use count-only queries where possible to avoid fetching all rows
+    const [productsResult, ordersCountResult, pendingCountResult, revenueResult, recentOrdersResult, tradeinResult, offersResult] = await Promise.all([
+      supabaseAdmin.from('products').select('id', { count: 'exact', head: true }),
+      supabaseAdmin.from('transactions').select('id', { count: 'exact', head: true }),
+      supabaseAdmin.from('transactions').select('id', { count: 'exact', head: true }).eq('order_status', 'pending'),
+      supabaseAdmin.from('transactions').select('amount'),
+      supabaseAdmin.from('transactions').select('id, amount, status, order_status, billing_details, created_at, payment_intent_id').order('created_at', { ascending: false }).limit(5),
+      supabaseAdmin.from('tradable_products').select('id', { count: 'exact', head: true }),
+      supabaseAdmin.from('offers').select('id, is_active, start_date, end_date'),
     ])
 
     const totalProducts = productsResult.count ?? 0
+    const totalOrders = ordersCountResult.count ?? 0
+    const pendingOrders = pendingCountResult.count ?? 0
     const totalTradeins = tradeinResult.count ?? 0
-
-    const transactions = transactionsResult.data || []
-    const totalOrders = transactions.length
-    const totalRevenue = transactions.reduce((sum, t) => sum + (t.amount || 0), 0)
-    const pendingOrders = transactions.filter(t => t.order_status === 'pending').length
+    const totalRevenue = (revenueResult.data || []).reduce((sum, t) => sum + (t.amount || 0), 0)
+    const recentOrders = recentOrdersResult.data || []
 
     const offers = offersResult.data || []
     const now = new Date()
@@ -56,8 +41,6 @@ export async function GET(request) {
       if (end && now > end) return false
       return true
     }).length
-
-    const recentOrders = transactions.slice(0, 5)
 
     return NextResponse.json({
       success: true,

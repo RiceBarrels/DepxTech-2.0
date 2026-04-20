@@ -1,9 +1,12 @@
-import { getTranslations } from 'next-intl/server'
+import { buildPageMeta } from '@/lib/seo'
 
 export async function generateMetadata({ params }) {
   const { locale } = await params
-  const t = await getTranslations({ locale, namespace: 'metadata' })
-  return { title: t('faqTitle'), description: t('faqDescription') }
+  return buildPageMeta(locale, {
+    titleKey: 'faqTitle',
+    descKey: 'faqDescription',
+    path: '/trade/faq',
+  })
 }
 
 export default function FAQLayout({ children }) {

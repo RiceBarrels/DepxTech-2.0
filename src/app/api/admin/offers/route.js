@@ -1,23 +1,7 @@
 import { NextResponse } from 'next/server'
 import { verifyAdminAccess } from '@/lib/serverAuth'
-import { createClient } from '@supabase/supabase-js'
+import { supabaseAdmin } from '@/lib/supabase-admin'
 
-// Create Supabase client with service role for admin operations
-function createServiceRoleClient() {
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-  const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE
-  
-  if (!supabaseUrl || !supabaseServiceRoleKey) {
-    throw new Error('Missing Supabase environment variables')
-  }
-  
-  return createClient(supabaseUrl, supabaseServiceRoleKey, {
-    auth: {
-      autoRefreshToken: false,
-      persistSession: false
-    }
-  })
-}
 
 export async function GET(request) {
   try {
@@ -32,7 +16,7 @@ export async function GET(request) {
     }
 
     // Create service role client for admin operations
-    const supabase = createServiceRoleClient()
+    const supabase = supabaseAdmin
 
     // Get query parameters
     const { searchParams } = new URL(request.url)
@@ -161,7 +145,7 @@ export async function POST(request) {
     } = body
 
     // Create service role client for admin operations
-    const supabase = createServiceRoleClient()
+    const supabase = supabaseAdmin
 
     // Prepare insert data
     const insertData = {
@@ -274,7 +258,7 @@ export async function PUT(request) {
     } = body
 
     // Create service role client for admin operations
-    const supabase = createServiceRoleClient()
+    const supabase = supabaseAdmin
 
     // Prepare update data
     const updateData = {
@@ -349,7 +333,7 @@ export async function DELETE(request) {
     }
 
     // Create service role client for admin operations
-    const supabase = createServiceRoleClient()
+    const supabase = supabaseAdmin
 
     // Delete the offer from the database
     const { error } = await supabase

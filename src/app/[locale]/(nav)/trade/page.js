@@ -4,19 +4,18 @@ import TradeHero from '@/components/trade/TradeHero'
 import CategoryGrid from '@/components/trade/CategoryGrid'
 import { TradeTrustIndicators, TradeValueProposition } from '@/components/trade/TradeTrustIndicators'
 import { TradeProductCard } from '@/components/trade/TradeCards'
+import { TradeTestimonials } from '@/components/trade/TradeTestimonials'
+import { TradeEnvironmentalImpact } from '@/components/trade/TradeEnvironmentalImpact'
+import { AcceptedBrands } from '@/components/trade/AcceptedBrands'
+import { TradeFAQPreview } from '@/components/trade/TradeFAQPreview'
 import { supabaseAdmin } from '@/lib/supabase-admin'
 import { Package, Truck, CreditCard } from 'lucide-react'
 import { getTranslations } from 'next-intl/server'
 
 export async function generateMetadata({ params }) {
   const { locale } = await params
-  const t = await getTranslations({ locale, namespace: 'metadata' })
-  return {
-    title: t('tradeTitle'),
-    description: t('tradeDescription'),
-    openGraph: { title: t('tradeTitle'), description: t('tradeDescription'), type: 'website' },
-    robots: { index: true, follow: true },
-  }
+  const { buildPageMeta } = await import('@/lib/seo')
+  return buildPageMeta(locale, { titleKey: 'tradeTitle', descKey: 'tradeDescription', path: '/trade' })
 }
 
 export default async function TradePage() {
@@ -26,6 +25,7 @@ export default async function TradePage() {
   const { data: featured } = await supabaseAdmin
     .from('tradable_products')
     .select('id, title, base_price, imgs, des, brand, category')
+    .is('variant_of', null)
     .order('views', { ascending: false })
     .limit(6)
 
@@ -41,6 +41,21 @@ export default async function TradePage() {
     <div className="flex flex-col items-center">
       <TradeHero />
       <CategoryGrid />
+
+      {/* Can't find your device? */}
+      <section className="w-full max-w-7xl px-4 -mt-4 mb-2">
+        <TransitionLink href="/trade/custom" className="block">
+          <div className="flex items-center justify-between gap-4 p-4 sm:p-5 rounded-xl border border-dashed border-primary/30 bg-primary/5 hover:bg-primary/10 hover:border-primary/50 transition-all">
+            <div>
+              <h3 className="font-semibold text-foreground text-sm sm:text-base">{t('cantFindDevice')}</h3>
+              <p className="text-xs sm:text-sm text-muted-foreground mt-0.5">{t('cantFindDeviceDesc')}</p>
+            </div>
+            <Button variant="outline" size="sm" className="shrink-0 gap-1">
+              {t('cantFindDeviceCta')}
+            </Button>
+          </div>
+        </TransitionLink>
+      </section>
 
       {/* Featured Devices */}
       {featuredProducts.length > 0 && (
@@ -83,8 +98,11 @@ export default async function TradePage() {
         </div>
       </section>
 
+      {/* Environmental Impact */}
+      <TradeEnvironmentalImpact />
+
       {/* Trust Indicators */}
-      <section className="w-full max-w-7xl px-4 pb-6">
+      <section className="w-full max-w-7xl px-4 py-6">
         <TradeTrustIndicators />
       </section>
 
@@ -92,6 +110,15 @@ export default async function TradePage() {
       <section className="w-full max-w-7xl px-4 pb-6">
         <TradeValueProposition />
       </section>
+
+      {/* Customer Testimonials */}
+      <TradeTestimonials />
+
+      {/* Accepted Brands */}
+      <AcceptedBrands />
+
+      {/* FAQ Preview */}
+      <TradeFAQPreview />
 
       {/* CTA */}
       <section className="w-full max-w-7xl px-4 pb-16">

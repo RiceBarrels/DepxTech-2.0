@@ -403,13 +403,13 @@ export default function EditOfferPage() {
                                     {formData.applicable_categories.map((cat, idx) => (
                                         <Badge key={idx} variant="secondary" className="flex items-center gap-1">
                                             {cat}
-                                            <button
+                                            <Button
                                                 type="button"
                                                 onClick={() => removeCategory(cat)}
                                                 className="ml-1 hover:text-red-600"
                                             >
                                                 <XIcon className="w-3 h-3" />
-                                            </button>
+                                            </Button>
                                         </Badge>
                                     ))}
                                 </div>

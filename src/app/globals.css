@@ -717,343 +717,201 @@ body {
   }
 }
 
-/* Enable view transitions on mobile */
-@supports (view-transition-name: none) {
-  :root {
-    view-transition-name: root;
+/*
+/* iOS Native Enhancements */
+@supports (-webkit-touch-callout: none) {
+  /* Prevent overscroll/rubber banding on body */
+  /* html,
+  body {
+    overscroll-behavior: none;
+    -webkit-overflow-scrolling: touch;
+    position: fixed;
+    overflow: hidden;
+    width: 100%;
+    height: 100%;
+  } */
+
+  /* Main scrollable container */
+  /* body > * {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  } */
+
+  /* Safe area support */
+  /* :root {
+    --safe-area-inset-top: env(safe-area-inset-top, 0px);
+    --safe-area-inset-right: env(safe-area-inset-right, 0px);
+    --safe-area-inset-bottom: env(safe-area-inset-bottom, 0px);
+    --safe-area-inset-left: env(safe-area-inset-left, 0px);
+  } */
+
+  /* Native-style momentum scrolling */
+  /* * {
+    -webkit-overflow-scrolling: touch;
+  } */
+
+  /* Disable pull-to-refresh on specific elements */
+  /* .no-pull-to-refresh {
+    overscroll-behavior-y: contain;
+  } */
+
+  /* Better tap highlight */
+  /* * {
+    -webkit-tap-highlight-color: transparent;
+  } */
+
+  /* Smooth button press feedback */
+  /* button,
+  [role="button"],
+  a {
+    -webkit-touch-callout: none;
+    touch-action: manipulation;
+    transition: opacity 0.15s ease;
   }
+
+  button:active,
+  [role="button"]:active,
+  a:active {
+    opacity: 0.7;
+    transition: opacity 0s;
+  } */
+
+  /* Prevent double-tap zoom on inputs */
+  /* input,
+  textarea,
+  select {
+    font-size: 16px;
+    touch-action: manipulation;
+  } */
 }
 
-/* View Transitions - Root */
-::view-transition-old(root),
-::view-transition-new(root) {
-  animation: none;
-  mix-blend-mode: normal; /* Prevents blending issues */
+/* ═══════════════════════════════════════════
+   View Transitions
+   ═══════════════════════════════════════════ */
+
+@view-transition {
+  navigation: auto;
 }
 
-/* Default: fade and scale for nav pages */
+/* ── Global defaults ── */
+::view-transition-group(*) { z-index: 0; }
+::view-transition-old(*) { z-index: 0; }
+::view-transition-new(*) { z-index: 1; }
+
+/* ── Root page transitions ── */
+
+/* Default: fade + scale (nav pages) */
 :root:not(.transition-slide) ::view-transition-old(root) {
-
-  animation-name: fade-and-scale-out;
+  animation: vt-fade-scale-out 0.3s cubic-bezier(0.32, 0.72, 0, 1) both;
 }
-
 :root:not(.transition-slide) ::view-transition-new(root) {
-  animation-name: fade-and-scale-in;
+  animation: vt-fade-scale-in 0.3s cubic-bezier(0.32, 0.72, 0, 1) both;
 }
 
-/* Slide transitions when navigating to/from transition routes (no nav) */
+/* Slide (transition routes — login, checkout, account, etc.) */
 :root.transition-slide ::view-transition-old(root) {
-  animation-name: slide-out-left;
-  animation-duration: 0.35s;
-  animation-timing-function: cubic-bezier(0.32, 0.72, 0, 1);
+  animation: vt-slide-out 0.35s cubic-bezier(0.32, 0.72, 0, 1) both;
 }
-
 :root.transition-slide ::view-transition-new(root) {
-  animation-name: slide-in-right;
-  animation-duration: 0.35s;
-  animation-timing-function: cubic-bezier(0.32, 0.72, 0, 1);
+  animation: vt-slide-in 0.35s cubic-bezier(0.32, 0.72, 0, 1) both;
 }
 
-/* View Transitions for Main Content Only - Enhanced animations */
-::view-transition-old(main-content),
-::view-transition-new(main-content) {
-  animation-duration: 0.3s;
-  animation-timing-function: cubic-bezier(0.32, 0.72, 0, 1);
-}
-
-::view-transition-old(main-content) {
-  animation-name: main-content-fade-out;
-}
-
-::view-transition-new(main-content) {
-  animation-name: main-content-fade-in;
-}
-
-/* View Transitions for transition pages - fancy left-to-right slide */
-::view-transition-old(transition-page),
-::view-transition-new(transition-page) {
-  animation-duration: 0.35s;
-  animation-timing-function: cubic-bezier(0.32, 0.72, 0, 1);
-}
-
+/* ── transition-page (nav + backNav layouts) ── */
 ::view-transition-old(transition-page) {
-  animation-name: slide-out-left;
+  animation: vt-slide-out 0.35s cubic-bezier(0.32, 0.72, 0, 1) both;
 }
-
 ::view-transition-new(transition-page) {
-  animation-name: slide-in-right;
+  animation: vt-slide-in 0.35s cubic-bezier(0.32, 0.72, 0, 1) both;
+}
+::view-transition-group(transition-page) { z-index: 20 !important; }
+
+/* ── Admin content ── */
+::view-transition-old(admin-content) {
+  animation: vt-content-out 0.25s cubic-bezier(0.4, 0, 1, 1) forwards;
+}
+::view-transition-new(admin-content) {
+  animation: vt-content-in 0.3s cubic-bezier(0, 0, 0.2, 1) 0.1s both;
 }
 
-::view-transition-group(transition-page) {
-  z-index: 20 !important;
-}
-
-/* View Transitions for fade-and-scale Only */
-::view-transition-old(fade-and-scale),
-::view-transition-new(fade-and-scale) {
-  animation-duration: 0.3s;
-  animation-timing-function: cubic-bezier(0.32, 0.72, 0, 1);
-}
-
-::view-transition-old(fade-and-scale) {
-  animation-name: fade-and-scale-out;
-}
-
-::view-transition-new(fade-and-scale) {
-  animation-name: fade-and-scale-in;
-}
-
-/* View Transitions for auth-card Only */
-::view-transition-old(auth-card),
-::view-transition-new(auth-card) {
-  animation-duration: 0.3s;
-  animation-timing-function: cubic-bezier(0.32, 0.72, 0, 1);
-}
-
-::view-transition-old(auth-card) {
-  animation-name: slide-out-fade;
-}
-
-::view-transition-new(auth-card) {
-  animation-name: slide-in-fade;
-}
-
-/* sidebar */
-::view-transition-old(side-bar),
-::view-transition-new(side-bar) {
-  animation-duration: 0.3s;
-  animation-timing-function: cubic-bezier(0.32, 0.72, 0, 1);
-}
-
-::view-transition-old(side-bar) {
-  animation-name: slide-out-fade;
-}
-
-::view-transition-new(side-bar) {
-  animation-name: slide-in-fade;
-}
-
-/* Ensure nav stays on top during view transitions */
-::view-transition-group(*) {
-  z-index: 0;
-}
-/* Ensure nav stays on top during view transitions */
-::view-transition-old(*){
-  z-index: 0;
-}
-/* Ensure nav stays on top during view transitions */
-::view-transition-new(*) {
-  z-index: 1;
-}
-
-/* Nav should be below transition pages */
-nav[class*="fixed"] {
-  position: fixed !important;
-  z-index: 10 !important;
-  isolation: isolate;
-}
-
-/* Nav bar view transition - stays below transition pages */
+/* ── Persistent UI — always on top ── */
 ::view-transition-group(nav-bar),
 ::view-transition-group(nav-bar-mobile),
+::view-transition-group(pwa-tab-bar),
 ::view-transition-group(route-controller) {
-  z-index: 10 !important;
-}
-
-/* Transition pages should be above nav */
-[data-route-group="transitions"] {
   z-index: 20 !important;
-  position: relative;
 }
 
 ::view-transition-old(nav-bar),
 ::view-transition-new(nav-bar),
 ::view-transition-old(nav-bar-mobile),
 ::view-transition-new(nav-bar-mobile),
+::view-transition-old(pwa-tab-bar),
+::view-transition-new(pwa-tab-bar),
 ::view-transition-old(route-controller),
-::view-transition-new(route-controller)
- {
-  animation: none !important;
-  /* mix-blend-mode: normal; Prevents blending issues */
+::view-transition-new(route-controller) {
+  mix-blend-mode: normal;
 }
 
-@keyframes slide-out-fade {
-  from {
-    opacity: 1;
-    transform: translateX(0);
-  }
-  to {
-    opacity: 0;
-    transform: translateX(-20px);
-  }
+[data-route-group="transitions"] {
+  z-index: 10 !important;
+  position: relative;
 }
 
-@keyframes slide-in-fade {
-  from {
-    opacity: 0;
-    transform: translateX(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
+/* ── Keyframes ── */
+
+@keyframes vt-fade-scale-out {
+  to { opacity: 0; transform: scale(0.96) translateX(-8px); }
+}
+@keyframes vt-fade-scale-in {
+  from { opacity: 0; transform: scale(1.04) translateX(8px); }
 }
 
-/* Main transition animations */
-@keyframes pageEnter {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+@keyframes vt-slide-out {
+  to { opacity: 0; transform: translateX(-30%) scale(0.95); }
+}
+@keyframes vt-slide-in {
+  from { opacity: 0; transform: translateX(30%) scale(0.95); }
 }
 
-@keyframes pageExit {
-  from {
-    opacity: 1;
-    transform: translateY(0);
-  }
-  to {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
+@keyframes vt-content-out {
+  to { opacity: 0; transform: translateY(-20px); filter: blur(2px); }
+}
+@keyframes vt-content-in {
+  from { opacity: 0; transform: translateY(20px); filter: blur(2px); }
 }
 
-@keyframes fade-and-scale-out {
-  from {
-    opacity: 1;
-    transform: scale(1) translateX(0);
-  }
-  to {
-    opacity: 0;
-    transform: scale(0.96) translateX(-8px);
-  }
-}
-
-@keyframes fade-and-scale-in {
-  from {
-    opacity: 0;
-    transform: scale(1.04) translateX(8px);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1) translateX(0);
-  }
-}
-
-/* Smooth main-content animations */
-@keyframes main-content-fade-out {
-  from {
-    opacity: 1;
-    transform: translateY(0);
-  }
-  to {
-    opacity: 0;
-    transform: translateY(-12px);
-  }
-}
-
-@keyframes main-content-fade-in {
-  from {
-    opacity: 0;
-    transform: translateY(12px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* Smooth slide transitions - mobile-like full screen slide */
-@keyframes slide-out-left {
-  from {
-    opacity: 1;
-    transform: translateX(0) scale(1);
-  }
-  to {
-    opacity: 0;
-    transform: translateX(-30%) scale(0.95);
-  }
-}
-
-@keyframes slide-in-right {
-  from {
-    opacity: 0;
-    transform: translateX(30%) scale(0.95);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0) scale(1);
-  }
-}
-
-/* Fade transitions */
-@keyframes fade-out {
-  from {
-    opacity: 1;
-  }
-  to {
-    opacity: 0;
-  }
-}
-
+/* ── Utility animation classes ── */
 @keyframes fade-in {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
-
 @keyframes fade-in-up {
-  from {
-    opacity: 0;
-    transform: translateY(12px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
 }
-
 @keyframes slide-down {
-  from {
-    opacity: 0;
-    transform: translateY(-4px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@view-transition {
-  navigation: auto;
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .animate-fade-in {
   animation: fade-in 0.4s cubic-bezier(0.32, 0.72, 0, 1) both;
 }
-
 .animate-fade-in-up {
   animation: fade-in-up 0.4s cubic-bezier(0.32, 0.72, 0, 1) both;
 }
-
 .animate-slide-down {
   animation: slide-down 0.25s cubic-bezier(0.32, 0.72, 0, 1) both;
 }
 
-/* Optional: Add transition to specific elements */
-.sidebar-menu-button {
-  transition: all 0.2s ease;
-}
-
-.sidebar-menu-button:hover {
-  transform: translateX(2px);
+/* ── Layout containment for transitioned elements ── */
+[style*="viewTransitionName"] {
+  contain: layout;
 }
 
 /* Aceternity UI Animations */
@@ -1119,6 +977,19 @@ nav[class*="fixed"] {
 
 .animate-shimmer {
   animation: shimmer 2s linear infinite;
+}
+
+@keyframes marquee {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-marquee {
+  animation: marquee 30s linear infinite;
 }
 
 /* Background Gradient Animation */
@@ -1199,3 +1070,4 @@ nav[class*="fixed"] {
   animation: moveInCircle 20s ease infinite;
   opacity: 1;
 }
+

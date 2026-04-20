@@ -4,10 +4,12 @@ import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { toast } from 'sonner'
+import { useWebHaptics } from 'web-haptics/react'
 
 export function NewsletterForm() {
   const [email, setEmail] = useState('')
   const [isLoading, setIsLoading] = useState(false)
+  const { trigger } = useWebHaptics()
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -18,6 +20,7 @@ export function NewsletterForm() {
     // Simulate API call
     await new Promise(resolve => setTimeout(resolve, 500))
 
+    trigger('success')
     toast.success('Successfully subscribed!', {
       description: 'You\'ll receive trade-in price updates in your inbox.',
     })
@@ -33,6 +36,7 @@ export function NewsletterForm() {
         value={email}
         onChange={(e) => setEmail(e.target.value)}
         placeholder="Enter your email"
+        aria-label="Email address for newsletter"
         required
         className="flex-1 bg-white/10 border-white/20 text-white placeholder-slate-400 rounded-xl py-6 px-6 h-auto focus:ring-primary focus:border-primary transition-all"
       />

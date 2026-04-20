@@ -20,6 +20,7 @@ import { PlusIcon } from 'lucide-react'
 import Image from 'next/image'
 import { toast } from 'sonner'
 import { useTransitionRouter } from '@/components/ui/pageTransitions'
+import { useWebHaptics } from 'web-haptics/react'
 
 export function ProductActions({
     product,
@@ -36,6 +37,7 @@ export function ProductActions({
     const [currentCartAmount, setCurrentCartAmount] = useState(0)
     const [loading, setLoading] = useState(false)
     const router = useTransitionRouter()
+    const { trigger } = useWebHaptics()
     const stocks = product.stocks
 
     // Fetch cart items when component mounts or user changes
@@ -82,6 +84,7 @@ export function ProductActions({
         try {
             const result = await addToCart(product.id, amount)
             if (result.success) {
+                trigger('success')
                 const actionText = isInCart ? "Cart updated successfully!" : "Item added to cart successfully!"
                 toast.success(actionText, {
                     description: "You can view your cart in the cart page",
@@ -94,9 +97,11 @@ export function ProductActions({
                 // Refresh cart status
                 fetchCartItems()
             } else {
+                trigger('error')
                 toast.error('Failed to add item to cart: ' + result.error)
             }
         } catch (error) {
+            trigger('error')
             console.error('Error adding to cart:', error)
             toast.error('Failed to add item to cart')
         } finally {

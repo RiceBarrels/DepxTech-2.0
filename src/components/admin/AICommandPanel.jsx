@@ -15,6 +15,7 @@ import {
     PlusIcon,
     EditIcon,
     AlertCircleIcon,
+    GlobeIcon,
 } from 'lucide-react'
 import {
     Select,
@@ -23,6 +24,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select"
+import { Switch } from '@/components/ui/switch'
 import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
 
@@ -222,6 +224,7 @@ export function AICommandPanel({ products, onProductsChanged }) {
     const [model, setModel] = useState(AI_MODELS[0].id)
     const [history, setHistory] = useState([])
     const [streaming, setStreaming] = useState(null) // { command, modelLabel, text }
+    const [webSearch, setWebSearch] = useState(false)
     const scrollRef = useRef(null)
 
     const isLoading = streaming !== null
@@ -267,6 +270,7 @@ export function AICommandPanel({ products, onProductsChanged }) {
                     productContext,
                     model,
                     chatHistory,
+                    webSearch,
                 }),
             })
 
@@ -378,7 +382,7 @@ export function AICommandPanel({ products, onProductsChanged }) {
     const executeAction = async (action) => {
         let response
         switch (action.type) {
-            case 'add':
+            case 'add': {
                 response = await fetch('/api/admin/tradein', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -391,7 +395,19 @@ export function AICommandPanel({ products, onProductsChanged }) {
                         des: action.data.des || '',
                     }),
                 })
-                break
+                const addResult = await response.json()
+                if (!response.ok) throw new Error(addResult.error || 'Request failed')
+                // Fire-and-forget eBay price fetch for the new product
+                const newId = addResult.product?.id
+                if (newId) {
+                    fetch('/api/admin/tradein/ebay-price', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ ids: [newId] }),
+                    }).catch(() => {})
+                }
+                return
+            }
             case 'delete':
                 if (!action.data.id) throw new Error('Missing product ID')
                 response = await fetch(`/api/admin/tradein?id=${action.data.id}`, { method: 'DELETE' })
@@ -511,6 +527,20 @@ export function AICommandPanel({ products, onProductsChanged }) {
                             ))}
                         </SelectContent>
                     </Select>
+                    <button
+                        type="button"
+                        onClick={() => setWebSearch(prev => !prev)}
+                        className={cn(
+                            "flex items-center gap-1 h-9 px-2 rounded-md border text-xs shrink-0 transition-colors",
+                            webSearch
+                                ? "bg-blue-50 border-blue-300 text-blue-700 dark:bg-blue-950/40 dark:border-blue-700 dark:text-blue-400"
+                                : "bg-background border-input text-muted-foreground hover:bg-muted/50"
+                        )}
+                        title="Enable web search for real-time pricing data"
+                    >
+                        <GlobeIcon className="w-3.5 h-3.5" />
+                        Web
+                    </button>
                     <div className="relative flex-1">
                         <SparklesIcon className="absolute left-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-primary/60" />
                         <Input

@@ -1,22 +1,7 @@
 import { NextResponse } from 'next/server'
 import { verifyAdminAccess } from '@/lib/serverAuth'
-import { createClient } from '@supabase/supabase-js'
+import { supabaseAdmin } from '@/lib/supabase-admin'
 
-function createServiceRoleClient() {
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-  const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE
-
-  if (!supabaseUrl || !supabaseServiceRoleKey) {
-    throw new Error('Missing Supabase environment variables')
-  }
-
-  return createClient(supabaseUrl, supabaseServiceRoleKey, {
-    auth: {
-      autoRefreshToken: false,
-      persistSession: false
-    }
-  })
-}
 
 // GET — List all users with profile data
 export async function GET(request) {
@@ -26,7 +11,7 @@ export async function GET(request) {
       return NextResponse.json({ error: adminVerification.error }, { status: adminVerification.status })
     }
 
-    const supabase = createServiceRoleClient()
+    const supabase = supabaseAdmin
 
     // Fetch all auth users
     const { data: authData, error: authError } = await supabase.auth.admin.listUsers({
@@ -118,7 +103,7 @@ export async function PUT(request) {
       return NextResponse.json({ error: 'Cannot remove your own admin role' }, { status: 403 })
     }
 
-    const supabase = createServiceRoleClient()
+    const supabase = supabaseAdmin
 
     // Check if row exists in profile_customer_readonly
     const { data: existing, error: checkError } = await supabase
@@ -187,7 +172,7 @@ export async function DELETE(request) {
       return NextResponse.json({ error: 'Cannot delete your own account' }, { status: 403 })
     }
 
-    const supabase = createServiceRoleClient()
+    const supabase = supabaseAdmin
 
     // Delete from profile tables first (in case FK cascade doesn't cover it)
     await supabase.from('profile_customer_readonly').delete().eq('id', userId)

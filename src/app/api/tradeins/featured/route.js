@@ -11,6 +11,7 @@ export async function GET(request) {
       .from('tradable_products')
       .select('id, title, category, base_price, good_percent, imgs, brand')
       .eq('is_featured', true)
+      .is('variant_of', null)
       .order('base_price', { ascending: false })
       .limit(limit)
 

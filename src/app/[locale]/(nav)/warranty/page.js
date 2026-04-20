@@ -1,7 +1,5 @@
-'use client'
-
-import { useTranslations } from 'next-intl'
 import { Link } from '@/i18n/navigation'
+import { getTranslations } from 'next-intl/server'
 import {
   Shield,
   CheckCircle2,
@@ -11,8 +9,8 @@ import {
   FileText
 } from 'lucide-react'
 
-export default function WarrantyPage() {
-  const t = useTranslations('warranty')
+export default async function WarrantyPage() {
+  const t = await getTranslations('warranty')
 
   const warrantyFeatures = [
     {

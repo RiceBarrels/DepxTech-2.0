@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button'
 import { SparklesIcon, LoaderIcon, Languages, FileTextIcon } from 'lucide-react'
 import { toast } from 'sonner'
 import { useTranslations } from 'next-intl'
+import { useWebHaptics } from 'web-haptics/react'
 
 /**
  * AI Translate button — translates text fields to all locales.
@@ -17,6 +18,7 @@ import { useTranslations } from 'next-intl'
 export function AITranslateButton({ fields, context, onResult, className }) {
   const [loading, setLoading] = useState(false)
   const t = useTranslations('admin.ai')
+  const { trigger } = useWebHaptics()
 
   const handleTranslate = async () => {
     // Filter out empty fields
@@ -38,12 +40,14 @@ export function AITranslateButton({ fields, context, onResult, className }) {
       const data = await res.json()
       if (!res.ok) throw new Error(data.error || 'Translation failed')
 
+      trigger('success')
       onResult(data.translations)
       const localeCount = Object.values(data.translations)[0]
         ? Object.keys(Object.values(data.translations)[0]).length
         : 0
       toast.success(t('translateSuccess', { count: localeCount }))
     } catch (err) {
+      trigger('error')
       toast.error(err.message)
     } finally {
       setLoading(false)
@@ -79,6 +83,7 @@ export function AITranslateButton({ fields, context, onResult, className }) {
 export function AITranslateQuestionsButton({ questions, context, onResult, className }) {
   const [loading, setLoading] = useState(false)
   const t = useTranslations('admin.ai')
+  const { trigger } = useWebHaptics()
 
   const handleTranslate = async () => {
     if (!questions || questions.length === 0) {
@@ -96,10 +101,12 @@ export function AITranslateQuestionsButton({ questions, context, onResult, class
       const data = await res.json()
       if (!res.ok) throw new Error(data.error || 'Translation failed')
 
+      trigger('success')
       onResult(data.questions_i18n)
       const localeCount = Object.keys(data.questions_i18n).length
       toast.success(t('translateSuccess', { count: localeCount }))
     } catch (err) {
+      trigger('error')
       toast.error(err.message)
     } finally {
       setLoading(false)
@@ -138,6 +145,7 @@ export function AITranslateQuestionsButton({ questions, context, onResult, class
 export function AIGenerateButton({ type, prompt, context, onResult, label, className }) {
   const [loading, setLoading] = useState(false)
   const t = useTranslations('admin.ai')
+  const { trigger } = useWebHaptics()
 
   const handleGenerate = async () => {
     setLoading(true)
@@ -150,9 +158,11 @@ export function AIGenerateButton({ type, prompt, context, onResult, label, class
       const data = await res.json()
       if (!res.ok) throw new Error(data.error || 'Generation failed')
 
+      trigger('success')
       onResult(data.result)
       toast.success(t('generateSuccess'))
     } catch (err) {
+      trigger('error')
       toast.error(err.message)
     } finally {
       setLoading(false)

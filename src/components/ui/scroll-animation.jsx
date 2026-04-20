@@ -4,30 +4,25 @@ import * as React from 'react'
 import { motion } from 'framer-motion'
 import { cn } from '@/lib/utils'
 
-const SPRING_CONFIG = {
-  type: 'spring',
-  stiffness: 100,
-  damping: 16,
-  mass: 0.75,
-  restDelta: 0.005,
-  duration: 0.3,
+const TRANSITION_CONFIG = {
+  type: 'tween',
+  ease: [0.25, 0.1, 0.25, 1],
+  duration: 0.4,
 }
 
 const useAnimationVariants = (animate) =>
   React.useMemo(
     () => ({
       hidden: {
-        x: animate === 'left' ? '-100%' : animate === 'right' ? '100%' : 0,
-        y: animate === 'top' ? '-50px' : animate === 'bottom' ? '50px' : 0,
-        scale: animate === 'z' ? 0.8 : 1,
-        filter: animate === 'blur' ? 'blur(10px)' : 'blur(0px)',
+        x: animate === 'left' ? -40 : animate === 'right' ? 40 : 0,
+        y: animate === 'top' ? -30 : animate === 'bottom' ? 30 : 0,
+        scale: animate === 'z' ? 0.92 : 1,
         opacity: 0,
       },
       visible: {
         x: 0,
         y: 0,
         scale: 1,
-        filter: 'blur(0px)',
         opacity: 1,
       },
     }),
@@ -37,11 +32,9 @@ const useAnimationVariants = (animate) =>
 const filterVariants = {
   hidden: {
     opacity: 0,
-    filter: 'blur(10px)',
   },
   visible: {
     opacity: 1,
-    filter: 'blur(0px)',
   },
 }
 
@@ -76,7 +69,7 @@ export const ScrollReveal = React.forwardRef(
     return (
       <motion.div
         transition={{
-          ...SPRING_CONFIG,
+          ...TRANSITION_CONFIG,
           delay,
           ...(duration && { duration })
         }}
@@ -112,7 +105,7 @@ export const ScrollFade = React.forwardRef(
         whileInView="visible"
         viewport={{ once, amount }}
         variants={variants}
-        transition={{ ...SPRING_CONFIG, delay }}
+        transition={{ ...TRANSITION_CONFIG, delay }}
         className={className}
         {...props}
       >
@@ -152,7 +145,7 @@ export const ScrollScale = React.forwardRef(
         initial={{ opacity: 0, scale: 0.8 }}
         whileInView={{ opacity: 1, scale: 1 }}
         viewport={{ once, amount: 0.3 }}
-        transition={SPRING_CONFIG}
+        transition={TRANSITION_CONFIG}
         className={className}
         {...props}
       >

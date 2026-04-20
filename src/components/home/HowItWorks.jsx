@@ -1,14 +1,11 @@
-'use client'
-
-import { motion } from 'framer-motion'
 import { Tag, Truck, Banknote } from 'lucide-react'
 import { ScrollStagger, ScrollReveal } from '@/components/ui/scroll-animation'
-import { useTranslations } from 'next-intl'
+import { getTranslations } from 'next-intl/server'
 
 const stepIcons = [Tag, Truck, Banknote]
 
-export function HowItWorks() {
-  const t = useTranslations('home.howItWorks')
+export async function HowItWorks() {
+  const t = await getTranslations('home.howItWorks')
   const animations = ['left', 'bottom', 'right']
 
   const steps = [
@@ -42,24 +39,14 @@ export function HowItWorks() {
               animation={animations[idx]}
               className="flex flex-col items-center text-center group"
             >
-              <motion.div
-                whileHover={{ scale: 1.1, rotate: 5 }}
-                transition={{ type: "spring", stiffness: 400, damping: 10 }}
-                className="relative mb-6"
-              >
+              <div className="relative mb-6">
                 <div className="size-20 bg-primary/10 rounded-2xl flex items-center justify-center text-primary">
                   <step.Icon className="w-10 h-10" />
                 </div>
-                <motion.div
-                  initial={{ scale: 0 }}
-                  whileInView={{ scale: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ type: "spring", stiffness: 400, damping: 10, delay: idx * 0.15 + 0.5 }}
-                  className="absolute -top-3 -right-3 size-8 bg-primary text-white font-bold rounded-full flex items-center justify-center border-4 border-background"
-                >
+                <div className="absolute -top-3 -right-3 size-8 bg-primary text-white font-bold rounded-full flex items-center justify-center border-4 border-background">
                   {step.number}
-                </motion.div>
-              </motion.div>
+                </div>
+              </div>
               <h3 className="text-xl font-bold mb-3 text-slate-900 dark:text-white">
                 {step.title}
               </h3>

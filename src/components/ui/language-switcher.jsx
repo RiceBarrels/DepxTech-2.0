@@ -10,24 +10,48 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { GlobeIcon } from 'lucide-react'
+import * as Flags from 'country-flag-icons/react/3x2'
 
 const localeLabels = {
-  en: 'English',
-  'zh-CN': '简体中文',
-  'zh-TW': '繁體中文',
   ar: 'العربية',
-  nl: 'Nederlands',
-  fr: 'Français',
   de: 'Deutsch',
+  en: 'English',
+  es: 'Español',
+  fr: 'Français',
   it: 'Italiano',
   ja: '日本語',
   ko: '한국어',
+  nl: 'Nederlands',
   pl: 'Polski',
   pt: 'Português',
   ru: 'Русский',
-  es: 'Español',
   sv: 'Svenska',
+  'zh-CN': '简体中文',
+  'zh-HK': '繁體中文',
+}
+
+const localeFlags = {
+  ar: 'SA',
+  de: 'DE',
+  en: 'US',
+  es: 'ES',
+  fr: 'FR',
+  it: 'IT',
+  ja: 'JP',
+  ko: 'KR',
+  nl: 'NL',
+  pl: 'PL',
+  pt: 'PT',
+  ru: 'RU',
+  sv: 'SE',
+  'zh-CN': 'CN',
+  'zh-HK': 'HK',
+}
+
+function FlagIcon({ code, label, className = '' }) {
+  const Flag = Flags[code]
+  if (!Flag) return null
+  return <Flag title={label} className={`inline-block rounded-sm ${className}`} />
 }
 
 export function LanguageSwitcher({ variant = 'default' }) {
@@ -42,14 +66,16 @@ export function LanguageSwitcher({ variant = 'default' }) {
   if (variant === 'compact') {
     return (
       <Select value={locale} onValueChange={handleChange} popover>
-        <SelectTrigger className="w-auto h-7 gap-1 px-4 text-xs border-none ">
-          <GlobeIcon className="size-3" />
+        <SelectTrigger className="w-auto h-6 gap-1.5 px-4 text-xs border-none py-0" aria-label="Select language">
           <SelectValue />
         </SelectTrigger>
         <SelectContent>
           {routing.locales.map((l) => (
             <SelectItem key={l} value={l} className="text-xs">
-              {localeLabels[l]}
+              <div className="flex items-center gap-2">
+                <FlagIcon code={localeFlags[l]} label={localeLabels[l]} className="w-4 h-3" />
+                <span>{localeLabels[l]}</span>
+              </div>
             </SelectItem>
           ))}
         </SelectContent>
@@ -59,14 +85,17 @@ export function LanguageSwitcher({ variant = 'default' }) {
 
   return (
     <Select value={locale} onValueChange={handleChange}>
-      <SelectTrigger className="w-[140px] h-8 gap-1.5 text-sm">
-        <GlobeIcon className="size-3.5" />
+      <SelectTrigger className="w-[160px] h-8 gap-2 text-sm" aria-label="Select language">
+        <FlagIcon code={localeFlags[locale]} label={localeLabels[locale]} className="w-5 h-3.5 shrink-0" />
         <SelectValue />
       </SelectTrigger>
       <SelectContent>
         {routing.locales.map((l) => (
           <SelectItem key={l} value={l}>
-            {localeLabels[l]}
+            <div className="flex items-center gap-2">
+              <FlagIcon code={localeFlags[l]} label={localeLabels[l]} className="w-5 h-3.5" />
+              <span>{localeLabels[l]}</span>
+            </div>
           </SelectItem>
         ))}
       </SelectContent>

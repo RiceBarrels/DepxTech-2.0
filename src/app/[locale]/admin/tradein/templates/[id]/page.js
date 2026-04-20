@@ -32,15 +32,36 @@ import {
     UndoIcon,
     AlertCircleIcon,
     GripVerticalIcon,
+    GlobeIcon,
+    GitBranchIcon,
+    CornerDownRightIcon,
+    ExternalLinkIcon,
+    ImportIcon,
 } from 'lucide-react'
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+    DropdownMenuLabel,
+} from "@/components/ui/dropdown-menu"
 import { toast } from 'sonner'
 import { ImageUpload, uploadFiles, deleteFileFromBucket } from "@/components/admin/ImageUpload"
+import { AITranslateQuestionsButton } from '@/components/admin/AIButton'
 import { cn } from '@/lib/utils'
 import { DndContext, closestCenter, PointerSensor, useSensor, useSensors } from '@dnd-kit/core'
 import { SortableContext, verticalListSortingStrategy, useSortable, arrayMove } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 
 const genId = () => Math.random().toString(36).slice(2, 10)
+
+const LOCALE_NAMES = {
+    'zh-CN': '简体中文', 'zh-HK': '繁體中文',
+    ar: 'العربية', nl: 'Nederlands', fr: 'Français', de: 'Deutsch',
+    it: 'Italiano', ja: '日本語', ko: '한국어', pl: 'Polski',
+    pt: 'Português', ru: 'Русский', es: 'Español', sv: 'Svenska',
+}
 
 function SortableItem({ id, children }) {
     const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id })
@@ -67,9 +88,16 @@ export default function EditTemplatePage() {
     const [questions, setQuestions] = useState([])
     const [originalName, setOriginalName] = useState('')
     const [originalQuestions, setOriginalQuestions] = useState([])
+    const [questionsI18n, setQuestionsI18n] = useState({})
+    const [originalQuestionsI18n, setOriginalQuestionsI18n] = useState({})
     const [expandedQuestions, setExpandedQuestions] = useState(new Set())
+    const [selectedLocale, setSelectedLocale] = useState(null)
     const [showPreview, setShowPreview] = useState(false)
     const [linkedProductCount, setLinkedProductCount] = useState(0)
+    const [parentTemplateId, setParentTemplateId] = useState(null)
+    const [originalParentTemplateId, setOriginalParentTemplateId] = useState(null)
+    const [allTemplates, setAllTemplates] = useState([])
+    const [childTemplates, setChildTemplates] = useState([])
 
     // DnD sensors
     const sensors = useSensors(
@@ -114,8 +142,8 @@ export default function EditTemplatePage() {
 
     // Track unsaved changes
     const hasChanges = useMemo(() => {
-        return name !== originalName || JSON.stringify(questions) !== JSON.stringify(originalQuestions)
-    }, [name, originalName, questions, originalQuestions])
+        return name !== originalName || parentTemplateId !== originalParentTemplateId || JSON.stringify(questions) !== JSON.stringify(originalQuestions) || JSON.stringify(questionsI18n) !== JSON.stringify(originalQuestionsI18n)
+    }, [name, originalName, parentTemplateId, originalParentTemplateId, questions, originalQuestions, questionsI18n, originalQuestionsI18n])
 
     // Warn before leaving with unsaved changes
     useEffect(() => {
@@ -134,14 +162,17 @@ export default function EditTemplatePage() {
         async function fetchTemplate() {
             try {
                 setLoading(true)
-                const response = await fetch(`/api/admin/tradein/templates?id=${id}&withCounts=true`)
+                const response = await fetch(`/api/admin/tradein/templates?withCounts=true`)
                 const data = await response.json()
 
                 if (!response.ok) {
                     throw new Error(data.error || 'Failed to fetch template')
                 }
 
-                const foundTemplate = data.templates?.find(t => t.id === id)
+                const allTmpls = data.templates || []
+                setAllTemplates(allTmpls)
+
+                const foundTemplate = allTmpls.find(t => t.id === id)
                 if (!foundTemplate) {
                     throw new Error('Template not found')
                 }
@@ -150,6 +181,11 @@ export default function EditTemplatePage() {
                 setName(foundTemplate.name || '')
                 setOriginalName(foundTemplate.name || '')
                 setLinkedProductCount(foundTemplate.linked_product_count || 0)
+                setParentTemplateId(foundTemplate.parent_template_id || null)
+                setOriginalParentTemplateId(foundTemplate.parent_template_id || null)
+                setChildTemplates(allTmpls.filter(t => t.parent_template_id === id))
+                setQuestionsI18n(foundTemplate.questions_i18n || {})
+                setOriginalQuestionsI18n(JSON.parse(JSON.stringify(foundTemplate.questions_i18n || {})))
 
                 const q = (foundTemplate.questions || []).map(q => ({
                     ...q,
@@ -214,7 +250,9 @@ export default function EditTemplatePage() {
                 body: JSON.stringify({
                     id,
                     name,
-                    questions: processedQuestions
+                    questions: processedQuestions,
+                    questions_i18n: questionsI18n,
+                    parent_template_id: parentTemplateId
                 })
             })
 
@@ -224,11 +262,18 @@ export default function EditTemplatePage() {
             }
 
             setOriginalName(name)
+            setOriginalParentTemplateId(parentTemplateId)
             setOriginalQuestions(JSON.parse(JSON.stringify(processedQuestions)))
+            setOriginalQuestionsI18n(JSON.parse(JSON.stringify(questionsI18n)))
             setQuestions(processedQuestions)
+            const parts = []
+            if (data.updatedChildCount > 0) parts.push(`${data.updatedChildCount} child template${data.updatedChildCount !== 1 ? 's' : ''}`)
             if (data.updatedProductCount > 0) {
                 setLinkedProductCount(data.updatedProductCount)
-                toast.success(`Template saved! ${data.updatedProductCount} linked product${data.updatedProductCount !== 1 ? 's' : ''} updated.`)
+                parts.push(`${data.updatedProductCount} product${data.updatedProductCount !== 1 ? 's' : ''}`)
+            }
+            if (parts.length > 0) {
+                toast.success(`Template saved! Synced ${parts.join(' and ')}.`)
             } else {
                 toast.success('Template saved successfully')
             }
@@ -241,7 +286,9 @@ export default function EditTemplatePage() {
 
     const handleDiscard = () => {
         setName(originalName)
+        setParentTemplateId(originalParentTemplateId)
         setQuestions(JSON.parse(JSON.stringify(originalQuestions)))
+        setQuestionsI18n(JSON.parse(JSON.stringify(originalQuestionsI18n)))
         toast.info('Changes discarded')
     }
 
@@ -311,6 +358,28 @@ export default function EditTemplatePage() {
     const expandAll = () => setExpandedQuestions(new Set(questions.map((_, i) => i)))
     const collapseAll = () => setExpandedQuestions(new Set())
 
+    // Import questions from another template
+    const importFromTemplate = (templateId) => {
+        const source = allTemplates.find(t => t.id === templateId)
+        if (!source || !source.questions?.length) {
+            toast.error('Template has no questions to import')
+            return
+        }
+        const imported = source.questions.map(q => ({
+            ...JSON.parse(JSON.stringify(q)),
+            _dndId: genId(),
+            ans: (q.ans || []).map(a => ({ ...a, _dndId: genId() }))
+        }))
+        const startIndex = questions.length
+        setQuestions(prev => [...prev, ...imported])
+        setExpandedQuestions(prev => {
+            const next = new Set(prev)
+            imported.forEach((_, i) => next.add(startIndex + i))
+            return next
+        })
+        toast.success(`Imported ${imported.length} question${imported.length !== 1 ? 's' : ''} from "${source.name}"`)
+    }
+
     // ── Answer operations ──────────────────────────────
     const addAnswer = (qIndex) => {
         setQuestions(prev => {
@@ -349,6 +418,25 @@ export default function EditTemplatePage() {
             return updated
         })
     }
+
+    // ── Question origin lookup ────────────────────────
+    // Build a map: question title → list of template names that contain it
+    const questionOriginMap = useMemo(() => {
+        const map = {}
+        const normalize = (t) => (t || '').trim().toLowerCase().replace(/[:：\s]+$/g, '')
+        questions.forEach(q => {
+            const key = normalize(q.title)
+            if (!key) return
+            const sources = []
+            allTemplates.forEach(tmpl => {
+                if (tmpl.id === id) return
+                const has = (tmpl.questions || []).some(tq => normalize(tq.title) === key)
+                if (has) sources.push({ id: tmpl.id, name: tmpl.name, isParent: tmpl.id === parentTemplateId })
+            })
+            map[key] = sources
+        })
+        return map
+    }, [questions, allTemplates, parentTemplateId, id])
 
     // ── Loading state ──────────────────────────────────
     if (loading) {
@@ -457,9 +545,9 @@ export default function EditTemplatePage() {
             )}>
                 {/* ── Editor Column ── */}
                 <div className="flex flex-col gap-4">
-                    {/* Template Name */}
+                    {/* Template Name + Parent */}
                     <Card>
-                        <CardContent className="pt-5 pb-5">
+                        <CardContent className="pt-5 pb-5 space-y-4">
                             <div className="space-y-2">
                                 <Label htmlFor="name" className="text-sm font-medium">Template Name</Label>
                                 <Input
@@ -470,14 +558,83 @@ export default function EditTemplatePage() {
                                     className="text-base"
                                 />
                             </div>
+                            <div className="space-y-2">
+                                <Label className="text-sm font-medium flex items-center gap-1.5">
+                                    <CornerDownRightIcon className="w-3.5 h-3.5" />
+                                    Parent Template
+                                </Label>
+                                <Select
+                                    value={parentTemplateId || '_none'}
+                                    onValueChange={(v) => setParentTemplateId(v === '_none' ? null : v)}
+                                >
+                                    <SelectTrigger className="w-full">
+                                        <SelectValue placeholder="No parent template" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="_none">
+                                            <span className="text-muted-foreground">None</span>
+                                        </SelectItem>
+                                        {allTemplates
+                                            .filter(t => t.id !== id)
+                                            .map(t => (
+                                                <SelectItem key={t.id} value={t.id}>
+                                                    {t.name}
+                                                </SelectItem>
+                                            ))
+                                        }
+                                    </SelectContent>
+                                </Select>
+                                <p className="text-xs text-muted-foreground">
+                                    Link this template to a parent for organizational grouping.
+                                </p>
+                            </div>
+                            {childTemplates.length > 0 && (
+                                <div className="space-y-2">
+                                    <Label className="text-sm font-medium flex items-center gap-1.5">
+                                        <GitBranchIcon className="w-3.5 h-3.5" />
+                                        Child Templates ({childTemplates.length})
+                                    </Label>
+                                    <div className="flex flex-wrap gap-1.5">
+                                        {childTemplates.map(ct => (
+                                            <Badge
+                                                key={ct.id}
+                                                variant="outline"
+                                                className="text-xs cursor-pointer hover:bg-muted transition-colors text-emerald-600 border-emerald-200 dark:text-emerald-400 dark:border-emerald-800"
+                                                onClick={() => router.push(`/admin/tradein/templates/${ct.id}`)}
+                                            >
+                                                {ct.name}
+                                                <ExternalLinkIcon className="w-3 h-3 ml-1" />
+                                            </Badge>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
                         </CardContent>
                     </Card>
 
                     {/* Questions Header */}
-                    <div className="flex items-center justify-between">
+                    <div className="flex items-center justify-between flex-wrap gap-2">
                         <div className="flex items-center gap-2">
                             <HelpCircleIcon className="w-4 h-4 text-muted-foreground" />
                             <h2 className="text-sm font-semibold">Questions ({questions.length})</h2>
+                            {Object.keys(questionsI18n).length > 0 && (
+                                <Select value={selectedLocale || '_none'} onValueChange={(v) => setSelectedLocale(v === '_none' ? null : v)}>
+                                    <SelectTrigger className="h-7 w-auto gap-1.5 text-xs border-blue-300 text-blue-600 [&>svg]:hidden px-2">
+                                        <GlobeIcon className="w-3.5 h-3.5 shrink-0" />
+                                        <SelectValue />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="_none">
+                                            <span className="text-muted-foreground">English (source)</span>
+                                        </SelectItem>
+                                        {Object.keys(questionsI18n).map((locale) => (
+                                            <SelectItem key={locale} value={locale}>
+                                                {LOCALE_NAMES[locale] || locale} <span className="text-muted-foreground ml-1">({locale})</span>
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                            )}
                         </div>
                         <div className="flex items-center gap-1">
                             {questions.length > 0 && (
@@ -491,6 +648,54 @@ export default function EditTemplatePage() {
                                     <Separator orientation="vertical" className="h-4 mx-1" />
                                 </>
                             )}
+                            <AITranslateQuestionsButton
+                                questions={questions.map(({ _dndId, ...q }) => ({
+                                    ...q,
+                                    ans: (q.ans || []).map(({ _dndId: _, ...a }) => a)
+                                }))}
+                                context="trade-in question template"
+                                onResult={(i18n) => setQuestionsI18n(i18n)}
+                                className="h-7"
+                            />
+                            <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                    <Button variant="outline" size="sm" className="h-7">
+                                        <ImportIcon className="w-3.5 h-3.5 mr-1" />
+                                        Import
+                                    </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end" className="max-h-64 overflow-y-auto">
+                                    <DropdownMenuLabel className="text-xs">Import questions from</DropdownMenuLabel>
+                                    <DropdownMenuSeparator />
+                                    {parentTemplateId && (() => {
+                                        const parent = allTemplates.find(t => t.id === parentTemplateId)
+                                        if (!parent) return null
+                                        return (
+                                            <>
+                                                <DropdownMenuItem onClick={() => importFromTemplate(parentTemplateId)}>
+                                                    <CornerDownRightIcon className="w-3.5 h-3.5 mr-2 text-violet-500" />
+                                                    <span className="font-medium">{parent.name}</span>
+                                                    <Badge variant="secondary" className="ml-auto text-[10px] h-4 px-1">
+                                                        {parent.questions?.length || 0}
+                                                    </Badge>
+                                                </DropdownMenuItem>
+                                                <DropdownMenuSeparator />
+                                            </>
+                                        )
+                                    })()}
+                                    {allTemplates
+                                        .filter(t => t.id !== id && t.id !== parentTemplateId && t.questions?.length > 0)
+                                        .map(t => (
+                                            <DropdownMenuItem key={t.id} onClick={() => importFromTemplate(t.id)}>
+                                                {t.name}
+                                                <Badge variant="secondary" className="ml-auto text-[10px] h-4 px-1">
+                                                    {t.questions?.length || 0}
+                                                </Badge>
+                                            </DropdownMenuItem>
+                                        ))
+                                    }
+                                </DropdownMenuContent>
+                            </DropdownMenu>
                             <Button variant="outline" size="sm" onClick={addQuestion} className="h-7">
                                 <PlusIcon className="w-3.5 h-3.5 mr-1" />
                                 Add Question
@@ -563,6 +768,28 @@ export default function EditTemplatePage() {
                                                 <Badge variant="outline" className="text-[10px] h-5 px-1.5">
                                                     {question.ans?.length || 0} ans
                                                 </Badge>
+                                                {(() => {
+                                                    const key = (question.title || '').trim().toLowerCase().replace(/[:：\s]+$/g, '')
+                                                    const sources = questionOriginMap[key]
+                                                    if (!sources?.length) return null
+                                                    const parentSource = sources.find(s => s.isParent)
+                                                    const siblingCount = sources.filter(s => !s.isParent).length
+                                                    return (
+                                                        <>
+                                                            {parentSource && (
+                                                                <Badge variant="outline" className="text-[10px] h-5 px-1.5 text-violet-600 border-violet-300 dark:text-violet-400 dark:border-violet-700">
+                                                                    <CornerDownRightIcon className="w-2.5 h-2.5 mr-0.5" />
+                                                                    {parentSource.name}
+                                                                </Badge>
+                                                            )}
+                                                            {siblingCount > 0 && (
+                                                                <Badge variant="outline" className="text-[10px] h-5 px-1.5 text-sky-600 border-sky-300 dark:text-sky-400 dark:border-sky-700">
+                                                                    +{siblingCount}
+                                                                </Badge>
+                                                            )}
+                                                        </>
+                                                    )
+                                                })()}
                                             </div>
                                             {/* Action buttons on collapsed row */}
                                             <div className="flex items-center gap-0.5 shrink-0 ml-1" onClick={(e) => e.stopPropagation()}>
@@ -596,6 +823,12 @@ export default function EditTemplatePage() {
                                                                 onChange={(e) => updateQuestion(qIndex, 'title', e.target.value)}
                                                                 placeholder="Enter question text..."
                                                             />
+                                                            {selectedLocale && questionsI18n[selectedLocale]?.[qIndex]?.title && (
+                                                                <div className="flex items-start gap-1.5 mt-1">
+                                                                    <GlobeIcon className="w-3 h-3 text-blue-500 mt-0.5 shrink-0" />
+                                                                    <span className="text-xs text-blue-600 dark:text-blue-400">{questionsI18n[selectedLocale][qIndex].title}</span>
+                                                                </div>
+                                                            )}
                                                         </div>
                                                         <div className="space-y-1.5 sm:col-span-2">
                                                             <Label className="text-xs font-medium text-muted-foreground">Description (optional)</Label>
@@ -605,6 +838,12 @@ export default function EditTemplatePage() {
                                                                 placeholder="Helper text shown below the question..."
                                                                 className="text-sm"
                                                             />
+                                                            {selectedLocale && questionsI18n[selectedLocale]?.[qIndex]?.description && (
+                                                                <div className="flex items-start gap-1.5 mt-1">
+                                                                    <GlobeIcon className="w-3 h-3 text-blue-500 mt-0.5 shrink-0" />
+                                                                    <span className="text-xs text-blue-600 dark:text-blue-400">{questionsI18n[selectedLocale][qIndex].description}</span>
+                                                                </div>
+                                                            )}
                                                         </div>
                                                     </div>
 
@@ -719,6 +958,20 @@ export default function EditTemplatePage() {
                                                                             className="h-7 text-xs text-muted-foreground"
                                                                         />
                                                                     </div>
+                                                                    {selectedLocale && (() => {
+                                                                        const ta = questionsI18n[selectedLocale]?.[qIndex]?.ans?.[aIndex]
+                                                                        if (!ta?.content && !ta?.description) return null
+                                                                        return (
+                                                                            <div className="pl-6 flex items-start gap-1.5">
+                                                                                <GlobeIcon className="w-3 h-3 text-blue-500 mt-0.5 shrink-0" />
+                                                                                <div className="text-xs text-blue-600 dark:text-blue-400">
+                                                                                    {ta.content && <span>{ta.content}</span>}
+                                                                                    {ta.content && ta.description && <span className="mx-1 text-blue-400">·</span>}
+                                                                                    {ta.description && <span className="opacity-70">{ta.description}</span>}
+                                                                                </div>
+                                                                            </div>
+                                                                        )
+                                                                    })()}
                                                                     <div className="pl-6">
                                                                         <ImageUpload
                                                                             value={answer.img || ''}
@@ -784,15 +1037,17 @@ export default function EditTemplatePage() {
                                         Add questions to see a preview
                                     </p>
                                 ) : (
-                                    questions.map((q, qi) => (
+                                    questions.map((q, qi) => {
+                                        const tq = selectedLocale ? questionsI18n[selectedLocale]?.[qi] : null
+                                        return (
                                         <div key={qi} className="space-y-2.5">
                                             <div>
                                                 <p className="text-sm font-medium">
-                                                    {q.title || 'Untitled question'}
+                                                    {tq?.title || q.title || 'Untitled question'}
                                                     {q.required !== false && <span className="text-red-500 ml-0.5">*</span>}
                                                 </p>
-                                                {q.description && (
-                                                    <p className="text-xs text-muted-foreground mt-0.5">{q.description}</p>
+                                                {(tq?.description || q.description) && (
+                                                    <p className="text-xs text-muted-foreground mt-0.5">{tq?.description || q.description}</p>
                                                 )}
                                                 {q.type === 'opposite_multiple' && (
                                                     <p className="text-xs text-amber-600 dark:text-amber-400 mt-0.5">Adjustments apply when unchecked</p>
@@ -802,7 +1057,9 @@ export default function EditTemplatePage() {
                                                 <img src={q.img} alt="" className="w-full h-24 object-cover rounded-md" />
                                             )}
                                             <div className="space-y-1.5">
-                                                {(q.ans || []).map((a, ai) => (
+                                                {(q.ans || []).map((a, ai) => {
+                                                    const ta = tq?.ans?.[ai]
+                                                    return (
                                                     <div
                                                         key={ai}
                                                         className="flex items-center gap-2 rounded-lg border px-3 py-2 text-sm hover:bg-muted/50 cursor-pointer transition-colors"
@@ -812,9 +1069,9 @@ export default function EditTemplatePage() {
                                                             (q.type === 'multiple' || q.type === 'opposite_multiple') ? 'rounded-sm' : 'rounded-full'
                                                         )} />
                                                         <div className="flex-1 min-w-0">
-                                                            <span className="text-sm">{a.content || 'Untitled answer'}</span>
-                                                            {a.description && (
-                                                                <p className="text-xs text-muted-foreground truncate">{a.description}</p>
+                                                            <span className="text-sm">{ta?.content || a.content || 'Untitled answer'}</span>
+                                                            {(ta?.description || a.description) && (
+                                                                <p className="text-xs text-muted-foreground truncate">{ta?.description || a.description}</p>
                                                             )}
                                                         </div>
                                                         {(a.persentage || a.fixed) && (
@@ -832,11 +1089,13 @@ export default function EditTemplatePage() {
                                                             </div>
                                                         )}
                                                     </div>
-                                                ))}
+                                                    )
+                                                })}
                                             </div>
                                             {qi < questions.length - 1 && <Separator />}
                                         </div>
-                                    ))
+                                        )
+                                    })
                                 )}
                             </CardContent>
                         </Card>

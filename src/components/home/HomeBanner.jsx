@@ -1,4 +1,4 @@
-import Link from 'next/link'
+import { TransitionLink as Link } from '@/components/ui/pageTransitions'
 import { BannerControls } from './BannerControls'
 import { HomeHero } from './HomeHero'
 
@@ -16,21 +16,21 @@ const slides = [
       href="/trade"
       className="flex-none w-full h-full snap-center relative overflow-hidden bg-violet-50 dark:bg-[#07070f]"
     >
-      {/* Orbs — light */}
-      <div className="dark:hidden absolute inset-0 pointer-events-none">
+      {/* Orbs — light (hidden on mobile for performance) */}
+      <div className="dark:hidden absolute inset-0 pointer-events-none hidden sm:block">
         <div className="absolute -top-32 -left-32 w-[500px] h-[500px] rounded-full blur-[120px]" style={{ background: 'radial-gradient(circle, rgba(124,58,237,0.14) 0%, transparent 70%)' }} />
         <div className="absolute bottom-0 right-1/4 w-96 h-96 rounded-full blur-[90px]" style={{ background: 'radial-gradient(circle, rgba(79,70,229,0.08) 0%, transparent 70%)' }} />
       </div>
-      {/* Orbs — dark */}
-      <div className="hidden dark:block absolute inset-0 pointer-events-none">
+      {/* Orbs — dark (hidden on mobile for performance) */}
+      <div className="absolute inset-0 pointer-events-none hidden dark:sm:block">
         <div className="absolute -top-32 -left-32 w-[500px] h-[500px] rounded-full blur-[120px]" style={{ background: 'radial-gradient(circle, rgba(124,58,237,0.35) 0%, transparent 70%)' }} />
         <div className="absolute bottom-0 right-1/4 w-96 h-96 rounded-full blur-[90px]" style={{ background: 'radial-gradient(circle, rgba(79,70,229,0.25) 0%, transparent 70%)' }} />
         <div className="absolute top-1/2 right-16 w-72 h-72 rounded-full blur-[80px]" style={{ background: 'radial-gradient(circle, rgba(139,92,246,0.15) 0%, transparent 70%)' }} />
       </div>
 
-      {/* Grid texture */}
+      {/* Grid texture (hidden on mobile for performance) */}
       <div
-        className="absolute inset-0 opacity-[0.18] dark:opacity-[0.035] pointer-events-none"
+        className="absolute inset-0 opacity-[0.18] dark:opacity-[0.035] pointer-events-none hidden sm:block"
         style={{ backgroundImage: 'linear-gradient(rgba(109,40,217,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(109,40,217,0.5) 1px, transparent 1px)', backgroundSize: '48px 48px' }}
       />
 
@@ -98,20 +98,20 @@ const slides = [
       href="/products"
       className="flex-none w-full h-full snap-center relative overflow-hidden bg-emerald-50 dark:bg-[#050e09]"
     >
-      {/* Orbs — light */}
-      <div className="dark:hidden absolute inset-0 pointer-events-none">
+      {/* Orbs — light (hidden on mobile for performance) */}
+      <div className="dark:hidden absolute inset-0 pointer-events-none hidden sm:block">
         <div className="absolute top-0 right-0 w-[600px] h-[600px] rounded-full blur-[130px] -translate-y-1/4 translate-x-1/4" style={{ background: 'radial-gradient(circle, rgba(16,185,129,0.14) 0%, transparent 70%)' }} />
         <div className="absolute bottom-0 left-0 w-80 h-80 rounded-full blur-[80px]" style={{ background: 'radial-gradient(circle, rgba(20,184,166,0.08) 0%, transparent 70%)' }} />
       </div>
-      {/* Orbs — dark */}
-      <div className="hidden dark:block absolute inset-0 pointer-events-none">
+      {/* Orbs — dark (hidden on mobile for performance) */}
+      <div className="absolute inset-0 pointer-events-none hidden dark:sm:block">
         <div className="absolute top-0 right-0 w-[600px] h-[600px] rounded-full blur-[130px] -translate-y-1/4 translate-x-1/4" style={{ background: 'radial-gradient(circle, rgba(16,185,129,0.18) 0%, transparent 70%)' }} />
         <div className="absolute bottom-0 left-0 w-80 h-80 rounded-full blur-[80px]" style={{ background: 'radial-gradient(circle, rgba(20,184,166,0.12) 0%, transparent 70%)' }} />
       </div>
 
-      {/* Dot grid */}
+      {/* Dot grid (hidden on mobile for performance) */}
       <div
-        className="absolute inset-0 opacity-[0.28] dark:opacity-[0.07] pointer-events-none"
+        className="absolute inset-0 opacity-[0.28] dark:opacity-[0.07] pointer-events-none hidden sm:block"
         style={{ backgroundImage: 'radial-gradient(circle, rgba(5,150,105,0.8) 1px, transparent 1px)', backgroundSize: '30px 30px' }}
       />
 
@@ -179,20 +179,20 @@ const slides = [
       href="/offers"
       className="flex-none w-full h-full snap-center relative overflow-hidden bg-amber-50 dark:bg-[#0f0800]"
     >
-      {/* Orbs — light */}
-      <div className="dark:hidden absolute inset-0 pointer-events-none">
+      {/* Orbs — light (hidden on mobile for performance) */}
+      <div className="dark:hidden absolute inset-0 pointer-events-none hidden sm:block">
         <div className="absolute top-0 left-0 w-[500px] h-[500px] rounded-full blur-[120px] -translate-x-1/4 -translate-y-1/4" style={{ background: 'radial-gradient(circle, rgba(245,158,11,0.18) 0%, transparent 70%)' }} />
         <div className="absolute bottom-0 right-0 w-96 h-96 rounded-full blur-[90px]" style={{ background: 'radial-gradient(circle, rgba(234,88,12,0.1) 0%, transparent 70%)' }} />
       </div>
-      {/* Orbs — dark */}
-      <div className="hidden dark:block absolute inset-0 pointer-events-none">
+      {/* Orbs — dark (hidden on mobile for performance) */}
+      <div className="absolute inset-0 pointer-events-none hidden dark:sm:block">
         <div className="absolute top-0 left-0 w-[500px] h-[500px] rounded-full blur-[120px] -translate-x-1/4 -translate-y-1/4" style={{ background: 'radial-gradient(circle, rgba(245,158,11,0.22) 0%, transparent 70%)' }} />
         <div className="absolute bottom-0 right-0 w-96 h-96 rounded-full blur-[90px]" style={{ background: 'radial-gradient(circle, rgba(234,88,12,0.15) 0%, transparent 70%)' }} />
       </div>
 
-      {/* Diagonal stripes */}
+      {/* Diagonal stripes (hidden on mobile for performance) */}
       <div
-        className="absolute inset-0 opacity-[0.18] dark:opacity-[0.025] pointer-events-none"
+        className="absolute inset-0 opacity-[0.18] dark:opacity-[0.025] pointer-events-none hidden sm:block"
         style={{ backgroundImage: 'repeating-linear-gradient(-45deg, #f59e0b, #f59e0b 1px, transparent 1px, transparent 12px)' }}
       />
 
@@ -258,8 +258,8 @@ const slides = [
 
 export function HomeBanner() {
   return (
-    <section className="w-full relative group">
-      <div className="relative w-full h-[75dvh] overflow-hidden">
+    <section className="w-full justify-center items-center relative group flex">
+      <div className="relative w-full max-w-418 md:h-[65dvh] h-[55dvh] overflow-hidden">
         {/* Scrollable slide container — native CSS scroll-snap */}
         <div
           id="banner-scroller"

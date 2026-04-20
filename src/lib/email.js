@@ -80,12 +80,15 @@ export function notifyAdmins({ subject, html }) {
 /**
  * Build HTML for trade-in quote notification
  */
-export function buildTradeInEmail({ productTitle, customerName, customerEmail, customerPhone, estimatedValue, notes, shippingMethod }) {
+export function buildTradeInEmail({ productTitle, customerName, customerEmail, customerPhone, estimatedValue, notes, shippingMethod, paymentMethod, paymentHandle }) {
     const shippingLabel = shippingMethod === 'depxtech_box'
         ? 'DepxTech Shipping Kit (box + prepaid label)'
         : shippingMethod === 'own_box'
             ? 'Customer\'s Own Box'
             : 'Not selected'
+
+    const paymentLabels = { paypal: 'PayPal', zelle: 'Zelle', cashapp: 'Cash App', venmo: 'Venmo', bitcoin: 'Bitcoin' }
+    const paymentLabel = paymentLabels[paymentMethod] || paymentMethod || 'Not selected'
 
     return `
     <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -102,6 +105,10 @@ export function buildTradeInEmail({ productTitle, customerName, customerEmail, c
         <tr>
           <td style="padding: 8px 12px; border-bottom: 1px solid #e2e8f0; color: #64748b;">Shipping Method</td>
           <td style="padding: 8px 12px; border-bottom: 1px solid #e2e8f0; font-weight: 600; color: #2563eb;">${shippingLabel}</td>
+        </tr>
+        <tr>
+          <td style="padding: 8px 12px; border-bottom: 1px solid #e2e8f0; color: #64748b;">Payment Method</td>
+          <td style="padding: 8px 12px; border-bottom: 1px solid #e2e8f0; font-weight: 600; color: #7c3aed;">${paymentLabel}${paymentHandle ? ` — ${paymentHandle}` : ''}</td>
         </tr>
         <tr>
           <td style="padding: 8px 12px; border-bottom: 1px solid #e2e8f0; color: #64748b;">Customer</td>

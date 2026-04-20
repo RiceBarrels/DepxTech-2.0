@@ -313,13 +313,13 @@ export default function AddOfferPage() {
                                     {formData.applicable_categories.map((cat, idx) => (
                                         <div key={idx} className="flex items-center gap-1 bg-gray-100 px-2 py-1 rounded">
                                             <span className="text-sm">{cat}</span>
-                                            <button
+                                            <Button
                                                 type="button"
                                                 onClick={() => removeCategory(cat)}
                                                 className="text-red-600 hover:text-red-800"
                                             >
                                                 ×
-                                            </button>
+                                            </Button>
                                         </div>
                                     ))}
                                 </div>

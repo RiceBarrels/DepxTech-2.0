@@ -1,10 +1,8 @@
 "use client"
-import { SafeArea } from 'capacitor-plugin-safe-area';
-import { Capacitor } from '@capacitor/core';
-import { useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
 
-
-// Hook to get safe area insets
+// Hook to get safe area insets using CSS environment variables
+// These are automatically available on iOS and modern browsers
 export function useSafeArea() {
     const [safeArea, setSafeArea] = useState({
         top: 0,
@@ -14,52 +12,59 @@ export function useSafeArea() {
     });
 
     useEffect(() => {
-        const getSafeAreaInsets = async () => {
-            try {
-                if (Capacitor.isNativePlatform()) {
-                    const result = await SafeArea.getSafeAreaInsets();
-                    setSafeArea(result.insets);
-                    
-                    // Listen for safe area changes (e.g., device rotation)
-                    const listener = await SafeArea.addListener('safeAreaChanged', (data) => {
-                        setSafeArea(data.insets);
-                    });
+        if (typeof window === 'undefined') return;
 
-                    return () => {
-                        listener.remove();
-                    };
-                }
-            } catch (error) {
-                console.error('Error getting safe area insets:', error);
-            }
+        const updateSafeArea = () => {
+            // Try to get safe area from CSS environment variables
+            const computedStyle = getComputedStyle(document.documentElement);
+
+            const top = parseInt(computedStyle.getPropertyValue('env(safe-area-inset-top)') || '0');
+            const bottom = parseInt(computedStyle.getPropertyValue('env(safe-area-inset-bottom)') || '0');
+            const left = parseInt(computedStyle.getPropertyValue('env(safe-area-inset-left)') || '0');
+            const right = parseInt(computedStyle.getPropertyValue('env(safe-area-inset-right)') || '0');
+
+            setSafeArea({ top, bottom, left, right });
         };
 
-        getSafeAreaInsets();
+        updateSafeArea();
+
+        // Listen for orientation changes
+        window.addEventListener('resize', updateSafeArea);
+        window.addEventListener('orientationchange', updateSafeArea);
+
+        return () => {
+            window.removeEventListener('resize', updateSafeArea);
+            window.removeEventListener('orientationchange', updateSafeArea);
+        };
     }, []);
 
     return safeArea;
 }
 
-export function TopSafeArea({extraPX = 16}){
-    const area = useSafeArea().top
-    const height = area === 0 ? 0 : area + extraPX
+export function TopSafeArea({ extraPX = 16 }) {
+    const area = useSafeArea().top;
+    const height = area === 0 ? 0 : area + extraPX;
+
+    if (height === 0) return null;
 
     return (
-        <div 
-            className="w-full p-2 sm:h-0 sm:p-0"
-            style={{ height: `${height}px` }}
-        ></div>
-    )
-}
-
-export function BottomSafeArea(){
-    const area = useSafeArea().bottom
-    const height = area === 0 ? 0 : area + 16
-
-    return (
-        <div 
-            className="w-full p-2 sm:h-0 sm:p-0"
+        <div
+            className="w-full sm:h-0"
             style={{ height: `${height}px` }}
         />
-    )
+    );
+}
+
+export function BottomSafeArea() {
+    const area = useSafeArea().bottom;
+    const height = area === 0 ? 0 : area + 16;
+
+    if (height === 0) return null;
+
+    return (
+        <div
+            className="w-full sm:h-0"
+            style={{ height: `${height}px` }}
+        />
+    );
 }

@@ -1,23 +1,6 @@
 import { NextResponse } from 'next/server'
 import { verifyAdminAccess } from '@/lib/serverAuth'
-import { createClient } from '@supabase/supabase-js'
-
-// Create Supabase client with service role for admin operations
-function createServiceRoleClient() {
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-  const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE
-
-  if (!supabaseUrl || !supabaseServiceRoleKey) {
-    throw new Error('Missing Supabase environment variables')
-  }
-
-  return createClient(supabaseUrl, supabaseServiceRoleKey, {
-    auth: {
-      autoRefreshToken: false,
-      persistSession: false
-    }
-  })
-}
+import { supabaseAdmin } from '@/lib/supabase-admin'
 
 export async function GET(request) {
   try {
@@ -32,7 +15,7 @@ export async function GET(request) {
     }
 
     // Create service role client for admin operations
-    const supabase = createServiceRoleClient()
+    const supabase = supabaseAdmin
 
     // Get query parameters
     const { searchParams } = new URL(request.url)
@@ -152,17 +135,17 @@ export async function POST(request) {
       category,
       brand,
       series,
-      brand_img,
       imgs,
       base_date,
       depreciation_rate,
       is_featured,
       questions,
-      question_template_id
+      question_template_id,
+      variant_of
     } = body
 
     // Create service role client for admin operations
-    const supabase = createServiceRoleClient()
+    const supabase = supabaseAdmin
 
     // Prepare insert data with new schema
     const insertData = {
@@ -172,13 +155,13 @@ export async function POST(request) {
       category,
       brand,
       series,
-      brand_img: brand_img || null,
       imgs: imgs || [],
       base_date: base_date || null,
       depreciation_rate: parseFloat(depreciation_rate) || 0,
       is_featured: is_featured || false,
       questions: questions || [],
       question_template_id: question_template_id || null,
+      variant_of: variant_of || null,
       title_i18n: body.title_i18n || {},
       des_i18n: body.des_i18n || {},
       questions_i18n: body.questions_i18n || {},
@@ -259,17 +242,17 @@ export async function PUT(request) {
       category,
       brand,
       series,
-      brand_img,
       imgs,
       base_date,
       depreciation_rate,
       is_featured,
       questions,
-      question_template_id
+      question_template_id,
+      variant_of
     } = body
 
     // Create service role client for admin operations
-    const supabase = createServiceRoleClient()
+    const supabase = supabaseAdmin
 
     // Prepare update data with new schema
     const updateData = {
@@ -279,7 +262,6 @@ export async function PUT(request) {
       category: category || '',
       brand: brand || '',
       series: series || '',
-      brand_img: brand_img || null,
       imgs: imgs || [],
       base_date: base_date || null,
       depreciation_rate: parseFloat(depreciation_rate) || 0,
@@ -293,6 +275,11 @@ export async function PUT(request) {
     // Only update question_template_id if explicitly provided
     if (body.question_template_id !== undefined) {
       updateData.question_template_id = body.question_template_id
+    }
+
+    // Only update variant_of if explicitly provided
+    if (body.variant_of !== undefined) {
+      updateData.variant_of = body.variant_of
     }
 
     // Update the tradable product in the database
@@ -352,7 +339,7 @@ export async function DELETE(request) {
     }
 
     // Create service role client for admin operations
-    const supabase = createServiceRoleClient()
+    const supabase = supabaseAdmin
 
     // Delete the tradable product from the database
     const { error } = await supabase

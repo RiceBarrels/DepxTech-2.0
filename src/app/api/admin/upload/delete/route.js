@@ -1,23 +1,7 @@
 import { NextResponse } from 'next/server'
 import { verifyAdminAccess } from '@/lib/serverAuth'
-import { createClient } from '@supabase/supabase-js'
+import { supabaseAdmin } from '@/lib/supabase-admin'
 
-// Create Supabase client with service role for admin operations
-function createServiceRoleClient() {
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-  const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE
-  
-  if (!supabaseUrl || !supabaseServiceRoleKey) {
-    throw new Error('Missing Supabase environment variables')
-  }
-  
-  return createClient(supabaseUrl, supabaseServiceRoleKey, {
-    auth: {
-      autoRefreshToken: false,
-      persistSession: false
-    }
-  })
-}
 
 export async function POST(request) {
   try {
@@ -55,7 +39,7 @@ export async function POST(request) {
     const filePath = pathMatch[1]
 
     // Create service role client
-    const supabase = createServiceRoleClient()
+    const supabase = supabaseAdmin
 
     // Delete from Supabase Storage
     const { error: deleteError } = await supabase.storage

@@ -7,10 +7,12 @@ import Image from 'next/image'
 import { useTransitionRouter } from './pageTransitions'
 import { useTranslations } from 'next-intl'
 import { Input } from './input'
+import { useWebHaptics } from 'web-haptics/react'
 
 export function NavSearch({ className }) {
     const router = useTransitionRouter()
     const t = useTranslations('trade.search')
+    const { trigger } = useWebHaptics()
     const [query, setQuery] = useState('')
     const [results, setResults] = useState([])
     const [loading, setLoading] = useState(false)
@@ -60,11 +62,12 @@ export function NavSearch({ className }) {
     }, [query])
 
     const handleSelect = useCallback((id) => {
+        trigger('light')
         setOpen(false)
         setQuery('')
         inputRef.current?.blur()
         router.push(`/trade/product/${id}`)
-    }, [router])
+    }, [router, trigger])
 
     const handleSubmit = (e) => {
         e.preventDefault()
@@ -94,6 +97,7 @@ export function NavSearch({ className }) {
                         type="button"
                         onClick={() => { setQuery(''); setResults([]); setOpen(false) }}
                         className="absolute right-2 top-1/2 -translate-y-1/2 p-0.5 hover:bg-muted rounded"
+                        aria-label="Clear search"
                     >
                         <XIcon className="size-3.5 text-muted-foreground" />
                     </button>
