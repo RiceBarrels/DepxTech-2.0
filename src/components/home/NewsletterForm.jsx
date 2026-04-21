@@ -38,12 +38,12 @@ export function NewsletterForm() {
         placeholder="Enter your email"
         aria-label="Email address for newsletter"
         required
-        className="flex-1 bg-white/10 border-white/20 text-white placeholder-slate-400 rounded-xl py-6 px-6 h-auto focus:ring-primary focus:border-primary transition-all"
+        className="flex-1 bg-white/10 border-white/20 text-white placeholder-slate-400 rounded-xl focus:ring-primary focus:border-primary transition-all"
       />
       <Button
         type="submit"
         disabled={isLoading}
-        className="bg-emerald-500 hover:bg-emerald-400 text-slate-900 font-bold px-8 py-6 h-auto rounded-xl transition-all"
+        className="bg-emerald-500 hover:bg-emerald-400 text-slate-900 font-bold px-6 rounded-xl transition-all"
       >
         {isLoading ? 'Subscribing...' : 'Subscribe'}
       </Button>

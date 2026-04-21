@@ -1,9 +1,17 @@
-import { dirname } from 'path';
+import { dirname, join } from 'path';
+import { existsSync } from 'fs';
 import { fileURLToPath } from 'url';
 import createNextIntlPlugin from 'next-intl/plugin';
 
 const withNextIntl = createNextIntlPlugin('./src/i18n/request.js');
 const __dirname = dirname(fileURLToPath(import.meta.url));
+
+function findPackageRoot(dir) {
+  if (existsSync(join(dir, 'node_modules', 'next', 'package.json'))) return dir;
+  const parent = dirname(dir);
+  return parent === dir ? dir : findPackageRoot(parent);
+}
+const packageRoot = findPackageRoot(__dirname);
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -13,7 +21,7 @@ const nextConfig = {
     optimizeCss: true,
   },
   turbopack: {
-    root: __dirname,
+    root: packageRoot,
   },
   images: {
     dangerouslyAllowSVG: true,

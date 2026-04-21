@@ -9,28 +9,9 @@ import { getTranslations } from 'next-intl/server'
 export async function HomeHero() {
   const t = await getTranslations('home.hero')
   return (
-    <section className="relative h-full overflow-hidden bg-violet-50 dark:bg-[#07070f]">
-
-      {/* Orbs — light (hidden on mobile for performance) */}
-      <div className="dark:hidden absolute inset-0 pointer-events-none hidden sm:block">
-        <div className="absolute -top-32 -left-32 w-[600px] h-[600px] rounded-full blur-[130px]" style={{ background: 'radial-gradient(circle, rgba(124,58,237,0.12) 0%, transparent 70%)' }} />
-        <div className="absolute bottom-0 right-1/3 w-[400px] h-[400px] rounded-full blur-[100px]" style={{ background: 'radial-gradient(circle, rgba(79,70,229,0.07) 0%, transparent 70%)' }} />
-      </div>
-      {/* Orbs — dark (hidden on mobile for performance) */}
-      <div className="absolute inset-0 pointer-events-none hidden dark:sm:block">
-        <div className="absolute -top-32 -left-32 w-[600px] h-[600px] rounded-full blur-[130px]" style={{ background: 'radial-gradient(circle, rgba(124,58,237,0.28) 0%, transparent 70%)' }} />
-        <div className="absolute bottom-0 right-1/3 w-[400px] h-[400px] rounded-full blur-[100px]" style={{ background: 'radial-gradient(circle, rgba(79,70,229,0.18) 0%, transparent 70%)' }} />
-        <div className="absolute top-1/3 right-0 w-80 h-80 rounded-full blur-[90px]" style={{ background: 'radial-gradient(circle, rgba(139,92,246,0.12) 0%, transparent 70%)' }} />
-      </div>
-
-      {/* Grid texture (hidden on mobile for performance) */}
-      <div
-        className="absolute inset-0 opacity-[0.18] dark:opacity-[0.03] pointer-events-none hidden sm:block"
-        style={{ backgroundImage: 'linear-gradient(rgba(109,40,217,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(109,40,217,0.5) 1px, transparent 1px)', backgroundSize: '48px 48px' }}
-      />
-
+    <section className="relative min-h-full bg-violet-50 dark:bg-[#07070f]">
       {/* Content */}
-      <div className="relative z-10 h-full max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 flex items-center">
+      <div className="relative z-10 min-h-full max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 flex items-center">
         <div className="grid lg:grid-cols-2 gap-8 lg:gap-16 items-center w-full py-10 lg:py-0">
 
           {/* Left */}
@@ -100,9 +81,6 @@ export async function HomeHero() {
 
           {/* Right — Image card (desktop only) */}
           <div className="relative hidden lg:block">
-            {/* Glow — dark only */}
-            <div className="hidden dark:block absolute inset-0 rounded-[2rem] blur-2xl opacity-30" style={{ background: 'linear-gradient(135deg, rgba(124,58,237,0.6), rgba(79,70,229,0.4))' }} />
-
             {/* Card */}
             <div className="relative rounded-[2rem] p-6 border bg-white dark:bg-white/[0.03] border-violet-100 dark:border-violet-500/20 shadow-xl shadow-violet-100/50 dark:shadow-none">
               <div className="aspect-square w-full rounded-2xl flex items-center justify-center overflow-hidden bg-slate-50 dark:bg-white/[0.02] border border-slate-100 dark:border-white/5">
@@ -130,13 +108,6 @@ export async function HomeHero() {
                     <p className="text-xl font-bold text-slate-900 dark:text-white">{t('averagePayoutValue')}</p>
                   </div>
                 </div>
-              </div>
-
-              {/* Decorative corner dots */}
-              <div className="absolute top-4 right-4 flex gap-1.5">
-                <span className="w-2 h-2 rounded-full bg-violet-200 dark:bg-violet-500/40" />
-                <span className="w-2 h-2 rounded-full bg-indigo-200 dark:bg-indigo-500/30" />
-                <span className="w-2 h-2 rounded-full bg-slate-200 dark:bg-slate-700/60" />
               </div>
             </div>
           </div>

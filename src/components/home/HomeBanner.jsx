@@ -16,32 +16,6 @@ const slides = [
       href="/trade"
       className="flex-none w-full h-full snap-center relative overflow-hidden bg-violet-50 dark:bg-[#07070f]"
     >
-      {/* Orbs — light (hidden on mobile for performance) */}
-      <div className="dark:hidden absolute inset-0 pointer-events-none hidden sm:block">
-        <div className="absolute -top-32 -left-32 w-[500px] h-[500px] rounded-full blur-[120px]" style={{ background: 'radial-gradient(circle, rgba(124,58,237,0.14) 0%, transparent 70%)' }} />
-        <div className="absolute bottom-0 right-1/4 w-96 h-96 rounded-full blur-[90px]" style={{ background: 'radial-gradient(circle, rgba(79,70,229,0.08) 0%, transparent 70%)' }} />
-      </div>
-      {/* Orbs — dark (hidden on mobile for performance) */}
-      <div className="absolute inset-0 pointer-events-none hidden dark:sm:block">
-        <div className="absolute -top-32 -left-32 w-[500px] h-[500px] rounded-full blur-[120px]" style={{ background: 'radial-gradient(circle, rgba(124,58,237,0.35) 0%, transparent 70%)' }} />
-        <div className="absolute bottom-0 right-1/4 w-96 h-96 rounded-full blur-[90px]" style={{ background: 'radial-gradient(circle, rgba(79,70,229,0.25) 0%, transparent 70%)' }} />
-        <div className="absolute top-1/2 right-16 w-72 h-72 rounded-full blur-[80px]" style={{ background: 'radial-gradient(circle, rgba(139,92,246,0.15) 0%, transparent 70%)' }} />
-      </div>
-
-      {/* Grid texture (hidden on mobile for performance) */}
-      <div
-        className="absolute inset-0 opacity-[0.18] dark:opacity-[0.035] pointer-events-none hidden sm:block"
-        style={{ backgroundImage: 'linear-gradient(rgba(109,40,217,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(109,40,217,0.5) 1px, transparent 1px)', backgroundSize: '48px 48px' }}
-      />
-
-      {/* Concentric rings */}
-      <div className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/3 hidden md:block">
-        <div className="w-[420px] h-[420px] rounded-full border border-violet-300/40 dark:border-violet-500/10" />
-        <div className="absolute inset-8 rounded-full border border-violet-300/30 dark:border-violet-500/10" />
-        <div className="absolute inset-16 rounded-full border border-violet-400/30 dark:border-violet-400/15" />
-        <div className="absolute inset-24 rounded-full border border-violet-500/25 dark:border-violet-400/20" />
-      </div>
-
       {/* Content */}
       <div className="relative z-10 flex items-center h-full px-8 sm:px-12 lg:px-20">
         <div className="max-w-xl">
@@ -72,7 +46,7 @@ const slides = [
           <div className="flex flex-wrap items-center gap-4">
             <div
               className="px-5 py-2.5 rounded-full text-sm font-bold text-white"
-              style={{ background: 'linear-gradient(135deg, #7c3aed, #4f46e5)', boxShadow: '0 0 20px rgba(124,58,237,0.3)' }}
+              style={{ background: 'linear-gradient(135deg, #7c3aed, #4f46e5)' }}
             >
               Get a Quote →
             </div>
@@ -98,34 +72,6 @@ const slides = [
       href="/products"
       className="flex-none w-full h-full snap-center relative overflow-hidden bg-emerald-50 dark:bg-[#050e09]"
     >
-      {/* Orbs — light (hidden on mobile for performance) */}
-      <div className="dark:hidden absolute inset-0 pointer-events-none hidden sm:block">
-        <div className="absolute top-0 right-0 w-[600px] h-[600px] rounded-full blur-[130px] -translate-y-1/4 translate-x-1/4" style={{ background: 'radial-gradient(circle, rgba(16,185,129,0.14) 0%, transparent 70%)' }} />
-        <div className="absolute bottom-0 left-0 w-80 h-80 rounded-full blur-[80px]" style={{ background: 'radial-gradient(circle, rgba(20,184,166,0.08) 0%, transparent 70%)' }} />
-      </div>
-      {/* Orbs — dark (hidden on mobile for performance) */}
-      <div className="absolute inset-0 pointer-events-none hidden dark:sm:block">
-        <div className="absolute top-0 right-0 w-[600px] h-[600px] rounded-full blur-[130px] -translate-y-1/4 translate-x-1/4" style={{ background: 'radial-gradient(circle, rgba(16,185,129,0.18) 0%, transparent 70%)' }} />
-        <div className="absolute bottom-0 left-0 w-80 h-80 rounded-full blur-[80px]" style={{ background: 'radial-gradient(circle, rgba(20,184,166,0.12) 0%, transparent 70%)' }} />
-      </div>
-
-      {/* Dot grid (hidden on mobile for performance) */}
-      <div
-        className="absolute inset-0 opacity-[0.28] dark:opacity-[0.07] pointer-events-none hidden sm:block"
-        style={{ backgroundImage: 'radial-gradient(circle, rgba(5,150,105,0.8) 1px, transparent 1px)', backgroundSize: '30px 30px' }}
-      />
-
-      {/* Watermark "NEW" */}
-      <div
-        className="absolute right-0 top-1/2 -translate-y-1/2 font-black leading-none select-none hidden lg:block text-emerald-200 dark:text-[rgba(16,185,129,0.04)]"
-        style={{ fontSize: '18rem', letterSpacing: '-0.05em', lineHeight: 1 }}
-      >
-        NEW
-      </div>
-
-      {/* Accent line */}
-      <div className="absolute left-0 top-1/2 w-full h-px bg-gradient-to-r from-emerald-300/50 to-transparent dark:from-emerald-500/20" />
-
       {/* Content */}
       <div className="relative z-10 flex items-center h-full px-8 sm:px-12 lg:px-20">
         <div className="max-w-xl">
@@ -179,31 +125,6 @@ const slides = [
       href="/offers"
       className="flex-none w-full h-full snap-center relative overflow-hidden bg-amber-50 dark:bg-[#0f0800]"
     >
-      {/* Orbs — light (hidden on mobile for performance) */}
-      <div className="dark:hidden absolute inset-0 pointer-events-none hidden sm:block">
-        <div className="absolute top-0 left-0 w-[500px] h-[500px] rounded-full blur-[120px] -translate-x-1/4 -translate-y-1/4" style={{ background: 'radial-gradient(circle, rgba(245,158,11,0.18) 0%, transparent 70%)' }} />
-        <div className="absolute bottom-0 right-0 w-96 h-96 rounded-full blur-[90px]" style={{ background: 'radial-gradient(circle, rgba(234,88,12,0.1) 0%, transparent 70%)' }} />
-      </div>
-      {/* Orbs — dark (hidden on mobile for performance) */}
-      <div className="absolute inset-0 pointer-events-none hidden dark:sm:block">
-        <div className="absolute top-0 left-0 w-[500px] h-[500px] rounded-full blur-[120px] -translate-x-1/4 -translate-y-1/4" style={{ background: 'radial-gradient(circle, rgba(245,158,11,0.22) 0%, transparent 70%)' }} />
-        <div className="absolute bottom-0 right-0 w-96 h-96 rounded-full blur-[90px]" style={{ background: 'radial-gradient(circle, rgba(234,88,12,0.15) 0%, transparent 70%)' }} />
-      </div>
-
-      {/* Diagonal stripes (hidden on mobile for performance) */}
-      <div
-        className="absolute inset-0 opacity-[0.18] dark:opacity-[0.025] pointer-events-none hidden sm:block"
-        style={{ backgroundImage: 'repeating-linear-gradient(-45deg, #f59e0b, #f59e0b 1px, transparent 1px, transparent 12px)' }}
-      />
-
-      {/* Watermark "%" */}
-      <div
-        className="absolute right-4 top-1/2 -translate-y-1/2 font-black select-none hidden lg:block text-amber-200 dark:text-[rgba(245,158,11,0.045)]"
-        style={{ fontSize: '24rem', lineHeight: 1, letterSpacing: '-0.05em' }}
-      >
-        %
-      </div>
-
       {/* Top badge */}
       <div className="absolute top-6 left-8 sm:left-12 lg:left-20 z-10">
         <span
@@ -240,7 +161,7 @@ const slides = [
           <div className="flex flex-wrap items-center gap-4">
             <div
               className="px-5 py-2.5 rounded-full text-sm font-black"
-              style={{ background: 'linear-gradient(135deg, #fbbf24, #f97316)', color: '#000', boxShadow: '0 0 20px rgba(245,158,11,0.25)' }}
+              style={{ background: 'linear-gradient(135deg, #fbbf24, #f97316)', color: '#000' }}
             >
               View All Deals →
             </div>

@@ -19,10 +19,17 @@ import { useTranslations } from "next-intl"
 const SIDEBAR_WIDTH = 280
 const SNAP_THRESHOLD = 0.4
 const VELOCITY_THRESHOLD = 0.3
+// Only open sidebar via edge swipe starting within this many px of the left edge
+const EDGE_SWIPE_ZONE = 28
 
-const SidebarOpenContext = createContext(null)
+const SidebarContext = createContext(null)
+
 export function useSidebarOpen() {
-  return useContext(SidebarOpenContext) ?? (() => {})
+  return useContext(SidebarContext)?.toggle ?? (() => {})
+}
+
+export function useSidebar() {
+  return useContext(SidebarContext) ?? { isOpen: false, toggle: () => {}, progress: 0, menuOpacity: 1, xOpacity: 0, transitionStyle: "none", dragging: false }
 }
 
 function SidebarContent({ onClose }) {
@@ -64,7 +71,7 @@ function SidebarContent({ onClose }) {
   ]
 
   return (
-    <aside className="flex h-full w-full flex-col bg-card overflow-hidden">
+    <aside className="flex h-full w-full flex-col bg-background overflow-hidden">
       {/* Brand */}
       <div className="flex h-14 shrink-0 items-center px-5 border-b border-border">
         <h1 className="font-black text-xl tracking-tight">DepxTech</h1>
@@ -181,7 +188,6 @@ export default function MobileSidebarShell({ children, header }) {
   const [dragOffset, setDragOffset] = useState(0)
   const [isMobile, setIsMobile] = useState(null)
 
-  // Ref on the outer wrapper so swipe works from anywhere (including header area)
   const touchRef = useRef(null)
   const startX = useRef(0)
   const startY = useRef(0)
@@ -227,6 +233,14 @@ export default function MobileSidebarShell({ children, header }) {
         isHoriz.current = Math.abs(dx) > Math.abs(dy)
       }
       if (isHoriz.current === false) return
+
+      // When sidebar is closed, only respond to swipes starting from the left edge
+      // so carousel/banner horizontal scrolls aren't intercepted
+      if (!isOpenRef.current && startX.current > EDGE_SWIPE_ZONE) return
+
+      // Require minimum drag distance before activating — prevents browser back-swipe
+      // from briefly triggering sidebar animation before iOS commits the navigation
+      if (!draggingRef.current && Math.abs(dx) < 12) return
 
       e.preventDefault()
       lastX.current = t.clientX
@@ -290,13 +304,11 @@ export default function MobileSidebarShell({ children, header }) {
 
   const translateX = dragging ? dragOffset : isOpen ? SIDEBAR_WIDTH : 0
   const progress = Math.min(1, Math.max(0, translateX / SIDEBAR_WIDTH))
-  const btnRotation = progress * 180
-  const showX = progress >= 0.5
   const iconFadeStart = 20 / 180
   const menuOpacity =
     progress < iconFadeStart
       ? 1
-      : showX
+      : progress >= 0.5
       ? 0
       : Math.max(0, 1 - (progress - iconFadeStart) / (0.5 - iconFadeStart))
   const xOpacity =
@@ -308,8 +320,18 @@ export default function MobileSidebarShell({ children, header }) {
     ? "none"
     : "all 220ms cubic-bezier(0.4, 0, 0.2, 1)"
 
+  const contextValue = {
+    isOpen,
+    toggle: () => setIsOpen((v) => !v),
+    progress,
+    menuOpacity,
+    xOpacity,
+    transitionStyle,
+    dragging,
+  }
+
   return (
-    <SidebarOpenContext.Provider value={() => setIsOpen(true)}>
+    <SidebarContext.Provider value={contextValue}>
       {/* ── Mobile layout ── */}
       <div
         className={cn(
@@ -317,32 +339,6 @@ export default function MobileSidebarShell({ children, header }) {
           isMobile !== false ? "flex" : "hidden"
         )}
       >
-        {/* Floating hamburger — fixed at top-left, no horizontal translation */}
-        <button
-          onClick={() => setIsOpen((v) => !v)}
-          className="fixed p-3 rounded-full bg-primary text-primary-foreground active:scale-95 m-4"
-          style={{
-            left: 0,
-            top: safeArea.top,
-            zIndex: 60,
-            boxShadow: "0 4px 14px rgba(0,0,0,0.3), 0 1px 3px rgba(0,0,0,0.2)",
-            transform: `rotate(${btnRotation}deg)`,
-            transition: transitionStyle,
-          }}
-          aria-label={isOpen ? "Close menu" : "Open menu"}
-        >
-          <span className="relative block h-5 w-5">
-            <Menu
-              className="h-5 w-5 absolute inset-0"
-              style={{ opacity: menuOpacity, transition: dragging ? "none" : "opacity 200ms" }}
-            />
-            <X
-              className="h-5 w-5 absolute inset-0"
-              style={{ opacity: xOpacity, transition: dragging ? "none" : "opacity 200ms" }}
-            />
-          </span>
-        </button>
-
         {/* Sidebar: scales and fades in behind content */}
         <div
           className="fixed inset-y-0 left-0 w-[280px] z-10"
@@ -381,7 +377,7 @@ export default function MobileSidebarShell({ children, header }) {
               <AnimatePresence>
                 {isOpen && (
                   <motion.div
-                    className="absolute inset-0 z-[110] backdrop-blur-sm bg-foreground/20"
+                    className="absolute inset-0 z-[110] backdrop-blur-sm bg-foreground/20 touch-none"
                     onClick={() => setIsOpen(false)}
                     initial={{ opacity: 0 }}
                     animate={{ opacity: translateX / SIDEBAR_WIDTH }}
@@ -391,7 +387,7 @@ export default function MobileSidebarShell({ children, header }) {
                 )}
               </AnimatePresence>
 
-              <div className="h-full overflow-y-auto overflow-x-hidden">
+              <div className={cn("h-full overflow-x-hidden", isOpen || (dragging && dragOffset > 10) ? "overflow-hidden touch-none" : "overflow-y-auto")}>
                 {(isMobile === null || isMobile) && children}
               </div>
             </div>
@@ -409,6 +405,6 @@ export default function MobileSidebarShell({ children, header }) {
         {header}
         {(isMobile === null || !isMobile) && children}
       </div>
-    </SidebarOpenContext.Provider>
+    </SidebarContext.Provider>
   )
 }

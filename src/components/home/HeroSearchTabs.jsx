@@ -53,36 +53,26 @@ export default function HeroSearchTabs() {
                 <TradeSearch variant="hero" />
             ) : (
                 <form onSubmit={handleShopSubmit} className="relative">
-                    <div className="relative">
-                        <div className="absolute -inset-[2px] rounded-2xl overflow-hidden">
-                            <div className="absolute inset-[-50%] animate-[gradient-spin_4s_linear_infinite]" style={{ background: 'conic-gradient(from 0deg, rgba(16,185,129,0.3), rgba(59,130,246,0.3), rgba(16,185,129,0.3))' }} />
+                    <div className="relative flex items-center bg-background rounded-2xl overflow-hidden border border-slate-200 dark:border-white/10 focus-within:border-emerald-400 dark:focus-within:border-emerald-500/50 transition-colors">
+                        <div className="absolute left-5 pointer-events-none">
+                            <SearchIcon className="w-5 h-5 text-muted-foreground" />
                         </div>
-                        <div className="relative flex items-center bg-background rounded-2xl overflow-hidden">
-                            <div className="absolute left-5 pointer-events-none">
-                                <SearchIcon className="w-5 h-5 text-muted-foreground" />
-                            </div>
-                            <input
-                                type="text"
-                                value={shopQuery}
-                                onChange={(e) => setShopQuery(e.target.value)}
-                                placeholder="Search products..."
-                                className="w-full h-16 text-lg pl-14 pr-24 bg-transparent border-none outline-none focus:ring-0 text-foreground"
-                            />
-                            {shopQuery && (
-                                <button
-                                    type="submit"
-                                    className="absolute right-4 px-4 py-2 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-medium transition-colors"
-                                >
-                                    Search
-                                </button>
-                            )}
-                        </div>
+                        <input
+                            type="text"
+                            value={shopQuery}
+                            onChange={(e) => setShopQuery(e.target.value)}
+                            placeholder="Search products..."
+                            className="w-full h-16 text-lg pl-14 pr-24 bg-transparent border-none outline-none focus:ring-0 text-foreground"
+                        />
+                        {shopQuery && (
+                            <button
+                                type="submit"
+                                className="absolute right-4 px-4 py-2 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-medium transition-colors"
+                            >
+                                Search
+                            </button>
+                        )}
                     </div>
-                    <style jsx>{`
-                        @keyframes gradient-spin {
-                            to { transform: rotate(360deg); }
-                        }
-                    `}</style>
                 </form>
             )}
         </div>

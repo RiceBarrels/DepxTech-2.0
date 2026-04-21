@@ -2,7 +2,7 @@
 
 import { usePathname } from "@/i18n/navigation";
 import { TransitionLink } from "@/components/ui/pageTransitions";
-import { HomeIcon, ArrowRightLeftIcon, UserIcon, ShoppingCartIcon, TicketPercentIcon, BookOpen, ListOrderedIcon, LeafIcon, CircleHelpIcon, MessageCircleQuestionIcon, SmartphoneIcon, LaptopIcon, TabletIcon, GamepadIcon, HeadphonesIcon, WatchIcon, ShieldCheckIcon, TruckIcon, RotateCcwIcon, MenuIcon, ChevronRightIcon, ChevronDownIcon, ChevronLeftIcon, ArrowRightIcon, ShoppingBagIcon, InfoIcon, LifeBuoyIcon, MailIcon, ClockIcon } from "lucide-react";
+import { HomeIcon, ArrowRightLeftIcon, UserIcon, ShoppingCartIcon, TicketPercentIcon, BookOpen, ListOrderedIcon, LeafIcon, CircleHelpIcon, MessageCircleQuestionIcon, SmartphoneIcon, LaptopIcon, TabletIcon, GamepadIcon, HeadphonesIcon, WatchIcon, ShieldCheckIcon, TruckIcon, RotateCcwIcon, MenuIcon, X, ChevronRightIcon, ChevronDownIcon, ChevronLeftIcon, ArrowRightIcon, ShoppingBagIcon, InfoIcon, LifeBuoyIcon, MailIcon, ClockIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useState, useEffect, useRef, useCallback } from "react";
 import { Button } from "./button";
@@ -14,6 +14,7 @@ import { useTransitionRouter } from "./pageTransitions";
 import { useTranslations } from 'next-intl';
 import { LanguageSwitcher } from './language-switcher';
 import { NavSearch } from "./NavSearch";
+import { useSidebar } from './mobile-sidebar-shell';
 import {
     Drawer,
     DrawerContent,
@@ -201,6 +202,8 @@ export default function Nav({ layers = 3 }) {
     const safeArea = useSafeArea();
     const { user, profileData, loading } = useAuth();
     const { trigger } = useWebHaptics();
+
+    const { isOpen: sidebarOpen, toggle: toggleSidebar, menuOpacity: sidebarMenuOpacity, xOpacity: sidebarXOpacity, transitionStyle: sidebarTransition, dragging: sidebarDragging } = useSidebar()
 
     const [drawerOpen, setDrawerOpen] = useState(false)
     const [scrolled, setScrolled] = useState(false)
@@ -399,17 +402,35 @@ export default function Nav({ layers = 3 }) {
                 className={cn(
                     "flex sm:hidden flex-col z-100 gap-2 backdrop-blur-lg sticky top-0",
                     isFixed
-                        ? "border-l border-t border-primary/20 shadow bg-primary/10 top-2"
-                        : ""
+                        ? "border-l border-t border-primary/20 shadow bg-primary/10"
+                        : "bg-background/80"
                 )}
                 style={{
                     viewTransitionName: 'nav-bar-mobile',
                     paddingTop: `${safeArea.top}px`,
                 }}
             >
-                {/* Layer 1: Logo + Account (pl-16 reserves space for floating sidebar button) */}
-                <div className="flex items-center justify-between h-11 pl-16 pr-4">
-                    <TransitionLink href="/" className="flex items-center shrink-0">
+                {/* Layer 1: Hamburger + Logo + Account */}
+                <div className="flex items-center h-11 px-2 gap-1">
+                    {/* Hamburger button — inline in header, no floating */}
+                    <button
+                        onClick={toggleSidebar}
+                        className="shrink-0 p-2.5 rounded-full text-foreground active:scale-95 transition-transform"
+                        aria-label={sidebarOpen ? "Close menu" : "Open menu"}
+                    >
+                        <span className="relative block h-5 w-5">
+                            <MenuIcon
+                                className="h-5 w-5 absolute inset-0"
+                                style={{ opacity: sidebarMenuOpacity, transition: sidebarDragging ? "none" : "opacity 200ms" }}
+                            />
+                            <X
+                                className="h-5 w-5 absolute inset-0"
+                                style={{ opacity: sidebarXOpacity, transition: sidebarDragging ? "none" : "opacity 200ms" }}
+                            />
+                        </span>
+                    </button>
+
+                    <TransitionLink href="/" className="flex items-center shrink-0 flex-1">
                         <h1 className="font-black text-xl tracking-tight">DepxTech</h1>
                     </TransitionLink>
 
