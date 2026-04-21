@@ -229,8 +229,10 @@ export default function MobileSidebarShell({ children, header }) {
       const dx = t.clientX - startX.current
       const dy = t.clientY - startY.current
 
-      if (isHoriz.current === null && (Math.abs(dx) > 5 || Math.abs(dy) > 5)) {
-        isHoriz.current = Math.abs(dx) > Math.abs(dy)
+      if (isHoriz.current === null && (Math.abs(dx) > 8 || Math.abs(dy) > 8)) {
+        // Require clearly horizontal movement (2× horizontal vs vertical) to avoid
+        // vertical scrolls from ever being detected as horizontal gestures
+        isHoriz.current = Math.abs(dx) > Math.abs(dy) * 2
       }
       if (isHoriz.current === false) return
 
@@ -339,10 +341,11 @@ export default function MobileSidebarShell({ children, header }) {
           isMobile !== false ? "flex" : "hidden"
         )}
       >
-        {/* Sidebar: scales and fades in behind content */}
+        {/* Sidebar: when open, raised to z-30 (above touch-capture z-20) so links are clickable */}
         <div
-          className="fixed inset-y-0 left-0 w-[280px] z-10"
+          className="fixed inset-y-0 left-0 w-[280px]"
           style={{
+            zIndex: isOpen ? 30 : 10,
             transform: `translateX(${sidebarTranslateX}px) scale(${sidebarScale})`,
             opacity: sidebarOpacity,
             transformOrigin: "left center",
