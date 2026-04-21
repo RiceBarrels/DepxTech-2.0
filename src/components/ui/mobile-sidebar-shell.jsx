@@ -357,17 +357,14 @@ export default function MobileSidebarShell({ children, header }) {
           <SidebarContent onClose={() => setIsOpen(false)} />
         </div>
 
-        {/* Outer content wrapper — touch events captured here, NO translateX */}
+        {/* Full-screen touch-capture — transparent so sidebar shows through */}
         <div
           ref={touchRef}
-          className="absolute inset-0 z-20 flex flex-col bg-background overflow-hidden"
+          className="absolute inset-0 z-20"
         >
-          {/* Header slot — stays stationary */}
-          {header}
-
-          {/* Push-able area below the header — only this slides right */}
+          {/* Header + content slide together as one panel */}
           <div
-            className="flex-1 relative overflow-hidden"
+            className="absolute inset-0 flex flex-col bg-background overflow-hidden"
             style={{
               transform: `translateX(${translateX}px)`,
               transition: transitionStyle,
@@ -377,22 +374,26 @@ export default function MobileSidebarShell({ children, header }) {
               }),
             }}
           >
-            {/* Tap-to-close overlay */}
-            <AnimatePresence>
-              {isOpen && (
-                <motion.div
-                  className="absolute inset-0 z-[110] backdrop-blur-sm bg-foreground/20"
-                  onClick={() => setIsOpen(false)}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: translateX / SIDEBAR_WIDTH }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.2 }}
-                />
-              )}
-            </AnimatePresence>
+            {header}
 
-            <div className="h-full overflow-y-auto overflow-x-hidden">
-              {(isMobile === null || isMobile) && children}
+            <div className="flex-1 relative overflow-hidden">
+              {/* Tap-to-close overlay */}
+              <AnimatePresence>
+                {isOpen && (
+                  <motion.div
+                    className="absolute inset-0 z-[110] backdrop-blur-sm bg-foreground/20"
+                    onClick={() => setIsOpen(false)}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: translateX / SIDEBAR_WIDTH }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.2 }}
+                  />
+                )}
+              </AnimatePresence>
+
+              <div className="h-full overflow-y-auto overflow-x-hidden">
+                {(isMobile === null || isMobile) && children}
+              </div>
             </div>
           </div>
         </div>
