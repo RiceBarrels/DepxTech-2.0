@@ -32,7 +32,17 @@ export const MacbookScroll = ({
   badge
 }) => {
   const ref = useRef(null);
+  const containerRef = useRef(null);
+
+  // App shell scrolls inside #scrollable-content, not window. Resolve the
+  // container lazily once on the client so useScroll attaches to the real
+  // scroll source.
+  if (typeof window !== "undefined" && !containerRef.current) {
+    containerRef.current = document.getElementById("scrollable-content");
+  }
+
   const { scrollYProgress } = useScroll({
+    container: containerRef,
     target: ref,
     offset: ["start start", "end start"],
   });

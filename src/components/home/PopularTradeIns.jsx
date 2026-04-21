@@ -1,5 +1,4 @@
 import Image from 'next/image'
-import { Link } from '@/i18n/navigation'
 import { ArrowRight } from 'lucide-react'
 import { ScrollStagger, ScrollReveal } from '@/components/ui/scroll-animation'
 import { getTranslations } from 'next-intl/server'
@@ -22,51 +21,49 @@ export async function PopularTradeIns() {
   }))
 
   return (
-    <section className="py-20 bg-white dark:bg-background/50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="py-20 bg-slate-50 dark:bg-slate-950/30">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <ScrollStagger staggerChildren={0.1} className="flex items-center justify-between mb-10">
+        <div className="flex items-end justify-between mb-10 gap-6">
           <ScrollReveal animation="left">
-            <div>
-              <h2 className="text-3xl font-bold text-slate-900 dark:text-white">{t('heading')}</h2>
-              <p className="text-slate-500 mt-2">{t('subheading')}</p>
-            </div>
+            <h2 className="text-3xl sm:text-4xl font-semibold tracking-tight text-slate-900 dark:text-white">{t('heading')}</h2>
+            <p className="text-slate-500 mt-2">{t('subheading')}</p>
           </ScrollReveal>
           <ScrollReveal animation="right">
             <TransitionLink
               href="/trade/browse"
-              className="text-primary font-semibold flex items-center gap-1 hover:underline"
+              className="text-sm font-semibold text-slate-900 dark:text-white flex items-center gap-1 border-b border-slate-900/30 dark:border-white/30 pb-0.5 hover:border-slate-900 dark:hover:border-white transition-colors whitespace-nowrap"
             >
-              {t('viewAll')} <ArrowRight className="w-4 h-4" />
+              {t('viewAll')} <ArrowRight className="w-3.5 h-3.5" />
             </TransitionLink>
           </ScrollReveal>
-        </ScrollStagger>
+        </div>
 
-        {/* Devices Grid */}
-        <ScrollStagger staggerChildren={0.1} delayChildren={0.15} className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
+        {/* Devices — clean grid, no heavy cards */}
+        <ScrollStagger staggerChildren={0.08} delayChildren={0.1} className="grid grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-10">
           {devices.map((device) => (
-            <ScrollReveal key={device.key} animation="z">
-              <TransitionLink href={device.href} className="group block">
-                <div className="flex flex-col gap-4 p-4 sm:p-6 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/30 transition-all group-hover:border-primary/50 group-hover:shadow-xl group-hover:shadow-primary/5">
-                  <div className="w-full aspect-square rounded-xl flex items-center justify-center overflow-hidden">
-                    <div className="relative w-32 h-32 transition-transform group-hover:scale-110 duration-300">
+            <ScrollReveal key={device.key} animation="bottom">
+              <TransitionLink href={device.href} className="group flex flex-col gap-3">
+                <div className="relative aspect-square overflow-hidden rounded-lg bg-white dark:bg-slate-900">
+                  <div className="absolute inset-0 flex items-center justify-center p-6">
+                    <div className="relative w-full h-full transition-transform duration-500 group-hover:scale-105">
                       <Image
                         src={device.image}
                         alt={device.name}
                         fill
-                        sizes="128px"
+                        sizes="(max-width: 768px) 45vw, 22vw"
                         className="object-contain"
                       />
                     </div>
                   </div>
-                  <div>
-                    <h3 className="text-base font-bold text-slate-900 dark:text-white group-hover:text-primary transition-colors">
-                      {device.name}
-                    </h3>
-                    <p className="text-sm text-emerald-600 dark:text-emerald-400 font-semibold mt-1">
-                      {t('upTo')} {device.price}
-                    </p>
-                  </div>
+                </div>
+                <div className="flex items-baseline justify-between">
+                  <h3 className="text-sm font-semibold text-slate-900 dark:text-white group-hover:text-violet-600 dark:group-hover:text-violet-400 transition-colors">
+                    {device.name}
+                  </h3>
+                  <p className="text-sm text-slate-500 tabular-nums">
+                    {t('upTo')} <span className="text-slate-900 dark:text-white font-medium">{device.price}</span>
+                  </p>
                 </div>
               </TransitionLink>
             </ScrollReveal>

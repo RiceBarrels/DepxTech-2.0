@@ -7,8 +7,12 @@ import { cn } from '@/lib/utils'
 const TRANSITION_CONFIG = {
   type: 'tween',
   ease: [0.25, 0.1, 0.25, 1],
-  duration: 0.4,
+  duration: 0.55,
 }
+
+// True when an ancestor ScrollStagger is driving visibility — children skip
+// their own whileInView and inherit hidden/visible from the parent variants.
+const StaggerContext = React.createContext(false)
 
 const useAnimationVariants = (animate) =>
   React.useMemo(
@@ -30,52 +34,55 @@ const useAnimationVariants = (animate) =>
   )
 
 const filterVariants = {
-  hidden: {
-    opacity: 0,
-  },
-  visible: {
-    opacity: 1,
-  },
+  hidden: { opacity: 0 },
+  visible: { opacity: 1 },
 }
 
 // Container that staggers its children animations
 export const ScrollStagger = React.forwardRef(
-  ({ children, className, staggerChildren = 0.1, delayChildren = 0.1, once = true, amount = 0.3, ...props }, ref) => {
+  (
+    { children, className, staggerChildren = 0.1, delayChildren = 0.1, once = true, amount = 0.2, ...props },
+    ref
+  ) => {
     return (
-      <motion.div
-        className={cn('relative', className)}
-        ref={ref}
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once, amount }}
-        transition={{
-          staggerChildren,
-          delayChildren,
-        }}
-        {...props}
-      >
-        {children}
-      </motion.div>
+      <StaggerContext.Provider value={true}>
+        <motion.div
+          className={cn('relative', className)}
+          ref={ref}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once, amount }}
+          transition={{ staggerChildren, delayChildren }}
+          {...props}
+        >
+          {children}
+        </motion.div>
+      </StaggerContext.Provider>
     )
   }
 )
 ScrollStagger.displayName = 'ScrollStagger'
 
-// Animated child element with various animation types
+// Child reveal — standalone it drives itself, inside ScrollStagger it inherits.
 export const ScrollReveal = React.forwardRef(
-  ({ animation = 'blur', children, className, delay = 0, duration, ...props }, ref) => {
+  (
+    { animation = 'bottom', children, className, delay = 0, duration, once = true, amount = 0.2, ...props },
+    ref
+  ) => {
     const variants = useAnimationVariants(animation)
+    const inStagger = React.useContext(StaggerContext)
+
+    const viewportProps = inStagger
+      ? {}
+      : { initial: 'hidden', whileInView: 'visible', viewport: { once, amount } }
 
     return (
       <motion.div
-        transition={{
-          ...TRANSITION_CONFIG,
-          delay,
-          ...(duration && { duration })
-        }}
+        transition={{ ...TRANSITION_CONFIG, delay, ...(duration && { duration }) }}
         ref={ref}
         variants={animation ? variants : filterVariants}
         className={className}
+        {...viewportProps}
         {...props}
       >
         {children}
@@ -85,17 +92,9 @@ export const ScrollReveal = React.forwardRef(
 )
 ScrollReveal.displayName = 'ScrollReveal'
 
-// Standalone scroll animation (not part of stagger group)
+// Standalone scroll animation (always drives itself)
 export const ScrollFade = React.forwardRef(
-  ({
-    children,
-    className,
-    animation = 'bottom',
-    delay = 0,
-    once = true,
-    amount = 0.3,
-    ...props
-  }, ref) => {
+  ({ children, className, animation = 'bottom', delay = 0, once = true, amount = 0.2, ...props }, ref) => {
     const variants = useAnimationVariants(animation)
 
     return (
@@ -136,15 +135,34 @@ export const ScrollParallax = React.forwardRef(
 )
 ScrollParallax.displayName = 'ScrollParallax'
 
-// Scale on scroll
+// Scale on scroll — standalone; also works inside ScrollStagger via variants fallback.
 export const ScrollScale = React.forwardRef(
-  ({ children, className, once = true, ...props }, ref) => {
+  ({ children, className, once = true, amount = 0.2, ...props }, ref) => {
+    const inStagger = React.useContext(StaggerContext)
+
+    if (inStagger) {
+      return (
+        <motion.div
+          ref={ref}
+          variants={{
+            hidden: { opacity: 0, scale: 0.9 },
+            visible: { opacity: 1, scale: 1 },
+          }}
+          transition={TRANSITION_CONFIG}
+          className={className}
+          {...props}
+        >
+          {children}
+        </motion.div>
+      )
+    }
+
     return (
       <motion.div
         ref={ref}
-        initial={{ opacity: 0, scale: 0.8 }}
+        initial={{ opacity: 0, scale: 0.9 }}
         whileInView={{ opacity: 1, scale: 1 }}
-        viewport={{ once, amount: 0.3 }}
+        viewport={{ once, amount }}
         transition={TRANSITION_CONFIG}
         className={className}
         {...props}
@@ -156,14 +174,14 @@ export const ScrollScale = React.forwardRef(
 )
 ScrollScale.displayName = 'ScrollScale'
 
-// Counter animation on scroll
+// Counter animation on scroll — works whether parent scrolls window or a custom container.
 export const ScrollCounter = ({
   value,
   suffix = '',
   prefix = '',
   className,
   duration = 2,
-  once = true
+  once = true,
 }) => {
   const [count, setCount] = React.useState(0)
   const [hasAnimated, setHasAnimated] = React.useState(false)
@@ -203,7 +221,9 @@ export const ScrollCounter = ({
 
   return (
     <span ref={ref} className={className}>
-      {prefix}{count.toLocaleString()}{suffix}
+      {prefix}
+      {count.toLocaleString()}
+      {suffix}
     </span>
   )
 }

@@ -1,8 +1,6 @@
 'use client'
 
 import { useState } from 'react'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
 import { toast } from 'sonner'
 import { useWebHaptics } from 'web-haptics/react'
 
@@ -16,10 +14,7 @@ export function NewsletterForm() {
     if (!email.trim()) return
 
     setIsLoading(true)
-
-    // Simulate API call
     await new Promise(resolve => setTimeout(resolve, 500))
-
     trigger('success')
     toast.success('Successfully subscribed!', {
       description: 'You\'ll receive trade-in price updates in your inbox.',
@@ -30,23 +25,23 @@ export function NewsletterForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3 max-w-lg mx-auto relative z-10">
-      <Input
+    <form onSubmit={handleSubmit} className="flex items-end gap-3 max-w-md border-b border-slate-300 dark:border-slate-700 focus-within:border-slate-900 dark:focus-within:border-white transition-colors">
+      <input
         type="email"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
-        placeholder="Enter your email"
+        placeholder="you@example.com"
         aria-label="Email address for newsletter"
         required
-        className="flex-1 bg-white/10 border-white/20 text-white placeholder-slate-400 rounded-xl focus:ring-primary focus:border-primary transition-all"
+        className="flex-1 bg-transparent text-base py-3 outline-none placeholder:text-slate-400 dark:placeholder:text-slate-500 text-slate-900 dark:text-white"
       />
-      <Button
+      <button
         type="submit"
         disabled={isLoading}
-        className="bg-emerald-500 hover:bg-emerald-400 text-slate-900 font-bold px-6 rounded-xl transition-all"
+        className="text-sm font-semibold text-slate-900 dark:text-white py-3 whitespace-nowrap disabled:opacity-50 hover:text-violet-600 dark:hover:text-violet-400 transition-colors"
       >
-        {isLoading ? 'Subscribing...' : 'Subscribe'}
-      </Button>
+        {isLoading ? 'Subscribing…' : 'Subscribe →'}
+      </button>
     </form>
   )
 }
