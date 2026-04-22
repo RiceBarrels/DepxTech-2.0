@@ -1,5 +1,6 @@
 "use client";
 import React, { useEffect, useRef, useState } from "react";
+import { motion, useMotionValue, useTransform } from "motion/react";
 import { cn } from "@/lib/utils";
 import {
   IconBrightnessDown,
@@ -23,16 +24,9 @@ import { IconCommand } from "@tabler/icons-react";
 import { IconCaretLeftFilled } from "@tabler/icons-react";
 import { IconCaretDownFilled } from "@tabler/icons-react";
 
-export const MacbookScroll = ({
-  src,
-  showGradient,
-  title,
-  badge,
-}) => {
-  const containerRef = useRef(null);
-  const titleRef = useRef(null);
-  const lidRef = useRef(null);
-
+export const MacbookScroll = ({ src, showGradient, title, badge }) => {
+  const ref = useRef(null);
+  const scrollYProgress = useMotionValue(0);
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
@@ -41,86 +35,95 @@ export const MacbookScroll = ({
     }
   }, []);
 
-  // Plain scroll listener — bypasses GSAP ScrollTrigger + custom scroller
-  // complexity. getBoundingClientRect() is viewport-relative no matter
-  // which element scrolls, so this works for window and any inner
-  // scrolling container.
+  // The app uses an inner `#scrollable-content` element rather than window
+  // scrolling, so framer-motion's default `useScroll({ target })` won't
+  // pick up the right scroller. We drive `scrollYProgress` ourselves from
+  // both the inner container and window scroll events, computing progress
+  // from the target's viewport rect (which is correct for any scroller).
   useEffect(() => {
     if (typeof window === "undefined") return;
-    const container = containerRef.current;
-    const lidEl = lidRef.current;
-    if (!container || !lidEl) return;
+    const el = ref.current;
+    if (!el) return;
 
-    const scroller =
-      document.getElementById("scrollable-content") || window;
+    const inner = document.getElementById("scrollable-content");
+    const listeners = [window];
+    if (inner && inner !== document.documentElement) listeners.push(inner);
 
-    const startAngle = -24;
-    const endAngle = 0;
-    lidEl.style.transformOrigin = "50% 100%";
-    lidEl.style.transform = `perspective(800px) rotateX(${startAngle}deg)`;
-
-    let rafId = 0;
+    let raf = 0;
     const tick = () => {
-      rafId = 0;
-      const rect = container.getBoundingClientRect();
+      raf = 0;
+      const rect = el.getBoundingClientRect();
       const vh = window.innerHeight || 800;
-      // progress: 0 when container top is at bottom of viewport (just
-      // entering), 1 when container top is at top of viewport. Clamp.
-      const raw = (vh - rect.top) / vh;
-      const p = Math.max(0, Math.min(1, raw));
-      const angle = startAngle + (endAngle - startAngle) * p;
-      lidEl.style.transform = `perspective(800px) rotateX(${angle}deg)`;
+      // Mirrors framer-motion offset ["start start", "end start"]:
+      //   p = 0 when element top hits viewport top
+      //   p = 1 when element bottom hits viewport top
+      // Before that (element still below viewport) we map the entry from
+      // "start end" (element top at viewport bottom, p = -0.something) but
+      // clamp to 0 so the initial state shows the closed lid.
+      const denom = Math.max(1, rect.height);
+      const p = Math.max(0, Math.min(1, -rect.top / denom));
+      scrollYProgress.set(p);
     };
     const onScroll = () => {
-      if (rafId) return;
-      rafId = requestAnimationFrame(tick);
+      if (raf) return;
+      raf = requestAnimationFrame(tick);
     };
 
-    // Kick once so the initial position is correct even without scroll.
     tick();
-
-    scroller.addEventListener("scroll", onScroll, { passive: true });
+    listeners.forEach((node) =>
+      node.addEventListener("scroll", onScroll, { passive: true })
+    );
     window.addEventListener("resize", onScroll);
-    // Also listen on window in case the real scroll actually lives there.
-    if (scroller !== window) {
-      window.addEventListener("scroll", onScroll, { passive: true });
-    }
 
     return () => {
-      scroller.removeEventListener("scroll", onScroll);
+      listeners.forEach((node) =>
+        node.removeEventListener("scroll", onScroll)
+      );
       window.removeEventListener("resize", onScroll);
-      if (scroller !== window) {
-        window.removeEventListener("scroll", onScroll);
-      }
-      if (rafId) cancelAnimationFrame(rafId);
+      if (raf) cancelAnimationFrame(raf);
     };
-  }, [isMobile]);
+  }, [scrollYProgress]);
+
+  const scaleX = useTransform(
+    scrollYProgress,
+    [0, 0.3],
+    [1.2, isMobile ? 1 : 1.5]
+  );
+  const scaleY = useTransform(
+    scrollYProgress,
+    [0, 0.3],
+    [0.6, isMobile ? 1 : 1.5]
+  );
+  const translate = useTransform(scrollYProgress, [0, 1], [0, 1500]);
+  const rotate = useTransform(scrollYProgress, [0.1, 0.12, 0.3], [-28, -28, 0]);
+  const textTransform = useTransform(scrollYProgress, [0, 0.3], [0, 100]);
+  const textOpacity = useTransform(scrollYProgress, [0, 0.2], [1, 0]);
 
   return (
     <div
-      ref={containerRef}
+      ref={ref}
       className={cn(
-        "relative z-0 flex shrink-0 flex-col items-center justify-center overflow-visible py-10 [perspective:800px]",
-        "scale-[0.55] sm:scale-[0.7] md:scale-100"
+        "flex min-h-[200vh] shrink-0 scale-[0.35] transform flex-col items-center justify-start py-0 [perspective:800px] sm:scale-50 md:scale-100 md:py-80"
       )}
     >
-      <h2
-        ref={titleRef}
-        className="mb-12 text-center text-3xl font-bold text-neutral-800 dark:text-white"
+      <motion.h2
+        style={{ translateY: textTransform, opacity: textOpacity }}
+        className="mb-20 text-center text-3xl font-bold text-neutral-800 dark:text-white"
       >
         {title || (
           <span>
             This Macbook is built with Tailwindcss. <br /> No kidding.
           </span>
         )}
-      </h2>
-
-      {/* Lid */}
-      <Lid ref={lidRef} src={src} />
-
-      {/* Base area */}
-      <div className="relative z-0 h-[22rem] w-[32rem] overflow-hidden rounded-2xl bg-gray-200 dark:bg-[#272729]">
-        {/* above keyboard bar */}
+      </motion.h2>
+      <Lid
+        src={src}
+        scaleX={scaleX}
+        scaleY={scaleY}
+        rotate={rotate}
+        translate={translate}
+      />
+      <div className="relative -z-10 h-[22rem] w-[32rem] overflow-hidden rounded-2xl bg-gray-200 dark:bg-[#272729]">
         <div className="relative h-10 w-full">
           <div className="absolute inset-x-0 mx-auto h-4 w-[80%] bg-[#050505]" />
         </div>
@@ -146,7 +149,7 @@ export const MacbookScroll = ({
   );
 };
 
-export const Lid = ({ src, ref }) => {
+export const Lid = ({ scaleX, scaleY, rotate, translate, src }) => {
   return (
     <div className="relative [perspective:800px]">
       <div
@@ -166,9 +169,15 @@ export const Lid = ({ src, ref }) => {
           </span>
         </div>
       </div>
-      <div
-        ref={ref}
-        style={{ transformStyle: "preserve-3d" }}
+      <motion.div
+        style={{
+          scaleX,
+          scaleY,
+          rotateX: rotate,
+          translateY: translate,
+          transformStyle: "preserve-3d",
+          transformOrigin: "top",
+        }}
         className="absolute inset-0 h-96 w-[32rem] rounded-2xl bg-[#010101] p-2"
       >
         <div className="absolute inset-0 rounded-lg bg-[#272729]" />
@@ -177,7 +186,7 @@ export const Lid = ({ src, ref }) => {
           alt="aceternity logo"
           className="absolute inset-0 h-full w-full rounded-lg object-cover object-left-top"
         />
-      </div>
+      </motion.div>
     </div>
   );
 };

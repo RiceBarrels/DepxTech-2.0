@@ -72,7 +72,7 @@ export function GSAPStagger({
   once = true,
   // Fire well before the element reaches comfortable reading position so the
   // viewer never sees the "from" state sitting mid-screen.
-  start = 'top 98%',
+  start = 'top bottom',
   as: Tag = 'div',
 }) {
   const ref = useRef(null)
@@ -121,7 +121,7 @@ export function GSAPReveal({
   delay = 0,
   duration = 0.7,
   once = true,
-  start = 'top 98%',
+  start = 'top bottom',
   as: Tag = 'div',
 }) {
   const ref = useRef(null)
