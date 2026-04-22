@@ -58,15 +58,21 @@ export const MacbookScroll = ({
 
       const scroller = findScroller(container);
       const scaleTarget = isMobile ? 1 : 1.5;
-      const scrollDistance = isMobile ? 900 : 1800;
+      const scrollDistance = isMobile ? 900 : 1500;
+      // When the scroller is a non-body element we must use transform-based
+      // pinning, otherwise the pinned node is taken out of the scroll flow and
+      // visually disappears.
+      const usingCustomScroller = !!scroller && scroller !== window;
 
       gsap.set(lidEl, {
         scaleX: 1.2,
         scaleY: 0.6,
         rotateX: -28,
         y: 0,
+        autoAlpha: 1,
         transformOrigin: "top center",
         transformPerspective: 800,
+        force3D: true,
       });
       if (titleEl) gsap.set(titleEl, { y: 0, autoAlpha: 1 });
 
@@ -81,6 +87,7 @@ export const MacbookScroll = ({
           pin: true,
           anticipatePin: 1,
           invalidateOnRefresh: true,
+          ...(usingCustomScroller ? { pinType: "transform" } : {}),
         },
       });
 
@@ -90,12 +97,13 @@ export const MacbookScroll = ({
         tl.to(titleEl, { autoAlpha: 0, duration: 0.2 }, 0);
       }
 
-      // Lid opens: scale up + rotate to 0 across first third
+      // Lid opens: scale up + rotate flat across first third
       tl.to(lidEl, { scaleX: scaleTarget, scaleY: scaleTarget, duration: 0.3 }, 0);
-      tl.to(lidEl, { rotateX: 0, duration: 0.2 }, 0.1);
+      tl.to(lidEl, { rotateX: 0, duration: 0.3 }, 0.1);
 
-      // Lid drifts down across the full scroll range for a subtle parallax
-      tl.to(lidEl, { y: isMobile ? 220 : 500, duration: 1 }, 0);
+      // Keep the lid on screen — a tiny parallax drift, never enough to push
+      // the MacBook out of view.
+      tl.to(lidEl, { y: isMobile ? 40 : 80, duration: 1 }, 0);
     },
     { scope: containerRef, dependencies: [isMobile] }
   );

@@ -11,17 +11,28 @@ if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger, useGSAP)
 }
 
+/**
+ * Resolve the element we should treat as the scroll container. Prefer the
+ * explicit `#scrollable-content` node when it is actually scrolling, otherwise
+ * walk up the ancestor chain, and finally fall back to `window`.
+ */
 export function findScroller(el) {
   if (typeof window === 'undefined') return null
   const explicit = document.getElementById('scrollable-content')
-  if (explicit && explicit.scrollHeight > explicit.clientHeight) return explicit
+  if (explicit) {
+    const style = window.getComputedStyle(explicit)
+    const canScroll =
+      (style.overflowY === 'auto' || style.overflowY === 'scroll') &&
+      explicit.scrollHeight > explicit.clientHeight + 2
+    if (canScroll) return explicit
+  }
   let node = el?.parentElement
   while (node && node !== document.documentElement) {
     const style = window.getComputedStyle(node)
     const overflowY = style.overflowY
     if (
       (overflowY === 'auto' || overflowY === 'scroll') &&
-      node.scrollHeight > node.clientHeight
+      node.scrollHeight > node.clientHeight + 2
     ) {
       return node
     }
@@ -30,15 +41,18 @@ export function findScroller(el) {
   return explicit || window
 }
 
+// Initial "from" states. NEVER use autoAlpha: 0 — if ScrollTrigger fails or
+// fires too late the content must still be legible. We use 0.3 as a gentle
+// starting opacity so copy stays readable even without scroll.
 const FROM = {
-  bottom: { y: 40, autoAlpha: 0 },
-  top: { y: -36, autoAlpha: 0 },
-  left: { x: -48, autoAlpha: 0 },
-  right: { x: 48, autoAlpha: 0 },
-  scale: { scale: 0.9, autoAlpha: 0 },
-  z: { scale: 0.92, autoAlpha: 0 },
-  blur: { autoAlpha: 0, filter: 'blur(8px)' },
-  fade: { autoAlpha: 0 },
+  bottom: { y: 40, autoAlpha: 0.3 },
+  top: { y: -36, autoAlpha: 0.3 },
+  left: { x: -48, autoAlpha: 0.3 },
+  right: { x: 48, autoAlpha: 0.3 },
+  scale: { scale: 0.94, autoAlpha: 0.3 },
+  z: { scale: 0.94, autoAlpha: 0.3 },
+  blur: { autoAlpha: 0.3, filter: 'blur(6px)' },
+  fade: { autoAlpha: 0.3 },
 }
 
 function toVars(fromKey) {
@@ -55,7 +69,9 @@ export function GSAPStagger({
   from = 'bottom',
   duration = 0.7,
   once = true,
-  start = 'top 85%',
+  // Fire well before the element reaches comfortable reading position so the
+  // viewer never sees the "from" state sitting mid-screen.
+  start = 'top 92%',
   as: Tag = 'div',
 }) {
   const ref = useRef(null)
@@ -69,20 +85,24 @@ export function GSAPStagger({
       const scroller = findScroller(el)
       const fromVars = FROM[from] || FROM.bottom
 
-      gsap.set(targets, fromVars)
-      gsap.to(targets, {
-        ...toVars(from),
-        duration,
-        ease: 'power3.out',
-        stagger: staggerChildren,
-        delay: delayChildren,
-        scrollTrigger: {
-          trigger: el,
-          start,
-          scroller,
-          toggleActions: once ? 'play none none none' : 'play none none reverse',
-        },
-      })
+      gsap.fromTo(
+        targets,
+        fromVars,
+        {
+          ...toVars(from),
+          duration,
+          ease: 'power3.out',
+          stagger: staggerChildren,
+          delay: delayChildren,
+          immediateRender: false,
+          scrollTrigger: {
+            trigger: el,
+            start,
+            scroller,
+            toggleActions: once ? 'play none none none' : 'play none none reverse',
+          },
+        }
+      )
     },
     { scope: ref }
   )
@@ -101,7 +121,7 @@ export function GSAPReveal({
   delay = 0,
   duration = 0.7,
   once = true,
-  start = 'top 88%',
+  start = 'top 92%',
   as: Tag = 'div',
 }) {
   const ref = useRef(null)
@@ -113,19 +133,23 @@ export function GSAPReveal({
       const scroller = findScroller(el)
       const fromVars = FROM[from] || FROM.bottom
 
-      gsap.set(el, fromVars)
-      gsap.to(el, {
-        ...toVars(from),
-        duration,
-        delay,
-        ease: 'power3.out',
-        scrollTrigger: {
-          trigger: el,
-          start,
-          scroller,
-          toggleActions: once ? 'play none none none' : 'play none none reverse',
-        },
-      })
+      gsap.fromTo(
+        el,
+        fromVars,
+        {
+          ...toVars(from),
+          duration,
+          delay,
+          ease: 'power3.out',
+          immediateRender: false,
+          scrollTrigger: {
+            trigger: el,
+            start,
+            scroller,
+            toggleActions: once ? 'play none none none' : 'play none none reverse',
+          },
+        }
+      )
     },
     { scope: ref }
   )
@@ -146,38 +170,50 @@ export function GSAPCounter({
   once = true,
 }) {
   const ref = useRef(null)
+  const target = typeof value === 'number' ? value : parseFloat(value) || 0
+  const initialText = `${prefix}${target.toLocaleString()}${suffix}`
 
   useGSAP(
     () => {
       const el = ref.current
       if (!el) return
       const scroller = findScroller(el)
-      const obj = { n: 0 }
-      const target = typeof value === 'number' ? value : parseFloat(value) || 0
-      el.textContent = `${prefix}0${suffix}`
+      const obj = { n: target }
 
-      gsap.to(obj, {
-        n: target,
-        duration,
-        ease: 'power2.out',
-        onUpdate: () => {
-          if (!ref.current) return
-          ref.current.textContent = `${prefix}${Math.floor(obj.n).toLocaleString()}${suffix}`
-        },
-        scrollTrigger: {
-          trigger: el,
-          start: 'top 90%',
-          scroller,
-          toggleActions: once ? 'play none none none' : 'play none none reset',
-        },
-      })
+      gsap.fromTo(
+        obj,
+        { n: 0 },
+        {
+          n: target,
+          duration,
+          ease: 'power2.out',
+          immediateRender: false,
+          onStart: () => {
+            obj.n = 0
+          },
+          onUpdate: () => {
+            if (!ref.current) return
+            ref.current.textContent = `${prefix}${Math.floor(obj.n).toLocaleString()}${suffix}`
+          },
+          onComplete: () => {
+            if (!ref.current) return
+            ref.current.textContent = `${prefix}${target.toLocaleString()}${suffix}`
+          },
+          scrollTrigger: {
+            trigger: el,
+            start: 'top 95%',
+            scroller,
+            toggleActions: once ? 'play none none none' : 'play none none reset',
+          },
+        }
+      )
     },
     { scope: ref, dependencies: [value, suffix, prefix] }
   )
 
   return (
     <span ref={ref} className={className}>
-      {prefix}0{suffix}
+      {initialText}
     </span>
   )
 }
