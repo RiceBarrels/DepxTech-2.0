@@ -41,18 +41,19 @@ export function findScroller(el) {
   return explicit || window
 }
 
-// Initial "from" states. NEVER use autoAlpha: 0 — if ScrollTrigger fails or
-// fires too late the content must still be legible. We use 0.3 as a gentle
-// starting opacity so copy stays readable even without scroll.
+// Initial "from" states — hidden before the trigger fires, then fade in.
+// We compensate for the zero-opacity risk by firing the trigger at
+// `top 98%`, i.e. the moment the element peeks into the viewport, so
+// there's no perceptible blank gap.
 const FROM = {
-  bottom: { y: 40, autoAlpha: 0.3 },
-  top: { y: -36, autoAlpha: 0.3 },
-  left: { x: -48, autoAlpha: 0.3 },
-  right: { x: 48, autoAlpha: 0.3 },
-  scale: { scale: 0.94, autoAlpha: 0.3 },
-  z: { scale: 0.94, autoAlpha: 0.3 },
-  blur: { autoAlpha: 0.3, filter: 'blur(6px)' },
-  fade: { autoAlpha: 0.3 },
+  bottom: { y: 40, autoAlpha: 0 },
+  top: { y: -36, autoAlpha: 0 },
+  left: { x: -48, autoAlpha: 0 },
+  right: { x: 48, autoAlpha: 0 },
+  scale: { scale: 0.94, autoAlpha: 0 },
+  z: { scale: 0.94, autoAlpha: 0 },
+  blur: { autoAlpha: 0, filter: 'blur(6px)' },
+  fade: { autoAlpha: 0 },
 }
 
 function toVars(fromKey) {
@@ -71,7 +72,7 @@ export function GSAPStagger({
   once = true,
   // Fire well before the element reaches comfortable reading position so the
   // viewer never sees the "from" state sitting mid-screen.
-  start = 'top 92%',
+  start = 'top 98%',
   as: Tag = 'div',
 }) {
   const ref = useRef(null)
@@ -94,7 +95,6 @@ export function GSAPStagger({
           ease: 'power3.out',
           stagger: staggerChildren,
           delay: delayChildren,
-          immediateRender: false,
           scrollTrigger: {
             trigger: el,
             start,
@@ -121,7 +121,7 @@ export function GSAPReveal({
   delay = 0,
   duration = 0.7,
   once = true,
-  start = 'top 92%',
+  start = 'top 98%',
   as: Tag = 'div',
 }) {
   const ref = useRef(null)
@@ -141,7 +141,6 @@ export function GSAPReveal({
           duration,
           delay,
           ease: 'power3.out',
-          immediateRender: false,
           scrollTrigger: {
             trigger: el,
             start,

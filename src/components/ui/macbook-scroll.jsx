@@ -1,8 +1,5 @@
 "use client";
 import React, { useEffect, useRef, useState } from "react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { useGSAP } from "@gsap/react";
 import { cn } from "@/lib/utils";
 import {
   IconBrightnessDown,
@@ -26,10 +23,6 @@ import { IconCommand } from "@tabler/icons-react";
 import { IconCaretLeftFilled } from "@tabler/icons-react";
 import { IconCaretDownFilled } from "@tabler/icons-react";
 
-if (typeof window !== "undefined") {
-  gsap.registerPlugin(ScrollTrigger, useGSAP);
-}
-
 export const MacbookScroll = ({
   src,
   showGradient,
@@ -48,47 +41,64 @@ export const MacbookScroll = ({
     }
   }, []);
 
-  useGSAP(
-    () => {
-      const container = containerRef.current;
-      const lidEl = lidRef.current;
-      if (!container || !lidEl) return;
+  // Plain scroll listener — bypasses GSAP ScrollTrigger + custom scroller
+  // complexity. getBoundingClientRect() is viewport-relative no matter
+  // which element scrolls, so this works for window and any inner
+  // scrolling container.
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const container = containerRef.current;
+    const lidEl = lidRef.current;
+    if (!container || !lidEl) return;
 
-      const scroller =
-        document.getElementById("scrollable-content") || window;
+    const scroller =
+      document.getElementById("scrollable-content") || window;
 
-      // Start angle = closed-ish, end angle = flat open. Rotation only —
-      // no pin, no opacity, no scale, no translate, so the MacBook is
-      // always in the flow and always visible.
-      const startAngle = -24;
-      const endAngle = 0;
-      lidEl.style.transformOrigin = "50% 100%";
-      lidEl.style.transform = `perspective(800px) rotateX(${startAngle}deg)`;
+    const startAngle = -24;
+    const endAngle = 0;
+    lidEl.style.transformOrigin = "50% 100%";
+    lidEl.style.transform = `perspective(800px) rotateX(${startAngle}deg)`;
 
-      const st = ScrollTrigger.create({
-        trigger: container,
-        scroller,
-        start: "top 85%",
-        end: "bottom 15%",
-        scrub: 0.4,
-        invalidateOnRefresh: true,
-        onUpdate: (self) => {
-          const angle = startAngle + (endAngle - startAngle) * self.progress;
-          lidEl.style.transform = `perspective(800px) rotateX(${angle}deg)`;
-        },
-      });
+    let rafId = 0;
+    const tick = () => {
+      rafId = 0;
+      const rect = container.getBoundingClientRect();
+      const vh = window.innerHeight || 800;
+      // progress: 0 when container top is at bottom of viewport (just
+      // entering), 1 when container top is at top of viewport. Clamp.
+      const raw = (vh - rect.top) / vh;
+      const p = Math.max(0, Math.min(1, raw));
+      const angle = startAngle + (endAngle - startAngle) * p;
+      lidEl.style.transform = `perspective(800px) rotateX(${angle}deg)`;
+    };
+    const onScroll = () => {
+      if (rafId) return;
+      rafId = requestAnimationFrame(tick);
+    };
 
-      return () => {
-        st.kill();
-      };
-    },
-    { scope: containerRef, dependencies: [isMobile] }
-  );
+    // Kick once so the initial position is correct even without scroll.
+    tick();
+
+    scroller.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    // Also listen on window in case the real scroll actually lives there.
+    if (scroller !== window) {
+      window.addEventListener("scroll", onScroll, { passive: true });
+    }
+
+    return () => {
+      scroller.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+      if (scroller !== window) {
+        window.removeEventListener("scroll", onScroll);
+      }
+      if (rafId) cancelAnimationFrame(rafId);
+    };
+  }, [isMobile]);
 
   return (
     <div
       ref={containerRef}
-      style={{ border: "3px solid blue", minHeight: "600px" }}
       className={cn(
         "relative z-0 flex shrink-0 flex-col items-center justify-center overflow-visible py-10 [perspective:800px]",
         "scale-[0.55] sm:scale-[0.7] md:scale-100"
