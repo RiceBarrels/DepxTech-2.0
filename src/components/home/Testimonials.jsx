@@ -1,5 +1,5 @@
-import { ExternalLink } from 'lucide-react'
-import { ScrollStagger, ScrollReveal } from '@/components/ui/scroll-animation'
+import { Star, ExternalLink } from 'lucide-react'
+import { GSAPStagger, GSAPReveal } from '@/components/ui/scroll-animation-gsap'
 import { getTranslations } from 'next-intl/server'
 
 export async function Testimonials() {
@@ -16,55 +16,72 @@ export async function Testimonials() {
 
   return (
     <section className="py-20 bg-background">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <ScrollReveal animation="bottom" className="max-w-2xl mb-14">
-          <h2 className="text-3xl sm:text-4xl font-semibold tracking-tight text-slate-900 dark:text-white mb-3">
-            {t('heading')}
-          </h2>
-          <p className="text-slate-500 text-base sm:text-lg leading-relaxed">
-            {t('subheading')}
-          </p>
-        </ScrollReveal>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center mb-12">
+          <GSAPReveal from="top">
+            <h2 className="text-3xl sm:text-4xl font-black text-slate-900 dark:text-white mb-4">
+              {t('heading')}
+            </h2>
+          </GSAPReveal>
+          <GSAPReveal from="blur" delay={0.1}>
+            <p className="text-slate-500 text-lg max-w-2xl mx-auto">
+              {t('subheading')}
+            </p>
+          </GSAPReveal>
+        </div>
 
-        {/* Dense, column-based quote wall — no cards, no rating stars, no avatar circles */}
-        <ScrollStagger staggerChildren={0.1} className="columns-1 md:columns-2 lg:columns-3 gap-x-8 gap-y-10">
+        <GSAPStagger staggerChildren={0.12} delayChildren={0.1} from="bottom" className="grid md:grid-cols-3 gap-6">
           {reviews.map((review, i) => (
-            <ScrollReveal key={i} animation="bottom" className="break-inside-avoid mb-10">
-              <figure className="flex flex-col gap-4">
-                <blockquote className="text-base sm:text-lg leading-relaxed text-slate-700 dark:text-slate-300">
-                  &ldquo;{review.quote}&rdquo;
-                </blockquote>
-                <figcaption className="text-sm text-slate-500">
-                  <span className="font-medium text-slate-900 dark:text-white">{review.name}</span>
-                  <span className="mx-1.5 text-slate-300 dark:text-slate-700">·</span>
-                  {review.device}
-                </figcaption>
-              </figure>
-            </ScrollReveal>
+            <div key={i} className="flex flex-col h-full p-6 sm:p-8 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-200 dark:border-slate-700">
+              {/* Stars */}
+              <div className="flex gap-1 mb-4">
+                {[...Array(5)].map((_, j) => (
+                  <Star key={j} className="size-4 fill-amber-400 text-amber-400" />
+                ))}
+              </div>
+              {/* Quote */}
+              <p className="text-slate-700 dark:text-slate-300 leading-relaxed flex-1 mb-6">
+                &ldquo;{review.quote}&rdquo;
+              </p>
+              {/* Author */}
+              <div className="flex items-center gap-3 pt-4 border-t border-slate-200 dark:border-slate-700">
+                <div className="size-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-sm">
+                  {review.name.charAt(0)}
+                </div>
+                <div>
+                  <p className="font-semibold text-sm text-slate-900 dark:text-white">{review.name}</p>
+                  <p className="text-xs text-slate-500">{review.device}</p>
+                </div>
+              </div>
+            </div>
           ))}
-        </ScrollStagger>
+        </GSAPStagger>
 
-        <ScrollReveal animation="bottom">
-          <div className="mt-6 pt-10 border-t border-slate-200 dark:border-slate-800 flex flex-wrap items-center gap-x-6 gap-y-2">
+        {/* Links to external review platforms */}
+        <GSAPReveal from="blur">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-10">
             <p className="text-sm text-slate-500">{t('moreReviews')}</p>
-            <a
-              href="https://www.ebay.com/str/depxtech?_tab=feedback"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 text-sm font-medium text-slate-900 dark:text-white hover:text-violet-600 dark:hover:text-violet-400 transition-colors"
-            >
-              eBay <ExternalLink className="size-3" />
-            </a>
-            <a
-              href="https://www.jawa.gg/sp/197528/depxtech/reviews"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 text-sm font-medium text-slate-900 dark:text-white hover:text-violet-600 dark:hover:text-violet-400 transition-colors"
-            >
-              Jawa <ExternalLink className="size-3" />
-            </a>
+            <div className="flex items-center gap-4">
+              <a
+                href="https://www.ebay.com/str/depxtech?_tab=feedback"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:text-primary/80 transition-colors"
+              >
+                eBay <ExternalLink className="size-3.5" />
+              </a>
+              <span className="text-slate-300 dark:text-slate-600">|</span>
+              <a
+                href="https://www.jawa.gg/sp/197528/depxtech/reviews"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:text-primary/80 transition-colors"
+              >
+                Jawa <ExternalLink className="size-3.5" />
+              </a>
+            </div>
           </div>
-        </ScrollReveal>
+        </GSAPReveal>
       </div>
     </section>
   )
