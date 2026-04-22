@@ -218,6 +218,7 @@
     "returns": "Returns",
     "helpHours": "Mon-Sun 8-22 EDT(NY)",
     "helpEmail": "Email: support@depxtech.com",
+    "designBook": "Design Book",
     "socialsSection": "Socials",
     "facebook": "Facebook",
     "instagram": "Instagram",
@@ -1607,7 +1608,9 @@
     "membershipTitle": "Premium Membership Benefits | DepxTech",
     "membershipDescription": "Join our exclusive membership program with free shipping, monthly gifts, fast delivery, and weekly surprise offers.",
     "aboutTitle": "About Us | DepxTech",
-    "aboutDescription": "Learn about DepxTech's mission to make electronics trade-in easy, fast, and eco-friendly. Our story, values, and commitment to sustainability."
+    "aboutDescription": "Learn about DepxTech's mission to make electronics trade-in easy, fast, and eco-friendly. Our story, values, and commitment to sustainability.",
+    "designTitle": "Design System | DepxTech",
+    "designDescription": "The DepxTech design book — every color token, typography scale, component and motion primitive used across the product, documented in one place."
   },
   "trade": {
     "hero": {

@@ -91,6 +91,7 @@ export async function Footer(){
                                 <TransitionLink href="/shipping" className={desktopLinkClass}>{t('shippingInfo')}</TransitionLink>
                                 <TransitionLink href="/warranty" className={desktopLinkClass}>{t('warranty')}</TransitionLink>
                                 <TransitionLink href="/returns" className={desktopLinkClass}>{t('returns')}</TransitionLink>
+                                <TransitionLink href="/design" className={desktopLinkClass}>{t('designBook')}</TransitionLink>
                                 <span className="text-xs text-muted-foreground">{t('helpHours')}</span>
                                 <span className="text-xs text-muted-foreground">{t('helpEmail')}</span>
                             </div>
@@ -206,6 +207,8 @@ export async function Footer(){
                             <TransitionLink href="/warranty" className={linkClass}>{t('warranty')}</TransitionLink>
                             <div className="px-6"><Separator /></div>
                             <TransitionLink href="/returns" className={linkClass}>{t('returns')}</TransitionLink>
+                            <div className="px-6"><Separator /></div>
+                            <TransitionLink href="/design" className={linkClass}>{t('designBook')}</TransitionLink>
                             <div className="px-6"><Separator /></div>
                             <small className={linkClass}>{t('helpHours')}</small>
                             <small className={linkClass}>{t('helpEmail')}</small>
