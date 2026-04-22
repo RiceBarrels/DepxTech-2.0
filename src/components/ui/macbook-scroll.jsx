@@ -4,7 +4,6 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import { cn } from "@/lib/utils";
-import { findScroller } from "@/components/ui/scroll-animation-gsap";
 import {
   IconBrightnessDown,
   IconBrightnessUp,
@@ -52,58 +51,36 @@ export const MacbookScroll = ({
   useGSAP(
     () => {
       const container = containerRef.current;
-      const titleEl = titleRef.current;
       const lidEl = lidRef.current;
       if (!container || !lidEl) return;
 
-      const scroller = findScroller(container);
-      const scaleTarget = isMobile ? 1 : 1.5;
-      const scrollDistance = isMobile ? 900 : 1500;
-      // When the scroller is a non-body element we must use transform-based
-      // pinning, otherwise the pinned node is taken out of the scroll flow and
-      // visually disappears.
-      const usingCustomScroller = !!scroller && scroller !== window;
+      const scroller =
+        document.getElementById("scrollable-content") || window;
 
-      gsap.set(lidEl, {
-        scaleX: 1.2,
-        scaleY: 0.6,
-        rotateX: -28,
-        y: 0,
-        autoAlpha: 1,
-        transformOrigin: "top center",
-        transformPerspective: 800,
-        force3D: true,
-      });
-      if (titleEl) gsap.set(titleEl, { y: 0, autoAlpha: 1 });
+      // Start angle = closed-ish, end angle = flat open. Rotation only —
+      // no pin, no opacity, no scale, no translate, so the MacBook is
+      // always in the flow and always visible.
+      const startAngle = -24;
+      const endAngle = 0;
+      lidEl.style.transformOrigin = "50% 100%";
+      lidEl.style.transform = `perspective(800px) rotateX(${startAngle}deg)`;
 
-      const tl = gsap.timeline({
-        defaults: { ease: "none" },
-        scrollTrigger: {
-          trigger: container,
-          scroller,
-          start: "top top",
-          end: `+=${scrollDistance}`,
-          scrub: 0.6,
-          pin: true,
-          anticipatePin: 1,
-          invalidateOnRefresh: true,
-          ...(usingCustomScroller ? { pinType: "transform" } : {}),
+      const st = ScrollTrigger.create({
+        trigger: container,
+        scroller,
+        start: "top 85%",
+        end: "bottom 15%",
+        scrub: 0.4,
+        invalidateOnRefresh: true,
+        onUpdate: (self) => {
+          const angle = startAngle + (endAngle - startAngle) * self.progress;
+          lidEl.style.transform = `perspective(800px) rotateX(${angle}deg)`;
         },
       });
 
-      // Title translates and fades out during the first third
-      if (titleEl) {
-        tl.to(titleEl, { y: 100, duration: 0.3 }, 0);
-        tl.to(titleEl, { autoAlpha: 0, duration: 0.2 }, 0);
-      }
-
-      // Lid opens: scale up + rotate flat across first third
-      tl.to(lidEl, { scaleX: scaleTarget, scaleY: scaleTarget, duration: 0.3 }, 0);
-      tl.to(lidEl, { rotateX: 0, duration: 0.3 }, 0.1);
-
-      // Keep the lid on screen — a tiny parallax drift, never enough to push
-      // the MacBook out of view.
-      tl.to(lidEl, { y: isMobile ? 40 : 80, duration: 1 }, 0);
+      return () => {
+        st.kill();
+      };
     },
     { scope: containerRef, dependencies: [isMobile] }
   );
@@ -112,7 +89,7 @@ export const MacbookScroll = ({
     <div
       ref={containerRef}
       className={cn(
-        "relative flex min-h-screen shrink-0 flex-col items-center justify-center overflow-hidden py-10 [perspective:800px]",
+        "relative z-0 flex min-h-screen shrink-0 flex-col items-center justify-center overflow-visible py-10 [perspective:800px]",
         "scale-[0.45] sm:scale-[0.6] md:scale-100"
       )}
     >
@@ -131,7 +108,7 @@ export const MacbookScroll = ({
       <Lid ref={lidRef} src={src} />
 
       {/* Base area */}
-      <div className="relative -z-10 h-[22rem] w-[32rem] overflow-hidden rounded-2xl bg-gray-200 dark:bg-[#272729]">
+      <div className="relative z-0 h-[22rem] w-[32rem] overflow-hidden rounded-2xl bg-gray-200 dark:bg-[#272729]">
         {/* above keyboard bar */}
         <div className="relative h-10 w-full">
           <div className="absolute inset-x-0 mx-auto h-4 w-[80%] bg-[#050505]" />
