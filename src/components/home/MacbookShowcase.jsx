@@ -7,7 +7,10 @@ export async function MacbookShowcase() {
   const primaryAction = Array.isArray(flipWords) ? flipWords[0] : 'Trade'
 
   return (
-    <section className="w-full overflow-hidden bg-background dark:bg-[#07070f]">
+    <section
+      className="w-full bg-background dark:bg-[#07070f]"
+      style={{ border: '3px solid red', minHeight: '400px' }}
+    >
       <MacbookScroll
         title={
           <span className="text-slate-900 dark:text-white font-semibold tracking-tight">

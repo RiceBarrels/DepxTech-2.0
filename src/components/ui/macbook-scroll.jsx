@@ -88,9 +88,10 @@ export const MacbookScroll = ({
   return (
     <div
       ref={containerRef}
+      style={{ border: "3px solid blue", minHeight: "600px" }}
       className={cn(
-        "relative z-0 flex min-h-screen shrink-0 flex-col items-center justify-center overflow-visible py-10 [perspective:800px]",
-        "scale-[0.45] sm:scale-[0.6] md:scale-100"
+        "relative z-0 flex shrink-0 flex-col items-center justify-center overflow-visible py-10 [perspective:800px]",
+        "scale-[0.55] sm:scale-[0.7] md:scale-100"
       )}
     >
       <h2
