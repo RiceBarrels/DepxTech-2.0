@@ -10,7 +10,7 @@ export default function transitionLayout({ children }) {
         <div
             className="h-dvh w-full relative bg-background flex flex-col overflow-y-hidden"
         >
-            <Nav layers={1}/>
+            <Nav layers={1} disableMobileScrollStyle/>
             <div id="scrollable-content" className="rounded-t-3xl border border-b-0 border-border bg-background overflow-y-auto flex-1" style={{ viewTransitionName: 'transition-page' }}>
                 <div className="min-h-screen">
                     {children}
