@@ -193,7 +193,7 @@ function MegaMenuPanel({ menu, onLinkClick }) {
 }
 
 // ── Main Nav ──
-export default function Nav({ layers = 3 }) {
+export default function Nav({ layers = 3, disableMobileScrollStyle = false }) {
     const router = useTransitionRouter();
     const pathname = usePathname();
     const t = useTranslations('nav');
@@ -392,16 +392,16 @@ export default function Nav({ layers = 3 }) {
             {/* ── Mobile Top Header — hidden in PWA mode ── */}
             {!isPwaMode && <motion.nav
                 animate={{
-                    marginLeft: isFixed ? 16 : 0,
-                    marginRight: isFixed ? 16 : 0,
-                    marginTop: isFixed ? 16 : 0,
-                    marginBottom: isFixed ? 16 : 0,
-                    borderRadius: isFixed ? 24 : 0,
+                    marginLeft: isFixed && !disableMobileScrollStyle ? 16 : 0,
+                    marginRight: isFixed && !disableMobileScrollStyle ? 16 : 0,
+                    marginTop: isFixed && !disableMobileScrollStyle ? 16 : 0,
+                    marginBottom: isFixed && !disableMobileScrollStyle ? 16 : 0,
+                    borderRadius: isFixed && !disableMobileScrollStyle ? 24 : 0,
                 }}
                 transition={{ type: "spring", stiffness: 300, damping: 30 }}
                 className={cn(
                     "flex sm:hidden flex-col z-100 gap-2 backdrop-blur-lg sticky top-0",
-                    isFixed
+                    isFixed && !disableMobileScrollStyle
                         ? "border-l border-t border-primary/20 shadow bg-primary/10"
                         : "bg-background/80"
                 )}
