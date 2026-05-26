@@ -6,7 +6,8 @@ export function ScrollProgress() {
   const [progress, setProgress] = useState(0)
 
   useEffect(() => {
-    const scrollContainer = document.querySelector('[style*="view-transition-name: main-content"]')
+    const candidates = Array.from(document.querySelectorAll('#scrollable-content'))
+    const scrollContainer = candidates.find((el) => el.offsetParent !== null) || candidates[0]
     if (!scrollContainer) return
 
     const handleScroll = () => {

@@ -390,7 +390,7 @@ export default function MobileSidebarShell({ children, header }) {
                 )}
               </AnimatePresence>
 
-              <div className={cn("h-full overflow-x-hidden", isOpen || (dragging && dragOffset > 10) ? "overflow-hidden touch-none" : "overflow-y-auto")}>
+              <div className={cn("h-full flex flex-col overflow-hidden", (isOpen || (dragging && dragOffset > 10)) && "touch-none")}>
                 {(isMobile === null || isMobile) && children}
               </div>
             </div>

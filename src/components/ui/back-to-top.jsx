@@ -10,19 +10,22 @@ export function BackToTop() {
   const { trigger } = useWebHaptics()
 
   useEffect(() => {
-    const scrollContainer = document.querySelector('[style*="view-transition-name: main-content"]')
+    const candidates = Array.from(document.querySelectorAll('#scrollable-content'))
+    const scrollContainer = candidates.find((el) => el.offsetParent !== null) || candidates[0]
     if (!scrollContainer) return
 
     const handleScroll = () => {
       setVisible(scrollContainer.scrollTop > 400)
     }
 
+    handleScroll()
     scrollContainer.addEventListener('scroll', handleScroll, { passive: true })
     return () => scrollContainer.removeEventListener('scroll', handleScroll)
   }, [])
 
   const scrollToTop = () => {
-    const scrollContainer = document.querySelector('[style*="view-transition-name: main-content"]')
+    const candidates = Array.from(document.querySelectorAll('#scrollable-content'))
+    const scrollContainer = candidates.find((el) => el.offsetParent !== null) || candidates[0]
     scrollContainer?.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
